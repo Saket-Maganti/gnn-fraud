@@ -105,6 +105,7 @@ class TemperatureScaler(nn.Module):
     def fit(self, logits: torch.Tensor, labels: torch.Tensor, mask: torch.Tensor,
             lr: float = 0.01, max_iter: int = 50) -> float:
         """Fit T on validation set using NLL loss with LBFGS."""
+        self.to(logits.device)   # ensure T is on the same device as logits
         self.train()
         optimizer = torch.optim.LBFGS([self.T], lr=lr, max_iter=max_iter)
 
@@ -148,18 +149,29 @@ def train_model(data, model_name: str, strategy: str, device: torch.device,
 
     opt   = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=5e-4)
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=epochs)
+    use_amp = (device.type == "cuda")
+    scaler  = torch.cuda.amp.GradScaler(enabled=use_amp)
 
     best_f1, best_state, no_improve = 0.0, None, 0
     patience = 30
 
     for ep in range(1, epochs + 1):
         model.train()
-        logits = model(aug_data.x, aug_data.edge_index,
-                       getattr(aug_data, "edge_attr", None))
-        loss = crit(logits, aug_data.y, aug_data.train_mask)
-        opt.zero_grad(); loss.backward()
-        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-        opt.step(); sched.step()
+        with torch.cuda.amp.autocast(enabled=use_amp):
+            logits = model(aug_data.x, aug_data.edge_index,
+                           getattr(aug_data, "edge_attr", None))
+            loss = crit(logits, aug_data.y, aug_data.train_mask)
+        opt.zero_grad()
+        if use_amp:
+            scaler.scale(loss).backward()
+            scaler.unscale_(opt)
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+            scaler.step(opt); scaler.update()
+        else:
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+            opt.step()
+        sched.step()
         if hasattr(crit, "step_epoch"):
             crit.step_epoch()
 
