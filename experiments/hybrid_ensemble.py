@@ -193,9 +193,9 @@ def concat_rf_ensemble(gnn_model, data, device):
     raw   = data.x.cpu().numpy()                                     # [N, F]
     feat  = np.concatenate([emb, raw], axis=1)                       # [N, h+F]
 
-    y     = data.y.numpy()
-    tr_m  = data.train_mask.numpy()
-    te_m  = data.test_mask.numpy()
+    y     = data.y.cpu().numpy()
+    tr_m  = data.train_mask.cpu().numpy()
+    te_m  = data.test_mask.cpu().numpy()
 
     X_tr, y_tr = feat[tr_m], y[tr_m]
     X_te, y_te = feat[te_m], y[te_m]
@@ -259,29 +259,29 @@ def main(args):
     p_gnn_all = get_fraud_probs(gnn_model, data,     device)
     p_mlp_all = get_fraud_probs(mlp_model, mlp_data, device)
 
-    y_all = data.y.numpy()
+    y_all = data.y.cpu().numpy()
 
     rows = []
 
     # ── Baseline: GNN alone ────────────────────────────────────────────────
-    gnn_te  = p_gnn_all[test_mask.numpy()]
-    y_te    = y_all[test_mask.numpy()]
+    gnn_te  = p_gnn_all[test_mask.cpu().numpy()]
+    y_te    = y_all[test_mask.cpu().numpy()]
     preds_g = (gnn_te >= 0.5).astype(int)
     m = eval_binary(y_te, preds_g, gnn_te)
     rows.append({"strategy": "GNN alone (SAGE+weighted)", **m})
     print(f"\n  GNN alone:   F1={m['f1']:.4f}  AUC={m['auc']:.4f}")
 
     # ── Baseline: MLP alone ────────────────────────────────────────────────
-    mlp_te  = p_mlp_all[test_mask.numpy()]
+    mlp_te  = p_mlp_all[test_mask.cpu().numpy()]
     preds_m = (mlp_te >= 0.5).astype(int)
     m = eval_binary(y_te, preds_m, mlp_te)
     rows.append({"strategy": "MLP alone (no edges)", **m})
     print(f"  MLP alone:   F1={m['f1']:.4f}  AUC={m['auc']:.4f}")
 
     # ── Strategy 1: weighted average (α tuned on val) ─────────────────────
-    p_gnn_val = p_gnn_all[val_mask.numpy()]
-    p_mlp_val = p_mlp_all[val_mask.numpy()]
-    y_val     = y_all[val_mask.numpy()]
+    p_gnn_val = p_gnn_all[val_mask.cpu().numpy()]
+    p_mlp_val = p_mlp_all[val_mask.cpu().numpy()]
+    y_val     = y_all[val_mask.cpu().numpy()]
     alpha     = tune_alpha(p_gnn_val, p_mlp_val, y_val)
     print(f"\n  Optimal α (val set): {alpha:.2f}")
 
