@@ -1,30 +1,51 @@
 # Virtual environments
-gnn_env/
 venv/
 .venv/
 env/
+gnn_env/
 
-# Python
+# Python caches and build outputs
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
 *.egg-info/
-dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 build/
+dist/
 
-# Dataset (too large for GitHub — see data/README.md for download)
+# Local configuration
+.env
+.DS_Store
+.python-version
+
+# Data and large local assets
 data/raw/
 data/elliptic_bitcoin_dataset/
+*.zip
+*.tar
+*.tar.gz
+*.7z
 
-# Model checkpoints and results
+# Experiment outputs and checkpoints
 results/
+results2/
+logs/*.log
 *.pt
 *.pth
 best_model.pt
+best_evolve_model.pt
 
-# Misc
-.DS_Store
-*.zip
-gnnpaper.zip
-*.log
-.env
+# Paper build artifacts
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.log
+paper/*.out
+paper/*.pdf
+paper/*.spl
+paper/*.toc
+paper/missfont.log
+paper/texput.log
