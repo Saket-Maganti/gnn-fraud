@@ -1,0 +1,195 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\emailauthor{saket.maganti@vitap.ac.in}{Saket Maganti\corref {cor1}}
+\Newlabel{cor1}{1}
+\def\@LN@column{1}
+\Newlabel{vit}{a}
+\citation{crowe2020}
+\citation{weber2019}
+\citation{weber2019}
+\citation{alarab2020}
+\citation{lo2023}
+\citation{pareja2020evolvegcn}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{2}{section.1}\protected@file@percent }
+\newlabel{sec:intro}{{1}{2}{Introduction}{section.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}Why Graph Structure Looks Attractive for Fraud Detection}{2}{subsection.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}What Prior Work Overlooks}{2}{subsection.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}What This Paper Contributes}{2}{subsection.1.3}\protected@file@percent }
+\citation{akoglu2015graph}
+\citation{weber2019}
+\citation{pareja2020evolvegcn}
+\citation{alarab2020}
+\citation{lo2023}
+\citation{wang2019semi}
+\citation{liu2018geniepath}
+\citation{pourhabibi2020fraud}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Related Work}{3}{section.2}\protected@file@percent }
+\newlabel{sec:related}{{2}{3}{Related Work}{section.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}GNN-Based Fraud Detection}{3}{subsection.2.1}\protected@file@percent }
+\citation{chawla2002smote}
+\citation{zhao2021graphsmote}
+\citation{lin2017focal}
+\citation{pareja2020evolvegcn}
+\citation{sankar2020}
+\citation{xu2020inductive}
+\citation{gama2014survey}
+\citation{guo2017calibration}
+\citation{weber2019}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Handling Class Imbalance}{4}{subsection.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Temporal Graph Learning}{4}{subsection.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Calibration}{4}{subsection.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Dataset and Experimental Setup}{4}{section.3}\protected@file@percent }
+\newlabel{sec:dataset}{{3}{4}{Dataset and Experimental Setup}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}The Elliptic Bitcoin Dataset}{4}{subsection.3.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Elliptic Bitcoin Dataset summary. The 7.6:1 training imbalance and the dramatic variation in test-period fraud rates are the two properties that most shape our experimental results.}}{5}{table.caption.1}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{tab:dataset}{{1}{5}{Elliptic Bitcoin Dataset summary. The 7.6:1 training imbalance and the dramatic variation in test-period fraud rates are the two properties that most shape our experimental results}{table.caption.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Dataset characterisation. Top left: illicit rate over all 49 time steps, with the step-34/35 split shown explicitly. Top right: labeled-node counts per time step. Bottom left: overall node-class composition, including the large share of unlabeled transactions. Bottom right: correlation matrix for the ten most important Random Forest features. The figure makes two properties visible at once: the train/test split is temporally non-stationary, and the strongest features are informative without collapsing into a single redundant cluster.}}{5}{figure.caption.2}\protected@file@percent }
+\newlabel{fig:dataset_characterisation}{{1}{5}{Dataset characterisation. Top left: illicit rate over all 49 time steps, with the step-34/35 split shown explicitly. Top right: labeled-node counts per time step. Bottom left: overall node-class composition, including the large share of unlabeled transactions. Bottom right: correlation matrix for the ten most important Random Forest features. The figure makes two properties visible at once: the train/test split is temporally non-stationary, and the strongest features are informative without collapsing into a single redundant cluster}{figure.caption.2}{}}
+\citation{pareja2020evolvegcn}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Why the Test Period Is Problematic}{6}{subsection.3.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Illicit rate and node counts per test time step. Steps 35--42 maintain a rate broadly comparable to training and support reasonable model performance. Steps 43--49 fall to near-zero fraud rates, causing complete model collapse. Step 49 partially recovers as fraud activity briefly resumes.}}{6}{table.caption.3}\protected@file@percent }
+\newlabel{tab:temporal_rates}{{2}{6}{Illicit rate and node counts per test time step. Steps 35--42 maintain a rate broadly comparable to training and support reasonable model performance. Steps 43--49 fall to near-zero fraud rates, causing complete model collapse. Step 49 partially recovers as fraud activity briefly resumes}{table.caption.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Evaluation Protocol}{6}{subsection.3.3}\protected@file@percent }
+\citation{kipf2017}
+\citation{hamilton2017}
+\citation{velickovic2018}
+\citation{pareja2020evolvegcn}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Architectures and Training}{7}{section.4}\protected@file@percent }
+\newlabel{sec:methods}{{4}{7}{Architectures and Training}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Architectures}{7}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.1}MLP (feature-only control)}{7}{subsubsection.4.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.2}Graph Convolutional Network}{7}{subsubsection.4.1.2}\protected@file@percent }
+\newlabel{eq:gcn}{{1}{7}{Graph Convolutional Network}{equation.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.3}GraphSAGE}{7}{subsubsection.4.1.3}\protected@file@percent }
+\newlabel{eq:sage}{{2}{7}{GraphSAGE}{equation.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.4}Graph Attention Network}{7}{subsubsection.4.1.4}\protected@file@percent }
+\newlabel{eq:gat}{{3}{7}{Graph Attention Network}{equation.3}{}}
+\newlabel{eq:gat2}{{4}{7}{Graph Attention Network}{equation.4}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.5}EvolveGCN (ablation only)}{8}{subsubsection.4.1.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Imbalance Strategies}{8}{subsection.4.2}\protected@file@percent }
+\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces Structural Graph Augmentation}}{8}{algorithm.1}\protected@file@percent }
+\newlabel{alg:aug}{{1}{8}{Structural Graph Augmentation}{algorithm.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Training Configuration}{8}{subsection.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Results}{8}{section.5}\protected@file@percent }
+\newlabel{sec:results}{{5}{8}{Results}{section.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Main Benchmark}{8}{subsection.5.1}\protected@file@percent }
+\def\@LN@column{1}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Main benchmark: F1, Precision, Recall (mean\,$\pm $\,std, 3 seeds). MLP consistently achieves the highest F1. GCN's extreme precision--recall asymmetry (high precision, near-zero recall) is visible on the right panel. Red dashed lines mark the performance targets. GAT error bars are notably wider, reflecting attention instability under severe class imbalance.}}{9}{figure.caption.4}\protected@file@percent }
+\newlabel{fig:main_results}{{2}{9}{Main benchmark: F1, Precision, Recall (mean\,$\pm $\,std, 3 seeds). MLP consistently achieves the highest F1. GCN's extreme precision--recall asymmetry (high precision, near-zero recall) is visible on the right panel. Red dashed lines mark the performance targets. GAT error bars are notably wider, reflecting attention instability under severe class imbalance}{figure.caption.4}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Full benchmark results (mean\,$\pm $\,std, 3 seeds). Bold: column best. MLP dominates F1 and precision. No configuration reaches the 0.75 recall target, the consequence of temporal collapse in steps 43--49. GCN's high precision (0.89--0.93) is misleading: it predicts fraud almost never, making recall 0.29--0.32.}}{9}{table.caption.5}\protected@file@percent }
+\newlabel{tab:main_results}{{3}{9}{Full benchmark results (mean\,$\pm $\,std, 3 seeds). Bold: column best. MLP dominates F1 and precision. No configuration reaches the 0.75 recall target, the consequence of temporal collapse in steps 43--49. GCN's high precision (0.89--0.93) is misleading: it predicts fraud almost never, making recall 0.29--0.32}{table.caption.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}How Much Imbalance Handling Changes the Outcome}{9}{subsection.5.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Heatmap of F1 (left), Precision (centre), and Recall (right) across all 10 configurations. Green = high, red = low. GCN's column is clearly bi-polar: very green precision, very red recall. MLP shows consistently green F1. The recall heatmap confirms no configuration reaches the 0.75 target.}}{10}{figure.caption.6}\protected@file@percent }
+\newlabel{fig:heatmap}{{3}{10}{Heatmap of F1 (left), Precision (centre), and Recall (right) across all 10 configurations. Green = high, red = low. GCN's column is clearly bi-polar: very green precision, very red recall. MLP shows consistently green F1. The recall heatmap confirms no configuration reaches the 0.75 target}{figure.caption.6}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Strategy deep-dive across architectures. Weighted CE produces the clearest improvement for GCN, modest improvement for GraphSAGE, and mixed improvement for GAT. Graph augmentation improves recall more than precision, which explains why its ranking depends on whether the objective is aggregate F1 or asymmetric business cost.}}{10}{figure.caption.7}\protected@file@percent }
+\newlabel{fig:strategy_deep_dive}{{4}{10}{Strategy deep-dive across architectures. Weighted CE produces the clearest improvement for GCN, modest improvement for GraphSAGE, and mixed improvement for GAT. Graph augmentation improves recall more than precision, which explains why its ranking depends on whether the objective is aggregate F1 or asymmetric business cost}{figure.caption.7}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Statistical Robustness Across Seeds}{11}{subsection.5.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Variance across the three training seeds. MLP and GraphSAGE remain comparatively stable across F1, precision, and recall. GAT shows the widest error bars, especially on precision, which is consistent with the higher sensitivity of attention weights to class imbalance and random initialisation.}}{11}{figure.caption.8}\protected@file@percent }
+\newlabel{fig:variance}{{5}{11}{Variance across the three training seeds. MLP and GraphSAGE remain comparatively stable across F1, precision, and recall. GAT shows the widest error bars, especially on precision, which is consistent with the higher sensitivity of attention weights to class imbalance and random initialisation}{figure.caption.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Temporal Analysis}{11}{subsection.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Mechanism.}{11}{section*.12}\protected@file@percent }
+\def\@LN@column{1}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Temporal analysis: F1 per test time step (top) versus true illicit rate (bottom). The vertical dashed line marks the step-42/43 boundary. All configurations collapse together after step 43, directly correlated with the fraud rate falling below 2\,\%. The collapse is driven by the distribution shift, not by architectural differences.}}{12}{figure.caption.9}\protected@file@percent }
+\newlabel{fig:temporal_drift}{{6}{12}{Temporal analysis: F1 per test time step (top) versus true illicit rate (bottom). The vertical dashed line marks the step-42/43 boundary. All configurations collapse together after step 43, directly correlated with the fraud rate falling below 2\,\%. The collapse is driven by the distribution shift, not by architectural differences}{figure.caption.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Precision-Recall Curves}{12}{subsection.5.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.6}Confusion Matrices}{12}{subsection.5.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.7}Business Cost Analysis}{12}{subsection.5.7}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Per-class temporal breakdown for SAGE + Weighted CE (left) and SAGE + Graph Aug.\ (right). Recall (blue) falls from 0.74 at step 42 to 0.009 at step 43, a 98.8\,\% drop in one step. Precision (red) nominally holds at 0.15. The predicted fraud rate (orange dotted) tracks the collapse, confirming the model has stopped predicting fraud.}}{13}{figure.caption.11}\protected@file@percent }
+\newlabel{fig:perclass}{{7}{13}{Per-class temporal breakdown for SAGE + Weighted CE (left) and SAGE + Graph Aug.\ (right). Recall (blue) falls from 0.74 at step 42 to 0.009 at step 43, a 98.8\,\% drop in one step. Precision (red) nominally holds at 0.15. The predicted fraud rate (orange dotted) tracks the collapse, confirming the model has stopped predicting fraud}{figure.caption.11}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Precision-recall curves (left) and F1 vs classification threshold (right). SAGE configurations achieve higher average precision (AP) than GAT. No single threshold simultaneously delivers precision $>$0.70 and recall $>$0.75 for any configuration, the fundamental constraint imposed by temporal collapse in late steps.}}{13}{figure.caption.13}\protected@file@percent }
+\newlabel{fig:pr_curves}{{8}{13}{Precision-recall curves (left) and F1 vs classification threshold (right). SAGE configurations achieve higher average precision (AP) than GAT. No single threshold simultaneously delivers precision $>$0.70 and recall $>$0.75 for any configuration, the fundamental constraint imposed by temporal collapse in late steps}{figure.caption.13}{}}
+\def\@LN@column{1}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Per-step metrics for GraphSAGE + Weighted CE. Stable steps (35--42) average F1\,=\,0.799; collapsed steps (43--49) average F1\,=\,0.012. Pred\,\% is the fraction of labeled nodes predicted illicit, confirming that recall collapses because the model stops predicting fraud rather than becoming confused.}}{14}{table.caption.10}\protected@file@percent }
+\newlabel{tab:temporal_detail}{{4}{14}{Per-step metrics for GraphSAGE + Weighted CE. Stable steps (35--42) average F1\,=\,0.799; collapsed steps (43--49) average F1\,=\,0.012. Pred\,\% is the fraction of labeled nodes predicted illicit, confirming that recall collapses because the model stops predicting fraud rather than becoming confused}{table.caption.10}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.8}Training Dynamics}{14}{subsection.5.8}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Confusion matrices on the full test set (steps 35--49, labeled nodes only). TP = top-left. SAGE misses fewer fraud cases (FN\,=\,388) than GAT (FN\,=\,500--529). GAT + Graph Aug.\ has the most false alarms (FP\,=\,558) but catches the most fraud cases among the three GAT configurations.}}{15}{figure.caption.14}\protected@file@percent }
+\newlabel{fig:confusion}{{9}{15}{Confusion matrices on the full test set (steps 35--49, labeled nodes only). TP = top-left. SAGE misses fewer fraud cases (FN\,=\,388) than GAT (FN\,=\,500--529). GAT + Graph Aug.\ has the most false alarms (FP\,=\,558) but catches the most fraud cases among the three GAT configurations}{figure.caption.14}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Business cost analysis (FN\,=\,\$50k per missed fraud, FP\,=\,\$2k per false alert). Left: cost breakdown. Centre: total cost in \$M. Right: fraud catch rate. GAT + Graph Aug.\ achieves the lowest total cost (\$18.5M) despite a lower aggregate F1 than SAGE, because it catches 83 more true fraud cases with only 103 additional false alarms under the 25:1 cost asymmetry.}}{16}{figure.caption.15}\protected@file@percent }
+\newlabel{fig:business_cost}{{10}{16}{Business cost analysis (FN\,=\,\$50k per missed fraud, FP\,=\,\$2k per false alert). Left: cost breakdown. Centre: total cost in \$M. Right: fraud catch rate. GAT + Graph Aug.\ achieves the lowest total cost (\$18.5M) despite a lower aggregate F1 than SAGE, because it catches 83 more true fraud cases with only 103 additional false alarms under the 25:1 cost asymmetry}{figure.caption.15}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces Training dynamics. Training F1 (dashed) saturates near 0.98 while test F1 (solid) plateaus at 0.55--0.70. The gap opens around epoch 50, the point at which models begin memorising training-period structural signatures rather than learning transferable fraud features.}}{17}{figure.caption.16}\protected@file@percent }
+\newlabel{fig:training_curves}{{11}{17}{Training dynamics. Training F1 (dashed) saturates near 0.98 while test F1 (solid) plateaus at 0.55--0.70. The gap opens around epoch 50, the point at which models begin memorising training-period structural signatures rather than learning transferable fraud features}{figure.caption.16}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Analysis}{18}{section.6}\protected@file@percent }
+\newlabel{sec:analysis}{{6}{18}{Analysis}{section.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Why the MLP Outperforms GNNs}{18}{subsection.6.1}\protected@file@percent }
+\newlabel{sec:why_mlp}{{6.1}{18}{Why the MLP Outperforms GNNs}{subsection.6.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.1.1}Graph structure helps briefly, then turns into a liability}{18}{subsubsection.6.1.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Per-step GraphSAGE advantage over the MLP baseline. Positive values indicate that the GNN is ahead; negative values indicate that the MLP is ahead. Before the step-42/43 regime change, GraphSAGE often matches or slightly exceeds the MLP. After the collapse boundary, the sign flips and the MLP becomes more reliable, even though absolute F1 is low for all models in that region.}}{18}{figure.caption.17}\protected@file@percent }
+\newlabel{fig:ablation_advantage}{{12}{18}{Per-step GraphSAGE advantage over the MLP baseline. Positive values indicate that the GNN is ahead; negative values indicate that the MLP is ahead. Before the step-42/43 regime change, GraphSAGE often matches or slightly exceeds the MLP. After the collapse boundary, the sign flips and the MLP becomes more reliable, even though absolute F1 is low for all models in that region}{figure.caption.17}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.1.2}Feature Attribution: Local Features Carry the Discrimination}{18}{subsubsection.6.1.2}\protected@file@percent }
+\newlabel{sec:feature_importance}{{6.1.2}{18}{Feature Attribution: Local Features Carry the Discrimination}{subsubsection.6.1.2}{}}
+\def\@LN@column{1}
+\@writefile{lof}{\contentsline {figure}{\numberline {13}{\ignorespaces Random Forest feature importance. Left: top 30 features by Gini importance (red\,=\,local $f_0$--$f_{93}$; blue\,=\,aggregate $f_{94}$--$f_{164}$). Local features dominate the high-importance end. Right: cumulative importance, top 17 features explain 50\,\% of importance; top 45 explain 80\,\%. The most important single feature (f54, importance 0.056) is a local transaction feature.}}{19}{figure.caption.18}\protected@file@percent }
+\newlabel{fig:feature_importance}{{13}{19}{Random Forest feature importance. Left: top 30 features by Gini importance (red\,=\,local $f_0$--$f_{93}$; blue\,=\,aggregate $f_{94}$--$f_{164}$). Local features dominate the high-importance end. Right: cumulative importance, top 17 features explain 50\,\% of importance; top 45 explain 80\,\%. The most important single feature (f54, importance 0.056) is a local transaction feature}{figure.caption.18}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.1.3}Community Structure: Present but Temporally Fragile}{19}{subsubsection.6.1.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {14}{\ignorespaces Ego-graph analysis (100 samples per class). Fraud nodes cluster: 54\,\% fraudulent neighbours, subgraph density 0.615. Licit nodes are dispersed: 0.56\,\% fraudulent neighbours, density 0.570. The 96$\times $ neighbour-fraud-fraction ratio is a genuine structural signal that GNNs learn, and that becomes misleading once fraud patterns shift.}}{19}{figure.caption.19}\protected@file@percent }
+\newlabel{fig:community}{{14}{19}{Ego-graph analysis (100 samples per class). Fraud nodes cluster: 54\,\% fraudulent neighbours, subgraph density 0.615. Licit nodes are dispersed: 0.56\,\% fraudulent neighbours, density 0.570. The 96$\times $ neighbour-fraud-fraction ratio is a genuine structural signal that GNNs learn, and that becomes misleading once fraud patterns shift}{figure.caption.19}{}}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Calibration Cannot Fix the Collapse}{20}{subsection.6.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {15}{\ignorespaces Temperature scaling. Left: fitted temperatures $T \in [1.07, 1.27]$ confirm mild overconfidence, as expected from training on 11.6\,\% fraud. Right: $\Delta $F1 post-calibration. Every configuration shows $\Delta $F1\,=\,0.000, proving that temperature scaling cannot address the structural temporal collapse.}}{20}{figure.caption.20}\protected@file@percent }
+\newlabel{fig:temperature}{{15}{20}{Temperature scaling. Left: fitted temperatures $T \in [1.07, 1.27]$ confirm mild overconfidence, as expected from training on 11.6\,\% fraud. Right: $\Delta $F1 post-calibration. Every configuration shows $\Delta $F1\,=\,0.000, proving that temperature scaling cannot address the structural temporal collapse}{figure.caption.20}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}EvolveGCN: Why Hardware Matters}{20}{subsection.6.3}\protected@file@percent }
+\def\@LN@column{1}
+\@writefile{lof}{\contentsline {figure}{\numberline {16}{\ignorespaces EvolveGCN hardware analysis. Left: F1 comparison across all methods and hardware conditions. Our CPU EvolveGCN (F1\,=\,0.29) falls 0.48 points below the published GPU result (F1\,=\,0.77). Right: EvolveGCN's training curve plateaus early, consistent with the GRU failing to learn smooth weight dynamics from only 8 sampled snapshots.}}{21}{figure.caption.21}\protected@file@percent }
+\newlabel{fig:evolvegcn}{{16}{21}{EvolveGCN hardware analysis. Left: F1 comparison across all methods and hardware conditions. Our CPU EvolveGCN (F1\,=\,0.29) falls 0.48 points below the published GPU result (F1\,=\,0.77). Right: EvolveGCN's training curve plateaus early, consistent with the GRU failing to learn smooth weight dynamics from only 8 sampled snapshots}{figure.caption.21}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Comparison with Published Work}{21}{section.7}\protected@file@percent }
+\newlabel{sec:prior_work}{{7}{21}{Comparison with Published Work}{section.7}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {17}{\ignorespaces Comparison with prior Elliptic Dataset work. Gray bars: prior work (GPU, transductive evaluation). Coloured bars: our work (CPU, inductive). Our MLP (red) matches Alarab et al.\ (2020) despite stricter evaluation conditions. The SAGE gap vs.\ Lo et al.\ (2023) is largely attributable to the transductive vs.\ inductive protocol difference.}}{21}{figure.caption.22}\protected@file@percent }
+\newlabel{fig:prior_work}{{17}{21}{Comparison with prior Elliptic Dataset work. Gray bars: prior work (GPU, transductive evaluation). Coloured bars: our work (CPU, inductive). Our MLP (red) matches Alarab et al.\ (2020) despite stricter evaluation conditions. The SAGE gap vs.\ Lo et al.\ (2023) is largely attributable to the transductive vs.\ inductive protocol difference}{figure.caption.22}{}}
+\def\@LN@column{1}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Prior Elliptic Dataset work. All prior studies use transductive evaluation on GPU hardware. Our inductive CPU protocol is methodologically stricter. Our MLP is competitive with the best prior-work GNN result despite these disadvantages.}}{22}{table.caption.23}\protected@file@percent }
+\newlabel{tab:prior_work}{{5}{22}{Prior Elliptic Dataset work. All prior studies use transductive evaluation on GPU hardware. Our inductive CPU protocol is methodologically stricter. Our MLP is competitive with the best prior-work GNN result despite these disadvantages}{table.caption.23}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {8}Discussion}{22}{section.8}\protected@file@percent }
+\newlabel{sec:discussion}{{8}{22}{Discussion}{section.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.1}What These Results Mean in Practice}{22}{subsection.8.1}\protected@file@percent }
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2}Limitations}{23}{subsection.8.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}Reproducibility Notes}{23}{section.9}\protected@file@percent }
+\newlabel{sec:reproducibility}{{9}{23}{Reproducibility Notes}{section.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.1}What Must Stay Fixed}{23}{subsection.9.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.2}How to Read the Main Figures}{23}{subsection.9.2}\protected@file@percent }
+\citation{zugner2018}
+\citation{he2021}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.3}Threats to External Validity}{24}{subsection.9.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {10}Future Directions}{24}{section.10}\protected@file@percent }
+\newlabel{sec:future}{{10}{24}{Future Directions}{section.10}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {11}Conclusion}{24}{section.11}\protected@file@percent }
+\newlabel{sec:conclusion}{{11}{24}{Conclusion}{section.11}{}}
+\bibstyle{elsarticle-num}
+\bibdata{references}
+\bibcite{crowe2020}{{1}{}{{}}{{}}}
+\bibcite{weber2019}{{2}{}{{}}{{}}}
+\bibcite{alarab2020}{{3}{}{{}}{{}}}
+\bibcite{lo2023}{{4}{}{{}}{{}}}
+\bibcite{pareja2020evolvegcn}{{5}{}{{}}{{}}}
+\bibcite{akoglu2015graph}{{6}{}{{}}{{}}}
+\bibcite{wang2019semi}{{7}{}{{}}{{}}}
+\bibcite{liu2018geniepath}{{8}{}{{}}{{}}}
+\bibcite{pourhabibi2020fraud}{{9}{}{{}}{{}}}
+\bibcite{chawla2002smote}{{10}{}{{}}{{}}}
+\def\@LN@column{1}
+\bibcite{zhao2021graphsmote}{{11}{}{{}}{{}}}
+\bibcite{lin2017focal}{{12}{}{{}}{{}}}
+\bibcite{sankar2020}{{13}{}{{}}{{}}}
+\bibcite{xu2020inductive}{{14}{}{{}}{{}}}
+\bibcite{gama2014survey}{{15}{}{{}}{{}}}
+\bibcite{guo2017calibration}{{16}{}{{}}{{}}}
+\bibcite{kipf2017}{{17}{}{{}}{{}}}
+\bibcite{hamilton2017}{{18}{}{{}}{{}}}
+\bibcite{velickovic2018}{{19}{}{{}}{{}}}
+\bibcite{zugner2018}{{20}{}{{}}{{}}}
+\bibcite{he2021}{{21}{}{{}}{{}}}
+\providecommand\NAT@force@numbers{}\NAT@force@numbers
+\def\@LN@column{1}
+\gdef \@abspage@last{26}

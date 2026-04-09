@@ -1,0 +1,115 @@
+\begin{thebibliography}{10}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\expandafter\ifx\csname href\endcsname\relax
+  \def\href#1#2{#2} \def\path#1{#1}\fi
+
+\bibitem{crowe2020}
+{Association of Certified Fraud Examiners}, Report to the nations: 2020 global
+  study on occupational fraud and abuse, Tech. rep., ACFE (2020).
+
+\bibitem{weber2019}
+M.~Weber, J.~Chen, T.~Suzumura, A.~Pareja, E.~Law, A.~Dhurandhar, C.-Y.
+  Mavromatis, H.~Kanezashi, D.~Daws, S.~Kumur, G.~Kola, Anti-money laundering
+  in bitcoin: Experimenting with graph convolutional networks for financial
+  forensics, in: KDD Workshop on Anomaly Detection in Finance, 2019.
+
+\bibitem{alarab2020}
+I.~Alarab, S.~Prakoonwit, M.~I. Nacer, Competence of graph convolutional
+  networks for anti-money laundering in bitcoin blockchain, in: Proceedings of
+  the 2020 5th International Conference on Machine Learning Technologies, 2020,
+  pp. 23--27.
+
+\bibitem{lo2023}
+W.~W. Lo, G.~K. Kulatilleke, M.~Sarhan, S.~Layeghy, M.~Portmann, Inspection-l:
+  Self-supervised {GNN} node embeddings for money laundering detection in
+  bitcoin, Applied Intelligence 53 (2023) 19406--19417.
+
+\bibitem{pareja2020evolvegcn}
+A.~Pareja, G.~Domeniconi, J.~Chen, T.~Ma, T.~Suzumura, H.~Kanezashi, T.~Kaler,
+  T.~B. Schardl, C.~E. Leiserson, {EvolveGCN}: Evolving graph convolutional
+  networks for dynamic graphs, in: Proceedings of the AAAI Conference on
+  Artificial Intelligence, Vol.~34, 2020, pp. 5363--5370.
+
+\bibitem{akoglu2015graph}
+L.~Akoglu, H.~Tong, D.~Koutra, Graph-based anomaly detection and description: a
+  survey, Data Mining and Knowledge Discovery 29 (2015) 626--688.
+
+\bibitem{wang2019semi}
+D.~Wang, J.~Lin, P.~Cui, Q.~Jia, Z.~Wang, Y.~Fang, Q.~Yu, J.~Zhou, S.~Yang,
+  Y.~Qi, Semi-supervised graph attention networks for financial fraud
+  detection, in: IEEE International Conference on Big Data, 2019, pp. 1--10.
+
+\bibitem{liu2018geniepath}
+Z.~Liu, C.~Chen, L.~Li, J.~Zhou, X.~Li, L.~Song, Y.~Hu, {GeniePath}: Graph
+  neural networks with adaptive receptive paths, in: Proceedings of the AAAI
+  Conference on Artificial Intelligence, Vol.~33, 2019, pp. 4424--4431.
+
+\bibitem{pourhabibi2020fraud}
+T.~Pourhabibi, K.-L. Ong, B.~H. Kam, Y.~L. Boo, Fraud detection: A systematic
+  literature review of graph-based anomaly detection approaches, Decision
+  Support Systems 133 (2020) 113:278.
+
+\bibitem{chawla2002smote}
+N.~V. Chawla, K.~W. Bowyer, L.~O. Hall, W.~P. Kegelmeyer, {SMOTE}: Synthetic
+  minority over-sampling technique, Journal of Artificial Intelligence Research
+  16 (2002) 321--357.
+
+\bibitem{zhao2021graphsmote}
+T.~Zhao, X.~Zhang, S.~Wang, {GraphSMOTE}: Imbalanced node classification on
+  graphs with graph neural networks, in: Proceedings of the 14th ACM
+  International Conference on Web Search and Data Mining, 2021, pp. 833--841.
+
+\bibitem{lin2017focal}
+T.-Y. Lin, P.~Goyal, R.~Girshick, K.~He, P.~Doll{\'a}r, Focal loss for dense
+  object detection, in: Proceedings of the IEEE International Conference on
+  Computer Vision, 2017, pp. 2980--2988.
+
+\bibitem{sankar2020}
+A.~Sankar, Y.~Wu, L.~Gou, W.~Zhang, H.~Yang, {DySAT}: Deep neural
+  representation learning on dynamic graphs via self-attention networks, in:
+  Proceedings of the 13th International Conference on Web Search and Data
+  Mining, 2020, pp. 519--527.
+
+\bibitem{xu2020inductive}
+D.~Xu, C.~Ruan, E.~Korpeoglu, S.~Kumar, K.~Achan, Inductive representation
+  learning on temporal graphs, in: International Conference on Learning
+  Representations, 2020.
+
+\bibitem{gama2014survey}
+J.~Gama, I.~{\v{Z}}liobait{\.e}, A.~Bifet, M.~Pechenizkiy, A.~Bouchachia, A
+  survey on concept drift adaptation, ACM Computing Surveys 46~(4) (2014)
+  1--37.
+
+\bibitem{guo2017calibration}
+C.~Guo, G.~Pleiss, Y.~Sun, K.~Q. Weinberger, On calibration of modern neural
+  networks, in: Proceedings of the 34th International Conference on Machine
+  Learning, 2017, pp. 1321--1330.
+
+\bibitem{kipf2017}
+T.~N. Kipf, M.~Welling, Semi-supervised classification with graph convolutional
+  networks, in: International Conference on Learning Representations, 2017.
+
+\bibitem{hamilton2017}
+W.~L. Hamilton, R.~Ying, J.~Leskovec, Inductive representation learning on
+  large graphs, in: Advances in Neural Information Processing Systems, Vol.~30,
+  2017.
+
+\bibitem{velickovic2018}
+P.~Veli{\v{c}}kovi{\'{c}}, G.~Cucurull, A.~Casanova, A.~Romero, P.~Li{\`{o}},
+  Y.~Bengio, Graph attention networks, in: International Conference on Learning
+  Representations, 2018.
+
+\bibitem{zugner2018}
+D.~Z{\"u}gner, A.~Akbarnejad, S.~G{\"u}nnemann, Adversarial attacks on neural
+  networks for graph data, in: Proceedings of the 24th ACM SIGKDD International
+  Conference on Knowledge Discovery \& Data Mining, 2018, pp. 2847--2856.
+
+\bibitem{he2021}
+C.~He, K.~Balasubramanian, E.~Ceyani, C.~Yang, H.~Xie, L.~Sun, et~al.,
+  Fedgraphnn: A federated learning system and benchmark for graph neural
+  networks, in: ICLR Workshop on Distributed and Private Machine Learning,
+  2021.
+
+\end{thebibliography}

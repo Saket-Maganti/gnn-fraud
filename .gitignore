@@ -1,0 +1,12 @@
+# Virtual environments
+gnn_env/
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Large files / outputs
+results/
+*.pt
+*.pth

@@ -1,0 +1,404 @@
+%% paper_additions.tex
+%% New sections to integrate into paper_shared_body.tex
+%%
+%% Integration points:
+%%   Section A → append to \section{Dataset and Experimental Setup}
+%%   Section B → new \section, insert before \section{Results}
+%%   Section C → append to \section{Results}
+%%   Section D → new \section after results, before conclusion
+%%   Section E → replace bullet-list contributions in \section{Introduction}
+
+
+%% ═══════════════════════════════════════════════════════════════════════════
+%% SECTION A  –  Graph Construction Variants
+%% (Append to sec:dataset, after subsection{Evaluation Protocol})
+%% ═══════════════════════════════════════════════════════════════════════════
+
+\subsection{Graph Construction Variants}
+\label{sec:graph_construction}
+
+The Elliptic transaction graph is sparse by design: each transaction has
+on average 2.3 neighbours (Table~\ref{tab:graph_stats}), and 49 connected
+components correspond precisely to the 49 temporal slices, with no edges
+crossing slice boundaries. Whether these transaction-flow edges are the most
+informative graph structure for fraud detection is not obvious. A node's
+direct BTC counterparties may be less diagnostic than nodes that share
+similar behaviour, or nodes active in adjacent time windows.
+
+We therefore construct four graph variants from the same node features and
+evaluate each under identical training conditions.
+
+\textbf{Similarity graph.} For each time step independently, we compute the
+cosine similarity between every pair of node feature vectors and add an
+undirected edge wherever the similarity exceeds 0.92. Operating within
+timesteps keeps the computation tractable (roughly 4,000 nodes per slice)
+while ensuring comparisons are made between contemporaneous transactions.
+This yields 3.6M edges and a mean degree of 17.7.
+
+\textbf{Feature k-NN graph.} Each node is connected to its five nearest
+neighbours in feature space (L2 distance) within the same timestep. The
+resulting graph is denser than the original but sparser than the similarity
+graph: 1.0M edges, mean degree 4.9.
+
+\textbf{Temporal graph.} For adjacent timesteps $t$ and $t{+}1$, each node
+in $t$ is linked to its three nearest feature-space neighbours in $t{+}1$.
+This encodes temporal continuity: transactions that resemble each other
+across consecutive slices are connected even when no direct BTC flow exists
+between them. The graph has 1.2M edges, mean degree 5.9, and no within-step
+edges.
+
+\textbf{Augmented graph.} The original transaction edges combined with all
+similarity edges, yielding 4.1M edges and mean degree 19.9.
+
+\begin{table}[!htbp]
+\centering
+\caption{Topology of each graph construction variant. Connected-components
+  values are omitted for variants with more than 800K edges (marked ---)
+  because the NetworkX computation becomes prohibitively slow on the
+  full 203K-node graph. Clustering is estimated over a 3,000-node sample.}
+\label{tab:graph_stats}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Graph type} & \textbf{Edges} & \textbf{Mean deg.}
+  & \textbf{Max deg.} & \textbf{Clustering} & \textbf{CC} \\
+\midrule
+Original    &    468,710 &  2.30 & 473 & 0.000 & 49 \\
+Similarity  &  3,611,346 & 17.72 & 482 & 0.045 & ---\\
+Feature k-NN & 1,007,816 &  4.95 &  25 & 0.000 & ---\\
+Temporal    &  1,207,890 &  5.93 & 331 & 0.000 & ---\\
+Augmented   &  4,057,870 & 19.91 & 484 & 0.045 & ---\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Several structural properties are worth noting before reporting performance.
+The original graph has clustering coefficient zero across the sampled nodes:
+no two neighbours of any node are themselves connected. Feature-based graphs
+behave differently: in the similarity and augmented cases, clustering rises to
+0.045 because shared feature similarity is transitive. The high variance in
+max-degree (473 in the original, 25 in feature k-NN) also matters: the
+original graph contains high-degree hub transactions that are common in
+Bitcoin mixing services, a structural signature that feature-based graphs
+cannot replicate.
+
+
+%% ═══════════════════════════════════════════════════════════════════════════
+%% SECTION B  –  Comparison Against Classical Baselines
+%% (Insert as new \section before \section{Results})
+%% ═══════════════════════════════════════════════════════════════════════════
+
+\section{Comparison Against Classical Baselines}
+\label{sec:classical_comparison}
+
+Before examining graph-construction effects on GNN performance, it is worth
+establishing what classical ML achieves on the same features without any
+graph structure.
+
+\subsection{Baseline models}
+
+We train three models on the 165 node features directly, with no message
+passing or neighbourhood aggregation.
+
+\textbf{Logistic Regression} with class-balanced weights and L-BFGS solver
+serves as the linear lower bound. It is computationally negligible and
+interpretable; its coefficients are the simplest possible summary of which
+features matter.
+
+\textbf{Random Forest} with 300 trees, balanced class weights, and minimum
+leaf size 2. This is the strongest classical result in the Elliptic
+literature; Weber et al.\ \citep{weber2019} reported F1\,=\,0.64 under
+transductive evaluation. We report it under the same strict temporal split
+used for GNNs.
+
+\textbf{XGBoost} with 300 boosting rounds, max depth 6, learning rate 0.05,
+and scale\_pos\_weight equal to the negative-to-positive ratio (7.6). Tree
+construction uses the histogram method.
+
+Results are in Table~\ref{tab:classical_vs_gnn}.
+
+\begin{table}[!htbp]
+\centering
+\caption{Classical ML vs. GNN-SAGE on the original graph (single run).
+  The GNN numbers here are from a single training run; the best GNN result
+  in the multi-seed benchmark (GraphSAGE + weighted loss, 5 seeds) reaches
+  F1\,=\,0.781\,$\pm$\,0.007, closing most but not all of the gap with RF.
+  AUC scores are closer than F1 scores, suggesting the GNN probability
+  ranking is reasonable but its decision threshold is misaligned.}
+\label{tab:classical_vs_gnn}
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Model} & \textbf{F1} & \textbf{Precision} & \textbf{Recall}
+  & \textbf{AUC} \\
+\midrule
+Logistic Regression & 0.314 & 0.192 & 0.869 & 0.887 \\
+GNN-SAGE (original graph) & 0.290 & 0.179 & 0.764 & 0.845 \\
+XGBoost          & 0.775 & 0.819 & 0.735 & 0.931 \\
+GNN-SAGE + RF (hybrid) & 0.558 & 0.494 & 0.640 & 0.830 \\
+Random Forest    & \textbf{0.820} & 0.963 & 0.715 & \textbf{0.933} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{What the numbers actually say}
+
+Random Forest achieves F1\,=\,0.820 and AUC\,=\,0.933 with no graph
+structure at all. The single-run GNN on the original transaction graph
+achieves F1\,=\,0.290, roughly 2.8$\times$ lower. Even with proper
+multi-seed tuning (F1\,=\,0.781), the best GNN still falls short of RF by
+0.039 F1 points. Two things explain this.
+
+First, the Elliptic feature set already encodes a form of manual message
+passing. Features 94--164 are precomputed neighbourhood aggregates supplied
+by the dataset creators; they give any feature-only model access to first-hop
+graph information for free. The GNN is therefore not competing against a
+completely graph-blind baseline.
+
+Second, the decision-threshold problem is visible in the AUC numbers. The
+temporal GNN achieves AUC\,=\,0.895, only 0.038 below RF's AUC\,=\,0.933.
+The GNN probability ordering is reasonable; the issue is that its F1-optimal
+threshold shifts over time as the fraud rate changes, and a fixed default
+threshold of 0.5 performs poorly during low-fraud-rate test windows.
+
+\subsection{The hybrid model does not help}
+
+Passing GNN-SAGE embeddings (256-dimensional, extracted before the final
+linear layer) into a Random Forest gives F1\,=\,0.558 — considerably worse
+than RF on raw features. This is not the expected outcome for a hybrid model.
+Two likely explanations: the GNN embeddings are trained under class imbalance
+with weighted loss, which warps the embedding space away from the geometry RF
+exploits; and the 256-dimensional embeddings from a single-run GNN carry less
+per-feature information than the 165 handcrafted Elliptic features that RF
+was designed to split on. In short, GNN embeddings add noise, not signal,
+when the base feature set is already strong.
+
+
+%% ═══════════════════════════════════════════════════════════════════════════
+%% SECTION C  –  Graph Construction Results
+%% (Append to \section{Results}, after the per-timestep subsection)
+%% ═══════════════════════════════════════════════════════════════════════════
+
+\subsection{Effect of graph construction on GNN performance}
+\label{sec:graph_construction_results}
+
+Table~\ref{tab:graph_results} shows GraphSAGE performance across the five
+graph variants under identical training conditions (single run, 300 epochs,
+weighted loss).
+
+\begin{table}[!htbp]
+\centering
+\caption{GraphSAGE performance by graph construction (single run per
+  variant). The original transaction graph gives the worst GNN F1 of
+  all five variants. A temporal cross-timestep graph nearly doubles F1
+  at the cost of discarding the actual Bitcoin transaction structure.}
+\label{tab:graph_results}
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Graph} & \textbf{F1} & \textbf{Precision} & \textbf{Recall}
+  & \textbf{AUC} \\
+\midrule
+Original (transaction)    & 0.290 & 0.179 & 0.764 & 0.845 \\
+Similarity (cosine)       & 0.362 & 0.246 & 0.680 & 0.842 \\
+Augmented (orig + simil.) & 0.385 & 0.259 & 0.751 & 0.867 \\
+Feature k-NN              & 0.453 & 0.336 & 0.696 & 0.862 \\
+Temporal (cross-step)     & \textbf{0.549} & 0.456 & 0.690 & \textbf{0.895} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The original transaction graph performs worst despite being the semantically
+correct representation of the problem. The temporal graph performs best
+despite containing no transaction-flow information at all — its edges are
+defined entirely by feature similarity between adjacent time steps. This
+inversion is explained by the average degree numbers in
+Table~\ref{tab:graph_stats}: the original graph's 2.3 mean degree gives each
+node only two neighbours for message passing, providing a thin information
+channel. The temporal graph's 5.9 mean degree more than doubles the available
+neighbourhood context.
+
+The ablation results confirm this interpretation. Removing all edges from the
+original graph actually improves F1 from 0.290 to 0.341 (Table~\ref{tab:ablation}).
+The original transaction edges are marginally harmful rather than helpful: their
+sparsity forces the GNN to aggregate over a narrow neighbourhood whose content
+is already partially captured by the precomputed aggregate features (columns
+94--164). The constructed graphs provide richer context, but only the temporal
+graph provides enough context to matter.
+
+\begin{table}[!htbp]
+\centering
+\caption{Ablation results. ``Structural features only'' uses five
+  hand-computed structural attributes (degree, log-degree, normalised
+  timestep, in-degree, out-degree) as the sole node features. The
+  complete feature set contains 165 dimensions. The results show that
+  discriminative power is almost entirely carried by node content
+  features, not graph structure.}
+\label{tab:ablation}
+\small
+\begin{tabular}{llcc}
+\toprule
+\textbf{Experiment} & \textbf{What was removed} & \textbf{F1} & \textbf{AUC} \\
+\midrule
+Full model (GNN + original graph) & Nothing       & 0.290 & 0.845 \\
+No edges (MLP over features)      & Graph structure & 0.341 & 0.866 \\
+Structural features only          & Node content  & 0.000 & 0.598 \\
+No edges + structural features    & Graph + content & 0.000 & 0.589 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The structural-features-only result is unambiguous: degree, timestep, and
+in/out-degree carry zero discriminative power for fraud detection on this
+dataset. The model predicts the majority class for every node, achieving
+accuracy of 35.6\,\% but F1 of exactly zero. Fraud detection on Elliptic
+is a content problem, not a topology problem. Graph structure can assist
+when the topology is informative (as in the temporal variant), but it cannot
+compensate for the absence of content features.
+
+
+%% ═══════════════════════════════════════════════════════════════════════════
+%% SECTION D  –  Key Insights
+%% (New \section after Results, before Conclusion)
+%% ═══════════════════════════════════════════════════════════════════════════
+
+\section{Key Insights}
+\label{sec:insights}
+
+The following observations are drawn from the full set of experiments: the
+multi-seed GNN benchmark, the graph construction study, the classical
+baseline comparison, the hybrid model evaluation, and the ablation.
+Each addresses a question that the prior Elliptic literature leaves open.
+
+\subsection{When graph structure helps}
+
+Graph structure provides measurable benefit in two conditions.
+
+The first is when the constructed neighbourhood is rich enough to provide
+context that is not already redundant with precomputed features. The temporal
+graph, with mean degree 5.9 and cross-timestep connections, achieves the
+highest GNN AUC (0.895) and F1 (0.549) of all five graph variants. The
+original transaction graph, with mean degree 2.3 and clustering coefficient
+zero, provides the least benefit. More neighbours means more context,
+and constructed graphs tuned for feature similarity deliver that context
+even when the underlying transaction graph does not.
+
+The second is during stable fraud-rate windows. The per-timestep analysis
+(Section~\ref{sec:results}) shows that models — GNN and classical alike —
+are meaningfully better during test steps 35--42, when the fraud rate
+stays within $2\times$ the training distribution. During this window,
+GAT with graph augmentation achieves F1\,=\,0.789, a genuine advantage
+over a feature-only baseline.
+
+\subsection{When graph structure does not help}
+
+The original transaction graph edges, taken at face value, actively hurt
+performance relative to no edges at all. The ablation removes all edges
+and gains 0.051 F1 points. The graph augmentation strategy used in the
+multi-seed benchmark achieves its advantage by adding synthetic ego-graph
+subgraphs around minority nodes — it is an oversampling strategy with
+graph structure bolted on, not pure structural reasoning.
+
+The hybrid model result is telling: Random Forest on raw features beats
+Random Forest on GNN embeddings by 0.262 F1 points. The GNN embeddings
+do not compress the feature space into something more useful; they compress
+it into something less useful. A possible explanation is that the 165
+handcrafted features were engineered by domain experts who understood what
+discriminates Bitcoin fraud from legitimate activity; the GNN re-encodes
+those features through a generic message-passing lens that has no access to
+that prior knowledge.
+
+The temporal collapse (steps 43--49) is immune to graph structure. Both
+feature-only and graph-based models fail when the fraud rate drops to 0.3\,\%.
+This is a prior-shift problem, not an architecture problem. No graph
+construction variant recovers from it.
+
+\subsection{What the AUC gap tells us}
+
+The best GNN (GAT + graph augmentation, AUC\,=\,0.919) and the best classical
+model (Random Forest, AUC\,=\,0.933) are separated by 0.014 AUC units.
+The F1 gap between the same models, under a fixed decision threshold, is
+much larger. This pattern is consistent with a calibration mismatch that
+worsens as fraud rates drift from training conditions. The GNN's probability
+orderings are reasonable; its decision boundary is not.
+This is a calibration problem, not an expressivity problem, and threshold
+retuning on a held-out validation window should close most of the F1 gap
+during stable periods.
+
+\subsection{On feature dominance}
+
+Features 40--60 in the local feature block appear in the top-ranked
+positions for both RF Gini importance and GNN gradient saliency. The
+feature indices with highest GNN saliency (f52, f51, f80) overlap with
+the top RF features (f54, f46, f52), with Spearman rank correlation of
+approximately 0.71 across the top-15 features. Both models agree on which
+transaction properties matter most, even though they discover this agreement
+through completely different mechanisms. This convergence is modest evidence
+that the important features reflect genuine fraud structure rather than
+statistical artifacts specific to any one model family.
+
+\subsection{Practical takeaway}
+
+For a production fraud detector on a dataset with these properties, the
+most defensible choice is still a well-tuned ensemble (Random Forest or
+XGBoost) applied directly to the full feature set. The multi-seed
+GraphSAGE result (F1\,=\,0.781) closes the gap with RF substantially,
+but the 0.039 F1-point deficit comes with considerably more engineering
+overhead and a failure mode during fraud-rate shifts that classical models
+share. The main practical case for GNNs here is the temporal graph
+construction result: if the transaction graph is replaced by a richer
+constructed graph capturing behavioural similarity over time, GNN
+performance improves by 89\,\% relative (F1 0.290 $\to$ 0.549). Whether
+that is worth the construction overhead depends on the deployment context.
+On a live Bitcoin network where transaction edges are a direct artifact of
+the ledger and feature extraction is the expensive step, the temporal graph
+construction requires computing and indexing per-timestep nearest neighbours
+— feasible in batch, nontrivial in real time.
+
+
+%% ═══════════════════════════════════════════════════════════════════════════
+%% SECTION E  –  Updated contribution list
+%% (Replace the bullet-list contributions in \section{Introduction})
+%% ═══════════════════════════════════════════════════════════════════════════
+
+%% Replace the existing \begin{itemize}...\end{itemize} contributions block
+%% in the introduction with the following:
+
+\begin{itemize}[leftmargin=*]
+  \item A statistically validated benchmark across 4 architectures
+    $\times$ 3 imbalance strategies $\times$ 5 random seeds under
+    inductive mini-batch evaluation, establishing the single-number
+    performance ceiling for GNNs on this dataset.
+
+  \item A systematic comparison of five graph construction strategies
+    (original transaction graph, cosine similarity, feature k-NN,
+    cross-timestep temporal, and augmented). The temporal graph
+    construction improves GNN F1 by 89\,\% relative over the original
+    transaction graph — the most substantial intervention tested.
+
+  \item A direct comparison against Random Forest and XGBoost under the
+    same temporal split. Classical methods outperform single-run GNNs;
+    the gap narrows under multi-seed averaging but does not close.
+
+  \item An ablation decomposing GNN performance into contributions from
+    graph structure (edges) and node content (features), showing that
+    the original transaction graph is marginally harmful and that node
+    content features carry virtually all discriminative power.
+
+  \item A hybrid model evaluation (GNN embeddings $\to$ Random Forest)
+    showing that GNN representations do not improve over raw features
+    when the feature set is already expressive, with a 0.262 F1-point
+    decline relative to RF on raw features.
+
+  \item Feature importance analysis across RF (Gini), XGBoost (gain),
+    and GNN (input-gradient saliency), showing that models from
+    different families converge on the same feature subspace.
+
+  \item The first systematic per-timestep analysis on Elliptic,
+    demonstrating that aggregate test-set F1 conceals near-complete
+    failure in steps 43--49 and an impossibility result for post-hoc
+    recalibration under those conditions.
+
+  \item Code, checkpoints, and experiment scripts:
+    \url{https://github.com/Saket-Maganti/gnn-fraud}.
+\end{itemize}

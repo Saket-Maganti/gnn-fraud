@@ -1,0 +1,94 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\citation{weber2019}
+\citation{weber2019}
+\citation{alarab2020}
+\citation{lo2023}
+\citation{pareja2020evolvegcn}
+\citation{weber2019}
+\citation{pareja2020evolvegcn}
+\citation{chawla2002smote}
+\citation{zhao2021graphsmote}
+\citation{lin2017focal}
+\citation{guo2017calibration}
+\citation{gama2014survey}
+\@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}{section.1}\protected@file@percent }
+\newlabel{sec:intro}{{I}{1}{Introduction}{section.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {II}Related Work}{1}{section.2}\protected@file@percent }
+\newlabel{sec:related}{{II}{1}{Related Work}{section.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {III}Dataset and Experimental Setup}{1}{section.3}\protected@file@percent }
+\newlabel{sec:dataset}{{III}{1}{Dataset and Experimental Setup}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Elliptic Bitcoin Dataset}{1}{subsection.3.1}\protected@file@percent }
+\citation{kipf2017}
+\citation{hamilton2017}
+\citation{velickovic2018}
+\citation{pareja2020evolvegcn}
+\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Elliptic Bitcoin Dataset Statistics}}{2}{table.1}\protected@file@percent }
+\newlabel{tab:dataset}{{I}{2}{Elliptic Bitcoin Dataset Statistics}{table.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Dataset characterisation. The train/test split coincides with a clear change in illicit-rate regime, and the most important features remain only moderately correlated rather than collapsing into a single redundant block.}}{2}{figure.1}\protected@file@percent }
+\newlabel{fig:dataset_char}{{1}{2}{Dataset characterisation. The train/test split coincides with a clear change in illicit-rate regime, and the most important features remain only moderately correlated rather than collapsing into a single redundant block}{figure.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}Evaluation Protocol}{2}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {IV}Architectures and Training}{2}{section.4}\protected@file@percent }
+\newlabel{sec:methods}{{IV}{2}{Architectures and Training}{section.4}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {V}Results}{2}{section.5}\protected@file@percent }
+\newlabel{sec:results}{{V}{2}{Results}{section.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Main Benchmark}{2}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Strategy Sensitivity and Seed Robustness}{2}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-C}}Temporal Collapse}{2}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-D}}PR Curves and Confusion Matrices}{2}{subsection.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-E}}Business Cost Analysis}{2}{subsection.5.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Main benchmark: F1, Precision, Recall (mean\,$\pm $\,std, 3 seeds). MLP achieves the highest F1. GCN's precision paradox is visible: very high precision but near-zero recall. GAT error bars are the widest due to attention instability under class imbalance. Red dashed lines mark target thresholds.}}{3}{figure.2}\protected@file@percent }
+\newlabel{fig:main_results}{{2}{3}{Main benchmark: F1, Precision, Recall (mean\,$\pm $\,std, 3 seeds). MLP achieves the highest F1. GCN's precision paradox is visible: very high precision but near-zero recall. GAT error bars are the widest due to attention instability under class imbalance. Red dashed lines mark target thresholds}{figure.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Benchmark Results (Mean $\pm $ Std, 3 Seeds). Bold: column best. No configuration reaches the 0.75 recall target due to temporal collapse.}}{3}{table.2}\protected@file@percent }
+\newlabel{tab:main_results}{{II}{3}{Benchmark Results (Mean $\pm $ Std, 3 Seeds). Bold: column best. No configuration reaches the 0.75 recall target due to temporal collapse}{table.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {VI}Analysis}{3}{section.6}\protected@file@percent }
+\newlabel{sec:analysis}{{VI}{3}{Analysis}{section.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-A}}Feature Attribution and Graph-Advantage Ablation}{3}{subsection.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-B}}Community Structure, Calibration, and Hardware}{3}{subsection.6.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Reorganising the benchmark by strategy and by seed confirms the same conclusion: architecture dominates the ranking, while GAT is the least stable family under imbalance.}}{4}{figure.3}\protected@file@percent }
+\newlabel{fig:strategy_variance}{{3}{4}{Reorganising the benchmark by strategy and by seed confirms the same conclusion: architecture dominates the ranking, while GAT is the least stable family under imbalance}{figure.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Per-step F1 (top) versus true illicit rate (bottom). All configurations collapse identically after step~42, directly corresponding to the fraud-rate drop. The collapse is driven by distributional shift, not by architectural differences.}}{4}{figure.4}\protected@file@percent }
+\newlabel{fig:temporal}{{4}{4}{Per-step F1 (top) versus true illicit rate (bottom). All configurations collapse identically after step~42, directly corresponding to the fraud-rate drop. The collapse is driven by distributional shift, not by architectural differences}{figure.4}{}}
+\citation{weber2019}
+\citation{alarab2020}
+\citation{lo2023}
+\citation{pareja2020evolvegcn}
+\bibstyle{IEEEtran}
+\bibdata{references}
+\bibcite{weber2019}{1}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Precision-recall (left) and confusion matrix analysis (right) for all four main configurations.}}{5}{figure.5}\protected@file@percent }
+\newlabel{fig:pr_cm}{{5}{5}{Precision-recall (left) and confusion matrix analysis (right) for all four main configurations}{figure.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Per-Step Metrics for GraphSAGE + Weighted CE}}{5}{table.3}\protected@file@percent }
+\newlabel{tab:temporal_detail}{{III}{5}{Per-Step Metrics for GraphSAGE + Weighted CE}{table.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {VII}Prior Work Comparison}{5}{section.7}\protected@file@percent }
+\newlabel{sec:prior}{{VII}{5}{Prior Work Comparison}{section.7}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {VIII}Discussion and Conclusion}{5}{section.8}\protected@file@percent }
+\newlabel{sec:conclusion}{{VIII}{5}{Discussion and Conclusion}{section.8}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Prior Elliptic Work vs.\ This Study}}{5}{table.4}\protected@file@percent }
+\newlabel{tab:prior}{{IV}{5}{Prior Elliptic Work vs.\ This Study}{table.4}{}}
+\bibcite{alarab2020}{2}
+\bibcite{lo2023}{3}
+\bibcite{pareja2020evolvegcn}{4}
+\bibcite{chawla2002smote}{5}
+\bibcite{zhao2021graphsmote}{6}
+\bibcite{lin2017focal}{7}
+\bibcite{guo2017calibration}{8}
+\bibcite{gama2014survey}{9}
+\bibcite{kipf2017}{10}
+\bibcite{hamilton2017}{11}
+\bibcite{velickovic2018}{12}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Business cost analysis (FN\,=\,\$50k, FP\,=\,\$2k). GAT + Graph Aug.\ achieves the lowest operational cost despite lower aggregate F1, because catching more fraud outweighs the extra false-alarm cost.}}{6}{figure.6}\protected@file@percent }
+\newlabel{fig:biz}{{6}{6}{Business cost analysis (FN\,=\,\$50k, FP\,=\,\$2k). GAT + Graph Aug.\ achieves the lowest operational cost despite lower aggregate F1, because catching more fraud outweighs the extra false-alarm cost}{figure.6}{}}
+\@writefile{toc}{\contentsline {section}{References}{6}{section*.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Analysis pair. Left: Random Forest importance shows that most discriminative power sits in local transaction features. Right: the graph-model advantage reverses after step~42, which is consistent with learned topology becoming stale under temporal shift.}}{7}{figure.7}\protected@file@percent }
+\newlabel{fig:analysis_pair}{{7}{7}{Analysis pair. Left: Random Forest importance shows that most discriminative power sits in local transaction features. Right: the graph-model advantage reverses after step~42, which is consistent with learned topology becoming stale under temporal shift}{figure.7}{}}
+\newlabel{fig:features}{{7}{7}{Analysis pair. Left: Random Forest importance shows that most discriminative power sits in local transaction features. Right: the graph-model advantage reverses after step~42, which is consistent with learned topology becoming stale under temporal shift}{figure.7}{}}
+\newlabel{fig:ablation_advantage}{{7}{7}{Analysis pair. Left: Random Forest importance shows that most discriminative power sits in local transaction features. Right: the graph-model advantage reverses after step~42, which is consistent with learned topology becoming stale under temporal shift}{figure.7}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Three supporting analyses. Fraud communities are real but temporally fragile, temperature scaling does not recover performance, and temporal GNNs remain highly sensitive to hardware and snapshot availability.}}{7}{figure.8}\protected@file@percent }
+\newlabel{fig:supporting_triptych}{{8}{7}{Three supporting analyses. Fraud communities are real but temporally fragile, temperature scaling does not recover performance, and temporal GNNs remain highly sensitive to hardware and snapshot availability}{figure.8}{}}
+\newlabel{fig:community}{{8}{7}{Three supporting analyses. Fraud communities are real but temporally fragile, temperature scaling does not recover performance, and temporal GNNs remain highly sensitive to hardware and snapshot availability}{figure.8}{}}
+\newlabel{fig:temp}{{8}{7}{Three supporting analyses. Fraud communities are real but temporally fragile, temperature scaling does not recover performance, and temporal GNNs remain highly sensitive to hardware and snapshot availability}{figure.8}{}}
+\newlabel{fig:evolve}{{8}{7}{Three supporting analyses. Fraud communities are real but temporally fragile, temperature scaling does not recover performance, and temporal GNNs remain highly sensitive to hardware and snapshot availability}{figure.8}{}}
+\gdef \@abspage@last{7}

@@ -1,0 +1,97 @@
+================================================================
+GNN Fraud Detection Paper — Three Formats
+Author: Saket Maganti, VIT-AP University
+================================================================
+
+FILES
+─────
+paper_elsevier.tex   Expert Systems with Applications (elsarticle)
+paper_ieee.tex       IEEE Transactions on NNLS (IEEEtran journal)
+paper_arxiv.tex      arXiv cs.LG preprint (plain article)
+paper_springer.tex   Springer LNCS format (llncs)
+references.bib       Shared bibliography (23 entries)
+figures/             21 PNG figures (shared across formats)
+
+COMPILE COMMANDS (local LaTeX)
+──────────────────────────────
+For each format, run:
+  pdflatex -interaction=nonstopmode <file>.tex
+  bibtex <file>
+  pdflatex -interaction=nonstopmode <file>.tex
+  pdflatex -interaction=nonstopmode <file>.tex
+
+Required packages (all standard, available on Overleaf):
+  texlive-latex-extra, texlive-publishers (for elsarticle + IEEEtran + llncs),
+  texlive-science, amsmath, booktabs, graphicx, algorithm, natbib,
+  microtype, hyperref, subcaption, titlesec, fancyhdr
+
+OVERLEAF (recommended)
+──────────────────────
+1. New Project → Upload Project
+2. Upload one .tex file + references.bib
+3. Create folder named "figures", upload all required PNGs into it
+4. Overleaf auto-compiles; download PDF from top-left button
+   (For elsarticle and llncs: change compiler to pdfLaTeX if needed)
+
+ARXIV SUBMISSION
+────────────────
+1. Compile paper_arxiv.tex locally to verify
+2. Submit: paper_arxiv.tex + references.bib + figures/ directory
+3. Category: cs.LG | Cross-list: cs.AI, stat.ML, q-fin.RM
+4. The \graphicspath{{./figures/}{figures/}} handles arXiv's path
+
+CORE FIGURES (place in figures/ subfolder)
+──────────────────────────────────────────
+fig1_main_results.png       fig8_prior_work.png
+fig2_temporal_drift.png     fig9_evolvegcn.png
+fig3_perclass_temporal.png  fig10_confusion_matrices.png
+fig4_feature_importance.png fig11_heatmap.png
+fig5_community_structure.png fig12_training_curves.png
+fig6_pr_curves.png          fig13_temperature_scaling.png
+fig7_business_cost.png
+
+EXTENDED FIGURES USED IN THE UPGRADED PAPER
+───────────────────────────────────────────
+fig14_strategy_deep_dive.png
+fig15_variance_analysis.png
+fig16_ablation_advantage.png
+fig17_dataset_analysis.png
+
+KNOWN FIXES APPLIED (vs previous versions)
+───────────────────────────────────────────
+elsarticle:
+  - Removed \FloatBarrier (caused blank pages); use [!htbp] only
+  - Removed duplicate \usepackage{natbib} (elsarticle loads it)
+  - \usepackage[protrusion=false,expansion=false]{microtype}
+  - Float params tuned: floatpagefraction=0.80, topfraction=0.90
+  - Long URLs shortened to fix overfull hboxes
+  - \begin{sloppypar} around training config paragraph
+  - Extended with dataset characterisation, strategy, robustness, and ablation figures
+  - Target length: 25+ pages in single-column journal layout
+
+IEEE:
+  - figure* environment for full-width two-column figures
+  - table* for full-width results table
+  - \scriptsize + \setlength{\tabcolsep}{4pt} for compact tables
+  - Updated with strategy/variance composite figure and ablation figure
+  - Result depends on journal template spacing
+
+arXiv:
+  - \graphicspath{{./figures/}{figures/}} for arXiv compatibility
+  - Explicit ./figures/ prefix on all \includegraphics calls
+  - Standalone article class (no journal dependencies)
+  - Updated with dataset, variance, and ablation figures
+
+Springer (LNCS):
+  - Uses standard llncs class with Springer-compatible front matter
+  - Includes the upgraded figures most relevant to the manuscript narrative
+  - Bibliography style: splncs04
+
+HUMAN WRITING STYLE
+────────────────────
+All prose uses varied sentence structure, hedged claims
+("largely attributable to", "in principle"), rhetorical questions,
+first-person observations ("We are not arguing that..."),
+contrasting conjunctions ("Yet this paper shows..."),
+and natural paragraph-level flow rather than bullet summaries.
+================================================================

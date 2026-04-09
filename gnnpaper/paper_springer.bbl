@@ -1,0 +1,54 @@
+\begin{thebibliography}{1}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+\providecommand{\doi}[1]{https://doi.org/#1}
+
+\bibitem{alarab2020}
+Alarab, I., Prakoonwit, S., Nacer, M.I.: Competence of graph convolutional
+  networks for anti-money laundering in bitcoin blockchain. In: Proceedings of
+  the 2020 5th International Conference on Machine Learning Technologies. pp.
+  23--27 (2020)
+
+\bibitem{chawla2002smote}
+Chawla, N.V., Bowyer, K.W., Hall, L.O., Kegelmeyer, W.P.: {SMOTE}: Synthetic
+  minority over-sampling technique. Journal of Artificial Intelligence Research
+   \textbf{16},  321--357 (2002)
+
+\bibitem{gama2014survey}
+Gama, J., {\v{Z}}liobait{\.e}, I., Bifet, A., Pechenizkiy, M., Bouchachia, A.:
+  A survey on concept drift adaptation. ACM Computing Surveys  \textbf{46}(4),
+  1--37 (2014)
+
+\bibitem{guo2017calibration}
+Guo, C., Pleiss, G., Sun, Y., Weinberger, K.Q.: On calibration of modern neural
+  networks. In: Proceedings of the 34th International Conference on Machine
+  Learning. pp. 1321--1330 (2017)
+
+\bibitem{lin2017focal}
+Lin, T.Y., Goyal, P., Girshick, R., He, K., Doll{\'a}r, P.: Focal loss for
+  dense object detection. In: Proceedings of the IEEE International Conference
+  on Computer Vision. pp. 2980--2988 (2017)
+
+\bibitem{lo2023}
+Lo, W.W., Kulatilleke, G.K., Sarhan, M., Layeghy, S., Portmann, M.:
+  Inspection-l: Self-supervised {GNN} node embeddings for money laundering
+  detection in bitcoin. Applied Intelligence  \textbf{53},  19406--19417 (2023)
+
+\bibitem{pareja2020evolvegcn}
+Pareja, A., Domeniconi, G., Chen, J., Ma, T., Suzumura, T., Kanezashi, H.,
+  Kaler, T., Schardl, T.B., Leiserson, C.E.: {EvolveGCN}: Evolving graph
+  convolutional networks for dynamic graphs. In: Proceedings of the AAAI
+  Conference on Artificial Intelligence. vol.~34, pp. 5363--5370 (2020)
+
+\bibitem{weber2019}
+Weber, M., Chen, J., Suzumura, T., Pareja, A., Law, E., Dhurandhar, A.,
+  Mavromatis, C.Y., Kanezashi, H., Daws, D., Kumur, S., Kola, G.: Anti-money
+  laundering in bitcoin: Experimenting with graph convolutional networks for
+  financial forensics. In: KDD Workshop on Anomaly Detection in Finance (2019)
+
+\bibitem{zhao2021graphsmote}
+Zhao, T., Zhang, X., Wang, S.: {GraphSMOTE}: Imbalanced node classification on
+  graphs with graph neural networks. In: Proceedings of the 14th ACM
+  International Conference on Web Search and Data Mining. pp. 833--841 (2021)
+
+\end{thebibliography}
