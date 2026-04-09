@@ -126,7 +126,7 @@ def extract_embeddings(model, data, device) -> np.ndarray:
     data   = data.to(device)
     model(data.x, data.edge_index, getattr(data, "edge_attr", None))
     handle.remove()
-    return embeddings["emb"].numpy()   # [N, hidden]
+    return embeddings["emb"].cpu().numpy()   # [N, hidden]
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -301,9 +301,9 @@ def main(args):
     # Extract embeddings
     print("Extracting embeddings …")
     emb = extract_embeddings(model, data, device)   # [N, 256]
-    y   = data.y.numpy()
-    ts  = data.time_step.numpy()
-    tm  = data.test_mask.numpy()
+    y   = data.y.cpu().numpy()
+    ts  = data.time_step.cpu().numpy()
+    tm  = data.test_mask.cpu().numpy()
 
     print(f"  Embedding shape: {emb.shape}")
 
