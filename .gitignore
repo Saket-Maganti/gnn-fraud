@@ -1,12 +1,30 @@
 # Virtual environments
 gnn_env/
+venv/
 .venv/
+env/
 
 # Python
 __pycache__/
 *.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
 
-# Large files / outputs
+# Dataset (too large for GitHub — see data/README.md for download)
+data/raw/
+data/elliptic_bitcoin_dataset/
+
+# Model checkpoints and results
 results/
 *.pt
 *.pth
+best_model.pt
+
+# Misc
+.DS_Store
+*.zip
+gnnpaper.zip
+*.log
+.env
