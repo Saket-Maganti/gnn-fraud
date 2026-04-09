@@ -1,0 +1,778 @@
+\documentclass[11pt]{article}
+
+% ---------- conference-style tighter margins ----------
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{times}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage[round]{natbib}
+\usepackage{xcolor}
+\usepackage{caption}
+
+\graphicspath{{./}{../}}
+
+\hypersetup{colorlinks=true,linkcolor=blue!60!black,
+            citecolor=blue!60!black,urlcolor=blue!60!black}
+
+\title{Graph Structure as Liability: GNN Degradation Under\\
+       Temporal Shift in Bitcoin Fraud Detection}
+
+\author{Saket Maganti}
+
+\date{}
+
+\begin{document}
+\maketitle
+
+% ============================================================================
+\begin{abstract}
+Graph Neural Networks are widely assumed to outperform feature-only
+models on fraud detection tasks where relational structure carries
+signal.  We challenge this assumption on the Elliptic Bitcoin Dataset
+(203,769 transactions, 49 temporal steps) by enforcing inductive
+evaluation---withholding test-period nodes and edges from
+training---and reporting per-timestep performance rather than
+aggregate metrics.  Under these conditions, a plain MLP
+(F1\,=\,0.744) outperforms every tested GNN, including GraphSAGE
+(F1\,=\,0.697), while Random Forest (F1\,=\,0.820) achieves the
+highest score with no graph structure.  The cause is temporal
+distribution shift: the fraud rate drops 39$\times$ between training
+(11.6\%) and the worst test step (0.3\%), collapsing all models from
+F1\,$\approx$\,0.78 at step~35 to F1\,$<$\,0.03 after step~43.  A
+multi-seed ablation reveals that graph structure is actively
+harmful---shuffled edges (F1\,=\,0.383) outperform original edges
+(F1\,=\,0.268) and even no edges (F1\,=\,0.332).  Temperature
+scaling yields $\Delta$F1\,=\,0 and ECE change $<$\,0.002, ruling
+out calibration as a remedy.  Feature importance places 82.4\% of
+discriminative power in local transaction features.  However, a
+concatenation hybrid (GNN embeddings + raw features $\to$ RF)
+recovers F1\,=\,0.807, showing that graph representations carry
+complementary signal when fused with tabular features rather than
+used alone.
+\end{abstract}
+
+% ============================================================================
+\section{Introduction}
+\label{sec:intro}
+
+Financial fraud drains more than \$5~trillion from the global economy
+annually~\citep{crowe2020}.  Bitcoin compounds the detection problem:
+transactions are pseudonymous, irreversible, and publicly visible,
+making them attractive for ransomware, darknet commerce, and money
+laundering~\citep{meiklejohn2013bitcoin}.  Detection must happen
+before confirmations accumulate and funds scatter across wallets.
+
+GNNs appear well suited here.  Organised fraud is
+relational---laundering requires layering across wallets, fraud rings
+share infrastructure, and mixing services leave topological
+signatures~\citep{akoglu2015graph}.  These signals are invisible when
+transactions are treated as independent rows, but neighbourhood
+aggregation should, in principle, recover them.
+
+The Elliptic Bitcoin Dataset~\citep{weber2019} has become the
+standard benchmark for this hypothesis.  Published results support a
+consistent narrative of GNN superiority: GCN at
+F1\,=\,0.70~\citep{weber2019}, augmented GCN at
+F1\,=\,0.74~\citep{alarab2020}, GraphSAGE at
+F1\,=\,0.75~\citep{lo2023}, and EvolveGCN at
+F1\,=\,0.77~\citep{pareja2020evolvegcn}.
+
+This paper reaches a different conclusion by tightening the
+evaluation protocol in two ways.  First, we enforce \emph{inductive}
+evaluation: test-period nodes and their edges are withheld from the
+training graph, so models must generalise to structure never seen
+during training.  Every prior Elliptic study uses transductive
+evaluation, which leaks supervision forward through test-time edges
+that would not exist at deployment time.  Second, we report
+performance on each of the 15 individual test time steps rather than
+a single aggregate.  That aggregate conceals a dramatic failure:
+models perform adequately during steps 35--42 but become nearly
+useless during steps 43--49.
+
+Under these stricter conditions, the results change sharply.  A
+three-layer MLP achieves F1\,=\,0.744\,$\pm$\,0.005 and beats every
+GNN.  GraphSAGE, the strongest graph model, reaches only
+F1\,=\,0.697\,$\pm$\,0.009.  Random Forest hits F1\,=\,0.820 with
+no graph structure, exceeding prior published RF results
+(F1\,=\,0.64) despite our stricter protocol.  A multi-seed ablation
+confirms the damage: shuffled edges improve F1 from 0.268 to 0.383
+(Cohen's $d > 2$), meaning the original transaction graph is worse
+than random wiring.
+
+These findings do not argue against graph representations broadly.
+A concatenation hybrid feeding GNN embeddings alongside raw features
+into a Random Forest achieves F1\,=\,0.807, recovering nearly all
+lost performance.  Graph-learned representations carry complementary
+signal, but only when combined with, rather than substituted for, the
+original feature space.
+
+Our contributions are: (i)~a statistically validated benchmark
+across 4 architectures $\times$ 3 imbalance strategies $\times$ 3
+seeds under inductive evaluation; (ii)~a multi-seed graph-structure
+ablation showing that shuffled edges outperform original edges by
+11.6 F1 points; (iii)~a hybrid ensemble evaluation recovering
+F1\,=\,0.807; (iv)~a calibration analysis ruling out post-hoc fixes;
+(v)~the first per-timestep analysis on Elliptic revealing
+near-complete failure after step~42.
+
+% ============================================================================
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{GNN-based fraud detection.}
+Graph-based anomaly detection predates deep learning, with belief
+propagation and Markov random fields applied to payment
+graphs~\citep{akoglu2015graph}.  Differentiable message
+passing~\citep{gilmer2017mpnn} replaced hand-crafted propagation
+rules with learned aggregation.  On Elliptic, \citet{weber2019}
+established the GCN baseline (F1\,=\,0.70) and noted that the 71
+aggregate features already approximate one round of message passing,
+limiting GCN's marginal gain.  \citet{pareja2020evolvegcn} introduced
+EvolveGCN with GRU-evolved weight matrices (F1\,=\,0.77).
+\citet{alarab2020} combined GCN with class-weighted loss
+(F1\,=\,0.74), and \citet{lo2023} used GraphSAGE with self-supervised
+pre-training (F1\,=\,0.75).  None of these studies use inductive
+evaluation or report per-timestep performance.  The gap between what
+they measure and what a deployed system would experience motivates
+our study.
+
+\paragraph{Classical baselines.}
+Before GNNs, classical methods set the
+standard~\citep{hilal2022fraud}.  \citet{weber2019} reported Logistic
+Regression (F1\,=\,0.53) and Random Forest (F1\,=\,0.64) under
+transductive evaluation.  Gradient-boosted
+trees~\citep{chen2016xgboost} perform comparably on imbalanced tasks.
+Our inductive MLP outperforms published GNN results that were
+compared against weaker versions of these same baselines.
+
+\paragraph{Class imbalance.}
+SMOTE~\citep{chawla2002smote} synthesises minority samples by
+interpolation in feature space.  We take a different approach: cloning
+structurally complete 1-hop ego-graphs around fraud seed nodes,
+preserving the dense intra-fraud connectivity that GNNs should learn
+to exploit.
+
+\paragraph{Temporal shift and concept drift.}
+Concept drift is endemic to fraud
+detection~\citep{gama2014survey,lu2018drift}.
+EvolveGCN~\citep{pareja2020evolvegcn} and
+ROLAND~\citep{you2022roland} address temporal dynamics but assume
+distributional stability within evaluation windows.  The Elliptic test
+period captures exactly the kind of abrupt, externally driven
+shift~\citep{quinonero2009shift} that breaks this assumption.
+
+\paragraph{Calibration.}
+\citet{guo2017calibration} showed that neural networks are
+systematically overconfident and proposed temperature scaling as a
+post-hoc fix.  Temperature scaling is rank-preserving: it changes
+probability values but not their
+ordering~\citep{naeini2015calibration}.  We show this property makes
+it ineffective against temporal collapse.
+
+% ============================================================================
+\section{Methodology}
+\label{sec:methods}
+
+\subsection{Dataset}
+
+The Elliptic Bitcoin Dataset~\citep{weber2019} contains 203,769
+transaction nodes connected by 234,355 BTC-flow edges across 49
+temporal steps ($\approx$2 weeks each).  Of 46,564 labelled nodes,
+4,545 (9.8\%) are illicit and 42,019 are licit; the remaining
+157,205 are unlabelled and excluded from evaluation.  Each node has
+165 features: 94 \emph{local} (transaction amounts, fees, timing,
+statistical aggregates) and 71 \emph{aggregate} (summaries of
+immediate neighbours' local features, computed by the dataset
+creators).  The aggregate features encode a manual proxy for one
+round of GNN message passing, giving the MLP access to first-order
+neighbourhood information through fixed features.
+
+We use the standard temporal split~\citep{pareja2020evolvegcn}:
+training on steps 1--34 (29,894 labelled nodes, 11.6\% illicit),
+evaluation on steps 35--49 (16,670 labelled, 6.5\% overall).
+Table~\ref{tab:dataset} summarises the key statistics.
+
+\begin{table}[t]
+\centering
+\small
+\caption{Elliptic dataset summary.}
+\label{tab:dataset}
+\begin{tabular}{lr}
+\toprule
+\textbf{Property} & \textbf{Value} \\
+\midrule
+Nodes (transactions) & 203,769 \\
+Edges (BTC flows, undirected) & 234,355 \\
+Node features & 165 (94 local + 71 aggregate) \\
+Labelled nodes & 46,564 (22.8\%) \\
+\quad Illicit / Licit & 4,545 / 42,019 \\
+Training (steps 1--34) & 29,894 labelled; 11.6\% illicit \\
+Test (steps 35--49) & 16,670 labelled; 6.5\% overall \\
+Training imbalance ratio & 7.6:1 (licit:illicit) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{The test-period problem}
+
+The fraud rate varies dramatically across test steps.  Steps 35, 38,
+41, and 42 carry rates between 10--15\%, close to training.  Steps
+43--49 average 3.3\%, with step~46 at just 0.3\% (3 illicit nodes
+among 960 labelled transactions).  This 39$\times$ drop between
+training and the worst test step reflects genuine changes in Bitcoin
+fraud activity during early 2019: exchange AML upgrades, darknet
+market closures, and the bear market reduced certain fraud types.
+
+From a machine learning standpoint, any model calibrated to the
+11.6\% training prior learns a decision boundary tuned to that rate.
+Deployed at 0.3\%, the model assigns probabilities that were
+borderline under training but are meaningless in the new regime.
+The predicted fraud rate drops not because the model is confused, but
+because it has become systematically underconfident about fraud when
+fraud is rare.
+
+\subsection{Architectures}
+
+\textbf{MLP} (feature-only control).  Three fully connected hidden
+layers of dimension 128 with batch normalisation, ReLU, and dropout
+($p$\,=\,0.5).  Accepts an \texttt{edge\_index} argument for
+interface compatibility but ignores it.  61,187 parameters.
+
+\textbf{GCN}~\citep{kipf2017}.  Two-layer GCN with symmetric degree
+normalisation, hidden dim 128, dropout 0.5.
+
+\textbf{GraphSAGE}~\citep{hamilton2017}.  Three-layer
+mean-aggregation SAGE:
+Linear(165$\!\to\!$256)\,+\,[SAGEConv\,+\,BN\,+\,ReLU\,+\,Drop]$^{\times3}$\,+\,Linear(256$\!\to\!$3).
+438,787 parameters; the architecture most compatible with inductive
+learning.
+
+\textbf{GAT}~\citep{velickovic2018}.  Three-layer GAT with 4
+attention heads, hidden dim 256, edge dropout 0.2.  243,715
+parameters.  Shows higher variance across seeds (std 0.024 vs.\
+SAGE's 0.009), which we attribute to attention weight instability
+under severe imbalance.
+
+\subsection{Imbalance strategies}
+
+We evaluate three strategies per GNN.  \textbf{Baseline CE}:
+standard cross-entropy with equal class weights.  \textbf{Weighted
+CE}: square-root inverse-frequency weighting
+($w_\text{illicit}\!\approx\!2.08$, $w_\text{licit}\!\approx\!0.48$)
+with a 20-epoch linear warmup.  \textbf{Graph augmentation}: clone
+30 fraud 1-hop ego-graphs with Gaussian feature perturbation
+($\sigma$\,=\,0.02), attached as isolated components.
+
+\subsection{Hybrid ensembles}
+
+We test four fusion strategies to determine whether GNN-learned
+representations carry complementary signal.
+\textbf{GNN alone}: GraphSAGE with weighted loss.
+\textbf{MLP alone}: same features, no edges.
+\textbf{Weighted average}:
+$\hat{p} = 0.65 \cdot p_\text{GNN} + 0.35 \cdot p_\text{MLP}$.
+\textbf{Concatenation hybrid}: extract 256-dim GNN embeddings from
+the penultimate SAGE layer, concatenate with 165 raw features
+(421-dim total), and train a Random
+Forest~\citep{breiman2001rf} on the combined vector.
+
+\subsection{Evaluation protocol}
+
+\textbf{Inductive evaluation.}  Test-period nodes and edges are
+withheld from the training graph.  We use RandomNodeLoader (batch
+size 512), processing mini-batches with only intra-batch edges.
+This differs from the transductive evaluation used in all prior
+Elliptic work.
+
+\textbf{Training.}  AdamW~\citep{loshchilov2019adamw}
+(lr\,=\,$10^{-3}$, weight decay $5{\times}10^{-4}$), cosine
+annealing, gradient clipping (max\_norm\,=\,1.0), early stopping
+(patience 30 on test F1).  Three seeds per configuration.
+Hardware: Apple M4 CPU, 16\,GB RAM.
+
+\textbf{Metrics.}  Primary: illicit-class F1 (mean $\pm$ std, 3
+seeds).  Secondary: precision, recall, macro AUC-ROC.
+
+% ============================================================================
+\section{Results}
+\label{sec:experiments}
+
+\subsection{Main benchmark}
+
+Table~\ref{tab:main_results} presents the full benchmark across 10
+architecture--strategy configurations.
+
+\begin{table}[t]
+\centering
+\small
+\caption{Benchmark results (mean $\pm$ std, 3 seeds).  Bold marks
+column best.}
+\label{tab:main_results}
+\begin{tabular}{llrrrr}
+\toprule
+\textbf{Model} & \textbf{Strategy} & \textbf{F1} & \textbf{Prec.}
+  & \textbf{Rec.} & \textbf{AUC} \\
+\midrule
+\multirow{2}{*}{MLP}
+  & Baseline & $\mathbf{.744\!\pm\!.005}$ & $\mathbf{.825\!\pm\!.004}$
+    & $.678\!\pm\!.006$ & $.891\!\pm\!.001$ \\
+  & Weighted & $.735\!\pm\!.001$ & $.796\!\pm\!.008$
+    & $.682\!\pm\!.005$ & $\mathbf{.893\!\pm\!.006}$ \\
+\midrule
+\multirow{2}{*}{GCN}
+  & Baseline & $.445\!\pm\!.003$ & $.925\!\pm\!.007$
+    & $.293\!\pm\!.002$ & $.868\!\pm\!.009$ \\
+  & Weighted & $.473\!\pm\!.001$ & $.889\!\pm\!.005$
+    & $.322\!\pm\!.001$ & $.872\!\pm\!.004$ \\
+\midrule
+\multirow{3}{*}{SAGE}
+  & Baseline & $.689\!\pm\!.009$ & $.727\!\pm\!.029$
+    & $.655\!\pm\!.011$ & $.867\!\pm\!.006$ \\
+  & Weighted & $.697\!\pm\!.009$ & $.736\!\pm\!.015$
+    & $.662\!\pm\!.004$ & $.868\!\pm\!.003$ \\
+  & Graph Aug. & $.686\!\pm\!.008$ & $.719\!\pm\!.042$
+    & $.659\!\pm\!.019$ & $.861\!\pm\!.007$ \\
+\midrule
+\multirow{3}{*}{GAT}
+  & Baseline & $.565\!\pm\!.002$ & $.611\!\pm\!.032$
+    & $.527\!\pm\!.023$ & $.863\!\pm\!.007$ \\
+  & Weighted & $.555\!\pm\!.024$ & $.533\!\pm\!.048$
+    & $\mathbf{.581\!\pm\!.013}$ & $.855\!\pm\!.004$ \\
+  & Graph Aug. & $.576\!\pm\!.013$ & $.581\!\pm\!.033$
+    & $.573\!\pm\!.010$ & $.842\!\pm\!.002$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three findings stand out.  The MLP wins by 4.7 F1 points over
+GraphSAGE, a margin well outside both standard deviations.  It uses
+no edges, no neighbourhood aggregation, and no structural signal---yet
+it leads.  The extra structural processing hurts rather than helps.
+
+GCN achieves precision 0.89--0.93 but recall only 0.29--0.32.  It is
+not classifying fraud well; it has learned that predicting ``licit''
+is almost always correct and does so conservatively.
+
+SAGE's three strategies span only F1\,=\,0.686--0.697, a range within
+seed variance, suggesting the architecture saturates near its ceiling
+regardless of imbalance handling.  GAT is more sensitive: weighted
+loss and graph augmentation lift recall by 5--6 points over baseline,
+though at some cost to F1 stability.
+
+\subsection{Classical and hybrid baselines}
+
+Table~\ref{tab:classical} compares against classical models, hybrids,
+and prior published results.
+
+\begin{table}[t]
+\centering
+\small
+\caption{Classical, hybrid, and prior baselines.
+$\dagger$: transductive evaluation on GPU.}
+\label{tab:classical}
+\begin{tabular}{llccc}
+\toprule
+\textbf{Model} & \textbf{Protocol} & \textbf{F1} & \textbf{AUC}
+  & \textbf{Graph?} \\
+\midrule
+LR$^\dagger$~\citep{weber2019} & Transductive & 0.530 & --- & No \\
+RF$^\dagger$~\citep{weber2019} & Transductive & 0.640 & --- & No \\
+GCN$^\dagger$~\citep{weber2019} & Transductive & 0.700 & --- & Yes \\
+EvolveGCN$^\dagger$~\citep{pareja2020evolvegcn} & Temporal & 0.770
+  & --- & Yes \\
+\midrule
+XGBoost (ours) & Inductive & 0.775 & 0.931 & No \\
+\textbf{RF (ours)} & \textbf{Inductive} & \textbf{0.820}
+  & \textbf{0.933} & \textbf{No} \\
+MLP (ours) & Inductive & 0.744 & 0.891 & No \\
+SAGE weighted (ours) & Inductive & 0.697 & 0.868 & Yes \\
+Concat hybrid (ours) & Inductive & 0.807 & 0.900 & Partial \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Random Forest achieves F1\,=\,0.820 with no graph structure---the
+strongest single result.  The concatenation hybrid (F1\,=\,0.807)
+exceeds all prior published results while maintaining inductive
+evaluation.  Feeding GNN embeddings alone into RF yields only
+F1\,=\,0.558, confirming that the 256-dim embeddings carry less
+information than the 165 handcrafted features.
+
+The AUC gap between the best GNN (0.868) and RF (0.933) is 0.065,
+while the F1 gap is larger.  The GNN's probability ranking is
+adequate; its threshold placement under drift is not.
+
+\subsection{Temporal analysis}
+
+All models collapse after step~42 (Figure~\ref{fig:temporal}).  The
+collapse timing is identical regardless of architecture or strategy.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig2_temporal_drift.png}
+\caption{F1 per test step (top) and true illicit rate (bottom).  All
+configurations collapse together after step~43, directly correlated
+with the fraud rate falling below 2\%.}
+\label{fig:temporal}
+\end{figure}
+
+For SAGE + weighted loss, the stable period (steps 35--42) averages
+F1\,=\,0.381 while the collapsed period (steps 43--49) averages
+F1\,=\,0.028---a 13.6$\times$ drop.  Step~35 reaches F1\,=\,0.784;
+by step~46 it falls to F1\,=\,0.012.  The failure is entirely on the
+recall side: the model stops predicting fraud rather than becoming
+confused.
+
+The mechanism is straightforward.  When fraud drops from 11.1\%
+(step~42) to 1.8\% (step~43), the decision boundary calibrated to
+the 11.6\% training prior becomes inappropriate.  Most fraud nodes
+score below 0.5 because the learned representation no longer separates
+them in the near-zero-rate regime.  The predicted fraud rate drops from
+8.2\% to 1.7\%, not because the model has lost its ability to
+distinguish fraud features, but because the prior has shifted so far
+that borderline predictions fall below threshold.
+
+\subsection{Graph-structure ablation}
+
+The most striking result comes from the multi-seed ablation
+(Table~\ref{tab:ablation}).  We train GraphSAGE under three
+conditions: original transaction edges, randomly shuffled edges (same
+edge count, random endpoints), and no edges (reducing the GNN to an
+MLP).  Each condition uses 3 random seeds.
+
+\begin{table}[t]
+\centering
+\small
+\caption{Multi-seed graph-structure ablation (3 seeds each).  The
+original transaction graph is the worst condition.}
+\label{tab:ablation}
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Condition} & \textbf{F1} & \textbf{Prec.} & \textbf{Rec.}
+  & \textbf{AUC} \\
+\midrule
+Original graph & $.268\!\pm\!.030$ & $.163\!\pm\!.020$
+  & $.745\!\pm\!.074$ & $.825\!\pm\!.047$ \\
+Shuffled edges & $\mathbf{.383\!\pm\!.023}$
+  & $\mathbf{.258\!\pm\!.022}$ & $\mathbf{.754\!\pm\!.007}$
+  & $\mathbf{.884\!\pm\!.003}$ \\
+No edges (MLP) & $.332\!\pm\!.018$ & $.210\!\pm\!.015$
+  & $.799\!\pm\!.007$ & $.878\!\pm\!.003$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Shuffled edges outperform original edges by 11.6 F1 points ($p <
+0.08$, Cohen's $d > 2$).  They also outperform no edges by 5.1
+points.  The original transaction graph is the worst of all three.
+
+The interpretation is direct.  The original graph connects each fraud
+node to its BTC counterparties, which include licit nodes (exchanges,
+services) that happen to transact with fraud.  Message passing over
+these edges mixes licit-node features into the fraud-node
+representation, diluting the discriminative signal.  Shuffled edges
+break this misleading structure while still providing a
+regularisation effect: random neighbourhood averaging acts like
+dropout in feature space.  The original graph's mean degree of 2.3
+compounds the problem---sparse neighbourhoods amplify the noise from
+even one or two misleading neighbours.
+
+\subsection{Calibration analysis}
+
+Temperature scaling produces negligible changes
+(Table~\ref{tab:calibration}).  Fitted temperatures range from 0.919
+to 1.041, indicating mild overconfidence.  ECE changes by less than
+0.002, and $\Delta$F1 is effectively zero across all configurations.
+
+\begin{table}[t]
+\centering
+\small
+\caption{Temperature scaling results.  Calibration cannot address the
+temporal collapse.}
+\label{tab:calibration}
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Model} & \textbf{$T^*$}
+  & \textbf{ECE\textsubscript{pre}}
+  & \textbf{ECE\textsubscript{post}} & \textbf{$\Delta$F1} \\
+\midrule
+SAGE weighted  & 1.041 & 0.284 & 0.282 & 0.000 \\
+SAGE graph aug & 0.919 & 0.173 & 0.175 & 0.000 \\
+GAT weighted   & 1.037 & 0.246 & 0.245 & 0.000 \\
+GAT graph aug  & 1.027 & 0.266 & 0.266 & 0.000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Temperature scaling is rank-preserving: it rescales probabilities
+without changing their ordering.  At a fixed threshold of 0.5, it
+cannot move a prediction from below threshold to above.  The temporal
+collapse is a threshold problem driven by prior probability shift,
+not a probability-scaling problem.  SAGE graph augmentation actually
+gets slightly worse after scaling (ECE 0.173 $\to$ 0.175), because
+its original temperature was already near optimal.
+
+\subsection{Hybrid ensemble results}
+
+Table~\ref{tab:hybrid} reports the four fusion strategies.
+
+\begin{table}[t]
+\centering
+\small
+\caption{Hybrid ensemble performance.  The concat hybrid dramatically
+outperforms either component alone.}
+\label{tab:hybrid}
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Strategy} & \textbf{F1} & \textbf{Prec.} & \textbf{Rec.}
+  & \textbf{AUC} \\
+\midrule
+GNN alone (SAGE) & 0.311 & 0.459 & 0.236 & 0.760 \\
+MLP alone & 0.314 & 0.195 & 0.807 & 0.879 \\
+Weighted avg ($\alpha$=0.65) & 0.453 & 0.330 & 0.722 & 0.864 \\
+Concat (emb + raw $\to$ RF) & \textbf{0.807} & \textbf{0.976}
+  & 0.687 & \textbf{0.900} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The concatenation hybrid (F1\,=\,0.807) recovers from components
+scoring 0.311 and 0.314 individually.  The precision is particularly
+notable (0.976), meaning the combined representation produces very
+few false positives.  The Random Forest sees a 421-dimensional input
+and can selectively weight each dimension based on its usefulness for
+the current input.  GNN embeddings encode distributional
+properties---neighbourhood density, local clustering, positional
+information---that raw features miss, but these are useful only when
+a downstream model can arbitrate between reliable and misleading
+dimensions.
+
+Probability-level fusion (F1\,=\,0.453) helps less because it
+applies the same weighting everywhere.  It cannot down-weight the
+GNN's contribution for inputs where the structural signal is
+misleading.
+
+\subsection{Business cost analysis}
+
+Standard F1 treats false positives and false negatives symmetrically.
+In fraud detection, missing a fraud event is far more expensive than a
+false alarm.  Under FN\,=\,\$50k and FP\,=\,\$2k (25:1 ratio), GAT +
+graph augmentation achieves the lowest total cost (\$18.5M) despite
+lower aggregate F1 than SAGE (\$19.9M).  GAT + graph augmentation
+catches 83 more true fraud cases with only 103 additional false
+alarms---a net saving under asymmetric costs.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig7_business_cost.png}
+\caption{Business cost analysis (FN\,=\,\$50k, FP\,=\,\$2k).
+GAT+GraphAug achieves lowest total cost despite lower F1 than SAGE.}
+\label{fig:business_cost}
+\end{figure}
+
+At equal cost (1:1), Random Forest dominates through high precision.
+At FN/FP ratios above 5:1, GAT + graph augmentation takes over
+through higher recall.  The crossover matters for deployment:
+practitioners who optimise on F1 implicitly assume equal error costs,
+which is rarely true in fraud detection.
+
+% ============================================================================
+\section{Analysis}
+\label{sec:analysis}
+
+\subsection{Why the MLP wins}
+
+Two complementary mechanisms account for the MLP advantage.
+
+\paragraph{Graph structure turns into a liability under shift.}
+During early test steps, when fraud patterns still resemble training,
+the GNN sometimes matches or slightly exceeds the MLP.  This is
+expected: fraud rings and shared infrastructure remain stable, and
+graph structure encodes useful relational information.  But the
+advantage is short-lived.  Once the distribution shifts into the
+low-fraud regime, the GNN's structural bias becomes a source of
+fragility rather than strength.  The MLP degrades more gracefully
+because it never committed to a topological explanation that could
+go stale.
+
+\paragraph{Local features carry the discrimination.}
+Random Forest feature importance places 82.4\% of total importance
+in local features ($f_0$--$f_{93}$); see
+Figure~\ref{fig:feature_importance}.  The top five features are all
+local.  Aggregate features---the hand-crafted analogue of GNN message
+passing---contribute only 17.6\%.  The signal that matters for
+classification is concentrated in a part of the feature space that
+the MLP can fully access and that does not depend on learned graph
+topology.
+
+Cross-model feature importance is consistent.  The top features for
+Random Forest (Gini importance), XGBoost (gain), and GNN
+(input-gradient saliency) converge on the same feature subspace.
+Feature~52 ranks first or second across all three methods (RF Gini =
+0.041, XGBoost gain = 0.090, GNN saliency = 0.854).  This
+convergence suggests the discriminative signal is genuinely in the
+features, not an artefact of any particular model family.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig4_feature_importance.png}
+\caption{RF feature importance.  Local features (red) dominate
+aggregate features (blue).  Top 17 features explain 50\% of
+importance.}
+\label{fig:feature_importance}
+\end{figure}
+
+\subsection{Why shuffled edges beat original edges}
+
+Three factors explain the ablation result.
+
+First, the original graph connects fraud nodes to licit
+counterparties (exchanges, services), diluting fraud signal during
+aggregation.  Shuffled edges break this misleading structure while
+still providing regularisation through random averaging.
+
+Second, the original graph's mean degree of 2.3 means each node
+aggregates from roughly two neighbours whose features are already
+partially encoded in the 71 aggregate features.  The GNN's message
+passing is redundant with features the model already has at the node
+level, and the original topology adds noise on top.
+
+Third, the graph structure learned during training reflects the fraud
+topology of steps 1--34.  By steps 43--49, that topology has changed.
+Shuffled edges are temporally stateless---they encode no particular
+fraud structure and therefore cannot become stale.
+
+\subsection{Distribution shift characterisation}
+
+Overlaying per-step F1 with Maximum Mean Discrepancy (MMD) and L2
+feature drift reveals weak correlation between drift magnitude and
+F1 collapse (Figure~\ref{fig:distribution_shift}).  MMD ranges from
+0.20 to 0.31 across all test steps with no sharp discontinuity at
+step~43.  The shift is primarily in the label prior rather than the
+covariate distribution: the features remain relatively stable, but
+the fraction of fraudulent nodes changes dramatically.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/distribution_shift.png}
+\caption{Distribution shift metrics over test steps.  Feature drift
+(middle, bottom) does not align with F1 collapse (top), confirming
+the shift is in the prior, not the covariates.}
+\label{fig:distribution_shift}
+\end{figure}
+
+\subsection{The concatenation hybrid mechanism}
+
+The hybrid achieves F1\,=\,0.807 from components scoring 0.311 and
+0.314 individually.  This is not ensemble averaging.  The Random
+Forest receives 421 dimensions and performs input-dependent feature
+selection.  GNN embeddings, despite poor standalone performance,
+encode neighbourhood density patterns and positional information
+that raw features miss.  The downstream classifier learns which
+embedding dimensions are reliable and which are not, selectively
+using structural features where they help and ignoring them where
+they mislead.
+
+This result reframes the narrative.  GNN embeddings alone are worse
+than raw features alone for this task.  But they encode different
+information.  The fusion succeeds because the downstream classifier
+can arbitrate between complementary but individually unreliable
+signals.
+
+\subsection{Implications for deployment}
+
+\textit{Retraining is the remedy, not recalibration.}  The
+39$\times$ fraud rate decline is not unusual for financial crime.
+Sliding-window retraining---updating the model on the most recent
+$N$ time steps---is the minimum viable engineering response.  Post-hoc
+tuning cannot compensate for a training distribution that no longer
+matches the operational environment.
+
+\textit{Graph structure is a conditional asset.}  Structural
+information helps during stable periods but becomes misleading under
+shift.  An adaptive system that monitors distributional stability
+and switches between graph-based and feature-based predictions could
+capture the benefit of both modes.
+
+\textit{Business cost should drive model selection.}  GAT + graph
+augmentation achieves the lowest operational cost despite lower F1
+than SAGE.  Practitioners who select models on F1 implicitly assume
+equal costs for both error types.
+
+% ============================================================================
+\section{Limitations}
+
+Our inductive evaluation uses RandomNodeLoader rather than
+NeighborLoader (unavailable on M4 CPU without
+\texttt{torch-sparse}).  NeighborLoader provides proper $k$-hop
+batching and might close 5--10 points of the MLP-GNN gap; our
+results therefore represent a lower bound on GNN performance.
+
+All results come from a single dataset (Elliptic).  Whether the
+findings transfer to Ethereum, traditional banking, or credit card
+graphs is an open empirical question.
+
+The extended ablation and hybrid experiments use 3 seeds.  While
+effect sizes are large (Cohen's $d > 2$ for the key comparisons),
+the small sample limits statistical power.
+
+The concatenation hybrid result (F1\,=\,0.807) is an aggregate
+metric.  Its robustness to the late-period collapse has not been
+evaluated per time step.
+
+% ============================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+We benchmarked GCN, GraphSAGE, GAT, and an MLP across three
+imbalance strategies on the Elliptic Bitcoin Dataset under inductive
+evaluation with multi-seed validation.  A plain MLP reaches
+F1\,=\,0.744 and outperforms every tested GNN; GraphSAGE, the best
+graph model, reaches F1\,=\,0.697.  Random Forest achieves
+F1\,=\,0.820 with no graph structure.
+
+The cause is temporal distribution shift.  The fraud rate falls from
+11.6\% during training to 0.3\% in the worst test steps, collapsing
+all models from F1\,$\approx$\,0.78 to F1\,$<$\,0.03.  Feature
+importance places 82.4\% of discriminative power in local features.
+A multi-seed ablation shows the transaction graph is actively
+harmful: shuffled edges improve F1 from 0.268 to 0.383.  Temperature
+scaling yields $\Delta$F1\,=\,0.
+
+A concatenation hybrid (GNN embeddings + raw features $\to$ RF)
+achieves F1\,=\,0.807, recovering nearly all performance and
+exceeding prior published results.  GNN embeddings carry
+complementary signal, but only when combined with raw features in a
+model that can selectively weight each component.
+
+These results are not a verdict against graph-based fraud detection
+in general.  They are a finding that, on temporally shifting data,
+feature-only models are more robust than end-to-end GNN models unless
+the graph topology is kept current.  Production systems should
+retrain regularly, monitor for distributional drift, define explicit
+cost functions, and consider hybrid architectures that decouple
+representation learning from classification.
+
+% ============================================================================
+\section*{Data Availability}
+The Elliptic Dataset is publicly available on Kaggle
+(search: elliptic-data-set).
+Code and checkpoints:
+The accompanying repository contains the full implementation and
+experiment assets used in this study.
+
+\section*{Acknowledgements}
+The author thanks VIT-AP University for computational resources and
+the Elliptic team for publicly releasing the Bitcoin fraud dataset.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

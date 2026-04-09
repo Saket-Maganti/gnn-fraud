@@ -1,0 +1,73 @@
+%% ============================================================
+%%  arXiv preprint -- cs.LG
+%%  Long-form preprint aligned with the journal manuscript
+%% ============================================================
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[hidelinks,colorlinks=true,
+            linkcolor=blue!60!black,
+            citecolor=blue!60!black,
+            urlcolor=blue!60!black]{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{enumitem}
+\usepackage{url}
+\usepackage{natbib}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+\setlength{\headheight}{14pt}
+\lhead{\small arXiv preprint}
+\rhead{\small Maganti (2026)}
+\cfoot{\thepage}
+
+\graphicspath{{./}{../}}
+
+\title{When Graph Structure Becomes a Liability: \\
+  Temporal Distribution Shift Degrades GNN Fraud Detection \\
+  but Graph-Derived Representations Survive in Hybrid Ensembles}
+
+\author{Saket Maganti}
+
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Graph Neural Networks are the default architecture for fraud detection
+on transaction graphs, but published evaluations on the Elliptic
+Bitcoin Dataset rely on transductive protocols that leak test-time
+structure into training.  We re-evaluate GCN, GraphSAGE, and GAT under
+inductive evaluation with multi-seed validation and per-timestep
+reporting.  A plain MLP (F1 = 0.744) outperforms every tested GNN
+(best: GraphSAGE, F1 = 0.697).  Random Forest with no graph structure
+achieves F1 = 0.820.  The cause is temporal distribution shift: the
+fraud rate drops 39$\times$ between training and the worst test steps,
+collapsing all models from F1 $\approx$ 0.78 to F1 $<$ 0.03.  A
+multi-seed graph-structure ablation shows the transaction graph is
+actively harmful: randomly shuffling edges improves F1 from 0.268 to
+0.383.  Temperature scaling yields $\Delta$F1 = 0, ruling out
+calibration as a fix.  However, a concatenation hybrid (GNN embeddings
++ raw features $\to$ Random Forest) achieves F1 = 0.807, showing that
+graph-derived representations carry complementary signal when combined
+with tabular features in a model that can selectively weight each
+component.  We release code, checkpoints, and all experimental scripts.
+\end{abstract}
+
+\input{paper_shared_body}
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}
