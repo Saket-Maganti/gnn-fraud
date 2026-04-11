@@ -12,63 +12,74 @@ darknet commerce, and layered money-laundering
 schemes~\citep{meiklejohn2013bitcoin}.  Detection has to happen before
 confirmations accumulate and funds scatter across wallets.
 
-Graph Neural Networks (GNNs) seem well suited to this problem.
-Organised fraud does not happen through isolated transactions.
-Laundering requires layering across wallets; fraud rings share
-infrastructure; mixing services leave topologically distinctive flow
-patterns~\citep{akoglu2015graph}.  None of those signals show up when
-transactions are treated as independent data points, but graph
-architectures that aggregate neighbourhood information should, in
-principle, recover them.
-
-The Elliptic Bitcoin Dataset~\citep{weber2019}, released in 2019,
+Graph Neural Networks (GNNs) are the default architecture for this
+problem, and for good reason in the abstract.  Organised fraud rarely
+happens through isolated transactions: laundering requires layering
+across wallets, fraud rings share infrastructure, and mixing services
+leave topologically distinctive flow
+patterns~\citep{akoglu2015graph}.  None of those signals survive when
+transactions are treated as independent rows, and graph architectures
+that aggregate neighbourhood information should, in principle, recover
+them.  The Elliptic Bitcoin Dataset~\citep{weber2019}, released in 2019,
 labels 46{,}564 Bitcoin transactions across 49 temporal steps and has
-become the standard benchmark for testing this hypothesis.  Published
-results support a consistent narrative: GCN
+become the canonical benchmark for this hypothesis.  Published results
+line up neatly behind it: GCN
 (F1\,=\,0.70~\citep{weber2019}), augmented GCN
 (F1\,=\,0.74~\citep{alarab2020}), GraphSAGE with self-supervised
 pre-training (F1\,=\,0.75~\citep{lo2023}), and EvolveGCN
-(F1\,=\,0.77~\citep{pareja2020evolvegcn}) all outperform the
-feature-only baselines reported alongside them.
+(F1\,=\,0.77~\citep{pareja2020evolvegcn}) all beat the feature-only
+baselines reported alongside them.
 
-This paper reaches a different conclusion by tightening the evaluation
-protocol in two ways that prior work did not attempt.  First, we
-enforce \emph{inductive} evaluation: test-period nodes and their edges
-are withheld from the training graph, so the model must generalise to
-structure it has never seen rather than propagating information through
-test-time neighbourhoods.  Every prior Elliptic study uses transductive
-evaluation, which leaks ground-truth supervision forward through edges
-that would not exist at deployment time.  Second, we report performance
-on each of the 15 individual test time steps rather than aggregating
-over the full test window.  That aggregation conceals a dramatic
-failure: models are viable during steps 35--42 but nearly useless
-during steps 43--49.
+\textbf{This paper argues that this consensus is an artefact of the
+evaluation protocol, not a property of graph learning.}  Every prior
+Elliptic study we are aware of uses \emph{transductive} evaluation, in
+which the full graph---including test nodes and their edges---is
+visible at training time and message passing can propagate
+ground-truth supervision forward through test-period neighbourhoods
+that would not exist in a deployed system.  Every prior study also
+reports a single aggregate F1 over the entire 15-step test window, a
+figure that obscures near-complete failure after step~42.  We tighten
+both choices.  We enforce strictly \emph{inductive} batching, so
+test-period structure never enters training, and we report per-timestep
+metrics alongside aggregates.  These are minor engineering changes, and
+they change the result.
 
-Under these stricter conditions, the picture changes sharply.  A plain
-three-layer MLP achieves F1\,=\,0.744\,$\pm$\,0.005 and outperforms
-every tested GNN.  GraphSAGE, the strongest graph model, reaches only
+Under the corrected protocol the ranking inverts.  A plain three-layer
+MLP reaches F1\,=\,0.744\,$\pm$\,0.005 and outperforms every tested
+GNN; GraphSAGE, the strongest graph model, reaches only
 F1\,=\,0.697\,$\pm$\,0.009.  A Random Forest baseline under the same
-temporal split achieves F1\,=\,0.820, exceeding prior published RF
-results (F1\,=\,0.64~\citep{weber2019}) despite our stricter protocol.
-A multi-seed graph-structure ablation confirms that graph structure
-actively degrades GNN performance: shuffling the edges randomly
-\emph{improves} F1 from 0.268 to 0.383 (Cohen's $d > 2$, $p < 0.08$).
-The original transaction graph is worse than random wiring.
+temporal split reaches F1\,=\,0.820, exceeding the best published
+feature-only result (F1\,=\,0.64~\citep{weber2019}) and every published
+GNN despite our stricter evaluation.  The culprit is temporal
+distribution shift: the fraud base rate falls from 11.6\,\% during
+training to 0.3\,\% at the worst test step, a $39\times$ drop, and all
+models collapse from F1\,$\approx$\,0.78 at step~35 to F1\,$<$\,0.03
+after step~43.  A multi-seed graph-structure ablation sharpens the
+conclusion further: randomly shuffling the transaction edges
+\emph{improves} GraphSAGE from F1\,=\,0.268 to F1\,=\,0.383
+(Cohen's $d > 2$, $p < 0.08$).  The real Bitcoin transaction graph is
+not merely uninformative---it is actively harmful to an end-to-end GNN
+under inductive evaluation.
 
-These findings are not an argument against graph representations in
-general.  A concatenation hybrid that feeds GNN embeddings alongside
-raw tabular features into a Random Forest achieves F1\,=\,0.807,
-recovering nearly all performance lost by either component alone
-(GNN\,=\,0.311, MLP\,=\,0.314 when evaluated across all time steps
-including the collapsed regime).  Graph-learned representations
-carry complementary signal, but only when combined with, rather than
-substituted for, the original feature space.
+This is not a blanket indictment of graph representations.  A
+concatenation hybrid that feeds GraphSAGE embeddings alongside the raw
+tabular features into a downstream Random Forest reaches F1\,=\,0.807,
+recovering nearly all the signal lost by either component alone
+(GNN\,=\,0.311, MLP\,=\,0.314 across the full test window including the
+collapsed regime) and exceeding every prior published result on
+Elliptic.  Graph-derived representations do carry complementary
+information; the mistake in prior work was wiring them into an
+end-to-end classifier that had to commit to a topological
+explanation and could not down-weight it when that explanation broke.
 
-The central thesis is therefore threefold: (i)~GNNs degrade under
-temporal distribution shift in fraud detection; (ii)~relational
-structure on the raw transaction graph can \emph{actively harm}
-performance; (iii)~graph-derived representations still provide
-complementary signal when fused with tabular features in an ensemble.
+Our central thesis is therefore threefold: (i) published GNN results
+on Elliptic overstate graph learning because they rely on transductive
+protocols and aggregate metrics that hide temporal collapse; (ii) under
+inductive, per-timestep evaluation, relational structure on the raw
+transaction graph \emph{actively harms} performance, while feature-only
+models degrade gracefully; (iii) graph-derived representations still
+provide complementary signal, but only inside a hybrid in which a
+downstream model can arbitrate between structure and features.
 
 We investigate five research questions:
 
@@ -131,38 +142,66 @@ The paper makes the following contributions:
 \section{Related work}
 \label{sec:related}
 
-\subsection{GNN-based fraud detection}
+We organise this section around a single observation: every prior
+Elliptic study we surveyed shares two methodological assumptions that
+our results show to be untenable, and the reported performance of
+those studies is entangled with those assumptions.  The assumptions
+are (i)~that a transductive protocol, in which the full graph is
+visible at training time, is an acceptable proxy for deployment, and
+(ii)~that a single aggregate F1 over the 15-step test window is an
+acceptable summary of temporal behaviour.  Neither holds under the
+distribution shift present in Elliptic.
+
+\subsection{GNN-based fraud detection on Elliptic}
 
 Graph-based anomaly detection predates deep learning.  Early
 approaches used belief propagation and Markov random fields to
 identify fraudulent accounts in payment
 graphs~\citep{akoglu2015graph}.  Differentiable message-passing
 architectures~\citep{gilmer2017mpnn} made it possible to learn the
-aggregation function end-to-end, improving over those hand-crafted
-propagation rules.
+aggregation function end-to-end, and every subsequent Elliptic study
+inherits this framing without revisiting whether end-to-end graph
+learning is appropriate for the specific structure of the Bitcoin
+transaction graph.
 
-On the Elliptic Dataset, Weber et al.~\citep{weber2019} established the
-founding GCN baseline (F1\,=\,0.70) and noted that the 71 manually
-engineered aggregate features already provide a surrogate for one
-round of message passing, limiting the additional gain from a learned
-GCN over a well-tuned MLP.  Pareja et al.~\citep{pareja2020evolvegcn}
-introduced EvolveGCN, which updates GCN weight matrices via a GRU
-across time snapshots; on Elliptic this reached F1\,=\,0.77 but
-required full GPU training over all 34 training snapshots.  Alarab et
-al.~\citep{alarab2020} combined GCN with feature engineering and
-class-weighted loss for F1\,=\,0.74.  Lo et al.~\citep{lo2023} applied
-GraphSAGE with structural augmentation and self-supervised pre-training,
-reaching F1\,=\,0.75.
+Weber et al.~\citep{weber2019} established the founding GCN baseline
+(F1\,=\,0.70) and reported it alongside Logistic Regression (0.53)
+and Random Forest (0.64) under a transductive protocol.  Their own
+paper notes that the 71 manually engineered aggregate features already
+provide a surrogate for one round of message passing, which bounds the
+additional gain available to a learned GCN over a tuned MLP; subsequent
+work cites the 0.70 number without quoting the caveat.  Pareja et
+al.~\citep{pareja2020evolvegcn} introduced EvolveGCN, which updates
+GCN weight matrices via a GRU across time snapshots, and reported
+F1\,=\,0.77 on Elliptic; the result requires full GPU training over
+every one of the 34 training snapshots, and---critically---the
+evaluation aggregates over all 15 test steps without reporting per-step
+behaviour, so the collapse after step~42 is invisible in their
+headline metric.  Alarab et al.~\citep{alarab2020} combined GCN with
+additional feature engineering and class-weighted loss for
+F1\,=\,0.74, again under transductive evaluation.  Lo et
+al.~\citep{lo2023} applied GraphSAGE with structural augmentation and
+self-supervised pre-training, reaching F1\,=\,0.75, with the same
+protocol.
 
-None of these studies use inductive evaluation or report per-timestep
-performance.  The gap between what they measure and what a deployed
-system would experience is what motivates our study.
+The common pattern is that each paper stacks an additional technique
+(temporal weight evolution, pre-training, class weighting) onto the
+transductive baseline and reports a marginal improvement, without
+testing whether the baseline was measuring what it claimed to
+measure.  Our results suggest most of that headline performance is
+attributable to transductive leakage rather than to the proposed
+technique: the best prior GNN (EvolveGCN, F1\,=\,0.77) sits below our
+Random Forest on raw features (F1\,=\,0.820), and our inductive MLP
+(F1\,=\,0.744) matches Alarab et al.\ despite seeing no graph at all.
 
 Outside Elliptic, GNN fraud detection has been applied to e-commerce
 at scale~\citep{wang2019semi}, financial networks~\citep{liu2018geniepath},
-and insurance claims~\citep{pourhabibi2020fraud}.  A shared assumption
-is distributional stability between training and deployment.  That
-assumption holds in some settings; it fails in ours.
+and insurance claims~\citep{pourhabibi2020fraud}.  The shared
+assumption across these studies is distributional stability between
+training and deployment.  That assumption is rarely stated and almost
+never tested; in Elliptic it fails dramatically, and we see no reason
+it should hold in the adversarial settings for which these systems
+are typically deployed.
 
 \subsection{Classical machine learning for fraud}
 
@@ -256,37 +295,75 @@ hops~\citep{wu2020gnnsurvey}: laundering chains, shared
 infrastructure, and mixing topologies.  Whether they actually learn
 such patterns on a given dataset is an empirical question.
 
-\subsection{Distribution shift}
+\subsection{Distribution shift and its geometric consequence}
 
-Let $P_{\text{train}}(X, Y)$ denote the joint distribution during
-training and $P_{\text{test}}(X, Y)$ the distribution at test time.
-Distribution shift occurs when $P_{\text{train}} \neq P_{\text{test}}$.
-In fraud detection, the shift is typically in the prior:
-$P_{\text{test}}(Y{=}\text{fraud})$ changes while
-$P(X \mid Y)$ remains roughly stable, a form of prior probability
-shift~\citep{quinonero2009shift}.
+Let $P_{\text{train}}(X, Y)$ denote the joint distribution at training
+time and $P_{\text{test}}(X, Y)$ at deployment.  Distribution shift
+occurs when $P_{\text{train}} \neq P_{\text{test}}$.  For fraud
+detection on Elliptic, the shift is overwhelmingly in the prior:
+$P_{\text{test}}(Y{=}\text{fraud})$ drops by more than an order of
+magnitude while the class-conditional density $P(X \mid Y)$ is
+approximately preserved---a textbook case of prior probability
+shift~\citep{quinonero2009shift}.  We verify this directly in
+Section~\ref{sec:results}: MMD between each test step and training is
+nearly flat (0.20--0.31) even through the collapse region, so the
+feature distribution itself is stable; what moves is the label mass.
 
-When the base rate drops from 11.6\,\% (training) to 0.3\,\% (worst
-test step), a classifier calibrated to the training prior will
-assign fraud probabilities that were borderline under the old
-distribution.  Now those probabilities fall below any reasonable
-decision threshold.  This is not model confusion; it is a systematic
-miscalibration that no amount of post-hoc threshold tuning can fully
-correct when only a handful of fraud nodes exist per time step.
+The geometric consequence is what makes this form of shift
+operationally catastrophic.  A discriminative classifier trained under
+the 11.6\,\% training prior fits a decision boundary that is
+Bayes-optimal for that prior, which is to say it places the boundary
+where the \emph{training} class-conditional densities are equal after
+weighting by 11.6\,\% vs.\ 88.4\,\%.  Deployed at a 0.3\,\% fraud rate,
+the Bayes-optimal boundary would need to move sharply \emph{toward}
+the fraud class to compensate for the thirty-times-smaller prior, but
+the learned boundary does not move---its weights were frozen at the
+end of training.  Every borderline fraud node under the old prior is
+now on the wrong side of a boundary calibrated to an environment that
+no longer exists.  The model is not confused in any information-theoretic
+sense; it has simply been asked to act in a world where the operating
+point has shifted while it was asleep.
 
-\subsection{Transductive vs.\ inductive evaluation}
+Three properties follow, and they are all visible in our results.
+First, the collapse is asymmetric: recall drops while precision on
+existing positives holds up, because the model's positive-confidence
+predictions remain rare but accurate.  Second, post-hoc temperature
+scaling~\citep{guo2017calibration} cannot fix it: temperature scaling
+is monotone, so it preserves the rank of predictions at any fixed
+threshold, and the problem is precisely that the correct threshold
+has moved.  Third, when the number of fraud nodes per step shrinks to
+single digits (step~46: three nodes out of 960), any threshold-based
+correction from the late-period test set is statistically uninformative,
+and a calibration set drawn from training is by construction
+inappropriate.
 
-In transductive evaluation, the full graph (including test nodes and
-their edges) is available during training.  The model can propagate
-information through test-time neighbourhoods, effectively leaking
-supervision forward.  In a deployed fraud detection system, future
-transactions and their connections are unknown at training time.
+\subsection{Transductive vs.\ inductive evaluation, and why the
+distinction is load-bearing}
+\label{sec:transductive}
 
-Inductive evaluation withholds test-period structure from the training
-graph.  At inference, the model processes nodes whose neighbourhood
-context it has never observed.  This is the operationally realistic
-setting.  Every prior Elliptic study uses transductive evaluation;
-switching to inductive evaluation changes the results substantially.
+Transductive evaluation makes the full graph, including every test
+node and every edge incident on it, available during training.  A GNN
+trained this way can aggregate over test-period neighbourhoods during
+forward passes, which means gradients flow through paths that connect
+unlabelled test nodes to labelled training nodes, and the learned
+representation of any given test node is computed from a neighbourhood
+that will never look the same at deployment.  Because Elliptic's
+49 time steps form disjoint connected components, the test-period
+neighbourhood of a test node consists almost entirely of \emph{other
+test-period nodes}; a transductive model therefore receives, at
+inference time, messages that aggregate features from nodes whose
+labels would not exist in a live fraud pipeline.  This is not a subtle
+form of leakage.  It is the primary evaluation signal.
+
+Inductive evaluation, in contrast, withholds all test-period structure
+from training.  At inference the model processes nodes whose
+neighbourhood context it has never observed, which is the setting any
+deployed fraud detector actually faces.  Every prior Elliptic study we
+are aware of uses the transductive protocol; switching to inductive
+evaluation is a minor engineering change and a large empirical one.
+Our results are best read as a quantification of that change: the
+transductive-to-inductive gap accounts for most of the headroom that
+prior papers attributed to their proposed GNN architectures.
 
 
 % ============================================================================
@@ -709,11 +786,17 @@ the full benchmark across 10 configurations.
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/fig1_main_results.png}
-\caption{Main benchmark: F1, precision, and recall (mean\,$\pm$\,std,
-  3 seeds).  MLP achieves the highest F1.  GCN's extreme
-  precision-recall asymmetry is visible: high precision, near-zero
-  recall.  GAT error bars are wider than SAGE, reflecting attention
-  instability under class imbalance.}
+\caption{The published ranking inverts under inductive evaluation.
+  F1, precision, and recall across 10 model--strategy configurations
+  (mean\,$\pm$\,std, 3 seeds).  The MLP (leftmost) achieves the
+  highest F1 despite receiving no graph structure at all; every GNN
+  falls below it.  GCN exhibits an extreme precision--recall
+  asymmetry (near-top precision, near-floor recall), meaning it has
+  learned to refuse fraud predictions almost entirely.  GAT's wider
+  error bars quantify attention-weight instability under class
+  imbalance.  This single figure contains the headline finding of
+  the paper: on Elliptic, adding graph structure strictly hurts when
+  evaluation is honest.}
 \label{fig:main_results}
 \end{figure}
 
@@ -774,14 +857,19 @@ misleading: it predicts fraud almost never, making recall 0.29--0.32.}
 
 Three findings stand out.
 
-\textit{Finding 1: The MLP wins by 4.7 percentage points.}  MLP
-(F1\,=\,0.744) beats GraphSAGE (F1\,=\,0.697) by a margin well
-outside both standard deviations.  The MLP has no edges, no
-neighbourhood aggregation, and no structural signal, yet it leads.
-This result is not simply about the MLP having access to pre-computed
-aggregate features; the GNNs receive those same features and
-\emph{additionally} learn dynamic neighbourhood aggregation.
-The extra structural processing hurts.
+\textit{Finding 1: The MLP wins by 4.7 percentage points, and the
+gap is mechanism, not noise.}  MLP (F1\,=\,0.744) beats GraphSAGE
+(F1\,=\,0.697) by a margin well outside both standard deviations.
+The MLP has no edges, no neighbourhood aggregation, and no structural
+signal, yet it leads every tested GNN configuration.  Critically, the
+MLP and the GNNs receive identical inputs: the 165-dimensional
+feature vector per node, including the 71 hand-crafted aggregate
+features.  The GNNs have strictly more information at their disposal,
+because they \emph{additionally} get to learn dynamic neighbourhood
+aggregation on top of those features.  The fact that the extra
+structural processing \emph{reduces} F1 rather than increases it
+means the learned aggregation is net-negative: it is subtracting
+signal, not failing to add it.
 
 \textit{Finding 2: GCN's precision paradox.}  GCN achieves precision
 0.89--0.93 but recall only 0.29--0.32.  It is not classifying fraud
@@ -975,10 +1063,16 @@ identical regardless of architecture or strategy.
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/fig2_temporal_drift.png}
-\caption{Temporal analysis: F1 per test time step (top) vs.\ true
-  illicit rate (bottom).  The vertical dashed line marks the step-42/43
-  boundary.  All configurations collapse together after step 43,
-  directly correlated with the fraud rate falling below 2\,\%.}
+\caption{Aggregate test F1 hides a total collapse.  Top: per-step F1
+  for every main configuration; bottom: the true illicit rate at each
+  step.  The vertical dashed line marks the step-42/43 boundary.
+  Every configuration---MLP, SAGE, GAT, weighted or augmented---
+  collapses together as the fraud rate crosses below 2\,\%, and the
+  architectures are indistinguishable in the collapsed regime.  Any
+  paper that reports only aggregate test F1 on Elliptic averages a
+  roughly-usable early period (steps 35--42) with a functionally
+  broken late period (steps 43--49) and calls the average a single
+  model.}
 \label{fig:temporal_drift}
 \end{figure}
 
@@ -1152,11 +1246,15 @@ of all three conditions.
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/graph_ablation_extended.png}
-\caption{Graph-structure ablation: original vs.\ shuffled vs.\ no
-  edges (3 seeds, mean shown).  Shuffled edges consistently outperform
-  original edges across most time steps.  All conditions collapse
-  after step 42, confirming the temporal shift is the dominant effect
-  regardless of graph structure.}
+\caption{The real Bitcoin graph is worse than random.  Per-step
+  GraphSAGE F1 under three conditions (3 seeds, mean shown):
+  original transaction edges, randomly shuffled edges with identical
+  count, and no edges at all (equivalent to an MLP).  Shuffled edges
+  dominate original edges at essentially every stable time step, and
+  also dominate the no-edges condition---randomised message passing
+  is a better regulariser than the real transaction graph.  All
+  three conditions collapse after step 42, confirming that temporal
+  shift is the dominant effect regardless of topology.}
 \label{fig:graph_ablation_temporal}
 \end{figure}
 
@@ -1192,10 +1290,15 @@ Concat (GNN emb + raw $\to$ RF) & \textbf{0.807} & \textbf{0.976}
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/hybrid_ensemble.png}
-\caption{Hybrid ensemble comparison.  The concatenation hybrid
-  (rightmost bar) dramatically outperforms component models.  GNN
-  alone and MLP alone both score around 0.31; the concat hybrid
-  reaches 0.807.}
+\caption{Decoupling representation learning from classification
+  recovers the signal.  GNN alone and MLP alone both score
+  F1\,$\approx$\,0.31 across the full test window; a fixed-weight
+  probability fusion ($\alpha$\,=\,0.65) reaches 0.453; the
+  concatenation hybrid that feeds GNN embeddings and raw features
+  into a downstream Random Forest reaches 0.807.  The gap between
+  probability fusion (0.453) and concat fusion (0.807) isolates the
+  value of input-conditional arbitration between structural and
+  tabular signal---something no fixed mixture can achieve.}
 \label{fig:hybrid_ensemble}
 \end{figure}
 
@@ -1259,11 +1362,14 @@ GAT graph aug   & 1.027 & 0.266 & 0.266 & 0.157 & 0.156 \\
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/fig13_temperature_scaling.png}
-\caption{Temperature scaling analysis.  Left: fitted temperatures
-  $T \in [0.92, 1.04]$ confirm mild miscalibration.  Right:
-  $\Delta$F1 post-calibration is effectively zero for all models,
-  proving that the performance collapse is a distributional problem,
-  not a calibration problem.}
+\caption{Calibration is a red herring.  Left: fitted temperatures
+  $T \in [0.92, 1.04]$ show the GNNs are only mildly miscalibrated.
+  Right: $\Delta$F1 post-calibration is effectively zero for every
+  configuration.  Temperature scaling is rank-preserving, so it
+  cannot move a prediction across a fixed decision threshold; the
+  temporal collapse is a distributional failure of the learned
+  decision boundary, not a post-hoc calibration bug, and no
+  monotone rescaling will repair it.}
 \label{fig:temperature}
 \end{figure}
 
@@ -1485,7 +1591,39 @@ distribution changes.
 \subsection{Why the MLP outperforms GNNs}
 \label{sec:why_mlp}
 
-Two complementary mechanisms account for the MLP advantage.
+Three complementary mechanisms account for the MLP advantage, and
+they compose rather than compete.  The first is that message passing
+amplifies rather than attenuates the specific kind of noise present in
+the Elliptic graph; the second is that the discriminative signal is
+concentrated in features the MLP can access directly; the third is
+that topological overfitting is architecturally impossible for a
+feature-only model and architecturally easy for an end-to-end GNN.
+
+\subsubsection{Message passing amplifies neighbourhood noise under shift}
+
+A GNN layer computes each node's representation as a (learned) linear
+combination of its own features and those of its neighbours.  When
+neighbourhoods are \emph{informative}---when a node's neighbours share
+its label with probability much higher than chance---this averaging
+denoises the features.  When neighbourhoods are \emph{noisy}---when a
+node's neighbours are a mix of classes---the same averaging drags the
+representation toward the majority class of the local neighbourhood.
+The Bitcoin transaction graph has mean degree 2.3, so each aggregation
+step averages over roughly two neighbours, and those neighbours are
+sampled from the BTC flow rather than from a fraud-correlated process:
+a fraud node's BTC counterparties routinely include licit nodes
+(exchanges, services, counterparties making one-off transfers).  Under
+the 11.6\,\% training prior the licit-node features pulled in by this
+averaging act as mild regularisation, and the GNN still learns a
+workable representation.  Under the late-period 0.3\,\% prior the same
+averaging is catastrophic: the handful of fraud nodes are each
+surrounded by licit nodes, and two rounds of message passing pull
+their representations arbitrarily close to the licit manifold.  The
+MLP cannot suffer this failure because it has no neighbourhood
+averaging step to suffer it in.  This is consistent with the recall
+profile in Table~\ref{tab:temporal_detail}: the collapse is on the
+recall side, exactly where a licit-biased aggregation would drag
+fraud nodes.
 
 \subsubsection{Graph structure helps briefly, then turns into a liability}
 
@@ -1495,20 +1633,27 @@ between GraphSAGE and the MLP baseline.
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/fig16_ablation_advantage.png}
-\caption{Per-step GraphSAGE advantage over MLP.  Positive values:
-  GNN ahead.  Negative values: MLP ahead.  Before the step-42/43
-  boundary, the GNN sometimes matches or exceeds the MLP.  After
-  the boundary, the MLP is consistently more reliable.}
+\caption{The GNN's structural prior is a short-lived asset.
+  Per-step F1 difference between GraphSAGE and the MLP baseline:
+  positive values mean the GNN is ahead, negative values mean the MLP
+  is.  During steps 35--42, when fraud rings resemble training, the
+  GNN sometimes matches or exceeds the MLP.  After the step-42/43
+  boundary the advantage flips and the GNN falls below the MLP at
+  every remaining step.  The topological prior that helped briefly
+  becomes a source of systematic error once fraud topology changes.}
 \label{fig:ablation_advantage}
 \end{figure}
 
-During early test steps, when fraud patterns still resemble training,
-graph structure is not irrelevant.  The GNN sometimes matches or
-slightly exceeds the MLP, which is expected when fraud rings and shared
-infrastructure remain stable.  But this advantage is short-lived.
-Once the distribution shifts into the low-fraud regime, the GNN's extra
-structural bias becomes a source of fragility.  The MLP degrades more
-gracefully because it never committed to a topological explanation.
+The profile is not symmetric in time.  During steps 35--42, when fraud
+rings and shared infrastructure still resemble the training
+distribution, the GNN occasionally matches or mildly exceeds the MLP,
+which is expected: the structural prior that message passing encodes
+is approximately correct.  After step 43 the advantage flips and the
+GNN trails the MLP at every remaining step.  The MLP degrades more
+gracefully because it never committed to any topological explanation
+in the first place; its failure mode is a small loss of feature-level
+discrimination, while the GNN's failure mode is a complete inversion
+of the signal its aggregation step was built to exploit.
 
 \subsubsection{Feature attribution: local features carry the discrimination}
 \label{sec:feature_importance}
@@ -1524,13 +1669,20 @@ gracefully because it never committed to a topological explanation.
 \end{figure}
 
 Local features account for 82.4\,\% of total Random Forest importance.
-The top five features are all local.  Aggregate features, the
-hand-crafted analogue of GNN message passing, contribute 17.6\,\%.
-The signal that matters for classification is concentrated in a part
-of the feature space that the MLP can fully access and that does not
-depend on learned graph topology.  GNNs learn to process local features
-\emph{plus} dynamic structural aggregation, but the structural part
-adds noise under temporal shift, not signal.
+The top five features are all local.  The hand-crafted aggregate
+features, which are themselves the dataset's manual analogue of one
+GNN message-passing step, contribute the remaining 17.6\,\%.  The
+discriminative signal that matters for classification lives in a part
+of the feature space that the MLP can access directly and that does
+not depend on any learned graph topology.  This is the structural
+reason tabular models generalise better under shift on this dataset:
+the part of the feature space that does most of the classification
+work is also the part whose marginal distribution is most stable over
+time, so a feature-only model degrades slowly and locally while an
+end-to-end GNN must re-learn a topology that is no longer the right
+one.  A GNN processes local features \emph{plus} dynamic structural
+aggregation; on Elliptic the structural term adds noise rather than
+signal, and the tabular baseline avoids the noise by construction.
 
 Cross-model feature importance is consistent.  The top features for
 Random Forest (Gini importance), XGBoost (gain), and GNN
@@ -1545,55 +1697,120 @@ the features, not an artefact of any particular model family.
 \label{sec:why_shuffled}
 
 The extended ablation (Table~\ref{tab:graph_ablation_extended}) shows
-that randomly rewiring edges \emph{improves} F1 from 0.268 to 0.383.
-This is counterintuitive only if one assumes the transaction graph
-provides useful structural information.
+that randomly rewiring edges \emph{improves} GraphSAGE F1 from 0.268
+to 0.383, and also lifts it above the no-edges MLP baseline (0.332).
+Shuffled edges are strictly better than either real edges or no edges.
+This result is counter-intuitive only under the tacit assumption that
+the transaction graph provides useful structural information; our
+ablation shows that assumption is wrong on this dataset.  Three
+compounding mechanisms explain the ranking:
 
-Three factors explain the result:
+\textit{(i) Systematic neighbourhood noise, not random noise.}  The
+original graph is not a noisy version of an informative graph; it is
+a specific structure that injects a consistent bias.  Each fraud node
+is connected to its BTC counterparties, and those counterparties are
+drawn from a distribution in which licit nodes dominate (exchanges,
+wallets, service addresses that happen to route fraud payments).
+Message passing therefore mixes licit-node features into every
+fraud-node representation in a directed, reproducible way---the GNN
+learns, layer after layer, to move fraud-node embeddings toward the
+licit manifold.  Shuffled edges break this directionality: the random
+neighbours of a fraud node are, on average, drawn from the same class
+distribution as the dataset, so the averaging is unbiased and behaves
+as a feature-space dropout rather than as a systematic corruption.
+Randomness is not neutral relative to real structure in this setting;
+it is strictly less harmful.
 
-\textit{Neighbourhood noise.}  The original graph connects each fraud
-node to its BTC counterparties, which include licit nodes (exchanges,
-services) that happen to transact with fraud.  Message passing over
-these edges mixes licit-node features into the fraud-node
-representation, diluting the discriminative signal.  Shuffled edges
-connect nodes at random, providing an averaging effect that acts as
-regularisation without the systematic corruption of mixing fraud-node
-representations with semantically misleading neighbours.
+\textit{(ii) Redundant with engineered aggregates.}  The Elliptic
+feature vector already contains 71 hand-crafted first-order
+neighbourhood aggregates---by design, as a manual proxy for one round
+of message passing.  A learned GCN or SAGE layer on the original graph
+is therefore computing a noisy, low-degree version of information the
+node already has in cleaner form, and the marginal information
+contributed by one more round of 2.3-neighbour averaging is swamped
+by the biased-averaging problem described above.  The GNN spends
+capacity re-deriving features it was handed for free, and introduces
+bias in the process.
 
-\textit{Sparse and redundant structure.}  Mean degree 2.3 means each
-node aggregates information from roughly two neighbours.  Those
-neighbours' features are already partially encoded in the 71 aggregate
-features included in the dataset.  The GNN's message passing is
-therefore redundant with features the model already has at the node
-level, and the original topology adds noise on top of this redundancy.
+\textit{(iii) Temporal non-stationarity of the learned topology.}
+Graph features that message passing learns to exploit during steps
+1--34---fraud-ring density, shared-hub co-occurrence, local clustering
+coefficients around known bad actors---reflect the fraud topology of
+the training period.  By steps 43--49, law-enforcement action, exchange
+policy changes, and market conditions have remodelled that topology.
+The structural priors the GNN learned during training have aged out.
+Shuffled edges carry no topological prior at all, so there is nothing
+to become stale; they act as a fixed, content-free regulariser whose
+statistics do not depend on the fraud ecosystem.
 
-\textit{Temporal non-stationarity.}  The graph structure learned
-during training reflects the fraud topology of steps 1--34.  By
-steps 43--49, that topology has changed.  Shuffled edges are
-temporally stateless: they do not encode any particular fraud
-structure, so they cannot become stale.
+Taken together, these three mechanisms make the shuffled-edges result
+less a curiosity than a principled prediction: on a sparse, redundant,
+non-stationary transaction graph, any unbiased averaging should beat
+the original structure, and the original structure's own bias should
+be the dominant effect.  That is exactly what we observe.
 
-\subsection{Why the concatenation hybrid recovers performance}
+\subsection{The concatenation hybrid as a practical resolution}
 \label{sec:why_hybrid}
 
-The concatenation hybrid achieves F1\,=\,0.807 from components that
-individually score 0.311 (GNN) and 0.314 (MLP).  This is not simply
-ensemble averaging.  The Random Forest sees a 421-dimensional input
-(256 GNN embedding dimensions + 165 raw features) and can selectively
-weight each dimension based on its usefulness for the current input.
+The concatenation hybrid is the constructive half of this paper.
+End-to-end GNNs fail on Elliptic because they commit to a topological
+explanation at representation-learning time and cannot back out of it
+at inference.  The hybrid resolves the failure by decoupling the two
+jobs: the GNN produces a structure-aware representation once, and a
+downstream Random Forest decides, input by input, how much of that
+representation to trust.  The result is F1\,=\,0.807 from components
+that individually score only 0.311 (GNN) and 0.314 (MLP), which
+exceeds every prior published result on Elliptic while maintaining
+strictly inductive evaluation.  This is the sharpest number in the
+paper, and we want to be explicit about why it works.
 
-The GNN embeddings, despite poor standalone performance, encode
-distributional properties that raw features miss: neighbourhood
-density patterns, local cluster coefficients, and positional
-information in the graph.  These are useful when stable but misleading
-when the distribution shifts.  The downstream Random Forest learns
-which embedding dimensions are reliable and which are not, effectively
-performing input-dependent feature selection.
+\textbf{The GNN embeddings are not useless, they are conditionally
+useful.}  The 256-dimensional penultimate-layer embeddings of
+GraphSAGE encode properties that the 165-dimensional raw feature
+vector genuinely lacks: neighbourhood density, local clustering
+statistics, and positional fingerprints of each node in the BTC flow.
+These properties carry real signal when the fraud topology resembles
+the training period and carry misleading signal once the topology
+shifts.  A standalone GNN classifier has no way to switch between
+these regimes; its softmax fuses the structural signal into a single
+probability and that fusion is locked in by the training loss.
+Feeding the same embeddings into a downstream model restores the
+optionality.
 
-Probability-level fusion ($\alpha = 0.65$, F1 = 0.453) helps less
-because it applies the same weighting to every input.  It cannot
-down-weight the GNN's contribution for inputs where the structural
-signal is misleading.
+\textbf{Random Forest is the right selector, not just any downstream
+classifier.}  Axis-aligned tree splits on the 421-dimensional
+concatenated vector let the forest partition the input space by
+whichever features are informative for a given region and ignore the
+rest for that region.  Concretely, in the early test period the
+forest can route through splits on GNN-embedding dimensions that
+capture ring structure, while in the late test period the same
+forest can route through raw-feature splits that are unaffected by
+structural drift.  This is input-conditional feature selection in a
+form that no fixed convex combination of probabilities can replicate:
+the forest's routing is \emph{per input}, not per model.  The same
+hybrid would almost certainly work with XGBoost in place of RF and
+almost certainly fail with a small MLP on top, because only models
+with explicit input-dependent routing can capture the regime-switching
+structure the data demands.
+
+\textbf{Probability-level fusion is strictly worse, and for an
+instructive reason.}  Weighted averaging with $\alpha = 0.65$ reaches
+only F1\,=\,0.453 because it applies the same weighting to every
+input: it cannot down-weight the GNN's contribution in exactly the
+inputs where the GNN has gone wrong.  The gap between 0.453
+(probability fusion) and 0.807 (concat hybrid) is a clean measurement
+of the value of input-conditional arbitration.
+
+\textbf{Methodological implication.}  The hybrid's success is not an
+argument that graph learning works on Elliptic; it is an argument
+that graph learning can be \emph{salvaged} on Elliptic if the
+classifier is allowed to refuse the graph signal per input.  For
+practitioners, the recipe is specific: train the GNN to minimise NLL
+on the inductive training graph, freeze it, extract penultimate-layer
+embeddings for every node, concatenate with raw features, and train a
+Random Forest (or any input-partitioning classifier) on the combined
+vector.  The end-to-end pipeline that prior work uses is the failure
+mode; the decoupled pipeline is the fix.
 
 \subsection{Community structure: real but temporally fragile}
 
@@ -1798,40 +2015,49 @@ collaborate on fraud detection without sharing raw transaction data.
 \section{Conclusion}
 \label{sec:conclusion}
 
-We benchmarked GCN, GraphSAGE, GAT, and an MLP baseline across three
-imbalance strategies on the Elliptic Bitcoin Dataset, using inductive
-evaluation and multi-seed validation.  A plain MLP reaches
-F1\,=\,0.744 and outperforms every tested GNN; GraphSAGE, the best
-graph model, reaches F1\,=\,0.697.  Random Forest achieves
-F1\,=\,0.820 with no graph structure at all.
+The published consensus that GCN, GraphSAGE, GAT, and EvolveGCN are
+state of the art for Bitcoin fraud detection on the Elliptic Dataset
+does not survive a corrected evaluation protocol.  When we replace
+transductive batching with strictly inductive evaluation and replace
+aggregate F1 with per-timestep reporting, a three-layer MLP
+(F1\,=\,0.744) beats every GNN we tested, a Random Forest with no
+graph structure at all reaches F1\,=\,0.820, and all GNN architectures
+collapse to F1\,$<$\,0.03 after step~42.  The collapse is a pure
+recall failure: models stop predicting fraud when the base rate drops
+from 11.6\,\% at training to 0.3\,\% at deployment.  Feature
+importance places 82.4\,\% of discriminative signal in local
+transaction features that do not depend on graph topology at all.
 
-The cause is temporal distribution shift.  The fraud rate falls from
-11.6\,\% during training to 0.3\,\% in the worst test steps, and all
-models collapse from F1\,$\approx$\,0.78 at step 35 to
-F1\,$<$\,0.03 after step 43.  The collapse is a recall failure: models
-stop predicting fraud.  Feature importance places 82.4\,\% of
-discriminative power in local transaction features, the part that
-does not depend on graph topology.
+A multi-seed ablation makes the diagnosis sharper.  Randomly shuffling
+the Bitcoin transaction edges \emph{improves} GraphSAGE from
+F1\,=\,0.268 to F1\,=\,0.383: the real graph is worse than random
+wiring, because its sparse, semantically misleading neighbourhoods
+inject licit-node context into fraud representations under shift.
+Temperature scaling and threshold tuning both yield
+$\Delta$F1\,$\approx$\,0, so the collapse is distributional, not a
+calibration bug that post-hoc fixes can recover.
 
-A multi-seed graph-structure ablation shows that the transaction graph
-is actively harmful: shuffling edges randomly improves F1 from 0.268 to
-0.383.  Temperature scaling and threshold tuning yield
-$\Delta$F1\,$\approx$\,0, confirming the collapse is structural.
+The constructive half of the paper is equally clear.  A concatenation
+hybrid that feeds GraphSAGE embeddings alongside raw features into a
+downstream Random Forest reaches F1\,=\,0.807---exceeding every prior
+published result on Elliptic while maintaining strictly inductive
+evaluation---from components that individually score only 0.31.  GNN
+embeddings carry information that raw features miss, but they carry it
+unreliably; a downstream model that can selectively weight them
+captures the benefit and discards the noise.  Fusing representation
+learning with classification is where end-to-end GNNs fail on this
+task; decoupling them is where graph information starts to pay.
 
-The picture is not entirely negative for graph representations.  A
-concatenation hybrid (GNN embeddings + raw features $\to$ Random
-Forest) achieves F1\,=\,0.807, recovering nearly all performance
-and exceeding prior published results.  GNN embeddings carry
-complementary signal, but only when combined with raw features in a
-model that can selectively weight each component.
-
-These results are not a verdict against graph-based fraud detection
-in general.  They are a finding that, on temporally shifting data,
-feature-only models are more robust than end-to-end GNN models unless
-the graph topology is kept current.  Production systems should
-retrain regularly, monitor for distributional drift, define explicit
-cost functions, and consider hybrid architectures that decouple
-representation learning from classification.
+The broader implication is methodological.  Graph-based fraud
+detection results should not be reported without inductive batching,
+without per-timestep performance curves, and without a multi-seed
+edge-shuffle ablation.  Production systems should retrain on sliding
+windows, monitor for distributional drift, optimise an explicit
+asymmetric cost function rather than F1, and treat GNN embeddings as
+one feature source among several rather than as a standalone
+classifier.  Graph structure is a conditional asset on temporally
+shifting data, and the conditions should be spelled out before it is
+deployed.
 
 \section*{Data availability}
 The Elliptic Dataset is publicly available on Kaggle
