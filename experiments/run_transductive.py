@@ -3,10 +3,12 @@ experiments/run_transductive.py
 
 Transductive evaluation of GraphSAGE on the Elliptic Bitcoin Dataset.
 
-In the transductive setting the **full** graph adjacency is visible during
-training — that is, message passing can propagate information across edges
-that touch test-period nodes, even though those nodes' labels are masked out
-of the loss.  This is the protocol used by most published Elliptic results.
+In the transductive setting the **full** graph (every node's features plus
+every edge, including those that touch test-period nodes) is visible during
+training.  Message passing can propagate information across edges that
+connect training nodes to test-period nodes, and BatchNorm sees every
+node's features; only the loss remains masked to the training label set.
+This matches the protocol used by most published Elliptic GNN results.
 
 Paired runner: experiments/run_inductive.py
 Shared config: experiments/_leakage_gap_utils.LeakageGapConfig
@@ -61,20 +63,20 @@ def parse_args() -> LeakageGapConfig:
 def main() -> None:
     cfg = parse_args()
     print("=" * 60)
-    print("TRANSDUCTIVE GraphSAGE  (full adjacency during training)")
+    print("TRANSDUCTIVE GraphSAGE  (full graph visible at training time)")
     print("=" * 60)
 
     data = load_elliptic()
 
-    # Transductive: train and eval both see the full graph adjacency.
-    full_edge_index = data.edge_index
-
+    # Transductive: train AND eval on the exact same full-graph Data object.
+    # Message passing during training therefore sees every edge, including
+    # edges that touch test-period nodes.  The loss remains masked to
+    # `data.train_mask`, which is how every published Elliptic GNN trains.
     result = train_and_evaluate(
-        data             = data,
-        train_edge_index = full_edge_index,
-        eval_edge_index  = full_edge_index,
-        cfg              = cfg,
-        setting_name     = "transductive",
+        train_data   = data,
+        eval_data    = data,
+        cfg          = cfg,
+        setting_name = "transductive",
     )
 
     print("\nBest test metrics (transductive):")

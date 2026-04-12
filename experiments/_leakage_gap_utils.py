@@ -4,14 +4,29 @@ experiments/_leakage_gap_utils.py
 Shared helpers for the Transductive vs. Inductive Evaluation Gap experiment.
 
 Both `run_transductive.py` and `run_inductive.py` import from this module so
-that the two settings differ **only** in the adjacency used for message
-passing at training time:
+that the two settings differ **only** in the adjacency (and feature subset)
+used during training-time message passing:
 
-  * Transductive : full adjacency (train + test nodes/edges visible)
-  * Inductive    : train-period adjacency only (both endpoints in steps 1-34)
+  * Transductive : full adjacency + full node tensor at training time.  The
+                   loss is still masked to training-period labels only, but
+                   message passing can propagate information through edges
+                   that touch test-period nodes, and BatchNorm sees every
+                   node's features.  This is the protocol used by most
+                   published Elliptic results.
 
-Everything else — model, seed, optimiser, schedule, loss, evaluation —
-is held constant.  No new models, no new features.
+  * Inductive    : training operates on a relabeled subgraph containing
+                   only nodes from steps 1-34 and only edges whose both
+                   endpoints lie in that window.  The model never observes
+                   a test-period feature vector during training, so neither
+                   message passing nor BatchNorm can leak test-period
+                   statistics into the learned weights.  At inference time
+                   the full adjacency is restored so that test-period nodes
+                   can still receive messages from their (train-period)
+                   neighbourhoods.
+
+Everything else — model class, seed, optimiser, schedule, loss, evaluation
+code, early-stopping criterion — is held constant.  No new models, no new
+features, no hidden hyperparameter differences.
 """
 
 from __future__ import annotations
@@ -21,12 +36,14 @@ import os
 import random
 import sys
 import time
-from dataclasses import dataclass, asdict
-from typing import Dict, Optional
+from dataclasses import asdict, dataclass
+from typing import Dict, Optional, Tuple
 
 import numpy as np
 import torch
 import torch.nn.functional as F
+from torch_geometric.data import Data
+from torch_geometric.utils import subgraph
 
 # Make sure we can import the project modules when invoked as a script.
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -47,7 +64,8 @@ class LeakageGapConfig:
     """Hyperparameters shared by both transductive and inductive runs.
 
     Kept identical on purpose — the experiment isolates the effect of the
-    adjacency matrix, not of model capacity or training recipe.
+    training-time adjacency and node subset, not of model capacity or
+    training recipe.
     """
     model_name: str       = "sage"
     hidden_channels: int  = 256
@@ -87,7 +105,7 @@ def resolve_device(name: str) -> torch.device:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Adjacency masking — the ONLY place where the two settings differ
+# Adjacency masking — the single lever that separates the two settings
 # ─────────────────────────────────────────────────────────────────────────────
 
 def build_inductive_edge_index(
@@ -97,14 +115,59 @@ def build_inductive_edge_index(
 ) -> torch.Tensor:
     """Keep only edges whose **both** endpoints are in the training period.
 
-    Under this masking, GraphSAGE message passing during training cannot see
-    any test-period node features — a strict inductive setup.  At evaluation
-    time the caller should swap back to the full adjacency so that test-period
-    neighbourhoods are available for inference.
+    Used as a helper by `build_inductive_subgraph`; also exposed for unit
+    tests of the masking rule in isolation.
     """
     src, dst = edge_index
     keep = (time_step[src] <= train_time_max) & (time_step[dst] <= train_time_max)
     return edge_index[:, keep]
+
+
+def build_inductive_subgraph(
+    data: Data,
+    train_time_max: int = 34,
+) -> Data:
+    """Return a relabeled PyG Data object containing ONLY train-period nodes.
+
+    The resulting object has:
+        * `x` restricted to rows whose `time_step` <= `train_time_max`
+        * `y` and `time_step` restricted identically
+        * `edge_index` restricted to edges whose both endpoints survived,
+          and relabeled into the new 0..N-1 index space
+        * `train_mask` that matches the original semantics (labeled nodes
+          in steps 1-34) but projected onto the subset
+
+    This is the proper inductive training graph: a GNN trained on it has no
+    mechanism — neither message passing nor BatchNorm running statistics —
+    to observe any test-period information.
+    """
+    train_node_mask = data.time_step <= train_time_max
+    keep_idx        = torch.where(train_node_mask)[0]
+
+    sub_ei, _ = subgraph(
+        keep_idx,
+        data.edge_index,
+        relabel_nodes = True,
+        num_nodes     = data.num_nodes,
+    )
+
+    sub = Data(
+        x          = data.x[keep_idx],
+        y          = data.y[keep_idx],
+        edge_index = sub_ei,
+    )
+    sub.time_step  = data.time_step[keep_idx]
+    sub.train_mask = data.train_mask[keep_idx]
+    sub.test_mask  = torch.zeros_like(sub.train_mask)  # sanity: no test nodes here
+
+    assert sub.train_mask.sum().item() == data.train_mask.sum().item(), (
+        "inductive subgraph should preserve every labeled training node; "
+        "the node mask was derived from the same time-step condition"
+    )
+    assert sub.test_mask.sum().item() == 0, (
+        "inductive subgraph must not expose any test nodes"
+    )
+    return sub
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -115,32 +178,36 @@ def _weighted_ce(logits: torch.Tensor,
                  y: torch.Tensor,
                  mask: torch.Tensor,
                  weight: torch.Tensor) -> torch.Tensor:
+    """Masked, class-weighted cross-entropy — identical formulation in both
+    settings.  Only `mask` selects the subset that contributes to the loss."""
     return F.cross_entropy(logits[mask], y[mask], weight=weight)
 
 
-def _eval(model, data, train_edge_index, eval_edge_index, mask) -> Dict[str, float]:
-    """Evaluate with the adjacency that should be visible at inference."""
+@torch.no_grad()
+def _eval_full_graph(model, eval_data: Data) -> torch.Tensor:
+    """Run the model over the full evaluation graph and return logits."""
     model.eval()
-    with torch.no_grad():
-        logits = model(data.x, eval_edge_index)
-    return compute_metrics(logits, data.y, mask)
+    return model(eval_data.x, eval_data.edge_index)
 
 
 def train_and_evaluate(
-    data,
-    train_edge_index: torch.Tensor,
-    eval_edge_index:  torch.Tensor,
-    cfg: LeakageGapConfig,
+    train_data: Data,
+    eval_data:  Data,
+    cfg:        LeakageGapConfig,
     setting_name: str,
 ) -> Dict:
-    """Train GraphSAGE with a given training adjacency and evaluate on test.
+    """Train GraphSAGE on `train_data`, evaluate on `eval_data.test_mask`.
 
     Args:
-        data:              PyG Data (full graph, all masks populated).
-        train_edge_index:  adjacency used for message passing during training.
-        eval_edge_index:   adjacency used for evaluation.
-        cfg:               shared hyperparameters.
-        setting_name:      "transductive" or "inductive", used for logging.
+        train_data:   Data object used for every training forward pass.
+                       * Transductive: the full graph.
+                       * Inductive:    the train-period subgraph returned
+                                       by `build_inductive_subgraph`.
+        eval_data:     ALWAYS the full graph.  This is how test-period nodes
+                       receive messages from their train-period neighbours
+                       at inference in the inductive setting.
+        cfg:           shared hyperparameters.
+        setting_name:  "transductive" or "inductive", used for logging.
 
     Returns:
         Dict with best test metrics, per-timestep F1 breakdown, and timing.
@@ -148,15 +215,14 @@ def train_and_evaluate(
     set_seed(cfg.seed)
     device = resolve_device(cfg.device)
 
-    data              = data.to(device)
-    train_edge_index  = train_edge_index.to(device)
-    eval_edge_index   = eval_edge_index.to(device)
+    train_data = train_data.to(device)
+    eval_data  = eval_data.to(device)
 
-    class_weights = get_class_weights(data).to(device)
+    class_weights = get_class_weights(train_data).to(device)
 
     model = build_model(
         cfg.model_name,
-        in_channels     = data.num_node_features,
+        in_channels     = train_data.num_node_features,
         hidden_channels = cfg.hidden_channels,
         num_layers      = cfg.num_layers,
         dropout         = cfg.dropout,
@@ -172,7 +238,11 @@ def train_and_evaluate(
 
     n_params = count_parameters(model)
     print(f"[{setting_name}] model={cfg.model_name} "
-          f"params={n_params:,} device={device}")
+          f"params={n_params:,} device={device} "
+          f"train_nodes={train_data.num_nodes:,} "
+          f"train_edges={train_data.num_edges:,} "
+          f"eval_nodes={eval_data.num_nodes:,} "
+          f"eval_edges={eval_data.num_edges:,}")
 
     best_f1      = 0.0
     best_metrics: Dict[str, float] = {}
@@ -181,8 +251,9 @@ def train_and_evaluate(
 
     for epoch in range(1, cfg.epochs + 1):
         model.train()
-        logits = model(data.x, train_edge_index)
-        loss   = _weighted_ce(logits, data.y, data.train_mask, class_weights)
+        logits = model(train_data.x, train_data.edge_index)
+        loss   = _weighted_ce(logits, train_data.y, train_data.train_mask,
+                              class_weights)
 
         optimizer.zero_grad()
         loss.backward()
@@ -191,8 +262,9 @@ def train_and_evaluate(
         scheduler.step()
 
         if epoch % cfg.eval_every == 0 or epoch == 1:
-            te = _eval(model, data, train_edge_index, eval_edge_index,
-                       data.test_mask)
+            logits_full = _eval_full_graph(model, eval_data)
+            te = compute_metrics(logits_full, eval_data.y, eval_data.test_mask)
+
             if te["f1"] > best_f1:
                 best_f1      = te["f1"]
                 best_metrics = te.copy()
@@ -209,14 +281,17 @@ def train_and_evaluate(
                 print(f"  early stop at epoch {epoch}")
                 break
 
-    # Per-timestep breakdown on test window
-    per_step = _per_timestep_breakdown(model, data, eval_edge_index)
+    per_step = _per_timestep_breakdown(model, eval_data)
 
     return {
         "setting":       setting_name,
         "model":         cfg.model_name,
         "hyperparams":   asdict(cfg),
         "n_parameters":  n_params,
+        "train_nodes":   int(train_data.num_nodes),
+        "train_edges":   int(train_data.num_edges),
+        "eval_nodes":    int(eval_data.num_nodes),
+        "eval_edges":    int(eval_data.num_edges),
         "best_metrics":  best_metrics,
         "per_timestep":  per_step,
         "wall_time_sec": round(time.time() - t0, 1),
@@ -224,15 +299,15 @@ def train_and_evaluate(
 
 
 @torch.no_grad()
-def _per_timestep_breakdown(model, data, eval_edge_index) -> Dict[int, Dict[str, float]]:
+def _per_timestep_breakdown(model, eval_data: Data) -> Dict[int, Dict[str, float]]:
     model.eval()
-    logits = model(data.x, eval_edge_index)
+    logits = model(eval_data.x, eval_data.edge_index)
     out: Dict[int, Dict[str, float]] = {}
     for t in range(35, 50):
-        mask = data.test_mask & (data.time_step == t)
+        mask = eval_data.test_mask & (eval_data.time_step == t)
         if mask.sum().item() < 5:
             continue
-        out[int(t)] = compute_metrics(logits, data.y, mask)
+        out[int(t)] = compute_metrics(logits, eval_data.y, mask)
     return out
 
 
@@ -240,7 +315,7 @@ def _per_timestep_breakdown(model, data, eval_edge_index) -> Dict[int, Dict[str,
 # Data loading
 # ─────────────────────────────────────────────────────────────────────────────
 
-def load_elliptic():
+def load_elliptic() -> Data:
     features, classes, edges = load_elliptic_raw()
     data = preprocess(features, classes, edges)
     return data
