@@ -138,6 +138,7 @@ The paper makes the following contributions:
 \end{itemize}
 
 
+\FloatBarrier
 % ============================================================================
 \section{Related work}
 \label{sec:related}
@@ -266,6 +267,7 @@ We show this does not happen during temporal collapse.
 
 
 % ============================================================================
+\FloatBarrier
 \section{Background}
 \label{sec:background}
 
@@ -367,6 +369,7 @@ prior papers attributed to their proposed GNN architectures.
 
 
 % ============================================================================
+\FloatBarrier
 \section{Dataset and problem setup}
 \label{sec:dataset}
 
@@ -380,7 +383,7 @@ of another, encoding BTC flow; following prior work we treat them as
 undirected for bidirectional message passing.
 Table~\ref{tab:dataset} gives the summary statistics.
 
-\begin{table}[!htbp]
+\begin{table}[tbp]
 \centering
 \caption{Elliptic Bitcoin Dataset summary.  The 7.6:1 training
 imbalance and the variation in test-period fraud rates are the two
@@ -416,7 +419,7 @@ already has access to first-order neighbourhood information through
 fixed aggregate features; the GNN's additional contribution is
 learned, dynamic propagation over the graph topology.
 
-\begin{figure}[!htbp]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/fig17_dataset_analysis.png}
 \caption{Dataset characterisation.  Top left: illicit rate over all 49
@@ -446,7 +449,7 @@ has just three illicit nodes among 960 labeled transactions (0.3\,\%).
 Steps 43--49 average 3.3\,\% illicit, roughly a 3.5$\times$ reduction
 from training.
 
-\begin{table}[!htbp]
+\begin{table}[tbp]
 \centering
 \caption{Illicit rate and node counts per test time step.  Steps 35--42
 maintain a rate broadly comparable to training.  Steps 43--49 drop to
@@ -529,7 +532,7 @@ flow.  Result: 1.2M edges, mean degree 5.9, no within-step edges.
 \textbf{Augmented graph.}  Original transaction edges combined with all
 similarity edges: 4.1M edges, mean degree 19.9.
 
-\begin{table}[!htbp]
+\begin{table}[tbp]
 \centering
 \caption{Topology of each graph variant.  Connected components and
 clustering are omitted where prohibitively expensive to compute on the
@@ -562,6 +565,7 @@ structural property that feature-based graphs cannot replicate.
 
 
 % ============================================================================
+\FloatBarrier
 \section{Methodology}
 \label{sec:methods}
 
@@ -668,7 +672,7 @@ GraphSMOTE-style embedding interpolation~\citep{zhao2021graphsmote},
 this preserves the dense intra-fraud connectivity that GNNs should
 learn to associate with illicit behaviour.
 
-\begin{algorithm}[!htbp]
+\begin{algorithm}[tbp]
 \caption{Structural graph augmentation}
 \label{alg:aug}
 \begin{algorithmic}[1]
@@ -724,6 +728,7 @@ scaling.
 
 
 % ============================================================================
+\FloatBarrier
 \section{Experimental setup}
 \label{sec:setup}
 
@@ -774,6 +779,7 @@ not driven by outlier initialisations.
 
 
 % ============================================================================
+\FloatBarrier
 \section{Results}
 \label{sec:results}
 
@@ -783,7 +789,7 @@ not driven by outlier initialisations.
 Figure~\ref{fig:main_results} and Table~\ref{tab:main_results} present
 the full benchmark across 10 configurations.
 
-\begin{figure}[!htbp]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/fig1_main_results.png}
 \caption{The published ranking inverts under inductive evaluation.
@@ -800,7 +806,7 @@ the full benchmark across 10 configurations.
 \label{fig:main_results}
 \end{figure}
 
-\begin{table}[!htbp]
+\begin{table}[tbp]
 \centering
 \caption{Full benchmark results (mean\,$\pm$\,std, 3 seeds).  Bold
 marks column best.  MLP leads on F1 and precision.  No configuration
@@ -884,7 +890,7 @@ its ceiling regardless of imbalance handling.  GAT is more sensitive:
 weighted loss and graph augmentation lift recall by 5--6 percentage
 points over baseline, though at some cost to F1 stability.
 
-\begin{figure}[!htbp]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/fig11_heatmap.png}
 \caption{Heatmap of F1 (left), precision (centre), and recall (right)
@@ -900,7 +906,7 @@ To confirm that the SAGE gap is not due to insufficient model capacity,
 we evaluate deeper and alternative aggregation variants
 (Table~\ref{tab:stronger_baselines}).
 
-\begin{table}[!htbp]
+\begin{table}[tbp]
 \centering
 \caption{Stronger GraphSAGE variants (3 seeds).  Deeper networks and
 alternative aggregation do not close the gap with the MLP.
@@ -932,7 +938,7 @@ does not help; it just adds parameters without adding signal.
 Figure~\ref{fig:strategy_deep_dive} reorganises the benchmark around
 strategy choice rather than model family.
 
-\begin{figure}[!htbp]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/fig14_strategy_deep_dive.png}
 \caption{Strategy comparison across architectures.  Weighted CE gives
@@ -950,7 +956,7 @@ buys recall at the cost of precision stability.
 
 \subsection{Variance across seeds}
 
-\begin{figure}[!htbp]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/fig15_variance_analysis.png}
 \caption{Per-metric variance across training seeds.  MLP and SAGE are
@@ -965,13 +971,14 @@ error bars (Figure~\ref{fig:variance}).  SAGE is similarly stable.  GAT
 is less reliable, with wider precision variance that makes operational
 tuning harder.
 
+\FloatBarrier
 \subsection{Classical and hybrid baseline comparisons}
 \label{sec:classical}
 
 Table~\ref{tab:classical} presents classical baselines, hybrid models,
 and prior work under the same temporal split.
 
-\begin{table}[!htbp]
+\begin{table}[tbp]
 \centering
 \caption{Comparison against classical and hybrid baselines.
   $\dagger$: Weber et al.\ (2019), transductive evaluation, GPU.
@@ -1018,7 +1025,7 @@ between the best GNN (0.919) and RF (0.933) is small (0.014), while
 the F1 gap is larger.  The GNN's probability ranking is adequate; its
 threshold placement is not.
 
-\begin{figure}[!htbp]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/fig_model_comparison.png}
 \caption{Model comparison across all evaluated approaches.  Left: F1.
@@ -1028,9 +1035,10 @@ threshold placement is not.
 \label{fig:model_comparison}
 \end{figure}
 
+\FloatBarrier
 \subsection{Graph construction effects}
 
-\begin{figure}[!htbp]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/fig_graph_construction.png}
 \caption{Effect of graph construction on GNN performance.  Left and
@@ -1053,6 +1061,7 @@ already partially summarised by the aggregate features in the dataset.
 Denser graphs with more neighbours, or more informative neighbours,
 produce larger gains than any architecture swap.
 
+\FloatBarrier
 \subsection{Temporal analysis}
 \label{sec:temporal}
 
@@ -1060,7 +1069,7 @@ All models collapse after step 42.  Figure~\ref{fig:temporal_drift}
 shows this for the four main configurations; the collapse timing is
 identical regardless of architecture or strategy.
 
-\begin{figure}[!htbp]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/fig2_temporal_drift.png}
 \caption{Aggregate test F1 hides a total collapse.  Top: per-step F1
@@ -1079,7 +1088,7 @@ identical regardless of architecture or strategy.
 Table~\ref{tab:temporal_detail} gives the full per-step breakdown for
 SAGE + weighted loss.
 
-\begin{table}[!htbp]
+\begin{table}[tbp]
 \centering
 \caption{Per-step metrics for GraphSAGE + weighted loss.  Stable steps
   (35--42) average F1\,=\,0.381; collapsed steps (43--49) average
@@ -1118,7 +1127,7 @@ Mean 43--49 & & 0.028 & 0.022 & 0.087 \\
 Figure~\ref{fig:perclass} decomposes the collapse into precision and
 recall, confirming the failure is entirely on the recall side.
 
-\begin{figure}[!htbp]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/fig3_perclass_temporal.png}
 \caption{Per-class temporal breakdown for SAGE + weighted loss (left)
@@ -1137,13 +1146,14 @@ rate drops from 8.2\,\% to 1.7\,\%, not because the model is confused,
 but because it has become systematically underconfident about fraud in a
 near-zero-rate regime.
 
+\FloatBarrier
 \subsection{Precision-recall analysis}
 \label{sec:pr_analysis}
 
 Table~\ref{tab:pr_analysis} breaks down average precision by evaluation
 period, revealing the severity of temporal degradation.
 
-\begin{table}[!htbp]
+\begin{table}[tbp]
 \centering
 \caption{Average precision (AP) and optimal-threshold F1 by evaluation
   period.  All models show catastrophic AP collapse from early to late
@@ -1173,7 +1183,7 @@ GAT+Weighted  & All (35--49)    & 0.319 & 0.80 & 0.325 & 0.251 \\
 \end{tabular}
 \end{table}
 
-\begin{figure}[!htbp]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/fig6_pr_curves.png}
 \caption{Precision-recall curves (left) and F1 vs.\ classification
@@ -1188,6 +1198,7 @@ to 0.031, a 93.6\,\% reduction.  The optimal threshold shifts from 0.72
 in the early period to 0.40 in the late period, meaning a fixed
 threshold cannot serve both regimes.
 
+\FloatBarrier
 \subsection{Graph-structure ablation: original vs. shuffled vs. no edges}
 \label{sec:graph_ablation}
 
@@ -1197,7 +1208,7 @@ We train GraphSAGE under three conditions: original transaction edges,
 randomly shuffled edges (same count, random endpoints), and no edges
 (reducing the GNN to an MLP).  Each condition uses 3 random seeds.
 
-\begin{table}[!htbp]
+\begin{table}[tbp]
 \centering
 \caption{Multi-seed graph-structure ablation (3 seeds each).
   Shuffled edges outperform original edges by 11.6 F1 points.  The
@@ -1243,7 +1254,7 @@ feature space.
 Figure~\ref{fig:graph_ablation_temporal} shows the temporal profile
 of all three conditions.
 
-\begin{figure}[!htbp]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/graph_ablation_extended.png}
 \caption{The real Bitcoin graph is worse than random.  Per-step
@@ -1258,13 +1269,93 @@ of all three conditions.
 \label{fig:graph_ablation_temporal}
 \end{figure}
 
+\FloatBarrier
+\subsection{Transductive vs.\ inductive evaluation gap}
+\label{sec:leakage_gap}
+
+The graph-structure ablation (Section~\ref{sec:graph_ablation}) shows
+that the real transaction graph is harmful under inductive evaluation.
+A natural follow-up is whether \emph{transductive} evaluation---the
+protocol used by every prior Elliptic study---masks this harm by
+leaking test-period structure into training.
+
+We answer this by training GraphSAGE under two regimes that differ
+\emph{only} in the adjacency visible at training time, holding model
+architecture, hyperparameters, optimiser, loss, and random seed
+identical:
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Transductive}: the full graph (203{,}769 nodes,
+    468{,}710 edges) is available during every training forward pass.
+    Message passing crosses train--test boundaries, and BatchNorm
+    running statistics absorb test-period feature distributions.
+  \item \textbf{Inductive}: training operates on a strictly
+    train-period subgraph (136{,}265 nodes, 313{,}686 edges, 66.9\,\%
+    of the full graph).  No test-period node feature and no edge
+    incident on a test node is ever visible during training.  At
+    inference the full graph is restored so test nodes can still
+    receive messages from their train-period neighbours.
+\end{itemize}
+
+\begin{table}[tbp]
+\centering
+\caption{Transductive vs.\ inductive evaluation gap (200 epochs,
+  seed\,=\,42, identical hyperparameters).  Inductive GraphSAGE
+  outperforms transductive by 43 F1 points, the opposite of the naive
+  expectation.  Under temporal shift, the cross-period edges that
+  transductive evaluation leaks into training act as noise, not
+  signal.}
+\label{tab:leakage_gap}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Setting} & \textbf{F1} & \textbf{Prec.}
+  & \textbf{Recall} & \textbf{AUC} \\
+\midrule
+Transductive & 0.279 & 0.170 & 0.777 & 0.850 \\
+Inductive    & \textbf{0.706} & \textbf{0.752} & 0.666 & \textbf{0.927} \\
+\midrule
+$\Delta$ (ind.\ $-$ trans.) & $+0.427$ & $+0.582$ & $-0.111$ & $+0.077$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:leakage_gap} reports the aggregate metrics.  The
+inductive model (F1\,=\,0.706) outperforms the transductive model
+(F1\,=\,0.279) by 43 F1 points---the opposite of what one would
+expect if transductive information leakage helped the classifier.
+Note that the inductive result matches the SAGE result from our main
+benchmark (F1\,=\,0.697\,$\pm$\,0.009), confirming that the inductive
+protocol is the correct point of comparison.
+
+The explanation follows from the temporal shift characterised in
+Section~\ref{sec:transductive}.  In the stable regime (steps 35--42)
+the inductive model averages F1\,$\approx$\,0.74 while the transductive
+model averages only F1\,$\approx$\,0.42.  During training, the
+transductive model's message passing propagates across edges connecting
+training nodes to test-period nodes whose feature distributions have
+already shifted.  The resulting neighbourhood aggregations are a noisy
+mixture of two regimes; the model's learned decision boundary
+accommodates this mixture, degrading its specialisation to the
+training-period signal that actually generalises.  The inductive model,
+by contrast, never sees the shifted features and learns a tighter
+boundary that transfers better to early test steps where the
+distribution has not yet diverged.
+
+Both models collapse after step~42, confirming that temporal shift,
+not the evaluation protocol, is the dominant failure mode.  The
+leakage gap quantifies a second, additive harm: when the distribution
+shifts, exposing the shifted data during training does not help the
+model adapt---it merely contaminates the representations it has
+already learned.
+
+\FloatBarrier
 \subsection{Hybrid ensemble results}
 \label{sec:hybrid_results}
 
 Table~\ref{tab:hybrid} reports the four fusion strategies described in
 Section~\ref{sec:hybrid_methods}.
 
-\begin{table}[!htbp]
+\begin{table}[tbp]
 \centering
 \caption{Hybrid ensemble performance.  The concatenation hybrid (GNN
   embeddings + raw features $\to$ RF) achieves F1\,=\,0.807,
@@ -1287,7 +1378,7 @@ Concat (GNN emb + raw $\to$ RF) & \textbf{0.807} & \textbf{0.976}
 \end{tabular}
 \end{table}
 
-\begin{figure}[!htbp]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/hybrid_ensemble.png}
 \caption{Decoupling representation learning from classification
@@ -1321,12 +1412,13 @@ Probability-level fusion (weighted average, F1\,=\,0.453) helps less
 because it cannot selectively attend to different components for
 different inputs; it applies the same weighting everywhere.
 
+\FloatBarrier
 \subsection{Calibration analysis}
 \label{sec:calibration}
 
 Table~\ref{tab:calibration} reports temperature scaling results.
 
-\begin{table}[!htbp]
+\begin{table}[tbp]
 \centering
 \caption{Temperature scaling results.  Optimal temperatures are near
   1.0, indicating mild overconfidence.  ECE reduction after scaling
@@ -1348,7 +1440,7 @@ GAT graph aug   & 1.027 & 0.266 & 0.266 & 0.157 & 0.156 \\
 \end{tabular}
 \end{table}
 
-\begin{figure}[!htbp]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/calibration_curves.png}
 \caption{Calibration reliability diagrams for all four GNN
@@ -1359,7 +1451,7 @@ GAT graph aug   & 1.027 & 0.266 & 0.266 & 0.157 & 0.156 \\
 \label{fig:calibration_curves}
 \end{figure}
 
-\begin{figure}[!htbp]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/fig13_temperature_scaling.png}
 \caption{Calibration is a red herring.  Left: fitted temperatures
@@ -1388,6 +1480,7 @@ a threshold problem, not a probability-scaling problem.  The model
 assigns below-0.5 fraud probabilities to most fraud nodes in the
 low-rate period, and no monotone rescaling fixes this.
 
+\FloatBarrier
 \subsection{Business cost analysis}
 \label{sec:business_cost}
 
@@ -1397,7 +1490,7 @@ In fraud detection, the costs are asymmetric: missing a fraud event
 alarm (false positive).  Figure~\ref{fig:business_cost} evaluates all
 configurations under FN\,=\,\$50k and FP\,=\,\$2k.
 
-\begin{figure}[!htbp]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=0.82\linewidth]{figures/fig7_business_cost.png}
 \caption{Business cost analysis (FN = \$50k, FP = \$2k).  Left: cost
@@ -1417,7 +1510,7 @@ false alarms, a net saving.
 Table~\ref{tab:cost_sweep} shows how model rankings shift across
 different FN/FP ratios.
 
-\begin{table}[!htbp]
+\begin{table}[tbp]
 \centering
 \caption{Business cost at selected FN/FP ratios (normalised cost).
   At low ratios (equal cost), models with high precision dominate.
@@ -1450,9 +1543,10 @@ takes over because its higher recall catches more fraud.  The crossover
 matters for deployment: practitioners who optimise on F1 implicitly
 assume 1:1 costs, which is rarely true in fraud detection.
 
+\FloatBarrier
 \subsection{Confusion matrices}
 
-\begin{figure}[!htbp]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/fig10_confusion_matrices.png}
 \caption{Confusion matrices on the full test set (steps 35--49,
@@ -1462,10 +1556,11 @@ assume 1:1 costs, which is rarely true in fraud detection.
 \label{fig:confusion}
 \end{figure}
 
+\FloatBarrier
 \subsection{Comparison with published work}
 \label{sec:prior_work}
 
-\begin{figure}[!htbp]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/fig8_prior_work.png}
 \caption{Comparison with prior Elliptic work.  Gray: prior work (GPU,
@@ -1474,7 +1569,7 @@ assume 1:1 costs, which is rarely true in fraud detection.
 \label{fig:prior_work}
 \end{figure}
 
-\begin{table}[!htbp]
+\begin{table}[tbp]
 \centering
 \caption{Prior Elliptic Dataset results.  All prior studies use
   transductive evaluation on GPU hardware.  Our inductive CPU
@@ -1514,9 +1609,10 @@ at test time, leaking supervision.
 The concatenation hybrid (F1\,=\,0.807) exceeds all prior published
 results while maintaining an inductive evaluation protocol.
 
+\FloatBarrier
 \subsection{Training dynamics}
 
-\begin{figure}[!htbp]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/fig12_training_curves.png}
 \caption{Training dynamics.  Training F1 (dashed) saturates near 0.98
@@ -1534,10 +1630,11 @@ misleading when fraud behaviour shifts.  The MLP cannot overfit to
 topology because it has no access to structure; it can only overfit to
 feature distributions, which change less dramatically.
 
+\FloatBarrier
 \subsection{EvolveGCN hardware characterisation}
 \label{sec:evolvegcn}
 
-\begin{figure}[!htbp]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/fig9_evolvegcn.png}
 \caption{EvolveGCN hardware analysis.  Left: F1 across all methods
@@ -1560,9 +1657,10 @@ snapshots do not provide enough signal.
 This is not a problem with the EvolveGCN architecture.  It is a
 problem with operating it below its resource requirements.
 
+\FloatBarrier
 \subsection{Embedding analysis}
 
-\begin{figure}[!htbp]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=0.48\linewidth]{figures/embedding_tsne_label.png}
 \hfill
@@ -1585,6 +1683,7 @@ distribution changes.
 
 
 % ============================================================================
+\FloatBarrier
 \section{Analysis and discussion}
 \label{sec:analysis}
 
@@ -1630,7 +1729,7 @@ fraud nodes.
 Figure~\ref{fig:ablation_advantage} plots the per-step F1 difference
 between GraphSAGE and the MLP baseline.
 
-\begin{figure}[!htbp]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/fig16_ablation_advantage.png}
 \caption{The GNN's structural prior is a short-lived asset.
@@ -1658,7 +1757,7 @@ of the signal its aggregation step was built to exploit.
 \subsubsection{Feature attribution: local features carry the discrimination}
 \label{sec:feature_importance}
 
-\begin{figure}[!htbp]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/fig4_feature_importance.png}
 \caption{Random Forest feature importance.  Left: top 30 features by
@@ -1693,6 +1792,7 @@ similarly consistent (RF = 0.047, XGBoost = 0.038, GNN = 0.674).
 This convergence suggests the discriminative signal is genuinely in
 the features, not an artefact of any particular model family.
 
+\FloatBarrier
 \subsection{Why shuffled edges outperform original edges}
 \label{sec:why_shuffled}
 
@@ -1812,9 +1912,10 @@ Random Forest (or any input-partitioning classifier) on the combined
 vector.  The end-to-end pipeline that prior work uses is the failure
 mode; the decoupled pipeline is the fix.
 
+\FloatBarrier
 \subsection{Community structure: real but temporally fragile}
 
-\begin{figure}[!htbp]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/fig5_community_structure.png}
 \caption{Ego-graph analysis (100 samples per class).  Fraud nodes
@@ -1840,13 +1941,14 @@ under distribution shift.  A model that relies on feature distributions
 alone is more robust because feature distributions change less
 dramatically than graph topology.
 
+\FloatBarrier
 \subsection{Statistical significance of the MLP advantage}
 \label{sec:significance}
 
 Table~\ref{tab:significance} reports Welch's $t$-test and Cohen's $d$
 for the SAGE vs. MLP comparison.
 
-\begin{table}[!htbp]
+\begin{table}[tbp]
 \centering
 \caption{Statistical comparison of SAGE (weighted) vs.\ MLP (no
   edges), 3 seeds each.  The F1 difference ($\Delta = -0.063$) is not
@@ -1881,9 +1983,10 @@ $d = 12.16$.  SAGE weighted vs.\ GAT weighted is the one comparison
 that does not reach significance ($p = 0.121$, $d = 1.18$), consistent
 with these two being the closest competitors among the GNN variants.
 
+\FloatBarrier
 \subsection{Distribution shift characterisation}
 
-\begin{figure}[!htbp]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=0.96\linewidth]{figures/distribution_shift.png}
 \caption{Distribution shift metrics over the test period.  Top: F1
@@ -1939,6 +2042,7 @@ decoupling representation learning from classification.
 
 
 % ============================================================================
+\FloatBarrier
 \section{Limitations}
 \label{sec:limitations}
 
@@ -1977,6 +2081,7 @@ decoupling representation learning from classification.
 
 
 % ============================================================================
+\FloatBarrier
 \section{Future work}
 \label{sec:future}
 
@@ -2012,6 +2117,7 @@ collaborate on fraud detection without sharing raw transaction data.
 
 
 % ============================================================================
+\FloatBarrier
 \section{Conclusion}
 \label{sec:conclusion}
 
@@ -2033,6 +2139,11 @@ the Bitcoin transaction edges \emph{improves} GraphSAGE from
 F1\,=\,0.268 to F1\,=\,0.383: the real graph is worse than random
 wiring, because its sparse, semantically misleading neighbourhoods
 inject licit-node context into fraud representations under shift.
+A controlled transductive-vs.-inductive comparison reinforces this:
+inductive GraphSAGE (F1\,=\,0.706) outperforms transductive
+(F1\,=\,0.279) by 43 points, showing that the cross-period edges
+leaked by transductive evaluation act as additional noise rather than
+helpful signal.
 Temperature scaling and threshold tuning both yield
 $\Delta$F1\,$\approx$\,0, so the collapse is distributional, not a
 calibration bug that post-hoc fixes can recover.
