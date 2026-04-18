@@ -1329,7 +1329,7 @@ smaller than the $0.124$ F1 gap to raw features alone.  The
 embedding-only comparison confirms the direction with a larger gap:
 GNN-emb alone ($0.684 \pm 0.018$) beats MLP-emb alone ($0.649$) by
 $+0.035$ F1 ($p = 0.0005$, $d = +1.90$).  (The $0.684$ here is the
-10-seed mean of rows~C and coincides numerically with the old
+10-seed mean of row~C and coincides numerically with the old
 transductive-hybrid number reported in earlier drafts; the two have
 different meanings and should not be cross-referenced.)  Message
 passing on Elliptic therefore encodes a real but practically
@@ -1720,9 +1720,19 @@ are artefacts of the evaluation protocols used to produce them.
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.65\linewidth]{paperfigures/distribution_shift.png}
-\caption{Distribution shift over the test period.  \emph{Top:} F1.
-  \emph{Middle:} MMD vs.\ training.  \emph{Bottom:} L2 feature drift.
-  \emph{Takeaway:} the shift is in the prior, not the features.}
+\caption{Distribution shift over the test period (steps 35--49).
+  \emph{Top-left:} maximum mean discrepancy (MMD) of the test-step
+  feature distribution against the training distribution; higher
+  means more drift.  \emph{Top-right:} scatter of per-step MMD
+  against per-step F1 score, coloured by timestep, with least-
+  squares fit ($r = -0.233$).  \emph{Bottom-left:} L2 distance of
+  per-step feature means from the training feature mean.  \emph{
+  Bottom-right:} illicit rate (left axis, red bars) overlaid with
+  F1 score (right axis, blue line).  \emph{Takeaway:} feature drift
+  (MMD, L2) is modest and only weakly correlated with F1; the
+  dominant shift is in the \emph{prior} (illicit rate crashes from
+  ${\sim}14\,\%$ to ${<}2\,\%$ after step~42), and F1 tracks the
+  prior collapse, not the feature drift.}
 \label{fig:distribution_shift}
 \end{figure}
 \noindent Figure~\ref{fig:distribution_shift} overlays per-step F1 with MMD and
