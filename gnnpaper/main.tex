@@ -8,6 +8,8 @@
 \usepackage[margin=1in]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
+\usepackage{lmodern}                        % scalable fonts, fixes encoding artifacts
+\usepackage[protrusion=true,expansion=true]{microtype}  % fixes overfull hboxes
 \usepackage{amsmath,amssymb}
 \usepackage[dvipsnames,table]{xcolor}
 \usepackage{graphicx}
@@ -18,6 +20,7 @@
 \usepackage{algorithm}
 \usepackage{algorithmic}
 \usepackage{placeins}                       % \FloatBarrier
+\usepackage{float}                          % [H] placement
 \usepackage[font=small,labelfont=bf,
             skip=6pt]{caption}              % compact captions
 \usepackage[colorlinks=true,
@@ -25,18 +28,28 @@
             citecolor=MidnightBlue,
             urlcolor=MidnightBlue]{hyperref}
 
-\graphicspath{{./}{../}}
+\graphicspath{{./}{../}{../paperfigures/}}
 
 % ── Float placement tuning ────────────────────────────────────────────────
-% Keep floats near their references; avoid full float pages unless strictly
-% necessary.  These settings trade a little whitespace for much better flow.
-\renewcommand{\topfraction}{0.92}
-\renewcommand{\bottomfraction}{0.85}
-\renewcommand{\textfraction}{0.08}
-\renewcommand{\floatpagefraction}{0.90}
-\setcounter{topnumber}{3}
+% Keep figures and tables near their first textual anchor while making
+% float-only pages harder to trigger.
+\renewcommand{\topfraction}{0.95}
+\renewcommand{\bottomfraction}{0.80}
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\floatpagefraction}{0.92}
+\renewcommand{\dblfloatpagefraction}{0.92}
+\setcounter{topnumber}{4}
 \setcounter{bottomnumber}{2}
-\setcounter{totalnumber}{4}
+\setcounter{totalnumber}{6}
+\setlength{\textfloatsep}{6pt plus 2pt minus 4pt}
+\setlength{\floatsep}{6pt plus 2pt minus 2pt}
+\setlength{\intextsep}{6pt plus 2pt minus 2pt}
+\setlength{\abovecaptionskip}{4pt}
+\setlength{\belowcaptionskip}{2pt}
+\widowpenalty=10000
+\clubpenalty=10000
+\displaywidowpenalty=10000
+\emergencystretch=2em                        % allow extra stretch to avoid overflow
 
 % ── Table row spacing ─────────────────────────────────────────────────────
 % booktabs alone leaves rules flush against data rows at 11pt.  Increase
@@ -55,38 +68,54 @@
 \maketitle
 
 \begin{abstract}
-Graph Neural Networks (GNNs) are the de facto architecture for fraud
+Graph Neural Networks (GNNs) are the dominant architecture for fraud
 detection on transaction graphs, and published results on the Elliptic
-Bitcoin Dataset consistently report GCN, GraphSAGE, GAT, and EvolveGCN
-as state of the art.  We show that this consensus is an artefact of
-the evaluation protocol rather than a property of graph learning.
-Every prior Elliptic study uses \emph{transductive} evaluation, which
-leaks test-period structure into training, and reports only aggregate
-metrics over a 15-step test window that conceals a near-total failure
-after step 42.  We re-run GCN, GraphSAGE, and GAT under strictly
-inductive evaluation with multi-seed validation and per-timestep
-reporting, and the picture inverts.  A plain three-layer MLP (F1~=
-~0.744) beats every GNN we tested (best: GraphSAGE, F1~=~0.697), and
-Random Forest with no graph structure reaches F1~=~0.820.  The cause
-is temporal distribution shift: the fraud base rate drops
-$39\times$ between training and the worst test steps, collapsing all
-models from F1~$\approx$~0.78 to F1~$<$~0.03.  A multi-seed ablation
-exposes an even sharper finding: \emph{randomly shuffling} the
-transaction edges \emph{improves} GraphSAGE from F1~=~0.268 to
-F1~=~0.383, so the real Bitcoin graph is not merely uninformative, it
-is actively harmful.  A controlled transductive-vs.-inductive
-comparison confirms the mechanism: inductive GraphSAGE
-(F1~=~0.706) outperforms transductive (F1~=~0.279) by 43 points,
-showing that cross-period edges leaked during transductive training
-inject noise rather than signal.  Temperature scaling yields $\Delta$F1~=~0,
-ruling out calibration as a remedy.  We then show the constructive
-counterpart: a concatenation hybrid that feeds GNN embeddings and raw
-features into a downstream Random Forest recovers F1~=~0.807,
-exceeding every prior published result despite our stricter protocol.
-Graph-derived representations carry complementary signal, but only
-when a downstream classifier can selectively weight them against
-tabular features.  We release code, checkpoints, and all experimental
-scripts so the corrected protocol is reproducible.
+Bitcoin Dataset consistently place GCN, GraphSAGE, GAT, and EvolveGCN
+above feature-only baselines.  We show this ranking is fragile under
+two protocol changes that remove evaluation leakage.  First, every
+prior Elliptic study uses \emph{transductive} training, in which
+message passing sees test-period edges, and reports a single aggregate
+metric that masks a near-total collapse after step~42.  Second, several
+widely cited ``inductive'' setups in fact train the encoder on the full
+graph and only mask the loss---a protocol that still leaks test-period
+features through batch statistics and aggregation.
+
+Under a strictly inductive protocol (encoder trained on the
+time-step\,$\le$\,34 relabeled subgraph, evaluated on the full graph
+at inference) with 10 seeds per configuration and per-timestep
+reporting, Random Forest on raw features reaches F1\,=\,0.821 and
+beats every GNN and every hybrid that uses graph-derived
+representations.  GraphSAGE, the strongest graph encoder under this
+protocol, reaches F1\,=\,0.689\,$\pm$\,0.017 (10 seeds); the 3-layer MLP reaches
+F1\,=\,0.549\,$\pm$\,0.015, \emph{reversing} the MLP$>$GNN ranking
+reported by evaluations that use random-partition mini-batching.  A paired controlled experiment
+confirms the mechanism: across 10 seeds GraphSAGE scores
+F1\,=\,0.294\,$\pm$\,0.028 when trained transductively and
+F1\,=\,0.689\,$\pm$\,0.017 when trained on the inductive subgraph, a
+39.5-point paired gap (Cohen's $d$\,=\,15.8, $p$\,=\,2.6$\times$10$^{-12}$)
+driven purely by exposure to test-period adjacency during training.
+
+The paper's original constructive claim---that a concatenation hybrid
+of GNN embeddings and raw features reaches F1\,=\,0.807---does not
+survive the clean protocol: across 10 seeds the same hybrid falls to
+F1\,=\,0.699\,$\pm$\,0.015, and a paired ablation that swaps the GNN
+encoder for an MLP of identical capacity shows graph structure
+contributes a statistically reliable but small lift
+($+0.018$ F1, Welch $p = 0.015$, $d = +1.20$), dwarfed by the
+$0.124$ F1 gap to raw features alone; the 0.807 number was a
+transductive leakage artefact, and raw features remain the strongest
+input.  Temperature scaling
+yields $\Delta$F1\,$\approx$\,0, ruling out calibration as a remedy.
+A multi-seed edge-shuffle ablation further shows that on Elliptic,
+\emph{randomly shuffled edges outperform the real transaction graph}:
+under this dataset's sparse, prior-shifted conditions, the topology
+is not merely uninformative, it is actively harmful.  We audit the
+most-cited prior Elliptic GNN results and the classical baselines
+reported alongside them, and find that every one relies on either
+transductive training or evaluation-time shortcuts that prevent an
+apples-to-apples comparison with our numbers.  Code,
+checkpoints, and the strict-inductive protocol are released so that
+future work can be compared against a leakage-free baseline.
 \end{abstract}
 
 \input{paper_shared_body}
