@@ -35,23 +35,8 @@ time-step\,$\le$\,34, so neither message passing nor batch statistics
 can observe any test-period vector during training; we report
 per-timestep F1 alongside aggregates; and we run 10 seeds with
 95\,\% bootstrap confidence intervals for every headline number.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.80\linewidth]{paperfigures/per_timestep_f1.pdf}
-\caption{Per-timestep fraud-class F1 on Elliptic under strict
-  inductive evaluation.  Random Forest on the raw 165-dimensional
-  features (single deterministic fit) dominates every timestep up to
-  the dark-market shutdown at step~43; GraphSAGE and the graph-blind
-  3-layer MLP (mean\,$\pm$\,1\,std over 10 seeds; shaded bands) track
-  below it.  Every configuration we test collapses to near-zero F1
-  after step~43.  The relative ordering, not the collapse, is the
-  paper's subject: aggregate F1 over the whole test period hides
-  both the pre-shutdown dominance of the feature-only baseline and
-  the post-shutdown universal collapse
-  (full analysis, Section~\ref{sec:temporal}).}
-\label{fig:intro_intuition}
-\end{figure}
+Figure~\ref{fig:main_results} in Section~\ref{sec:main_benchmark}
+shows the per-timestep F1 picture that the aggregate metric conceals.
 
 The protocol changes are minor; the empirical consequences are not.
 Three findings drive the paper.
@@ -956,7 +941,7 @@ XGBoost (ours)             & raw 165-d & 0.775           & 0.931           & No 
 \midrule
 Hybrid: RF on [SAGE emb $\Vert$ raw] & graph+raw
    & $0.699\!\pm\!0.015$  & 0.892 & Yes \\
-Hybrid: RF on [MLP emb $\Vert$ raw]  & raw only
+Hybrid: RF on [MLP emb $\Vert$ raw]  & mlp+raw
    & $0.680\!\pm\!0.015$  & 0.880 & No  \\
 RF on SAGE embedding alone           & graph
    & $0.684\!\pm\!0.018$  & 0.889 & Yes \\
@@ -1303,50 +1288,55 @@ E (raw only)     & ~~~  & $-0.142$ & $-29.3$ & $1.6{\times}10^{-10}$ & $-13.09$ 
 
 Three findings follow.
 
-\textit{Raw features beat every hybrid and every embedding-only
-variant.}  Random Forest on raw features alone (row E,
-F1\,=\,$0.823 \pm 0.002$) dominates every graph-aware cell by at
-least $0.12$ F1 points.  The closest contender---the GNN-embedding
-concat hybrid (row A, F1\,=\,$0.699 \pm 0.015$)---is separated from
-raw-features by Welch $p = 5.9 \times 10^{-10}$ at Cohen's
-$d = -11.4$.  The previously reported 0.807 number required
-transductive encoder training: the concat-hybrid pipeline in earlier
-drafts trained SAGE with full-graph message passing and only masked
-the loss, which exposes test-period adjacency to the encoder's batch
-normalisation and neighbourhood aggregation.  Once that shortcut is
-removed, the number falls from $0.807$ to $0.699$, a $10.8$-point
-drop.
+\textit{Raw features dominate every graph-aware variant; adding a
+graph embedding is a net negative.}  Random Forest on raw features
+alone (row E, F1\,=\,$0.823 \pm 0.002$) beats every graph-aware cell
+by at least $0.12$ F1 points.  The closest contender---the
+GNN-embedding concat hybrid (row A, F1\,=\,$0.699 \pm 0.015$)---is
+separated from raw-features by Welch $p = 5.9 \times 10^{-10}$ at
+Cohen's $d = -11.4$, and concatenating the 256-dim embedding onto
+the 165 raw features actively \emph{lowers} Random Forest F1 by
+$0.124$ points relative to raw alone.  The previously reported
+$0.807$ number required transductive encoder training: the
+concat-hybrid pipeline in earlier drafts trained SAGE with
+full-graph message passing and only masked the loss, which exposes
+test-period adjacency to the encoder's batch normalisation and
+neighbourhood aggregation.  Once that shortcut is removed, the
+number falls from $0.807$ to $0.699$, a $10.8$-point drop.
 
-\textit{GNN embeddings add a small, statistically reliable lift over
-MLP embeddings---orders of magnitude smaller than the gap to raw
-features.}  Rows A and B differ only in whether the encoder sees
-edges.  Across 10 seeds the GNN-concat hybrid reaches
-F1\,=\,$0.699 \pm 0.015$ and the MLP-concat hybrid reaches
-$0.680 \pm 0.015$---a difference of $+0.018$ F1 (Welch $p = 0.015$,
-Cohen's $d = +1.20$, a large standardised effect).  The
-embedding-only comparison (rows C vs.\ D) shows the same direction
-with a larger gap: GNN-emb alone reaches $0.684$ vs.\ MLP-emb alone
-at $0.649$ ($+0.035$ F1, $p = 0.0005$, $d = +1.90$).  Message
-passing on Elliptic therefore \emph{does} encode information beyond
-what a same-capacity MLP extracts from the same features.  But the
-lift it recovers---at most $0.035$ F1 in isolation, at most $0.018$
-F1 once raw features are also in the input---is an order of
-magnitude smaller than the $0.124$ F1 gap between the best hybrid
-and raw features alone.
+\textit{The tree-splitting mechanism.}  Concatenating a 256-dim
+embedding onto 165 raw features changes the Random Forest's
+splitting problem: of the 421 candidate dimensions at every node, a
+fixed $\sqrt{d}$-sized random subset is drawn per split.  When the
+extra 256 dimensions are noisier than the raw 165 with respect to
+the test distribution, they dilute the expected information gain
+per split without adding enough residual signal to compensate.  Row
+E's bootstrap CI $[0.804, 0.841]$ does not overlap with the best
+hybrid's $[0.676, 0.724]$, so the dilution effect is consistent
+across resamples, not a seed artefact.
 
-\textit{Raw features alone remain the strongest input.}
-Row E's $0.823$ F1 is the highest number in this paper (or in the
-prior Elliptic literature) under strict inductive protocol and
-matches the feature-only Random Forest result reported in
-Section~\ref{sec:classical}.  Adding graph-derived embeddings to
-raw features consistently lowers Random Forest performance on this
-dataset: the 256-dim embedding dilutes the tree-splitting signal
-carried by the original 165 engineered features.  The GNN's
-penultimate layer carries \emph{some} signal the MLP penultimate
-layer does not---the A-vs-B and C-vs-D gaps establish that---but
-the Random Forest extracts more of the discriminating signal from
-the raw features directly than from any concatenation that
-includes graph-derived embeddings.
+\textit{Graph structure does encode something---just not enough to
+matter on Elliptic.}  The mechanism above explains why the hybrid
+underperforms raw alone; rows A vs.\ B and C vs.\ D quantify what
+graph structure does contribute.  Rows A and B differ only in
+whether the encoder sees edges.  Across 10 seeds the GNN-concat
+hybrid reaches F1\,=\,$0.699 \pm 0.015$ and the MLP-concat hybrid
+reaches $0.680 \pm 0.015$: $+0.018$ F1 at Welch $p = 0.015$,
+Cohen's $d = +1.20$.  The $d$ is standardised-large because
+seed-to-seed variance is tiny ($\sigma \approx 0.015$), but the
+absolute effect is $0.018$ F1 points---an order of magnitude
+smaller than the $0.124$ F1 gap to raw features alone.  The
+embedding-only comparison confirms the direction with a larger gap:
+GNN-emb alone ($0.684 \pm 0.018$) beats MLP-emb alone ($0.649$) by
+$+0.035$ F1 ($p = 0.0005$, $d = +1.90$).  (The $0.684$ here is the
+10-seed mean of rows~C and coincides numerically with the old
+transductive-hybrid number reported in earlier drafts; the two have
+different meanings and should not be cross-referenced.)  Message
+passing on Elliptic therefore encodes a real but practically
+inconsequential signal the MLP misses: graph structure contributes
+a secondary gain bounded above by $0.035$ F1, while raw features
+contribute a primary gain of $0.124$ F1 that no
+graph-derived representation recovers.
 
 \FloatBarrier
 \subsection{Calibration analysis}
@@ -1439,7 +1429,7 @@ XGBoost (raw)        & 0.428 & 0.298 & 0.281 & 0.267 \\
 GraphSAGE (strict ind.) & 0.465 & 0.231 & 0.202 & 0.176 \\
 GAT (strict ind.)    & 0.461 & 0.195 & 0.161 & 0.131 \\
 GCN (strict ind.)    & 0.550 & 0.302 & 0.271 & 0.243 \\
-GNN+RF hybrid (strict ind.) & 1.015 & 0.491 & 0.426 & 0.367 \\
+GNN+RF hybrid (strict ind.) & 0.490 & 0.443 & 0.437 & 0.432 \\
 MLP (strict ind.)    & 0.484 & 0.241 & 0.211 & 0.184 \\
 \bottomrule
 \end{tabular}
@@ -1567,9 +1557,10 @@ any particular model family.
 \label{sec:why_shuffled}
 
 The extended ablation (Table~\ref{tab:graph_ablation_extended}) shows
-that randomly rewiring edges \emph{improves} GraphSAGE F1 from 0.268 to
-0.383 and also lifts it above the no-edges MLP baseline (0.332).  On
-this dataset, shuffled edges outperform both real edges and no edges.
+that randomly rewiring edges \emph{improves} GraphSAGE F1 from
+$0.290$ to $0.380$ and also lifts it above the no-edges MLP baseline
+($0.316$).  On this dataset, shuffled edges outperform both real
+edges and no edges, and no edges still outperform the real graph.
 We propose three complementary mechanisms to explain this observation:
 
 \textit{(i) Systematic neighbourhood noise.}  The original graph is
@@ -1642,16 +1633,20 @@ raw features alone.  Put plainly: graph structure encodes a
 secondary signal the MLP cannot recover, but raw features encode a
 primary signal neither the GNN hybrid nor the MLP hybrid can match.
 
-\textbf{Why raw features beat the hybrid.}  Concatenating a 256-dim
-embedding onto 165 raw features changes the tree-splitting problem.
-The Random Forest has to discover which of the 421 dimensions carry
-signal; when the extra 256 dimensions are noisy with respect to the
-test distribution, they dilute the available information per split
-and reduce effective capacity for the signal that does matter.
-Row E (raw only, F1\,=\,$0.823$) beats both hybrid rows, and its
-95\,\% bootstrap CI $[0.804, 0.841]$ does not overlap with the
-hybrid CIs.  On Elliptic under this protocol, adding graph-derived
-features is a net negative.
+\textbf{Graph embeddings are a net negative on top of raw features.}
+On Elliptic under strict-inductive evaluation, concatenating a
+graph-derived embedding to the raw feature vector makes the Random
+Forest strictly worse.  Row E (raw only, F1\,=\,$0.823$) beats both
+hybrid rows, and its 95\,\% bootstrap CI $[0.804, 0.841]$ does not
+overlap with either hybrid CI---this is not a variance artefact.
+The mechanism is a tree-splitting one: concatenating a 256-dim
+embedding onto 165 raw features forces the Random Forest to discover
+which of 421 dimensions carry signal, and when the extra 256 are
+noisy with respect to the test distribution they dilute the
+information-per-split budget and crowd out the raw features that
+actually generalise.  The effect is consistent in direction and
+magnitude across both the GNN hybrid and the MLP hybrid, so the cost
+is paid by the concatenation itself, not by any particular encoder.
 
 \textbf{Methodological implication.}  Any hybrid experiment that
 quotes F1 above the inductive raw-features Random Forest ($0.823$)
@@ -1839,15 +1834,23 @@ response.
     71 columns), but we cannot say what any individual feature
     measures.
 
-  \item \textbf{Shuffle ablation uses 3 seeds.}  The
-    original-vs-shuffled comparison (Section~\ref{sec:graph_ablation})
-    uses 3 seeds per condition, which is enough for a large Cohen's
-    $d$ ($d > 2$) but gives only $p = 0.079$ under a Welch test
-    with 2+2 degrees of freedom.  The rank ordering across seeds
-    is perfectly consistent (every seed has shuffled\,$>$\,original),
-    and the effect size is robust, but a full 10-seed replication
-    is the right next step.  We report $p$ and $d$ both so readers
-    can form their own view.
+  \item \textbf{The strict-inductive protocol may be too strict for
+    some deployments.}  We evaluate under a protocol that trains the
+    encoder on the time-step\,$\le$\,34 relabeled subgraph and
+    forbids any test-period node or edge from entering message
+    passing at training time.  This is the right yardstick for
+    generalisation claims and for settings where the model will be
+    applied to future transactions that were unseen at fit time---
+    the most common real deployment pattern.  It is, however, more
+    conservative than some legitimate production regimes: systems
+    that continuously retrain on a sliding window, or that operate
+    genuinely transductively on a fixed graph, are entitled to use
+    test-period adjacency during training and may reproduce the
+    higher published numbers without leakage.  Our critique is of
+    papers that run transductively but report the result as
+    generalisation, not of transductive deployment per se.  A
+    fairer benchmark for the continual-retraining case is an open
+    problem we flag for future work.
 \end{enumerate}
 
 

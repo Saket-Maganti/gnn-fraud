@@ -68,54 +68,34 @@
 \maketitle
 
 \begin{abstract}
-Graph Neural Networks (GNNs) are the dominant architecture for fraud
-detection on transaction graphs, and published results on the Elliptic
-Bitcoin Dataset consistently place GCN, GraphSAGE, GAT, and EvolveGCN
-above feature-only baselines.  We show this ranking is fragile under
-two protocol changes that remove evaluation leakage.  First, every
-prior Elliptic study uses \emph{transductive} training, in which
-message passing sees test-period edges, and reports a single aggregate
-metric that masks a near-total collapse after step~42.  Second, several
-widely cited ``inductive'' setups in fact train the encoder on the full
-graph and only mask the loss---a protocol that still leaks test-period
-features through batch statistics and aggregation.
-
-Under a strictly inductive protocol (encoder trained on the
-time-step\,$\le$\,34 relabeled subgraph, evaluated on the full graph
-at inference) with 10 seeds per configuration and per-timestep
-reporting, Random Forest on raw features reaches F1\,=\,0.821 and
-beats every GNN and every hybrid that uses graph-derived
-representations.  GraphSAGE, the strongest graph encoder under this
-protocol, reaches F1\,=\,0.689\,$\pm$\,0.017 (10 seeds); the 3-layer MLP reaches
-F1\,=\,0.549\,$\pm$\,0.015, \emph{reversing} the MLP$>$GNN ranking
-reported by evaluations that use random-partition mini-batching.  A paired controlled experiment
-confirms the mechanism: across 10 seeds GraphSAGE scores
-F1\,=\,0.294\,$\pm$\,0.028 when trained transductively and
-F1\,=\,0.689\,$\pm$\,0.017 when trained on the inductive subgraph, a
-39.5-point paired gap (Cohen's $d$\,=\,15.8, $p$\,=\,2.6$\times$10$^{-12}$)
-driven purely by exposure to test-period adjacency during training.
-
-The paper's original constructive claim---that a concatenation hybrid
-of GNN embeddings and raw features reaches F1\,=\,0.807---does not
-survive the clean protocol: across 10 seeds the same hybrid falls to
-F1\,=\,0.699\,$\pm$\,0.015, and a paired ablation that swaps the GNN
-encoder for an MLP of identical capacity shows graph structure
-contributes a statistically reliable but small lift
-($+0.018$ F1, Welch $p = 0.015$, $d = +1.20$), dwarfed by the
-$0.124$ F1 gap to raw features alone; the 0.807 number was a
-transductive leakage artefact, and raw features remain the strongest
-input.  Temperature scaling
-yields $\Delta$F1\,$\approx$\,0, ruling out calibration as a remedy.
-A multi-seed edge-shuffle ablation further shows that on Elliptic,
-\emph{randomly shuffled edges outperform the real transaction graph}:
-under this dataset's sparse, prior-shifted conditions, the topology
-is not merely uninformative, it is actively harmful.  We audit the
-most-cited prior Elliptic GNN results and the classical baselines
-reported alongside them, and find that every one relies on either
-transductive training or evaluation-time shortcuts that prevent an
-apples-to-apples comparison with our numbers.  Code,
-checkpoints, and the strict-inductive protocol are released so that
-future work can be compared against a leakage-free baseline.
+Published results on the Elliptic Bitcoin Dataset place GCN, GraphSAGE,
+GAT, and EvolveGCN above feature-only baselines, and we show this
+ranking is a protocol artefact rather than a property of graph
+learning.  Under a strictly inductive protocol (encoder trained on
+the time-step\,$\le$\,34 relabeled subgraph, evaluated on the full
+graph at inference) with 10 seeds and per-timestep reporting, Random
+Forest on raw 165-dimensional features reaches F1\,=\,$0.821$ and
+beats every GNN we tested; GraphSAGE, the strongest graph encoder,
+reaches only F1\,=\,$0.689 \pm 0.017$.  A paired controlled
+experiment holding architecture, optimiser, loss, and seed constant
+across 10 matched seeds shows GraphSAGE scoring
+F1\,=\,$0.294 \pm 0.028$ when trained transductively and
+F1\,=\,$0.689 \pm 0.017$ when trained inductively---a 39.5-point
+paired gap (Cohen's $d$\,=\,$15.8$, $p$\,=\,$2.6 \times 10^{-12}$)
+explained entirely by training-time exposure to test-period
+adjacency.  Earlier drafts reported F1\,=\,$0.807$ for a concatenation
+hybrid of GraphSAGE embeddings and raw features; under the clean
+protocol the same hybrid falls to F1\,=\,$0.699 \pm 0.015$, and the
+GNN contributes a statistically reliable but small $+0.018$ F1 lift
+over a matched-capacity MLP substitute ($p = 0.015$, $d = +1.20$)
+that is dwarfed by the $0.124$ F1 gap to raw features alone.  A
+10-seed edge-shuffle ablation further shows that on Elliptic
+\emph{randomly shuffled edges outperform the real transaction graph}
+by $8.9$ F1 points, so the dataset's topology is not merely
+uninformative but actively harmful under its sparse, prior-shifted
+conditions.  Code, checkpoints, 10-seed per-run artefacts, and the
+strict-inductive protocol are released so future work can be compared
+against a leakage-free baseline.
 \end{abstract}
 
 \input{paper_shared_body}
