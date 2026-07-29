@@ -1,29 +1,52 @@
 {
-  "schema": "coregraph_final_gate_status_v1",
-  "verdict": "COREGRAPH_BUILD_COMPLETE_BASELINES_PENDING_EXTERNAL_INTEGRATION",
-  "local_build_complete": true,
+  "schema": "coregraph_independent_audit_gate_status_v2",
+  "verdict": "PENDING_DRAFT_PR_CI_AND_SECOND_REVIEW_HANDOFF",
+  "scientific_core_repairs_complete": true,
+  "execution_readiness_claimed": false,
   "execution_performed": {
+    "official_baseline_installation": false,
     "provider_downloads": false,
+    "real_saved_predictions_connected": false,
+    "saved_output_pilot": false,
     "full_dataset_training": false,
     "multi_seed_campaigns": false,
     "kaggle_runs": false,
     "long_gpu_cpu_runs": false
   },
-  "gates": {
-    "frozen_tkde_boundary": "PASS_249_FILES",
-    "compile_lint_typed_core": "PASS",
-    "tests": "PASS_94",
-    "coverage": "77_PERCENT",
-    "cpu_one_epoch_smoke": "PASS",
-    "theory": "PASS_3_PROVED_WITH_GATES",
+  "local_gates": {
+    "compileall": "PASS",
+    "ruff": "PASS_FULL",
+    "mypy": "PASS_50_MODULES",
+    "tests": "PASS_158",
+    "anonymous_package_tests": "PASS_131",
+    "coverage_all_coregraph": "PASS_85_PERCENT",
+    "coverage_contracts": "PASS_96_PERCENT",
+    "coverage_routing": "PASS_96_PERCENT",
+    "coverage_objectives": "PASS_86_PERCENT",
+    "coverage_pilot": "PASS_90_PERCENT",
+    "coverage_support_engine": "PASS_88_PERCENT",
+    "coverage_contract_splits": "PASS_96_PERCENT",
+    "theory": "PASS_3_PROVED_XOR_COUNTEREXAMPLE",
+    "synthetic_method_checks": "PASS_10_SCENARIOS",
+    "cpu_one_epoch_smoke": "PASS_NO_PROVIDER_DATA",
     "notebooks": "PASS_12",
-    "paper_skeleton": "PASS_7_PAGE_VISUAL_QA",
-    "anonymous_release": "PASS_67_PACKAGED_TESTS",
-    "saved_output_pilot": "BLOCKED_INCOMPLETE_METHOD_ROWS",
-    "provider_manifests": "BLOCKED_NOT_STAGED",
-    "official_baseline_parity": "BLOCKED_PENDING_INTEGRATION",
-    "graphmetro_eerm_licences": "BLOCKED_NO_VERIFIED_LICENCE"
+    "paper_build_audit": "PASS_7_PAGE_PLACEHOLDER_EMPIRICAL_CLAIMS_BLOCKED",
+    "public_tree": "PASS_SANITIZED_INTENDED_TREE_ZERO_FINDINGS",
+    "anonymous_release": "PASS",
+    "frozen_tkde_boundary": "ZERO_TKDE_SCIENTIFIC_DELTAS_249_FILES"
   },
-  "push_authorized": false,
-  "push_performed": false
+  "external_or_empirical_gates": {
+    "draft_pr_ci": "PENDING",
+    "saved_output_pilot": "NOT_RUN_REQUIRES_SEPARATE_REVIEW",
+    "provider_manifests": "NOT_CONNECTED",
+    "official_baseline_parity": "NOT_ATTEMPTED",
+    "execution_readiness": "NOT_CLAIMED"
+  },
+  "git": {
+    "branch": "codex/coregraph-iclr-buildout-2026",
+    "draft_pr": 2,
+    "normal_fast_forward_push_complete": false,
+    "force_push": false,
+    "merge": false
+  }
 }

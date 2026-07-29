@@ -35,6 +35,7 @@ from coregraph.experts.feature_experts import LogisticRegressionExpert  # noqa: 
 from coregraph.experts.sampled_graph_expert import SampledNodeGraphExpert  # noqa: E402
 from coregraph.experts.sampling import SamplingPlan  # noqa: E402
 from coregraph.method import CoReGraph  # noqa: E402
+from coregraph.objectives.scores import ScoreType  # noqa: E402
 from coregraph.tasks.base import PredictionUnit, TaskBatch  # noqa: E402
 from coregraph.utils.seeding import seed_everything  # noqa: E402
 
@@ -94,12 +95,14 @@ def main() -> int:
     output = model(
         contracts=[contract(f"smoke_{index % 2}") for index in range(n)],
         expert_scores=expert_scores,
-        diagnostics=torch.tensor(
+        score_type=ScoreType.PROBABILITY,
+        shared_diagnostics=torch.tensor(
             np.column_stack(
                 [np.nanmean(features, axis=1), np.nanstd(features, axis=1), test]
             ),
             dtype=torch.float32,
         ),
+        per_expert_diagnostics=torch.zeros((n, 2, 0)),
         availability_mask=torch.ones((n, 2), dtype=torch.bool),
         expert_costs=torch.tensor([1.0, 3.0]),
         expert_names=("feature", "graph_like"),

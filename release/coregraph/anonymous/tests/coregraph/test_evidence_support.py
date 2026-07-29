@@ -131,13 +131,14 @@ def test_contradiction_and_scope_widening(contract_factory) -> None:
     )
     assert report.status is SupportStatus.REFUTED_IN_SCOPE
     assert report.contradiction_ids == ("artifact",)
-    assert report.scope_widening_detected
+    assert not report.scope_widening_detected
+    assert "requested_scope_incompatible" in report.missing_requirements
 
 
-def test_theory_only_is_not_predictive() -> None:
+def test_theory_boolean_only_is_blocked_and_not_predictive() -> None:
     theoretical = claim(theoretical=True, prediction_requirement=False)
     report = SupportEngine().evaluate(theoretical, [])
-    assert report.status is SupportStatus.SUPPORTED_THEORETICALLY
+    assert report.status is SupportStatus.BLOCKED_INCOMPLETE_SCOPE
     assert not report.predictive_ordering_permitted
 
 

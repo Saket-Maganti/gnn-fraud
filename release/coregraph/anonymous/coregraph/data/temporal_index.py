@@ -21,16 +21,20 @@ def first_incident_timestamp(
     if num_nodes < 0 or np.any(edges < 0) or np.any(edges >= num_nodes):
         raise ValueError("edge endpoints outside node range")
     if len(times) == 0:
-        fill = 0 if isolated_value is None else isolated_value
-        return np.full(num_nodes, fill)
+        fill = np.nan if isolated_value is None else isolated_value
+        return np.full(num_nodes, fill, dtype=float)
     if not np.issubdtype(times.dtype, np.number):
         raise ValueError("edge timestamps must be numeric")
     first = np.full(num_nodes, np.inf, dtype=float)
     np.minimum.at(first, edges[0], times)
     np.minimum.at(first, edges[1], times)
-    fill = float(np.min(times)) if isolated_value is None else float(isolated_value)
+    fill = np.nan if isolated_value is None else float(isolated_value)
     first[np.isinf(first)] = fill
-    if np.issubdtype(times.dtype, np.integer) and float(fill).is_integer():
+    if (
+        np.issubdtype(times.dtype, np.integer)
+        and np.isfinite(fill)
+        and float(fill).is_integer()
+    ):
         return first.astype(times.dtype)
     return first
 
@@ -41,10 +45,17 @@ def quantile_buckets(values: np.ndarray, n_buckets: int) -> np.ndarray:
     values = np.asarray(values)
     if values.size == 0:
         return np.asarray([], dtype=int)
-    boundaries = np.quantile(values, np.linspace(0, 1, n_buckets + 1))
+    finite = np.isfinite(values)
+    output = np.zeros(values.shape, dtype=int)
+    if not finite.any():
+        return output
+    boundaries = np.quantile(values[finite], np.linspace(0, 1, n_buckets + 1))
     boundaries[0] = np.nextafter(boundaries[0], -np.inf)
     boundaries[-1] = np.nextafter(boundaries[-1], np.inf)
-    return np.digitize(values, boundaries[1:-1], right=False).astype(int) + 1
+    output[finite] = (
+        np.digitize(values[finite], boundaries[1:-1], right=False).astype(int) + 1
+    )
+    return output
 
 
 def historical_edge_mask(

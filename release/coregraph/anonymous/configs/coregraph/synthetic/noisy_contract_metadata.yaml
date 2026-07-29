@@ -1,0 +1,5 @@
+regime: noisy_contract_metadata
+seed: 109
+num_nodes: 128
+time_steps: 4
+contract_metadata_noise: 0.25

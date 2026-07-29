@@ -1,0 +1,6 @@
+regime: calibration_mismatch
+seed: 111
+num_nodes: 128
+time_steps: 4
+feature_signal: 2.0
+graph_signal: 2.0

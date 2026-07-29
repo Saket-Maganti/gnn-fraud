@@ -9,6 +9,7 @@ from coregraph.contracts.axes import (
     BudgetSpec,
     ConstructionAxis,
     ConstructionSpec,
+    EdgeVisibility,
     ResourceAxis,
     ResourceSpec,
     SelectionAxis,
@@ -30,7 +31,7 @@ def test_contract_roundtrips_and_hash_is_stable(contract_factory) -> None:
     from_yaml = DeploymentContract.from_yaml(contract.to_yaml())
     assert from_json == contract == from_yaml
     assert from_json.stable_hash == contract.stable_hash
-    assert json.loads(contract.to_json())["schema_version"] == 2
+    assert json.loads(contract.to_json())["schema_version"] == 3
     assert contract.contract_id.endswith(contract.stable_hash[:16])
 
 
@@ -41,23 +42,25 @@ def test_axis_difference_and_projection(contract_factory) -> None:
         visibility=VisibilityAxis.HISTORICAL_ONLY,
     )
     assert set(left.axis_difference(right)) == {"visibility"}
-    assert left.claim_projection(("visibility",)) == {"visibility": "strict_inductive"}
+    assert left.claim_projection(("visibility",))["visibility"][
+        "edge_visibility"
+    ] == "historical_by_cutoff"
     with pytest.raises(ValueError, match="unknown"):
         left.claim_projection(("identity",))
 
 
 def test_missing_graph_is_jointly_validated(contract_factory) -> None:
-    with pytest.raises(ValueError, match="missing-graph"):
+    with pytest.raises(ValueError, match="edge-free"):
         contract_factory(visibility=VisibilityAxis.MISSING_GRAPH)
     valid = contract_factory(
         visibility=VisibilityAxis.MISSING_GRAPH,
         construction=ConstructionSpec(ConstructionAxis.NO_GRAPH),
     )
-    assert valid.visibility is VisibilityAxis.MISSING_GRAPH
+    assert valid.visibility.edge_visibility is EdgeVisibility.NONE
 
 
 def test_isolated_view_rejects_edge_construction(contract_factory) -> None:
-    with pytest.raises(ValueError, match="isolated"):
+    with pytest.raises(ValueError, match="edge-free"):
         contract_factory(visibility=VisibilityAxis.ISOLATED_INDUCTIVE)
 
 

@@ -23,7 +23,7 @@ from typing import Optional, List
 # ─────────────────────────────────────────────────────────────────────────────
 
 def mlp(dims: List[int], dropout: float = 0.0) -> nn.Sequential:
-    layers = []
+    layers: list[nn.Module] = []
     for i in range(len(dims) - 1):
         layers.append(nn.Linear(dims[i], dims[i+1]))
         if i < len(dims) - 2:

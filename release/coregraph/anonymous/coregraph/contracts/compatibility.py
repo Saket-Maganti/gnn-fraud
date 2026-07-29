@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Protocol
+
 from coregraph.contracts.axes import (
     BudgetAxis,
     BudgetSpec,
@@ -14,9 +16,15 @@ from coregraph.contracts.axes import (
     TimeAxis,
     TimeSpec,
     VisibilityAxis,
+    VisibilitySpec,
 )
 from coregraph.contracts.contract import DeploymentContract
-from fraudshiftbench.protocols import ProtocolContract
+
+
+class LegacyProtocolContract(Protocol):
+    """Minimal frozen-protocol surface required by the one-way adapter."""
+
+    name: str
 
 _MAP = {
     "transductive_static": (
@@ -47,7 +55,7 @@ _MAP = {
 
 
 def from_protocol_contract(
-    protocol: ProtocolContract,
+    protocol: LegacyProtocolContract,
     *,
     environment_id: str,
     role: ContractRole,
@@ -66,9 +74,9 @@ def from_protocol_contract(
         environment_id=environment_id,
         role=role,
         time=TimeSpec(mode=time, window=1 if time is TimeAxis.ROLLING else None),
-        visibility=visibility,
+        visibility=VisibilitySpec.from_v2(visibility),
         construction=ConstructionSpec(
-            mode=construction,
+            construction,
             recent_window=1 if construction is ConstructionAxis.RECENT_WINDOW else None,
         ),
         selection=selection,

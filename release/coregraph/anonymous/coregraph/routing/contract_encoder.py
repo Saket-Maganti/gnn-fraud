@@ -2,66 +2,99 @@
 
 from __future__ import annotations
 
+from enum import Enum
 from typing import Sequence
 
 import torch
 import torch.nn as nn
 
 from coregraph.contracts.axes import (
-    BudgetAxis,
-    ConstructionAxis,
-    ResourceAxis,
+    DeviceClass,
+    EdgeFeaturePolicy,
+    EdgeVisibility,
+    HistoryPolicy,
+    MeasurementStatus,
+    NodeVisibility,
+    Orientation,
+    ReviewMode,
     SelectionAxis,
     TimeAxis,
-    VisibilityAxis,
+    TopologyTransform,
 )
 from coregraph.contracts.contract import DeploymentContract
 
-AxisEnum = (
-    type[TimeAxis]
-    | type[VisibilityAxis]
-    | type[ConstructionAxis]
-    | type[SelectionAxis]
-    | type[BudgetAxis]
-    | type[ResourceAxis]
-)
-
-_AXES: dict[str, AxisEnum] = {
-    "time": TimeAxis,
-    "visibility": VisibilityAxis,
-    "construction": ConstructionAxis,
+_FIELDS: dict[str, type[Enum]] = {
+    "time_mode": TimeAxis,
+    "visibility_node": NodeVisibility,
+    "visibility_edge": EdgeVisibility,
+    "construction_history": HistoryPolicy,
+    "construction_orientation": Orientation,
+    "construction_edge_features": EdgeFeaturePolicy,
+    "construction_topology": TopologyTransform,
     "selection": SelectionAxis,
-    "budget": BudgetAxis,
-    "resource": ResourceAxis,
+    "budget_review": ReviewMode,
+    "resource_device": DeviceClass,
+    "resource_measurement": MeasurementStatus,
+}
+_COORDINATE_FIELDS = {
+    "time": ("time_mode",),
+    "visibility": ("visibility_node", "visibility_edge"),
+    "construction": (
+        "construction_history",
+        "construction_orientation",
+        "construction_edge_features",
+        "construction_topology",
+    ),
+    "selection": ("selection",),
+    "budget": ("budget_review",),
+    "resource": ("resource_device", "resource_measurement"),
 }
 
 
-def _axis_values(contract: DeploymentContract) -> dict[str, str]:
+def _categorical_values(contract: DeploymentContract) -> dict[str, str]:
     return {
-        "time": contract.time.mode.value,
-        "visibility": contract.visibility.value,
-        "construction": contract.construction.mode.value,
+        "time_mode": contract.time.mode.value,
+        "visibility_node": contract.visibility.node_visibility.value,
+        "visibility_edge": contract.visibility.edge_visibility.value,
+        "construction_history": contract.construction.history_policy.value,
+        "construction_orientation": contract.construction.orientation.value,
+        "construction_edge_features": (
+            contract.construction.edge_feature_policy.value
+        ),
+        "construction_topology": contract.construction.topology_transform.value,
         "selection": contract.selection.value,
-        "budget": contract.budget.mode.value,
-        "resource": contract.resource.mode.value,
+        "budget_review": contract.budget.review_mode.value,
+        "resource_device": contract.resource.device_class.value,
+        "resource_measurement": contract.resource.measurement_status.value,
     }
 
 
 def continuous_contract_features(contract: DeploymentContract) -> list[float]:
+    costs = contract.budget.cost_matrix or ((0.0, 0.0), (0.0, 0.0))
     return [
         float(contract.time.start or 0.0),
         float(contract.time.end or 0.0),
         float(contract.time.window or 0),
+        float(contract.visibility.target_node_availability),
+        float(contract.visibility.target_edge_availability),
+        float(contract.visibility.label_free_target_covariates),
+        float(contract.visibility.test_time_graph_access),
+        float(contract.visibility.historical_only),
         float(contract.construction.recent_window or 0),
         float(contract.construction.degree_cap or 0),
-        float(contract.budget.value or 0.0),
-        float(contract.resource.memory_gb or 0.0),
-        float(contract.resource.latency_ms or 0.0),
+        float(contract.budget.review_fraction or 0.0),
+        float(contract.budget.fixed_k or 0),
+        float(contract.budget.abstention_capacity or 0.0),
+        float(contract.budget.latency_allowance_ms or 0.0),
+        *(float(value) for row in costs for value in row),
+        float(contract.resource.memory_cap_gb or 0.0),
+        float(contract.resource.latency_cap_ms or 0.0),
+        float(len(contract.resource.unavailable_experts)),
     ]
 
 
 class FactorisedContractEncoder(nn.Module):
-    """One embedding per axis with optional pairwise interactions."""
+    """One learned representation per top-level coordinate."""
 
     def __init__(
         self,
@@ -82,18 +115,29 @@ class FactorisedContractEncoder(nn.Module):
         self.pairwise_interactions = pairwise_interactions
         self.axis_dropout = axis_dropout
         self.contract_noise_std = contract_noise_std
-        self.value_to_index: dict[str, dict[str, int]] = {
-            name: {member.value: index for index, member in enumerate(enum)}
-            for name, enum in _AXES.items()
-        }
+        self.value_to_index: dict[str, dict[str, int]] = {}
+        for name, enum_type in _FIELDS.items():
+            self.value_to_index[name] = {
+                str(member.value): index
+                for index, member in enumerate(enum_type)
+            }
         self.embeddings = nn.ModuleDict(
             {
                 name: nn.Embedding(len(mapping), embedding_dim)
                 for name, mapping in self.value_to_index.items()
             }
         )
-        pair_count = len(_AXES) * (len(_AXES) - 1) // 2 if pairwise_interactions else 0
-        input_dim = len(_AXES) * embedding_dim + pair_count + 8
+        pair_count = (
+            len(_COORDINATE_FIELDS) * (len(_COORDINATE_FIELDS) - 1) // 2
+            if pairwise_interactions
+            else 0
+        )
+        continuous_dim = 21
+        input_dim = (
+            len(_COORDINATE_FIELDS) * embedding_dim
+            + pair_count
+            + continuous_dim
+        )
         self.projection = nn.Sequential(
             nn.Linear(input_dim, output_dim),
             nn.ReLU(),
@@ -106,14 +150,14 @@ class FactorisedContractEncoder(nn.Module):
         *,
         device: torch.device | None = None,
     ) -> dict[str, torch.Tensor]:
-        values = [_axis_values(contract) for contract in contracts]
+        values = [_categorical_values(contract) for contract in contracts]
         return {
             name: torch.tensor(
                 [self.value_to_index[name][row[name]] for row in values],
                 dtype=torch.long,
                 device=device,
             )
-            for name in _AXES
+            for name in _FIELDS
         }
 
     def forward(self, contracts: Sequence[DeploymentContract]) -> torch.Tensor:
@@ -121,33 +165,42 @@ class FactorisedContractEncoder(nn.Module):
             raise ValueError("contract encoder requires at least one contract")
         device = next(self.parameters()).device
         indices = self.encode_indices(contracts, device=device)
-        encoded: list[torch.Tensor] = []
-        unknown_index = {
-            name: mapping["unknown"] for name, mapping in self.value_to_index.items()
-        }
-        for name in _AXES:
-            idx = indices[name]
+        coordinate_vectors: list[torch.Tensor] = []
+        for coordinate, fields in _COORDINATE_FIELDS.items():
+            del coordinate
+            parts = [self.embeddings[name](indices[name]) for name in fields]
+            vector = torch.stack(parts, dim=0).mean(dim=0)
             if self.training and self.axis_dropout > 0:
-                drop = torch.rand(idx.shape, device=device) < self.axis_dropout
-                idx = torch.where(
-                    drop,
-                    torch.full_like(idx, unknown_index[name]),
-                    idx,
+                drop = (
+                    torch.rand((len(contracts), 1), device=device)
+                    < self.axis_dropout
                 )
-            encoded.append(self.embeddings[name](idx))
+                vector = torch.where(drop, torch.zeros_like(vector), vector)
+            coordinate_vectors.append(vector)
         interactions: list[torch.Tensor] = []
         if self.pairwise_interactions:
-            for left in range(len(encoded)):
-                for right in range(left + 1, len(encoded)):
-                    interactions.append((encoded[left] * encoded[right]).sum(dim=-1, keepdim=True))
+            for left in range(len(coordinate_vectors)):
+                for right in range(left + 1, len(coordinate_vectors)):
+                    interactions.append(
+                        (
+                            coordinate_vectors[left]
+                            * coordinate_vectors[right]
+                        ).sum(dim=-1, keepdim=True)
+                    )
         continuous = torch.tensor(
             [continuous_contract_features(contract) for contract in contracts],
             dtype=torch.float32,
             device=device,
         )
         if self.training and self.contract_noise_std > 0:
-            continuous = continuous + torch.randn_like(continuous) * self.contract_noise_std
-        joined = torch.cat([*encoded, *interactions, continuous], dim=-1)
+            continuous = (
+                continuous
+                + torch.randn_like(continuous) * self.contract_noise_std
+            )
+        joined = torch.cat(
+            [*coordinate_vectors, *interactions, continuous],
+            dim=-1,
+        )
         return self.projection(joined)
 
 
