@@ -49,3 +49,11 @@ Repair commits:
   matched-contract worst-case gate.
 
 Draft-PR CI and the PR-body update are pending the first normal push.
+
+## First CI feedback
+
+The first normal push started duplicate push/PR workflows. Both audit jobs
+passed. One typed-core job exposed a pre-existing platform-sensitive exact
+float assertion (`1.0000001192092896 == 1`) in the router mask test. The
+assertion was repaired to use numerical tolerance; no scientific computation
+or acceptance threshold changed.
