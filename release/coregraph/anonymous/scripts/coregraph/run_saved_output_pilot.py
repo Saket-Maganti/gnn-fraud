@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Plan or execute the seed-bound saved-prediction pilot V3."""
+"""Plan, validate, or execute the seed-bound saved-prediction pilot V4."""
 
 from __future__ import annotations
 
@@ -19,6 +19,7 @@ if str(REPOSITORY_ROOT) not in sys.path:
 from coregraph.experiments.pilot import (  # noqa: E402
     BaselinePrediction,
     MethodExecutionStatus,
+    PILOT_RESULT_ROW_FIELDS,
     PilotAblation,
     SavedSourceGroup,
     align_artifact_group,
@@ -31,6 +32,13 @@ from coregraph.experiments.pilot import (  # noqa: E402
     instance_clairvoyant_oracle_ceiling,
     load_prediction_artifacts,
     validate_artifact_groups,
+)
+from coregraph.data.leakage import (  # noqa: E402
+    audit_cross_role_prediction_scopes,
+)
+from coregraph.experiments.protocol_registry import (  # noqa: E402
+    load_protocol_registry,
+    validate_protocol_bindings,
 )
 
 
@@ -66,6 +74,190 @@ def _router_execution_status(
     return MethodExecutionStatus.EXECUTABLE
 
 
+def _group_roles(groups):
+    roles = {
+        key: {artifact.contract_role for artifact in group}
+        for key, group in groups.items()
+    }
+    if any(len(value) != 1 for value in roles.values()):
+        raise RuntimeError(
+            "each prediction group must declare exactly one contract role"
+        )
+    return roles
+
+
+def build_no_training_materialization(
+    artifacts,
+    groups,
+    *,
+    gate_schema,
+    registry,
+):
+    """Materialise the full V4 result-key surface without fitting or scoring."""
+
+    bindings = validate_protocol_bindings(artifacts, registry)
+    roles = _group_roles(groups)
+    source_keys = sorted(
+        key for key, value in roles.items() if value == {"source"}
+    )
+    target_keys = sorted(
+        key for key, value in roles.items() if value == {"target"}
+    )
+    if not target_keys:
+        raise RuntimeError("pilot validation requires declared target groups")
+    aligned = {
+        key: align_artifact_group(groups[key])
+        for key in [*source_keys, *target_keys]
+    }
+    scopes = tuple(
+        aligned[key].as_leakage_scope(artifact)
+        for key in [*source_keys, *target_keys]
+        for artifact in groups[key]
+    )
+    leakage_reports = audit_cross_role_prediction_scopes(scopes)
+    atomic = [
+        report
+        for report in leakage_reports
+        if not report.passed
+    ]
+    if atomic:
+        codes = sorted(
+            {
+                finding.code
+                for report in atomic
+                for finding in report.findings
+                if finding.severity == "ATOMIC"
+            }
+        )
+        raise RuntimeError(f"atomic cross-role leakage blocks validation: {codes}")
+    required_methods = {
+        "full_corerouter",
+        *(
+            f"expert:{name}"
+            for name in gate_schema.get("required_experts", ())
+        ),
+        *(str(name) for name in gate_schema.get("strong_baselines", ())),
+        *(
+            f"ablation:{name}"
+            for name in gate_schema.get("required_ablations", ())
+        ),
+    }
+    metrics = {
+        str(value)
+        for value in gate_schema.get("required_contract_metrics", ())
+    }
+    planned_rows: list[dict[str, object]] = []
+    planned_routing: list[dict[str, object]] = []
+    source_groups: dict[str, list[object]] = {}
+    for target_key in target_keys:
+        dataset, task, _, _, expert_seed, fold = target_key
+        compatible_sources = [
+            key
+            for key in source_keys
+            if key[0] == dataset
+            and key[1] == task
+            and key[4] == expert_seed
+            and key[5] == fold
+        ]
+        if len(compatible_sources) < 2:
+            raise RuntimeError(
+                f"target {target_key} requires two same-seed source contracts"
+            )
+        target_artifact = groups[target_key][0]
+        for method in sorted(required_methods):
+            for metric in sorted(metrics):
+                row = {
+                    "dataset": dataset,
+                    "target_protocol_id": target_artifact.protocol_id,
+                    "target_contract_coordinate_hash": (
+                        target_artifact.contract_coordinate_hash
+                    ),
+                    "target_contract_id": target_artifact.contract_id,
+                    "seed": int(expert_seed),
+                    "expert_prediction_seed": int(expert_seed),
+                    "router_training_seed": derive_router_seed(
+                        int(expert_seed),
+                        method,
+                    ),
+                    "fold": fold,
+                    "method": method,
+                    "metric": metric,
+                    "value": None,
+                    "measurement_status": "NOT_EXECUTED_NO_TRAINING",
+                    "risk_definition": {
+                        "brier_contract_regret": (
+                            "contract_mean_brier_risk_minus_"
+                            "contract_feasible_oracle_brier_risk"
+                        ),
+                        "selective_zero_one_risk": (
+                            "zero_one_error_on_non_abstained_rows"
+                        ),
+                    }.get(metric, "not_a_risk_quantity"),
+                    "execution_status": (
+                        MethodExecutionStatus.NOT_APPLICABLE.value
+                    ),
+                    "abstention_threshold": None,
+                    "abstention_threshold_provenance": "not_fitted",
+                    "routing_threshold": None,
+                    "routing_threshold_provenance": "not_fitted",
+                    "abstention_decision_sha256": None,
+                    "accepted_count": None,
+                    "abstained_count": None,
+                    "forced_abstention": None,
+                    "forced_abstention_count": None,
+                    "abstention_capacity": None,
+                    "abstention_cost_per_decision": None,
+                    "offline_oracle": False,
+                }
+                if set(row) != set(PILOT_RESULT_ROW_FIELDS):
+                    raise RuntimeError("no-training row schema drift")
+                planned_rows.append(row)
+        planned_routing.append(
+            {
+                "dataset": dataset,
+                "target_protocol_id": target_artifact.protocol_id,
+                "target_contract_coordinate_hash": (
+                    target_artifact.contract_coordinate_hash
+                ),
+                "target_contract_id": target_artifact.contract_id,
+                "expert_prediction_seed": int(expert_seed),
+                "fold": fold,
+                "measurement_status": "NOT_EXECUTED_NO_TRAINING",
+            }
+        )
+        source_groups[str(target_key)] = [
+            list(key) for key in compatible_sources
+        ]
+    return {
+        "schema": "coregraph_saved_output_pilot_validation_v4",
+        "status": "VALIDATED_NO_TRAINING",
+        "training_performed": False,
+        "metric_computation_performed": False,
+        "target_oracle_measurement_performed": False,
+        "target_label_selection": False,
+        "oracle_target_selection": False,
+        "protocol_bindings": bindings,
+        "row_scope_reports": [
+            {
+                **dict(aligned[key].audit),
+                "expert_id": artifact.canonical_expert_id,
+                "artifact_path": str(artifact.path),
+                "artifact_checksum": artifact.checksum,
+            }
+            for key in [*source_keys, *target_keys]
+            for artifact in groups[key]
+        ],
+        "leakage_reports": [
+            report.to_dict() for report in leakage_reports
+        ],
+        "planned_rows": planned_rows,
+        "planned_routing": planned_routing,
+        "source_groups": source_groups,
+        "target_groups": [list(key) for key in target_keys],
+        "result_row_fields": list(PILOT_RESULT_ROW_FIELDS),
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -73,7 +265,21 @@ def main() -> int:
         default="configs/coregraph/pilot/saved_output.yaml",
     )
     parser.add_argument("--execute", action="store_true")
+    parser.add_argument("--validate-only", action="store_true")
+    parser.add_argument(
+        "--protocol-registry",
+        default=(
+            "results/coregraph_build/"
+            "CONTRACT_PROTOCOL_REGISTRY_V4.json"
+        ),
+    )
+    parser.add_argument(
+        "--gate-schema",
+        default="results/coregraph_build/PILOT_GATE_FROZEN_SPEC_V4.json",
+    )
     args = parser.parse_args()
+    if args.execute and args.validate_only:
+        parser.error("--execute and --validate-only are mutually exclusive")
     config = yaml.safe_load(Path(args.config).read_text(encoding="utf-8"))
     roots = [
         os.path.expandvars(value)
@@ -81,14 +287,14 @@ def main() -> int:
     ]
     manifests = discover_prediction_manifests(roots)
     plan = {
-        "schema": "coregraph_saved_output_pilot_plan_v3",
+        "schema": "coregraph_saved_output_pilot_plan_v4",
         "execute_requested": args.execute,
         "manifest_roots": roots,
         "discovered_manifests": [str(path) for path in manifests],
         "status": "PLANNED",
         "forbidden_target_selection": True,
         "required_datasets": config["required_datasets"],
-        "required_target_contracts": config["required_target_contracts"],
+        "required_target_protocols": config["required_target_protocols"],
         "required_expert_prediction_seeds": config["required_seeds"],
         "required_ablations": [
             ablation.value
@@ -98,7 +304,7 @@ def main() -> int:
     }
     output = Path(config["output"])
     output.parent.mkdir(parents=True, exist_ok=True)
-    if not args.execute:
+    if not args.execute and not args.validate_only:
         output.write_text(
             json.dumps(plan, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
@@ -112,18 +318,36 @@ def main() -> int:
         expected_experts=tuple(config["required_experts"]),
         expected_seeds=tuple(int(seed) for seed in config["required_seeds"]),
         expected_datasets=tuple(config["required_datasets"]),
-        expected_target_contracts=tuple(
-            config["required_target_contracts"]
+        expected_target_protocols=tuple(
+            config["required_target_protocols"]
         ),
     )
-    roles = {
-        key: {artifact.contract_role for artifact in group}
-        for key, group in groups.items()
-    }
-    if any(len(value) != 1 for value in roles.values()):
-        raise RuntimeError(
-            "each prediction group must declare exactly one contract role"
+    registry = load_protocol_registry(args.protocol_registry)
+    gate_schema = json.loads(
+        Path(args.gate_schema).read_text(encoding="utf-8")
+    )
+    validation = build_no_training_materialization(
+        artifacts,
+        groups,
+        gate_schema=gate_schema,
+        registry=registry,
+    )
+    if args.validate_only:
+        validation_output = Path(
+            config.get(
+                "validation_output",
+                "results/coregraph_pilot/saved_output_validation_v4.json",
+            )
         )
+        validation_output.parent.mkdir(parents=True, exist_ok=True)
+        validation_output.write_text(
+            json.dumps(validation, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        print(json.dumps(validation, indent=2, sort_keys=True))
+        return 0
+
+    roles = _group_roles(groups)
     source_keys = sorted(
         key for key, value in roles.items() if value == {"source"}
     )
@@ -157,28 +381,30 @@ def main() -> int:
             )
         source_groups: list[SavedSourceGroup] = []
         for key in compatible_sources:
-            _, scores, labels, splits = align_artifact_group(groups[key])
-            keep = np.isin(splits, ("train", "validation"))
+            aligned_source = align_artifact_group(groups[key])
+            scores = aligned_source.scores
+            labels = aligned_source.labels
+            splits = aligned_source.splits
             availability, costs = _availability_and_cost(
                 groups[key],
-                int(keep.sum()),
+                len(labels),
             )
             source_groups.append(
                 SavedSourceGroup(
                     contract=groups[key][0].deployment_contract,
                     scores={
-                        expert: values[keep]
+                        expert: values
                         for expert, values in scores.items()
                     },
-                    labels=labels[keep],
-                    splits=splits[keep],
+                    labels=labels,
+                    splits=splits,
                     availability=availability,
                     expert_costs=costs,
                 )
             )
-        _, target_scores, target_labels, _ = align_artifact_group(
-            groups[target_key]
-        )
+        aligned_target = align_artifact_group(groups[target_key])
+        target_scores = aligned_target.scores
+        target_labels = aligned_target.labels
         target_availability, target_costs = _availability_and_cost(
             groups[target_key],
             len(target_labels),
@@ -269,7 +495,9 @@ def main() -> int:
             target_labels,
             candidates,
             dataset=dataset,
-            target_contract=target_contract.contract_id,
+            target_protocol_id=groups[target_key][0].protocol_id,
+            target_contract_coordinate_hash=target_contract.coordinate_hash,
+            target_contract_id=target_contract.contract_id,
             expert_prediction_seed=expert_seed,
             router_training_seeds=router_training_seeds,
             fold=fold,
@@ -283,7 +511,11 @@ def main() -> int:
         routing_records.append(
             {
                 "dataset": dataset,
-                "target_contract": target_contract.contract_id,
+                "target_protocol_id": groups[target_key][0].protocol_id,
+                "target_contract_coordinate_hash": (
+                    target_contract.coordinate_hash
+                ),
+                "target_contract_id": target_contract.contract_id,
                 "seed": expert_seed,
                 "expert_prediction_seed": expert_seed,
                 "router_training_seed": full.router_training_seed,
@@ -297,7 +529,7 @@ def main() -> int:
         )
         used_sources[str(target_key)] = compatible_sources
     report = {
-        "schema": "coregraph_saved_output_pilot_v3",
+        "schema": "coregraph_saved_output_pilot_v4",
         "status": "MEASURED_FROM_SAVED_PREDICTIONS",
         "rows": all_rows,
         "headline_oracle_references": all_headline_references,
@@ -312,10 +544,17 @@ def main() -> int:
         "oracle_target_selection": False,
         "headline_oracle": "contract_feasible_oracle",
         "diagnostic_oracle": "instance_clairvoyant_oracle_ceiling",
-        "inferential_block": "expert_prediction_seed",
+        "inferential_block": "dataset_stratified_expert_prediction_seed",
         "paired_unit": (
-            "dataset_task_target_contract_expert_prediction_seed_fold"
+            "dataset_task_target_protocol_contract_"
+            "expert_prediction_seed_fold"
         ),
+        "risk_taxonomy": {
+            "training_surrogate": "bce_surrogate_contract_regret",
+            "headline_evaluation": "brier_contract_regret",
+            "selective_evaluation": "selective_zero_one_risk",
+        },
+        "pre_execution_validation": validation,
     }
     output.write_text(
         json.dumps(report, indent=2, sort_keys=True) + "\n",

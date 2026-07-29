@@ -9,13 +9,18 @@ explanations. Probability and logit mixtures are never interchanged
 implicitly; rank scores cannot enter calibration or entropy computations.
 
 The saved-output pilot predeclares each single expert, feasible averaging,
-source-validation best expert, a source-validation convex mixture, the partial
-`graphsafe_confidence_abstention_component`, the current graph-feature gate,
-learned atomic- and no-contract routers, and the source-trained
-`MOWST_INSPIRED_REIMPLEMENTATION`. The partial GraphSafe component is not a
-full GraphSafe comparator. Headline regret uses one contract-level feasible
-oracle expert for the whole contract. The instance-clairvoyant oracle is an
-offline diagnostic ceiling excluded from significance and deployable methods.
+source-validation best expert, a source-validation convex mixture, the current
+graph-feature gate, learned atomic- and no-contract routers, and the
+source-trained `MOWST_INSPIRED_REIMPLEMENTATION` as complete deployable
+comparators. The partial `graphsafe_confidence_abstention_component` is a
+compatibility component, not a full GraphSafe comparator or a member of the
+headline Holm family. Headline Brier contract regret uses one contract-level
+feasible oracle expert for the whole contract. The instance-clairvoyant oracle
+is an offline diagnostic ceiling excluded from significance and deployable
+methods. The BCE quantity used to fit the robust objective is named
+`bce_surrogate_contract_regret`; selective deployment error is
+`selective_zero_one_risk`. Values from these three loss definitions are never
+compared as though they shared a scale.
 CoReGraph may be called robust only when held-out-combination, worst-contract,
 CVaR, calibration, and budget results are complete.
 
@@ -32,6 +37,7 @@ operational capacity can constrain only the final label-free decision.
 Fallback produces an executable prediction from another allowed expert,
 whereas abstention produces no accepted prediction. Every method-contract row
 declares its execution state, and unavailable scores never enter ranking
-metrics. Expert-prediction seed is the inferential block; router-training seed
-is derived deterministically per method or ablation and is never counted as a
-replication.
+metrics. Expert-prediction seed is the inferential block within each dataset;
+same-numbered seeds from different datasets are never paired. Router-training
+seed is derived deterministically per method or ablation and is never counted
+as a replication.

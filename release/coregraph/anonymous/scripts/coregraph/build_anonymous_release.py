@@ -31,6 +31,10 @@ ROOT_FILES = (
 SPECIFICATION_FILES = (
     "results/coregraph_build/PILOT_GATE_FROZEN_SPEC.json",
     "results/coregraph_build/PILOT_V3_SPECIFICATION.md",
+    "results/coregraph_build/PILOT_GATE_FROZEN_SPEC_V4.json",
+    "results/coregraph_build/PILOT_V4_SPECIFICATION.md",
+    "results/coregraph_build/CONTRACT_PROTOCOL_REGISTRY.schema.json",
+    "results/coregraph_build/CONTRACT_PROTOCOL_REGISTRY_V4.json",
 )
 EXCLUDE_PARTS = {
     "__pycache__",

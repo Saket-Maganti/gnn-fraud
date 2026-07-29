@@ -1,9 +1,9 @@
 {
-  "aggregate_sha256": "24076ab0ff100a56765916fee3ad5ffc3e498915b0e1e65f9ce9edbcfcf5d878",
+  "aggregate_sha256": "492e1af303a38fd30cc5252994eda10f2c7137404a0176663b02556082f62e99",
   "files": {
     "Makefile": {
-      "bytes": 3586,
-      "sha256": "ea5f4df08aa635375bf3a43ffb1b335311858e94b4cf68c7200a60cff29c67a9"
+      "bytes": 4286,
+      "sha256": "d7b2c58a436cb5e79448e7aee8c3246cf353a59d09b7460f95a780b78e6752e6"
     },
     "configs/coregraph/analysis_families.yaml": {
       "bytes": 2169,
@@ -14,8 +14,8 @@
       "sha256": "f0b457c165c6e3233886931c017d9fbc7558db54d59392868fe5790f338782a6"
     },
     "configs/coregraph/pilot/saved_output.yaml": {
-      "bytes": 504,
-      "sha256": "f3ead1ca48e013e1778d8afe8881413b3619c974b104d0be7abcbd7776017888"
+      "bytes": 579,
+      "sha256": "e930fd1c6cecab3a83a2a676e2cf3b9eaa36917d28032cf9618c95a09341850d"
     },
     "configs/coregraph/run_matrices/ABLATION_GRID.csv": {
       "bytes": 25588,
@@ -58,8 +58,8 @@
       "sha256": "1677fa15f116bbb7b55192f4aeda8f2053b7c3b591ba4221dc97010c4fb9edc6"
     },
     "configs/coregraph/schemas/prediction_manifest.schema.json": {
-      "bytes": 1909,
-      "sha256": "ad89d1a214f41da57cb2db1b6f91d3d795fe15829c07b3a2c8243e5644617094"
+      "bytes": 4224,
+      "sha256": "b99d20e2b2fb8f1fbae483a1167e217a95f96d4e7cc7f45e1464195359f369c9"
     },
     "configs/coregraph/synthetic/all_experts_unavailable.yaml": {
       "bytes": 153,
@@ -166,8 +166,8 @@
       "sha256": "6a27e1a2a034b09d32ede1aa34d8d53a5670cabc16b559f85c07b70fb4bb062c"
     },
     "coregraph/data/leakage.py": {
-      "bytes": 3936,
-      "sha256": "875e1f3d287bdce0daa18acea2636384f8712ffe34a6a115a7ab393971572df5"
+      "bytes": 15460,
+      "sha256": "72b8dd5a9ae2250c485e25ec83707c9bd3daf36dfcac11e9132ac010ff693463"
     },
     "coregraph/data/synthetic.py": {
       "bytes": 10204,
@@ -202,16 +202,16 @@
       "sha256": "394c774b15d74a731fb9013b34c2a3675a2a1760700c895389870eb289a9cdaf"
     },
     "coregraph/evaluation/regret.py": {
-      "bytes": 1341,
-      "sha256": "7a1162a39a04d0d9c58cfb939b61a464d0b918cf538b368b9162f10bb0397195"
+      "bytes": 1537,
+      "sha256": "bdb4c5fe3274dfb160a5bd3db35e0cb213e772c7589caebd6c718f340af09bc4"
     },
     "coregraph/evaluation/reports.py": {
       "bytes": 786,
       "sha256": "ec8d7441ea304e35f103c6f1c7d3f704e8ef980c837d27b4317a501c8360de40"
     },
     "coregraph/evaluation/statistics.py": {
-      "bytes": 7369,
-      "sha256": "5f18f441b36eb52cb2c2a55dc5ab666d95256c8114a38c4f595dda4064b71996"
+      "bytes": 9117,
+      "sha256": "388c024d7287c8549aa2b0207bfb67634708433ea5208702ecbb7078c967ea79"
     },
     "coregraph/evidence.py": {
       "bytes": 19863,
@@ -233,17 +233,25 @@
       "bytes": 1077,
       "sha256": "5995a3f51a5facf1ad77f93b83cf10536755e34adc636292a20be87b7f51736d"
     },
+    "coregraph/experiments/manifest_conversion.py": {
+      "bytes": 28912,
+      "sha256": "6ac4d5c0999ce1c9faed25521493ad1a973afed8d9324527b140165b98a41911"
+    },
     "coregraph/experiments/manifests.py": {
       "bytes": 1843,
       "sha256": "e6a1429b0b2e5e5493fa90b2be699d79c179163b931b209ff6de2a3f20be9c3d"
     },
     "coregraph/experiments/pilot.py": {
-      "bytes": 77800,
-      "sha256": "6054a2009ca30fe3c2f69e917e33f4bd8cef84729825e0d50e51725af39f1203"
+      "bytes": 92900,
+      "sha256": "931e4f2d32cf432ec7f0c9658a2a9979e0f95e1b8bd46a5653218f725e636cec"
     },
     "coregraph/experiments/prediction_export.py": {
       "bytes": 1524,
       "sha256": "bed3f96da0bcd5373c6c4a9de8db7567af4f620e976c3fd03845a413d9402fea"
+    },
+    "coregraph/experiments/protocol_registry.py": {
+      "bytes": 5787,
+      "sha256": "5c97507b49b9af3e0b8839daf621cc156e06151e5624fdf6c913ef81203e62f7"
     },
     "coregraph/experiments/resume.py": {
       "bytes": 3214,
@@ -334,8 +342,8 @@
       "sha256": "e740328c38fff166ce6b205adf5eb86b50267823b35929418f58eb4b04dd29da"
     },
     "coregraph/objectives/composite.py": {
-      "bytes": 11414,
-      "sha256": "79e4e1325f4830ff4d9e843ed586e06dfd4b81bb0bd4197b48435520470114c1"
+      "bytes": 11428,
+      "sha256": "30008eb9be78c8eabceeab441dae6066e82ef181cf1873d6402e1cf85af6f92d"
     },
     "coregraph/objectives/compute.py": {
       "bytes": 1174,
@@ -350,8 +358,8 @@
       "sha256": "9e774f21117a991bf0dacc396940e7e73874979e99096118fcdcc67214aedb75"
     },
     "coregraph/objectives/regret.py": {
-      "bytes": 1279,
-      "sha256": "9ea996e4d0e229ac0ee3578cadcfa3d5e1e5a5984087c9d543b5e259b92d2952"
+      "bytes": 1309,
+      "sha256": "72d0d359164c9dbc0e7c94551bd8f0c92b520d4c082dbee8b6006b0130121398"
     },
     "coregraph/objectives/scores.py": {
       "bytes": 1775,
@@ -466,8 +474,8 @@
       "sha256": "910bf2bffc57983eb6d260f833d581572a76aaa4c69c54a9910cdeb2877f4c1c"
     },
     "docs/coregraph/ICLR_GO_NO_GO_GATES.md": {
-      "bytes": 1721,
-      "sha256": "9d3843bf38b2bed0e1b0f0eaf780c4147686a0944c9beef966022843a360982f"
+      "bytes": 1874,
+      "sha256": "d68d15b44ea2260e61db37cd9ffc0fde1f267accc4bb79223e6ccab1d30509c3"
     },
     "docs/coregraph/KNOWN_LIMITATIONS.md": {
       "bytes": 828,
@@ -478,16 +486,16 @@
       "sha256": "bf9295a751e573cf53276ec23fc489ce98410bd31c1df25750e2baaa2c9c224c"
     },
     "docs/coregraph/METHOD_CARD.md": {
-      "bytes": 2305,
-      "sha256": "0be9f0043f06f12b6709d24bc598de954ec4f2eecc9a441eaf234c4eb1ded713"
+      "bytes": 2711,
+      "sha256": "6e01568731d70e29d8cae627cfe421e80e1ee72e956e8eea85f90cd4e2db67ce"
     },
     "docs/coregraph/OBJECTIVE_SPECIFICATION.md": {
       "bytes": 1330,
       "sha256": "8832c805942723ba24f9b7f42bbb8a912e359cdb1bba576c9262afae478cc1e4"
     },
     "docs/coregraph/README.md": {
-      "bytes": 758,
-      "sha256": "8416a55c945e5102044be3f3f3c195f086f2e72b49c0de95b4a66ea9764014f7"
+      "bytes": 970,
+      "sha256": "2e0900c3993d3d866bf5aaf191c9aa0fc67283d6300bb4536fbbb5444196787a"
     },
     "docs/coregraph/REPRODUCIBILITY.md": {
       "bytes": 970,
@@ -506,8 +514,8 @@
       "sha256": "6d0683d4325a89d9219aab449f0e7f99768afd80e56cec7e03344b148b51576b"
     },
     "docs/coregraph/STATISTICAL_ANALYSIS_PLAN.md": {
-      "bytes": 1675,
-      "sha256": "844b811bbdb39f16a551d9035eb4427b0d7f9482480d312465a7dcceb297f88e"
+      "bytes": 2251,
+      "sha256": "fd3ceb65a8016b1f6b523463acdf087d62405b0ba8f98fe9f829b1175cbd50c1"
     },
     "docs/coregraph/SYNTHETIC_GENERATOR_CARD.md": {
       "bytes": 881,
@@ -634,8 +642,8 @@
       "sha256": "1cc081bc8f46cdbd20a846583d12b6699af47aa7d1aceb5d5405ad0180fb816e"
     },
     "paper_iclr/claims/ICLR_CLAIM_LEDGER.csv": {
-      "bytes": 2200,
-      "sha256": "4751b5017d65466d40054288963e9629bde93a159dd4aace38b5086b9e33ea85"
+      "bytes": 2262,
+      "sha256": "f3f75d835255f889cc12feee469aded18e5618e0b35757274fe7fd6cf0707f63"
     },
     "paper_iclr/figures/README.md": {
       "bytes": 424,
@@ -702,8 +710,8 @@
       "sha256": "66b43bc01bea2a99daf57c8b926f79b1daece252ebe107af738f3ddf80b3af57"
     },
     "paper_iclr/sections/04_problem.tex": {
-      "bytes": 1776,
-      "sha256": "2c808a780abde7cd04ddf54f90d9a4ff9c655db8a357ccd4af434f8db6c8117e"
+      "bytes": 2142,
+      "sha256": "b1e5790f7f45ff9c627c69497874abbb35579bbb1e5fa446da7050fa67cbbe2e"
     },
     "paper_iclr/sections/05_method.tex": {
       "bytes": 4267,
@@ -714,8 +722,8 @@
       "sha256": "4be071cbf486f7e6160d6ecbf06fdc343ca74b0e01bfe82cb7094e5a0f62a19d"
     },
     "paper_iclr/sections/07_experiments.tex": {
-      "bytes": 2476,
-      "sha256": "16a7c8ba28f88149f05b4d09be755cb5ae09b8f119cde31a68097391346df785"
+      "bytes": 3067,
+      "sha256": "a91ec302174d846e733cd972d96e88e6bcb2fcbeb2c804038be28bf689dd0262"
     },
     "paper_iclr/sections/08_results_placeholder.tex": {
       "bytes": 938,
@@ -778,8 +786,8 @@
       "sha256": "0f88853e4f4a245a63768f10d3c82bacc71617d826c2fef13af1af023a37280b"
     },
     "scripts/coregraph/build_anonymous_release.py": {
-      "bytes": 3290,
-      "sha256": "9d81946de85c1e5da4f1e148970881c1da95c2447c05af8552a12fb5fc10a940"
+      "bytes": 3545,
+      "sha256": "3c26b5d2c6e66ef2bb8f9aaa9c895235d2ae255df5b0109c5ff82a3b5967612a"
     },
     "scripts/coregraph/build_iclr_paper.sh": {
       "bytes": 935,
@@ -789,9 +797,13 @@
       "bytes": 958,
       "sha256": "8298efb729b9dd2647b589b937a0e7810e1d637b3022ef51daa57fcbc15099b7"
     },
+    "scripts/coregraph/convert_prediction_manifests_v4.py": {
+      "bytes": 14037,
+      "sha256": "5e55315be430aa8962f9bf41712cb1721e7539fa8911fb0df4919dc31047298b"
+    },
     "scripts/coregraph/evaluate_pilot_gate.py": {
-      "bytes": 29296,
-      "sha256": "691e633d2de622f3b26b7cad4c02c98aa3da45902e27b0e88d877398b310efc4"
+      "bytes": 54321,
+      "sha256": "ace275668445e53ca51be7d3b21f091026a59512b50f25e8e537cded12f8d535"
     },
     "scripts/coregraph/freeze_analysis_plan.py": {
       "bytes": 1196,
@@ -830,8 +842,8 @@
       "sha256": "2dcffc220850121f4e3112cb4992451c928e1b2bd229d175e68e47e8031d0be8"
     },
     "scripts/coregraph/run_saved_output_pilot.py": {
-      "bytes": 11985,
-      "sha256": "0629b24ee4b779a438fa1cc5be34277cc3198b8061d0c10f692822e8b46cb2b3"
+      "bytes": 21002,
+      "sha256": "7d0903f7ba84f3b2e5f8cc457eff382fb27ff9a64191df5a29e1e99024bec7c7"
     },
     "scripts/coregraph/run_statistical_analysis.py": {
       "bytes": 7618,
@@ -865,13 +877,29 @@
       "bytes": 1976,
       "sha256": "332bb69c6e3892920bb8ad7daf581a558b4c482d5085458c952f48c43df4c6a9"
     },
+    "specifications/CONTRACT_PROTOCOL_REGISTRY.schema.json": {
+      "bytes": 1500,
+      "sha256": "2da4fbb5d51eb1d5d71ebc7e5fe2053acda9f33cb6ec58c751db49b0cab8ad81"
+    },
+    "specifications/CONTRACT_PROTOCOL_REGISTRY_V4.json": {
+      "bytes": 1155,
+      "sha256": "64bd03a1cd9994833565f6be1d80e4e196da55810ca7236924cba048a4fd8de6"
+    },
     "specifications/PILOT_GATE_FROZEN_SPEC.json": {
       "bytes": 4752,
       "sha256": "23c78e1ac95a464fe3732815a6238f8450541105a9c7fb0e3abec0b935b7713f"
     },
+    "specifications/PILOT_GATE_FROZEN_SPEC_V4.json": {
+      "bytes": 5726,
+      "sha256": "dcd676f38f0ee75bd9b57bc611989fc3285584da1c05b699a00528f312cb9a88"
+    },
     "specifications/PILOT_V3_SPECIFICATION.md": {
       "bytes": 5535,
       "sha256": "17ca1d45cecde3dbcabf1f9ae6cf008c4d66911c3f9d088ff96f1e4e0dc6a20e"
+    },
+    "specifications/PILOT_V4_SPECIFICATION.md": {
+      "bytes": 3297,
+      "sha256": "1317577f5fea91a6a4407f38a0954eb17bcda62c16f6e1c92a4dfc2c71190201"
     },
     "tests/coregraph/conftest.py": {
       "bytes": 1359,
@@ -906,12 +934,12 @@
       "sha256": "aaf0718d265c45df46c027fdccffffbf0f31b45b232d41c224423dec3af67ac9"
     },
     "tests/coregraph/test_independent_audit_coverage_guards.py": {
-      "bytes": 20292,
-      "sha256": "18fb08508f2f6b019c978a23de72c43898b9d4fe690e792a9b5b4ddb80fcfd7f"
+      "bytes": 21360,
+      "sha256": "eb02b1bc722f9dc40bcf6ffd36ab4883fadebd14252199acede7b005678b96f8"
     },
     "tests/coregraph/test_independent_audit_manifests_pilot_statistics.py": {
-      "bytes": 13528,
-      "sha256": "3f69d42a14a57c09f91b884da3e1b1ad2f9a20536ba7cb6dc5168a53838fb4b5"
+      "bytes": 14568,
+      "sha256": "a64dcd4671587d68f439b1cb2fe470e49c0702378d30f68c142e6496084ab993"
     },
     "tests/coregraph/test_independent_audit_router.py": {
       "bytes": 5455,
@@ -958,8 +986,8 @@
       "sha256": "7eb94052472f59da9711c82d0c22dd1ec33da529ef3d52969cb339fb4b221cff"
     },
     "tests/coregraph/test_second_review_pilot_semantics.py": {
-      "bytes": 13308,
-      "sha256": "3887b1dcf9631dd645b35d958b80489f796feaa5749fe828f61e4afeb3feb692"
+      "bytes": 13646,
+      "sha256": "404cfb59d6c22e682582179d6f6a4d8cbac9b9fc57ca3764d6defcd83d80f0f7"
     },
     "tests/coregraph/test_statistics_metrics.py": {
       "bytes": 1796,
@@ -968,6 +996,10 @@
     "tests/coregraph/test_synthetic_sampling.py": {
       "bytes": 1781,
       "sha256": "c011827d2e299819c247989863a57fa3a581eee69983e4cbac62fbf1ccc676d0"
+    },
+    "tests/coregraph/test_third_review_v4_integration.py": {
+      "bytes": 34208,
+      "sha256": "52a1b61885850c61f529f8a8b32872b6199e071510edab0eccff9ea897ddd856"
     }
   },
   "schema": "coregraph_anonymous_release_v1",

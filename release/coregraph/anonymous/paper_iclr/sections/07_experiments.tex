@@ -21,20 +21,28 @@ no-contract routers, the source-trained
 \texttt{MOWST\_\allowbreak{}INSPIRED\_\allowbreak{}REIMPLEMENTATION}, and the
 honestly named
 \texttt{graphsafe\_\allowbreak{}confidence\_\allowbreak{}abstention\_\allowbreak{}component}.
-The latter is not a
-full GraphSafe comparator. Pending or unlicensed official code is excluded
+The latter is not a full GraphSafe comparator: it remains a descriptive
+compatibility component and is excluded from strong-baseline win requirements
+and headline Holm families. Pending or unlicensed official code is excluded
 rather than approximated under its name. The contract-level feasible oracle
-defines headline regret; the instance-clairvoyant oracle is diagnostic only.
+defines headline Brier regret; the instance-clairvoyant oracle is diagnostic
+only.
 Ablations remove factorised contracts, regret, budget, resource masks,
 stability, abstention, or diagnostics.
 
 \paragraph{Outcomes and inference.}
 Primary outcomes are AUPRC, Recall@0.5\%, Recall@1\%, Recall@2\%,
-budget-curve area, mean, maximum, and CVaR regret, selective risk, abstention
-cost, and compute. Unavailable and resource-blocked predictions do not enter
+budget-curve area, mean, maximum, and CVaR Brier contract regret, selective
+zero--one risk, abstention cost, and compute. Binary-cross-entropy surrogate
+regret is training terminology and does not enter the headline Brier family.
+Unavailable and resource-blocked predictions do not enter
 ranking metrics; fallback and abstention are distinct execution states.
-Inference pairs exact dataset--task--target-contract--fold contexts within
-expert-prediction seed. Router-training seeds are deterministic
+Inference pairs exact task--target-protocol-and-contract--fold contexts within
+dataset and expert-prediction seed. Same-numbered seeds across datasets are not
+paired. Exact tests and intervals are reported separately per dataset; a
+hierarchical dataset--seed bootstrap is secondary evidence only. The gate
+requires positive effects on both datasets, corrected support on at least one,
+and no contradiction on the other. Router-training seeds are deterministic
 method-specific provenance, not additional replications. Exact Wilcoxon,
 paired permutation, and seed-block bootstrap analyses replace normal
 approximations. Holm-corrected support, confidence intervals, and frozen effect

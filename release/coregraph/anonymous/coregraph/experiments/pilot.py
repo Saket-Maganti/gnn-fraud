@@ -19,6 +19,7 @@ from sklearn.linear_model import LogisticRegression
 
 from coregraph.contracts.axes import ContractRole, ReviewMode
 from coregraph.contracts.contract import DeploymentContract
+from coregraph.data.leakage import PredictionArtifactScope
 from coregraph.evaluation.metrics import (
     binary_metrics,
     budget_curve_auc,
@@ -44,7 +45,9 @@ class PredictionArtifact:
     dataset: str
     task: str
     prediction_unit: str
+    protocol_id: str
     contract_coordinate_hash: str
+    contract_id: str
     environment_id: str
     seed: int
     fold: str
@@ -54,6 +57,15 @@ class PredictionArtifact:
     code_hash: str
     contract_role: str
     deployment_contract: DeploymentContract
+    permitted_splits: tuple[str, ...]
+    evaluation_split: str
+    row_scope_policy: str
+    label_mapping: Mapping[str, str]
+    positive_label_id: int
+    provider_split_mapping: Mapping[str, str]
+    compute_cost_provenance: str
+    original_prediction_path: str
+    original_prediction_checksum: str
     expert_alias_of: str = ""
     expert_available: bool = True
     availability_reason_codes: tuple[str, ...] = ("available",)
@@ -68,6 +80,8 @@ class PredictionArtifact:
 
         if self.contract_coordinate_hash != self.deployment_contract.coordinate_hash:
             raise ValueError("artifact contract coordinate hash mismatch")
+        if self.contract_id != self.deployment_contract.contract_id:
+            raise ValueError("artifact complete contract ID mismatch")
         if self.environment_id != self.deployment_contract.environment_id:
             raise ValueError("artifact environment ID mismatch")
         if self.contract_role != self.deployment_contract.role.value:
@@ -76,7 +90,13 @@ class PredictionArtifact:
             raise ValueError("artifact seed must be non-negative")
         if self.compute_cost < 0:
             raise ValueError("artifact compute cost cannot be negative")
-        if not self.expert_id or not self.dataset or not self.task or not self.fold:
+        if (
+            not self.expert_id
+            or not self.dataset
+            or not self.task
+            or not self.fold
+            or not self.protocol_id
+        ):
             raise ValueError("artifact identity fields cannot be empty")
         if not valid_hex(self.checksum, (64,)):
             raise ValueError("artifact checksum must be lowercase SHA-256")
@@ -84,6 +104,47 @@ class PredictionArtifact:
             raise ValueError("artifact config hash must be lowercase SHA-256")
         if not valid_hex(self.code_hash, (40, 64)):
             raise ValueError("artifact code hash must be lowercase Git/SHA hash")
+        if not valid_hex(self.original_prediction_checksum, (64,)):
+            raise ValueError("original prediction checksum must be lowercase SHA-256")
+        if not self.original_prediction_path:
+            raise ValueError("original prediction path is required")
+        allowed_splits = {"train", "validation", "test", "unscored"}
+        if (
+            not self.permitted_splits
+            or not set(self.permitted_splits).issubset(allowed_splits)
+            or len(self.permitted_splits) != len(set(self.permitted_splits))
+        ):
+            raise ValueError("artifact permitted splits are invalid")
+        if self.row_scope_policy != "filter_and_audit":
+            raise ValueError("V4 row scope policy must be filter_and_audit")
+        if self.contract_role == ContractRole.SOURCE.value:
+            if not set(self.permitted_splits).issubset({"train", "validation"}):
+                raise ValueError("source permitted splits must be train/validation")
+            if self.evaluation_split != "validation":
+                raise ValueError("source evaluation split must be validation")
+        elif self.contract_role == ContractRole.TARGET.value:
+            if self.permitted_splits != ("test",):
+                raise ValueError("target permitted splits must contain only test")
+            if self.evaluation_split != "test":
+                raise ValueError("target evaluation split must be test")
+        if str(self.positive_label_id) not in self.label_mapping:
+            raise ValueError("positive label ID is absent from the provider label mapping")
+        if not self.label_mapping or any(
+            not str(key) or not str(value)
+            for key, value in self.label_mapping.items()
+        ):
+            raise ValueError("provider label mapping cannot contain empty values")
+        if (
+            not self.provider_split_mapping
+            or any(
+                not str(source)
+                or str(target) not in allowed_splits
+                for source, target in self.provider_split_mapping.items()
+            )
+        ):
+            raise ValueError("provider split mapping is invalid")
+        if not self.compute_cost_provenance:
+            raise ValueError("compute cost provenance is required")
         if not self.availability_reason_codes:
             raise ValueError("artifact availability reason codes are required")
         if self.expert_available and self.availability_reason_codes != (
@@ -115,6 +176,47 @@ class PredictionArtifact:
             self.environment_id,
             self.seed,
             self.fold,
+        )
+
+
+@dataclass(frozen=True)
+class AlignedArtifactGroup:
+    identifiers: np.ndarray
+    scores: Mapping[str, np.ndarray]
+    labels: np.ndarray
+    label_known: np.ndarray
+    splits: np.ndarray
+    timestamps: np.ndarray
+    raw_identifiers: np.ndarray
+    raw_labels: np.ndarray
+    raw_label_known: np.ndarray
+    raw_splits: np.ndarray
+    raw_timestamps: np.ndarray
+    audit: Mapping[str, Any]
+
+    def as_leakage_scope(
+        self,
+        artifact: PredictionArtifact,
+    ) -> PredictionArtifactScope:
+        return PredictionArtifactScope(
+            dataset=artifact.dataset,
+            expert_id=artifact.canonical_expert_id,
+            protocol_id=artifact.protocol_id,
+            expert_prediction_seed=artifact.expert_prediction_seed,
+            fold=artifact.fold,
+            role=artifact.contract_role,
+            contract_coordinate_hash=artifact.contract_coordinate_hash,
+            contract_id=artifact.contract_id,
+            path=str(artifact.path),
+            checksum=artifact.checksum,
+            original_checksum=artifact.original_prediction_checksum,
+            identifiers=tuple(str(value) for value in self.raw_identifiers),
+            splits=tuple(str(value) for value in self.raw_splits),
+            label_known=tuple(bool(value) for value in self.raw_label_known),
+            timestamps=tuple(
+                None if np.isnan(float(value)) else float(value)
+                for value in self.raw_timestamps
+            ),
         )
 
 
@@ -233,6 +335,36 @@ class MethodExecutionStatus(str, Enum):
     NOT_APPLICABLE = "NOT_APPLICABLE"
 
 
+PILOT_RESULT_ROW_FIELDS = (
+    "dataset",
+    "target_protocol_id",
+    "target_contract_coordinate_hash",
+    "target_contract_id",
+    "seed",
+    "expert_prediction_seed",
+    "router_training_seed",
+    "fold",
+    "method",
+    "metric",
+    "value",
+    "measurement_status",
+    "risk_definition",
+    "execution_status",
+    "abstention_threshold",
+    "abstention_threshold_provenance",
+    "routing_threshold",
+    "routing_threshold_provenance",
+    "abstention_decision_sha256",
+    "accepted_count",
+    "abstained_count",
+    "forced_abstention",
+    "forced_abstention_count",
+    "abstention_capacity",
+    "abstention_cost_per_decision",
+    "offline_oracle",
+)
+
+
 class PilotAblation(str, Enum):
     FULL = "full"
     NO_CONTRACT = "no_contract"
@@ -341,7 +473,7 @@ def discover_prediction_manifests(roots: Sequence[str | Path]) -> list[Path]:
         if root.is_file() and root.name.endswith(".json"):
             manifests.append(root)
         elif root.is_dir():
-            manifests.extend(root.rglob("prediction_manifest.json"))
+            manifests.extend(root.rglob("*prediction_manifest.json"))
     return sorted(set(path.resolve() for path in manifests))
 
 
@@ -352,7 +484,9 @@ def load_prediction_artifacts(manifests: Sequence[Path]) -> list[PredictionArtif
         "dataset",
         "task",
         "prediction_unit",
+        "protocol_id",
         "contract_coordinate_hash",
+        "contract_id",
         "environment_id",
         "expert_prediction_seed",
         "fold",
@@ -365,10 +499,21 @@ def load_prediction_artifacts(manifests: Sequence[Path]) -> list[PredictionArtif
         "expert_available",
         "availability_reason_codes",
         "compute_cost",
+        "compute_cost_provenance",
         "score_type",
+        "permitted_splits",
+        "evaluation_split",
+        "row_scope_policy",
+        "label_mapping",
+        "positive_label_id",
+        "provider_split_mapping",
+        "original_prediction_path",
+        "original_prediction_checksum",
     }
     for path in manifests:
         payload = json.loads(path.read_text(encoding="utf-8"))
+        if payload.get("schema_version") != "coregraph_prediction_manifest_v4":
+            raise ValueError(f"{path} is not a V4 prediction manifest")
         missing = sorted(required - set(payload))
         if missing:
             raise ValueError(f"{path} missing prediction manifest keys {missing}")
@@ -380,6 +525,18 @@ def load_prediction_artifacts(manifests: Sequence[Path]) -> list[PredictionArtif
         actual_checksum = hashlib.sha256(prediction_path.read_bytes()).hexdigest()
         if actual_checksum != str(payload["prediction_checksum"]):
             raise ValueError(f"{path} prediction checksum mismatch")
+        original_path = Path(payload["original_prediction_path"])
+        if not original_path.is_absolute():
+            original_path = (path.parent / original_path).resolve()
+        if not original_path.is_file():
+            raise ValueError(
+                f"{path} original prediction file is missing: {original_path}"
+            )
+        original_checksum = hashlib.sha256(
+            original_path.read_bytes()
+        ).hexdigest()
+        if original_checksum != str(payload["original_prediction_checksum"]):
+            raise ValueError(f"{path} original prediction checksum mismatch")
         contract = DeploymentContract.from_dict(payload["deployment_contract"])
         if str(payload["contract_coordinate_hash"]) != contract.coordinate_hash:
             raise ValueError(f"{path} contract coordinate hash mismatch")
@@ -392,9 +549,11 @@ def load_prediction_artifacts(manifests: Sequence[Path]) -> list[PredictionArtif
                 dataset=str(payload["dataset"]),
                 task=str(payload["task"]),
                 prediction_unit=str(payload["prediction_unit"]),
+                protocol_id=str(payload["protocol_id"]),
                 contract_coordinate_hash=str(
                     payload["contract_coordinate_hash"]
                 ),
+                contract_id=str(payload["contract_id"]),
                 environment_id=str(payload["environment_id"]),
                 seed=int(payload["expert_prediction_seed"]),
                 fold=str(payload["fold"]),
@@ -404,6 +563,25 @@ def load_prediction_artifacts(manifests: Sequence[Path]) -> list[PredictionArtif
                 code_hash=str(payload["code_hash"]),
                 contract_role=str(payload["contract_role"]),
                 deployment_contract=contract,
+                permitted_splits=tuple(
+                    str(value) for value in payload["permitted_splits"]
+                ),
+                evaluation_split=str(payload["evaluation_split"]),
+                row_scope_policy=str(payload["row_scope_policy"]),
+                label_mapping={
+                    str(key): str(value)
+                    for key, value in payload["label_mapping"].items()
+                },
+                positive_label_id=int(payload["positive_label_id"]),
+                provider_split_mapping={
+                    str(key): str(value)
+                    for key, value in payload["provider_split_mapping"].items()
+                },
+                compute_cost_provenance=str(
+                    payload["compute_cost_provenance"]
+                ),
+                original_prediction_path=str(original_path),
+                original_prediction_checksum=original_checksum,
                 expert_available=bool(payload["expert_available"]),
                 availability_reason_codes=tuple(
                     str(value)
@@ -422,7 +600,7 @@ def validate_artifact_groups(
     expected_experts: Sequence[str],
     expected_seeds: Sequence[int],
     expected_datasets: Sequence[str] | None = None,
-    expected_target_contracts: Sequence[str] | None = None,
+    expected_target_protocols: Sequence[str] | None = None,
 ) -> dict[
     tuple[str, str, str, str, int, str],
     tuple[PredictionArtifact, ...],
@@ -479,24 +657,22 @@ def validate_artifact_groups(
                 f"datasets; expected={sorted(expected_dataset_set)} "
                 f"actual={sorted(actual_dataset_set)}"
             )
-    if expected_target_contracts is not None:
-        required_contracts = set(expected_target_contracts)
+    if expected_target_protocols is not None:
+        required_protocols = set(expected_target_protocols)
         target_coverage: dict[str, set[str]] = defaultdict(set)
         for artifact in artifacts:
             if artifact.contract_role == ContractRole.TARGET.value:
-                target_coverage[artifact.dataset].add(
-                    artifact.deployment_contract.contract_id
-                )
+                target_coverage[artifact.dataset].add(artifact.protocol_id)
         datasets = (
             set(expected_datasets)
             if expected_datasets is not None
             else set(target_coverage)
         )
         for dataset in datasets:
-            if target_coverage[dataset] != required_contracts:
+            if target_coverage[dataset] != required_protocols:
                 raise ValueError(
-                    f"target contract coverage for {dataset} is incomplete; "
-                    f"expected={sorted(required_contracts)} "
+                    f"target protocol coverage for {dataset} is incomplete; "
+                    f"expected={sorted(required_protocols)} "
                     f"actual={sorted(target_coverage[dataset])}"
                 )
     return {
@@ -510,9 +686,32 @@ def _read_rows(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
+def _row_expert_matches(
+    row: Mapping[str, str],
+    artifact: PredictionArtifact,
+) -> bool:
+    value = str(row.get("expert_id") or row.get("model") or "")
+    aliases = {
+        artifact.expert_id,
+        artifact.canonical_expert_id,
+        {
+            "feature_mlp": "mlp",
+            "graphsage": "sage",
+        }.get(artifact.canonical_expert_id, artifact.canonical_expert_id),
+        "",
+    }
+    return value in aliases
+
+
+def _row_timestamp(row: Mapping[str, str]) -> Any:
+    if "timestamp" in row:
+        return row.get("timestamp")
+    return row.get("timestep")
+
+
 def align_artifact_group(
     artifacts: Sequence[PredictionArtifact],
-) -> tuple[np.ndarray, dict[str, np.ndarray], np.ndarray, np.ndarray]:
+) -> AlignedArtifactGroup:
     if not artifacts:
         raise ValueError("no prediction artifacts supplied")
     if len({artifact.group_key for artifact in artifacts}) != 1:
@@ -521,6 +720,22 @@ def align_artifact_group(
         )
     if len({artifact.prediction_unit for artifact in artifacts}) != 1:
         raise ValueError("prediction alignment cannot pool prediction units")
+    manifest_semantics = {
+        (
+            artifact.protocol_id,
+            artifact.contract_id,
+            artifact.permitted_splits,
+            artifact.evaluation_split,
+            artifact.row_scope_policy,
+            tuple(sorted(artifact.label_mapping.items())),
+            artifact.positive_label_id,
+            tuple(sorted(artifact.provider_split_mapping.items())),
+            artifact.contract_role,
+        )
+        for artifact in artifacts
+    }
+    if len(manifest_semantics) != 1:
+        raise ValueError("prediction artifacts disagree on V4 manifest semantics")
     if {artifact.score_type for artifact in artifacts} != {
         ScoreType.PROBABILITY
     }:
@@ -536,7 +751,7 @@ def align_artifact_group(
     for artifact in artifacts:
         rows = _read_rows(artifact.path)
         for row in rows:
-            if row.get("expert_id") not in {artifact.expert_id, ""}:
+            if not _row_expert_matches(row, artifact):
                 raise ValueError("prediction row expert ID mismatch")
         rows_by_expert[artifact.canonical_expert_id] = rows
     ids, scores, labels = align_prediction_rows(
@@ -548,15 +763,174 @@ def align_artifact_group(
         for expert, values in scores.items()
     }
     reference = rows_by_expert[expert_ids[0]]
+    reference_artifact = artifacts[0]
     reference_split = {
-        str(row[id_column]): str(row["split"]) for row in reference
+        str(row[id_column]): reference_artifact.provider_split_mapping.get(
+            str(row["split"]),
+            str(row["split"]),
+        )
+        for row in reference
+    }
+    reference_known = {
+        str(row[id_column]): _parse_label_known(row.get("label_known"))
+        for row in reference
+    }
+    reference_timestamp = {
+        str(row[id_column]): _parse_timestamp(_row_timestamp(row))
+        for row in reference
     }
     for expert, rows in rows_by_expert.items():
-        split_map = {str(row[id_column]): str(row["split"]) for row in rows}
+        artifact = next(
+            value
+            for value in artifacts
+            if value.canonical_expert_id == expert
+        )
+        split_map = {
+            str(row[id_column]): artifact.provider_split_mapping.get(
+                str(row["split"]),
+                str(row["split"]),
+            )
+            for row in rows
+        }
         if split_map != reference_split:
             raise ValueError(f"split mismatch after alignment for expert {expert}")
-    splits = np.asarray([reference_split[str(identifier)] for identifier in ids])
-    return ids, scores, labels, splits
+        known_map = {
+            str(row[id_column]): _parse_label_known(row.get("label_known"))
+            for row in rows
+        }
+        if known_map != reference_known:
+            raise ValueError(
+                f"label_known mismatch after alignment for expert {expert}"
+            )
+        timestamp_map = {
+            str(row[id_column]): _parse_timestamp(_row_timestamp(row))
+            for row in rows
+        }
+        if not _timestamp_maps_equal(timestamp_map, reference_timestamp):
+            raise ValueError(
+                f"timestamp mismatch after alignment for expert {expert}"
+            )
+    raw_splits = np.asarray(
+        [reference_split[str(identifier)] for identifier in ids]
+    )
+    raw_known = np.asarray(
+        [reference_known[str(identifier)] for identifier in ids],
+        dtype=bool,
+    )
+    raw_timestamps = np.asarray(
+        [reference_timestamp[str(identifier)] for identifier in ids],
+        dtype=float,
+    )
+    artifact = artifacts[0]
+    declared_label_ids = {int(value) for value in artifact.label_mapping}
+    observed_label_ids = {int(value) for value in labels.tolist()}
+    if not observed_label_ids.issubset(declared_label_ids):
+        raise ValueError(
+            "prediction rows contain labels absent from the provider label mapping"
+        )
+    provider_unknown_ids = {
+        int(identifier)
+        for identifier, meaning in artifact.label_mapping.items()
+        if str(meaning).strip().lower() in {"unknown", "unlabeled", "unlabelled"}
+    }
+    if provider_unknown_ids and np.any(
+        raw_known & np.isin(labels, tuple(provider_unknown_ids))
+    ):
+        raise ValueError(
+            "provider-unknown labels cannot be declared label-known"
+        )
+    if artifact.contract_role == ContractRole.SOURCE.value:
+        split_keep = np.isin(raw_splits, artifact.permitted_splits)
+        if np.any(split_keep & ~raw_known):
+            raise ValueError(
+                "source train/validation rows must all be label-known"
+            )
+        keep = split_keep & raw_known
+    else:
+        split_keep = raw_splits == artifact.evaluation_split
+        keep = split_keep & raw_known
+        if not keep.any():
+            raise ValueError(
+                "target artifact has no known rows in its evaluation split"
+            )
+    audit: dict[str, Any] = {
+        "dataset": artifact.dataset,
+        "protocol_id": artifact.protocol_id,
+        "contract_role": artifact.contract_role,
+        "contract_coordinate_hash": artifact.contract_coordinate_hash,
+        "contract_id": artifact.contract_id,
+        "expert_prediction_seed": artifact.expert_prediction_seed,
+        "fold": artifact.fold,
+        "raw_rows": int(len(ids)),
+        "included_rows": int(keep.sum()),
+        "excluded_rows": int((~keep).sum()),
+        "excluded_split_rows": int((~split_keep).sum()),
+        "excluded_unknown_label_rows": int((split_keep & ~raw_known).sum()),
+        "split_counts": {
+            str(split): int(np.sum(raw_splits == split))
+            for split in sorted(set(str(value) for value in raw_splits))
+        },
+        "provider_split_mapping": dict(artifact.provider_split_mapping),
+        "permitted_splits": list(artifact.permitted_splits),
+        "evaluation_split": artifact.evaluation_split,
+        "row_scope_policy": artifact.row_scope_policy,
+        "positive_label_id": artifact.positive_label_id,
+        "label_mapping": dict(artifact.label_mapping),
+        "artifact_paths": [str(value.path) for value in artifacts],
+        "artifact_checksums": [value.checksum for value in artifacts],
+    }
+    canonical_labels = np.where(
+        labels == artifact.positive_label_id,
+        1,
+        2,
+    )
+    return AlignedArtifactGroup(
+        identifiers=ids[keep],
+        scores={expert: values[keep] for expert, values in scores.items()},
+        labels=canonical_labels[keep],
+        label_known=raw_known[keep],
+        splits=raw_splits[keep],
+        timestamps=raw_timestamps[keep],
+        raw_identifiers=ids,
+        raw_labels=labels,
+        raw_label_known=raw_known,
+        raw_splits=raw_splits,
+        raw_timestamps=raw_timestamps,
+        audit=audit,
+    )
+
+
+def _parse_label_known(value: Any) -> bool:
+    if isinstance(value, bool):
+        return value
+    normalized = str(value).strip().lower()
+    if normalized in {"true", "1"}:
+        return True
+    if normalized in {"false", "0"}:
+        return False
+    raise ValueError("prediction rows require boolean label_known")
+
+
+def _parse_timestamp(value: Any) -> float:
+    if value is None or str(value).strip() == "":
+        return float("nan")
+    timestamp = float(value)
+    if not np.isfinite(timestamp):
+        raise ValueError("prediction timestamps must be finite when declared")
+    return timestamp
+
+
+def _timestamp_maps_equal(
+    left: Mapping[str, float],
+    right: Mapping[str, float],
+) -> bool:
+    if set(left) != set(right):
+        return False
+    return all(
+        (np.isnan(left[key]) and np.isnan(right[key]))
+        or left[key] == right[key]
+        for key in left
+    )
 
 
 def _stack_source_validation(
@@ -1870,7 +2244,9 @@ def evaluate_saved_output_pilot(
     candidates: Mapping[str, BaselinePrediction],
     *,
     dataset: str,
-    target_contract: str,
+    target_protocol_id: str,
+    target_contract_coordinate_hash: str,
+    target_contract_id: str,
     expert_prediction_seed: int,
     router_training_seeds: Mapping[str, int],
     fold: str,
@@ -1911,7 +2287,11 @@ def evaluate_saved_output_pilot(
             diagnostics.append(
                 {
                     "dataset": dataset,
-                    "target_contract": target_contract,
+                    "target_protocol_id": target_protocol_id,
+                    "target_contract_coordinate_hash": (
+                        target_contract_coordinate_hash
+                    ),
+                    "target_contract_id": target_contract_id,
                     "expert_prediction_seed": int(expert_prediction_seed),
                     "fold": fold,
                     "name": method,
@@ -1993,12 +2373,12 @@ def evaluate_saved_output_pilot(
                 prediction.scores,
                 (0.005, 0.01, 0.02),
             ),
-            "contract_regret": (
+            "brier_contract_regret": (
                 contract_risk - oracle_risk
                 if valid_headline_risk
                 else float("nan")
             ),
-            "selective_risk": selective,
+            "selective_zero_one_risk": selective,
             "coverage": float(accepted.mean()),
             "aurc": float(
                 area_under_risk_coverage_curve(
@@ -2020,7 +2400,11 @@ def evaluate_saved_output_pilot(
             rows.append(
                 {
                     "dataset": dataset,
-                    "target_contract": target_contract,
+                    "target_protocol_id": target_protocol_id,
+                    "target_contract_coordinate_hash": (
+                        target_contract_coordinate_hash
+                    ),
+                    "target_contract_id": target_contract_id,
                     "seed": int(expert_prediction_seed),
                     "expert_prediction_seed": int(expert_prediction_seed),
                     "router_training_seed": router_training_seed,
@@ -2028,6 +2412,16 @@ def evaluate_saved_output_pilot(
                     "method": method,
                     "metric": metric,
                     "value": float(value),
+                    "measurement_status": "MEASURED",
+                    "risk_definition": {
+                        "brier_contract_regret": (
+                            "contract_mean_brier_risk_minus_"
+                            "contract_feasible_oracle_brier_risk"
+                        ),
+                        "selective_zero_one_risk": (
+                            "zero_one_error_on_non_abstained_rows"
+                        ),
+                    }.get(metric, "not_a_risk_quantity"),
                     "execution_status": MethodExecutionStatus(
                         prediction.execution_status
                     ).value,
@@ -2058,12 +2452,14 @@ def evaluate_saved_output_pilot(
                 }
             )
     return {
-        "schema": "coregraph_saved_output_pilot_v3",
+        "schema": "coregraph_saved_output_pilot_v4",
         "status": "MEASURED_FROM_SAVED_PREDICTIONS",
         "rows": rows,
         "headline_oracle_reference": {
             "dataset": dataset,
-            "target_contract": target_contract,
+            "target_protocol_id": target_protocol_id,
+            "target_contract_coordinate_hash": target_contract_coordinate_hash,
+            "target_contract_id": target_contract_id,
             "expert_prediction_seed": int(expert_prediction_seed),
             "fold": fold,
             "name": "contract_feasible_oracle",
@@ -2079,5 +2475,5 @@ def evaluate_saved_output_pilot(
         "oracle_target_selection": False,
         "headline_oracle": "contract_feasible_oracle",
         "diagnostic_oracle": "instance_clairvoyant_oracle_ceiling",
-        "inferential_block": "expert_prediction_seed",
+        "inferential_block": "dataset_stratified_expert_prediction_seed",
     }

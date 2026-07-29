@@ -5,7 +5,7 @@ ICLR-C03,method implementation,SUPPORTED,unit tests and smoke run,"CoReGraph imp
 ICLR-C04,Elliptic and DGraphFin held-out contracts,CLAIM_BLOCKED_PENDING_EVIDENCE,ten-seed predictions and paired analysis,"RESULT_PENDING","CoReGraph wins on real fraud datasets"
 ICLR-C05,worst-contract AUPRC,CLAIM_BLOCKED_PENDING_EVIDENCE,final grid and Holm family,"TABLE_PENDING_RUNS","state-of-the-art worst-contract performance"
 ICLR-C06,worst-contract Recall@1%,CLAIM_BLOCKED_PENDING_EVIDENCE,final grid and budget audit,"TABLE_PENDING_RUNS","operationally superior"
-ICLR-C07,contract regret,CLAIM_BLOCKED_PENDING_EVIDENCE,contract-level feasible oracle and matched expert-seed blocks,"RESULT_PENDING","near-oracle routing or instance-oracle parity"
+ICLR-C07,Brier contract regret,CLAIM_BLOCKED_PENDING_EVIDENCE,contract-level feasible Brier oracle and dataset-stratified matched expert-seed blocks,"RESULT_PENDING","near-oracle routing, instance-oracle parity, or cross-loss regret comparison"
 ICLR-C08,unseen contract combinations,CLAIM_BLOCKED_PENDING_EVIDENCE,held-out combination split,"RESULT_PENDING","compositional generalisation demonstrated"
 ICLR-C09,resource-aware utility,CLAIM_BLOCKED_PENDING_EVIDENCE,measured telemetry and resource masks,"RESULT_PENDING","compute-efficient"
 ICLR-C10,routing stability,CLAIM_BLOCKED_PENDING_EVIDENCE,predeclared perturbation analysis,"RESULT_PENDING","stable routing"
