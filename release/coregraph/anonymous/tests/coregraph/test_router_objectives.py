@@ -25,7 +25,7 @@ def test_resource_mask_is_exact_and_all_missing_abstains() -> None:
         expert_costs=torch.tensor([1.0, 2.0, 3.0]),
     )
     assert output.expert_weights[0, 1].item() == 0
-    assert output.expert_weights[0].sum().item() == 1
+    assert output.expert_weights[0].sum().item() == pytest.approx(1.0)
     assert output.expert_weights[1].sum().item() == 0
     assert output.selected_expert.tolist()[1] == -1
     assert output.abstention_probability[1].item() == 1

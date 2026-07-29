@@ -1,5 +1,5 @@
 {
-  "aggregate_sha256": "cddebb59fc9f7be50b01e9400a46cdf3700d493274d10fb5ea42c243526514ad",
+  "aggregate_sha256": "24076ab0ff100a56765916fee3ad5ffc3e498915b0e1e65f9ce9edbcfcf5d878",
   "files": {
     "Makefile": {
       "bytes": 3586,
@@ -942,8 +942,8 @@
       "sha256": "ad5bb726062e35715f96036564cdc2c8a576db408ae6c65b66e79c54ccf53524"
     },
     "tests/coregraph/test_router_objectives.py": {
-      "bytes": 4228,
-      "sha256": "13ab29379582a92ae1ce66586cca41f40d9adfdd77709fea64419915ecc2cf9e"
+      "bytes": 4245,
+      "sha256": "f9ed99c8eeac353d24687b2acb7cd5cc90e92f7e65e2f8d279f2d7d748daf5cc"
     },
     "tests/coregraph/test_sampled_graph_expert.py": {
       "bytes": 1316,
