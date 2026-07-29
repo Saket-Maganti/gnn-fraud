@@ -28,6 +28,10 @@ ROOT_FILES = (
     "requirements-coregraph-lock.txt",
     "Makefile",
 )
+SPECIFICATION_FILES = (
+    "results/coregraph_build/PILOT_GATE_FROZEN_SPEC.json",
+    "results/coregraph_build/PILOT_V3_SPECIFICATION.md",
+)
 EXCLUDE_PARTS = {
     "__pycache__",
     ".pytest_cache",
@@ -80,6 +84,11 @@ def main() -> int:
         source = ROOT / relative
         if source.exists():
             shutil.copy2(source, DESTINATION / relative)
+    specification_dir = DESTINATION / "specifications"
+    specification_dir.mkdir()
+    for relative in SPECIFICATION_FILES:
+        source = ROOT / relative
+        shutil.copy2(source, specification_dir / source.name)
     files = {}
     for path in sorted(DESTINATION.rglob("*")):
         if path.is_file():

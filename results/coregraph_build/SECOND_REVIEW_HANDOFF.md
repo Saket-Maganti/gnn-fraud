@@ -18,8 +18,9 @@ performed.
    regression tests.
 4. Prediction-manifest, pilot-baseline/training, and paired-statistics tests.
 5. Theory/support and deterministic synthetic tests.
-6. `PILOT_V2_SPECIFICATION.md`, `THEORY_STRENGTHENING_PLAN.md`, and the final
-   gate status.
+6. The now-superseded `PILOT_V2_SPECIFICATION.md`,
+   `THEORY_STRENGTHENING_PLAN.md`, and the then-current gate status. Pilot V3
+   semantics are governed by `PILOT_V3_SPECIFICATION.md`.
 
 ## Review boundaries
 

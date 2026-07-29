@@ -58,14 +58,18 @@ For source contract groups, the configurable loss is
  \lambda_{\mathrm{abs}}\mathcal L_{\mathrm{abstention}}.
 \end{aligned}
 \]
-All group risks, feasible-oracle risks, regret, and CVaR terms are aggregated
-from example predictions, labels, group indices, expert predictions, and
-availability masks, preserving gradients through the contract encoder and
-router. Abstention combines selective risk, declared cost, and a capacity
-penalty, with its operating threshold selected on source validation only.
-The budget term is a smooth top-$K$ surrogate; we do not claim exact
-optimisation of discontinuous Recall@$K$. Stability covers contract
-perturbations, score noise, and availability masks.
+All group risks, contract-level feasible-oracle risks, regret, and CVaR terms
+are aggregated from example predictions, labels, group indices, expert
+predictions, and availability masks, preserving gradients through the
+contract encoder and router. Each oracle selects one feasible expert only
+after whole-contract expert risks are formed; an instance-clairvoyant oracle
+is diagnostic. Source-contract abstention capacities govern training and
+balanced source validation. The selected threshold and decision are frozen
+before target scoring; target capacity can only constrain that label-free
+decision. Source-contract budgets produce separate group-local top-$K$
+surrogates, while unconstrained groups receive no artificial $K$. We do not
+claim exact optimisation of discontinuous Recall@$K$. Stability covers
+contract perturbations, score noise, and availability masks.
 
 \begin{figure}[t]
   \centering

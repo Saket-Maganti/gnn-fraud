@@ -18,7 +18,7 @@ results:
     statement: appendix/appendix.tex
     implementation: coregraph/theory/resource_mask.py
     numerical_check: resource_mask
-    scope: feasible-set restriction of an offline oracle
+    scope: feasible-set restriction of one-expert-per-contract offline risk; excludes instance-clairvoyant selection
 prohibited_promotions:
   - learned_router_universal_improvement
   - prediction_space_mixture_lower_bound_without_assumptions

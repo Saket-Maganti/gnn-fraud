@@ -15,20 +15,29 @@ random-environment splits are secondary controls. Domain generalisation,
 unlabelled TTA, and few-label access are separate families.
 
 \paragraph{Baselines and ablations.}
-Baselines include individual feature/graph/tree/temporal experts, simple
-averaging, source-validation selection, Mowst, GraphMETRO when licensed,
-task-compatible graph OOD, official TGN, Group DRO, VREx, GraphSafe, atomic
-contract routing, no-contract routing, and the offline feasible oracle. Pending
-or unlicensed official code is excluded rather than approximated under its
-name. Ablations remove contract axes, interactions, diagnostics, regret, CVaR,
-budget, compute, stability, fallback, or abstention.
+Baselines include individual experts, feasible averaging, source-validation
+selection and convex mixing, the current graph-feature gate, atomic and
+no-contract routers, the source-trained
+\texttt{MOWST\_\allowbreak{}INSPIRED\_\allowbreak{}REIMPLEMENTATION}, and the
+honestly named
+\texttt{graphsafe\_\allowbreak{}confidence\_\allowbreak{}abstention\_\allowbreak{}component}.
+The latter is not a
+full GraphSafe comparator. Pending or unlicensed official code is excluded
+rather than approximated under its name. The contract-level feasible oracle
+defines headline regret; the instance-clairvoyant oracle is diagnostic only.
+Ablations remove factorised contracts, regret, budget, resource masks,
+stability, abstention, or diagnostics.
 
 \paragraph{Outcomes and inference.}
 Primary outcomes are AUPRC, Recall@0.5\%, Recall@1\%, Recall@2\%,
-budget-curve area, mean, maximum, and CVaR regret, selective risk, and compute.
-Inference pairs exact dataset--task--target-contract--fold contexts, averages
-contexts within seed, and treats the seed as the inferential block. Exact
-Wilcoxon, paired permutation, and seed-block bootstrap analyses replace normal
-approximations. Holm families are frozen before any final-run outcomes are
-inspected. Worst-contract comparisons use paired target-contract outcomes or
-contract regret rather than minima of unpaired raw scores.
+budget-curve area, mean, maximum, and CVaR regret, selective risk, abstention
+cost, and compute. Unavailable and resource-blocked predictions do not enter
+ranking metrics; fallback and abstention are distinct execution states.
+Inference pairs exact dataset--task--target-contract--fold contexts within
+expert-prediction seed. Router-training seeds are deterministic
+method-specific provenance, not additional replications. Exact Wilcoxon,
+paired permutation, and seed-block bootstrap analyses replace normal
+approximations. Holm-corrected support, confidence intervals, and frozen effect
+thresholds affect the go/no-go decision. Worst-case improvement is the minimum
+matched-contract difference within seed; maximum and CVaR regret are formed
+from contract regret within seed.

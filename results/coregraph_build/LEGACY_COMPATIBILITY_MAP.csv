@@ -10,7 +10,7 @@ data.datasets.tfinance,historical pseudo-time-capable loader,coregraph.data.TFin
 models.registry,simplified model factory,coregraph.experts.ExpertRegistry,Legacy models remain callable but receive explicit diagnostic status in the new registry,No,No diagnostic-as-official test
 models.modern_gnn.GraphTransformer;GPS;PCGNN,diagnostic architectures,coregraph.experts.LegacyModelExpert,Always labelled DIAGNOSTIC_APPROXIMATION until parity evidence exists,No,Status and warning test
 models.temporal_gnn.SnapshotTGN,discrete-time diagnostic,coregraph.experts.LegacyModelExpert,Never advertised as official TGN; alias is not used for headline baseline,No,Temporal official-status test
-models.graphsafe_v2,selective saved-output case study,coregraph.experts.GraphSafeAdapter,Baseline only and scope-bounded,No,Baseline label test
+models.graphsafe_v2,selective saved-output confidence case study,graphsafe_confidence_abstention_component,Validation-fitted confidence/abstention component only; never full GraphSafe parity,No,Second-review pilot semantics tests
 models.graph_feature_gating,two-expert validation gate,coregraph.experts.LegacyGateAdapter,Baseline only; CoReRouter is separate code and identity,No,Method separation test
 models.graph_harm_detector,mixed diagnostic utility,coregraph.routing.DiagnosticRegistry,Only label-free coordinates allowed at target; label-dependent signals are source-only,No,Leakage metadata test
 models.rolling_validation,time-window planner,coregraph.experiments.contract_splits plus graph views,Time ranges may be imported but V2 rebuilds admissible structure per fold,No,Future-edge test
