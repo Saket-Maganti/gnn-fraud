@@ -1,0 +1,57 @@
+\documentclass{article}
+
+% ICLR 2027 formatting had not been released when this skeleton was built.
+% The verified ICLR 2026 template is deliberately not frozen as a future style.
+\IfFileExists{iclr2027_conference.sty}{
+  \usepackage{iclr2027_conference}
+}{
+  \usepackage[margin=1in]{geometry}
+}
+\usepackage{amsmath,amssymb,amsthm,booktabs,graphicx,hyperref,microtype}
+\usepackage{xcolor}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newcommand{\pending}{\textcolor{red}{\texttt{RESULT\_PENDING}}}
+\newcommand{\tablepending}{\textcolor{red}{\texttt{TABLE\_PENDING\_RUNS}}}
+\newcommand{\claimblocked}{\textcolor{red}{\texttt{CLAIM\_BLOCKED\_PENDING\_EVIDENCE}}}
+
+\title{CoReGraph: Resource- and Budget-Aware Graph Expert Routing under
+Compositional Deployment Shift}
+\author{Anonymous Authors}
+
+\begin{document}
+\maketitle
+
+\input{sections/01_abstract}
+\input{sections/02_introduction}
+\input{sections/03_related_work}
+\input{sections/04_problem}
+\input{sections/05_method}
+\input{sections/06_theory}
+\input{sections/07_experiments}
+\input{sections/08_results_placeholder}
+\input{sections/09_limitations}
+\input{sections/10_conclusion}
+
+\paragraph{Reproducibility statement.}
+The appendix and anonymous artifact will specify the six-axis deployment
+contract, graph-view construction, task adapters, official-baseline pins,
+configuration hashes, saved predictions, telemetry, and the frozen analysis
+plan. Provider data and credentials will not be redistributed.
+
+\paragraph{Ethics statement.}
+Fraud detection is a high-impact decision-support setting. We report ranking,
+review-budget, calibration, abstention, and resource outcomes without treating
+model predictions as adjudications. Dataset licences, privacy boundaries,
+false-positive burdens, and human review capacity are explicit deployment
+coordinates. No personally identifying provider data is included in the
+artifact.
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\appendix
+\input{appendix/appendix}
+
+\end{document}

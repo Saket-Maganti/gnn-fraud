@@ -1,0 +1,16 @@
+threat_id,channel,injected_mutation,expected_control,test,status
+L001,future edges,edge timestamp after train cutoff,fold-specific GraphView excludes edge,test_temporal_graph_views_have_no_future_edges,PASS
+L002,boundary overlap,integer cutoff plus machine epsilon,nextafter boundary makes masks disjoint,test_temporal_graph_views_have_no_future_edges,PASS
+L003,target nodes,target node in non-transductive validation view,audit_view_bundle flags membership,test_temporal_graph_views_have_no_future_edges,PASS
+L004,target labels,router reads target labels,DG access audit rejects,target_access_audit_blocks_target_fit,PASS
+L005,target fit,scaler fitted on target,DG access audit rejects,target_access_audit_blocks_target_fit,PASS
+L006,identifier leakage,transaction_id feature,identifier audit rejects,test_masks_and_identifier_mutations_are_detected,PASS
+L007,unknown labels,unknown example placed in test mask,TaskBatch rejects,test_task_batch_rejects_unknown_label_and_duplicates,PASS
+L008,row order,reversed expert prediction rows,typed ID realignment,test_prediction_alignment_is_by_id_not_row_order,PASS
+L009,DGraphFin lifecycle,future incident event added,first incident time unchanged,test_dgraph_first_incident_time_is_immune_to_future_lifecycle_events,PASS
+L010,T-Finance pseudo-time,edge-order proxy used for temporal claim,timestamp guard rejects,test_tfinance_temporal_claim_rejects_edge_order_proxy,PASS
+L011,diagnostic labels,observed target error requested,label-requirement registry rejects,test_label_requiring_diagnostic_is_rejected,PASS
+L012,contract IDs,target atomic ID marked seen,ContractSplit rejects,test_observed_axis_unseen_combination_split,PASS
+L013,stale result,result checksum altered,resume returns invalid output,test_result_checksum_mutation_invalidates_resume,PASS
+L014,stale config,config hash altered,resume returns stale hash,test_stale_hash_and_interrupted_manifest,PASS
+L015,prediction file,manifest checksum binding,prediction checksum verified,test_prediction_export_checksum_is_bound_to_manifest,PASS

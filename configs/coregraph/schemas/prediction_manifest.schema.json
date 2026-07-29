@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CoReGraphPredictionManifestV2",
+  "type": "object",
+  "required": [
+    "expert_id",
+    "dataset",
+    "contract_id",
+    "contract_role",
+    "deployment_contract",
+    "task_type",
+    "prediction_unit",
+    "prediction_path",
+    "prediction_checksum",
+    "config_hash"
+  ],
+  "properties": {
+    "expert_id": {"type": "string"},
+    "dataset": {"type": "string"},
+    "contract_id": {"type": "string"},
+    "contract_role": {"enum": ["source", "target"]},
+    "deployment_contract": {"type": "object"},
+    "task_type": {
+      "enum": ["node_classification", "edge_classification", "transaction_classification"]
+    },
+    "prediction_unit": {"enum": ["node", "edge", "transaction"]},
+    "prediction_path": {"type": "string"},
+    "prediction_checksum": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "config_hash": {"type": "string"}
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "schema_version": "coregraph_pilot_gate_v1",
+  "criteria": [
+    {
+      "id": "strongest_baseline_identified",
+      "required": true
+    },
+    {
+      "id": "improvement_on_elliptic_and_dgraphfin",
+      "metric": "auprc",
+      "direction": "greater",
+      "required": true
+    },
+    {
+      "id": "worst_contract_gain",
+      "metric": "worst_contract_auprc",
+      "direction": "greater",
+      "required": true
+    },
+    {
+      "id": "average_utility_guardrail",
+      "metric": "average_auprc_delta",
+      "minimum": -0.002,
+      "required": true
+    },
+    {
+      "id": "paired_ci_excludes_material_harm",
+      "required": true
+    },
+    {
+      "id": "ablation_contribution",
+      "required": true
+    },
+    {
+      "id": "no_oracle_target_information",
+      "required": true
+    },
+    {
+      "id": "routing_diversity",
+      "minimum_distinct_experts": 2,
+      "required": true
+    },
+    {
+      "id": "routing_stability",
+      "maximum_flip_rate": 0.1,
+      "required": true
+    }
+  ],
+  "blocked_cell_ordering": "PROHIBITED"
+}

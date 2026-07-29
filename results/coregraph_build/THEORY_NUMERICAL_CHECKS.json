@@ -1,0 +1,17 @@
+{
+  "all_pass": true,
+  "compositional_bound": {
+    "pass": true,
+    "proof_status": "PROVED"
+  },
+  "fixed_mixture": {
+    "analytic_lower_bound": 0.18749999999999997,
+    "grid_minimum": 0.1875,
+    "pass": true,
+    "proof_status": "PROVED"
+  },
+  "resource_mask": {
+    "pass": true,
+    "proof_status": "PROVED"
+  }
+}

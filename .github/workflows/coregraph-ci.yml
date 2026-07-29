@@ -1,0 +1,50 @@
+name: coregraph-no-heavy-ci
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  typed-core:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: pip
+
+      - name: Install pinned CoReGraph dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-coregraph-lock.txt
+
+      - name: Compile, lint, and type-check
+        run: |
+          make coregraph-compile
+          make coregraph-lint
+          make coregraph-typecheck
+
+      - name: Unit, mutation, and frozen regression tests
+        run: make coregraph-test
+
+      - name: Theory, notebook, paper, release, and frozen-asset gates
+        run: |
+          python scripts/coregraph/check_theory_numerically.py
+          python scripts/coregraph/validate_theory_status.py
+          python scripts/coregraph/validate_notebooks.py
+          python scripts/coregraph/run_coregraph_smoke.py
+          python scripts/coregraph/validate_paper_skeleton.py
+          python scripts/coregraph/build_anonymous_release.py
+          python scripts/coregraph/audit_anonymous_release.py
+          python scripts/coregraph/hash_frozen_assets.py --verify
+
+# Provider downloads, official upstream installation, full training, Kaggle
+# execution, multi-seed campaigns, GPU runs, and empirical paper builds are
+# intentionally absent from CI.
