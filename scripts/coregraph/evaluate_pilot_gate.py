@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Evaluate predeclared seed-blocked pilot go/no-go gates."""
+"""Evaluate the frozen V3 pilot-semantics go/no-go gate."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ import json
 import sys
 from collections import defaultdict
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping, Sequence
 
 import numpy as np
 
@@ -19,34 +19,23 @@ if str(ROOT) not in sys.path:
 from coregraph.evaluation.corrections import holm  # noqa: E402
 from coregraph.evaluation.statistics import (  # noqa: E402
     bootstrap_seed_blocks,
-    build_paired_seed_blocks,
     exact_wilcoxon,
     paired_permutation,
+)
+from coregraph.experiments.pilot import (  # noqa: E402
+    MethodExecutionStatus,
+    derive_router_seed,
 )
 
 REQUIRED_BASELINES = {
     "average_all_feasible",
     "best_source_validation",
     "source_validation_convex_mixture",
-    "graphsafe_v2_adapter",
+    "graphsafe_confidence_abstention_component",
     "current_graph_feature_gate_adapter",
     "learned_no_contract_router",
     "learned_atomic_contract_router",
     "MOWST_INSPIRED_REIMPLEMENTATION",
-}
-HIGHER_IS_BETTER = {
-    "auprc",
-    "recall_at_0.5pct",
-    "recall_at_1pct",
-    "recall_at_2pct",
-    "budget_curve_area",
-}
-LOWER_IS_BETTER = {
-    "mean_regret",
-    "maximum_regret",
-    "cvar_regret",
-    "selective_risk",
-    "compute",
 }
 REQUIRED_ABLATIONS = {
     "ablation:no_contract",
@@ -58,19 +47,79 @@ REQUIRED_ABLATIONS = {
     "ablation:no_abstention",
     "ablation:no_diagnostics",
 }
+REQUIRED_DATASETS = {"elliptic", "dgraphfin"}
+REQUIRED_TARGET_CONTRACTS = {
+    "strict_inductive",
+    "isolated_inductive",
+    "transductive_structure",
+}
+REQUIRED_EXPERTS = {"feature_mlp", "gcn", "graphsage"}
+REQUIRED_CONTRACT_METRICS = {
+    "auprc",
+    "recall_at_0.5pct",
+    "recall_at_1pct",
+    "recall_at_2pct",
+    "budget_curve_area",
+    "contract_regret",
+    "selective_risk",
+    "coverage",
+    "aurc",
+    "abstention_cost",
+    "compute",
+}
+HIGHER_IS_BETTER = {
+    "auprc",
+    "recall_at_0.5pct",
+    "recall_at_1pct",
+    "recall_at_2pct",
+    "budget_curve_area",
+}
+LOWER_IS_BETTER = {
+    "contract_regret",
+    "mean_regret",
+    "maximum_regret",
+    "cvar_regret",
+    "selective_risk",
+    "abstention_cost",
+    "compute",
+}
+ROBUST_OUTCOMES = {"mean_regret", "maximum_regret", "cvar_regret"}
+
+
+def _expert_seed(row: Mapping[str, Any]) -> int:
+    if "expert_prediction_seed" in row:
+        return int(row["expert_prediction_seed"])
+    return int(row["seed"])
 
 
 def _holm_family(metric: str) -> str:
     if metric in HIGHER_IS_BETTER:
         return "ranking_and_budget"
-    if metric in {"mean_regret", "maximum_regret", "cvar_regret"}:
+    if metric in ROBUST_OUTCOMES | {"contract_regret"}:
         return "robust_risk"
-    if metric in {"selective_risk", "compute"}:
+    if metric in {"selective_risk", "abstention_cost", "compute"}:
         return "deployment"
     raise ValueError(f"metric {metric!r} has no declared Holm family")
 
 
 def _validate_gate_schema(schema: dict[str, Any]) -> None:
+    if schema.get("schema_version") != "coregraph_pilot_gate_v3":
+        raise ValueError("pilot gate must use the frozen V3 schema")
+    if set(schema.get("required_datasets", ())) != REQUIRED_DATASETS:
+        raise ValueError("pilot gate must require Elliptic and DGraphFin")
+    if (
+        set(schema.get("required_target_contracts", ()))
+        != REQUIRED_TARGET_CONTRACTS
+    ):
+        raise ValueError("pilot gate target-contract registry does not match code")
+    if tuple(schema.get("required_expert_prediction_seeds", ())) != tuple(
+        range(1, 11)
+    ):
+        raise ValueError("pilot gate must require expert-prediction seeds 1-10")
+    if set(schema.get("required_folds", ())) != {"fold0"}:
+        raise ValueError("pilot gate must require the frozen fold")
+    if set(schema.get("required_experts", ())) != REQUIRED_EXPERTS:
+        raise ValueError("pilot gate expert registry does not match code")
     if set(schema.get("required_strong_baselines", ())) != REQUIRED_BASELINES:
         raise ValueError("pilot gate schema baseline registry does not match code")
     declared_ablations = {
@@ -79,36 +128,71 @@ def _validate_gate_schema(schema: dict[str, Any]) -> None:
     }
     if declared_ablations != REQUIRED_ABLATIONS:
         raise ValueError("pilot gate schema ablations do not match code")
+    if (
+        set(schema.get("required_contract_metrics", ()))
+        != REQUIRED_CONTRACT_METRICS
+    ):
+        raise ValueError("pilot gate contract metrics do not match code")
     declared_families = schema.get("holm_families", {})
     if not isinstance(declared_families, dict):
         raise ValueError("pilot gate schema Holm families must be a mapping")
-    for family, metrics in declared_families.items():
-        if any(_holm_family(str(metric)) != family for metric in metrics):
-            raise ValueError("pilot gate schema Holm family mapping is inconsistent")
     if set(declared_families) != {
         "ranking_and_budget",
         "robust_risk",
         "deployment",
     }:
         raise ValueError("pilot gate schema must declare all three Holm families")
+    for family, metrics in declared_families.items():
+        if any(_holm_family(str(metric)) != family for metric in metrics):
+            raise ValueError("pilot gate schema Holm family mapping is inconsistent")
+    ablation_tests = schema.get("ablation_tests", {})
+    if {
+        f"ablation:{name}" for name in ablation_tests
+    } != REQUIRED_ABLATIONS:
+        raise ValueError("pilot gate must freeze one effect test per ablation")
+    expected_meaningful = {
+        "no_contract",
+        "atomic_contract",
+        "no_regret",
+        "no_budget",
+        "no_resource_mask",
+    }
+    if set(schema.get("required_meaningful_ablations", ())) != expected_meaningful:
+        raise ValueError("pilot gate meaningful-ablation registry does not match code")
+    thresholds = schema.get("effect_thresholds", {})
+    if (
+        float(thresholds.get("worst_contract_regret_improvement", 0.0)) <= 0
+        or float(thresholds.get("robust_primary_improvement", 0.0)) <= 0
+    ):
+        raise ValueError("pilot gate robust effect thresholds must be positive")
 
 
-def _derive_regret_rows(rows):
+def _derive_regret_rows(
+    rows: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
     contract_rows = [
         row for row in rows if str(row["metric"]) == "contract_regret"
     ]
-    grouped = defaultdict(list)
+    grouped: dict[tuple[str, int, str, str, int], list[float]] = defaultdict(
+        list
+    )
     for row in contract_rows:
+        value = float(row["value"])
+        if not np.isfinite(value):
+            continue
         grouped[
             (
                 str(row["dataset"]),
-                int(row["seed"]),
+                _expert_seed(row),
                 str(row.get("fold", "")),
                 str(row["method"]),
+                int(row.get("router_training_seed", -1)),
             )
-        ].append(float(row["value"]))
-    derived = []
-    for (dataset, seed, fold, method), values in grouped.items():
+        ].append(value)
+    derived: list[dict[str, Any]] = []
+    for (dataset, seed, fold, method, router_seed), values in sorted(
+        grouped.items()
+    ):
         ordered = sorted(values, reverse=True)
         tail_count = max(1, int(np.ceil(0.2 * len(ordered))))
         metrics = {
@@ -122,43 +206,618 @@ def _derive_regret_rows(rows):
                     "dataset": dataset,
                     "target_contract": "__seed_aggregate__",
                     "seed": seed,
+                    "expert_prediction_seed": seed,
+                    "router_training_seed": router_seed,
                     "fold": fold,
                     "method": method,
                     "metric": metric,
                     "value": value,
+                    "execution_status": MethodExecutionStatus.EXECUTABLE.value,
                 }
             )
     return derived
 
 
-def _worst_contract_seed_deltas(rows, baseline):
-    values = {
-        (
+def _matched_worst_contract_seed_deltas(
+    rows: Sequence[Mapping[str, Any]],
+    baseline: str,
+    *,
+    metric: str,
+    direction: str,
+) -> dict[tuple[str, int], float]:
+    if direction not in {"higher", "lower"}:
+        raise ValueError("matched worst-case direction must be higher or lower")
+    values: dict[tuple[str, str, int, str, str], float] = {}
+    for row in rows:
+        if (
+            str(row["metric"]) != metric
+            or str(row["method"]) not in {"full_corerouter", baseline}
+        ):
+            continue
+        value = float(row["value"])
+        if not np.isfinite(value):
+            continue
+        key = (
             str(row["dataset"]),
             str(row["target_contract"]),
-            int(row["seed"]),
+            _expert_seed(row),
             str(row.get("fold", "")),
             str(row["method"]),
-        ): float(row["value"])
-        for row in rows
-        if str(row["metric"]) == "auprc"
-        and str(row["method"]) in {"full_corerouter", baseline}
-    }
+        )
+        if key in values:
+            raise ValueError(f"duplicate matched target-contract row {key}")
+        values[key] = value
     contexts = {
         key[:4] for key in values if key[4] == "full_corerouter"
     }
-    by_seed = defaultdict(list)
-    for context in contexts:
+    if not contexts:
+        raise ValueError("matched worst-case comparison has no method rows")
+    by_block: dict[tuple[str, int], list[float]] = defaultdict(list)
+    for context in sorted(contexts):
         method_key = (*context, "full_corerouter")
         baseline_key = (*context, baseline)
         if baseline_key not in values:
-            raise ValueError(f"missing paired target-contract outcome {baseline_key}")
-        by_seed[context[2]].append(
-            values[method_key] - values[baseline_key]
+            raise ValueError(
+                f"missing paired target-contract outcome {baseline_key}"
+            )
+        method_value = values[method_key]
+        baseline_value = values[baseline_key]
+        improvement = (
+            method_value - baseline_value
+            if direction == "higher"
+            else baseline_value - method_value
         )
-    return tuple(
-        min(by_seed[seed]) for seed in sorted(by_seed)
+        by_block[(context[0], context[2])].append(improvement)
+    return {
+        block: float(min(differences))
+        for block, differences in sorted(by_block.items())
+    }
+
+
+def _worst_contract_seed_deltas(
+    rows: Sequence[Mapping[str, Any]],
+    baseline: str,
+) -> tuple[float, ...]:
+    """V2 compatibility view over the matched-contract implementation."""
+
+    matched = _matched_worst_contract_seed_deltas(
+        rows,
+        baseline,
+        metric="auprc",
+        direction="higher",
     )
+    return tuple(matched[key] for key in sorted(matched))
+
+
+def _required_methods(schema: Mapping[str, Any]) -> set[str]:
+    return {
+        "full_corerouter",
+        *(
+            f"expert:{name}"
+            for name in schema.get("required_experts", ())
+        ),
+        *(str(name) for name in schema["required_strong_baselines"]),
+        *(
+            f"ablation:{name}"
+            for name in schema["required_ablations"]
+        ),
+    }
+
+
+def _validate_complete_coverage(
+    rows: Sequence[Mapping[str, Any]],
+    schema: Mapping[str, Any],
+) -> dict[str, Any]:
+    required_datasets = {str(value) for value in schema["required_datasets"]}
+    required_contracts = {
+        str(value) for value in schema["required_target_contracts"]
+    }
+    required_seeds = {
+        int(value) for value in schema["required_expert_prediction_seeds"]
+    }
+    required_folds = {str(value) for value in schema["required_folds"]}
+    required_methods = _required_methods(schema)
+    required_metrics = {
+        str(value)
+        for value in schema.get(
+            "required_contract_metrics",
+            schema["primary_outcomes"],
+        )
+    }
+    ranking_outcomes = {
+        str(value) for value in schema.get("ranking_outcomes", ())
+    }
+    actual_datasets: set[str] = set()
+    actual_contracts: set[str] = set()
+    actual_seeds: set[int] = set()
+    actual_folds: set[str] = set()
+    actual_methods: set[str] = set()
+    actual_keys: set[tuple[str, str, int, str, str, str]] = set()
+    duplicates: list[tuple[str, str, int, str, str, str]] = []
+    semantic_errors: list[str] = []
+    for row in rows:
+        metric = str(row["metric"])
+        if metric not in required_metrics:
+            continue
+        dataset = str(row["dataset"])
+        contract = str(row["target_contract"])
+        seed = _expert_seed(row)
+        fold = str(row.get("fold", ""))
+        method = str(row["method"])
+        key = (dataset, contract, seed, fold, method, metric)
+        if key in actual_keys:
+            duplicates.append(key)
+        actual_keys.add(key)
+        actual_datasets.add(dataset)
+        actual_contracts.add(contract)
+        actual_seeds.add(seed)
+        actual_folds.add(fold)
+        actual_methods.add(method)
+        if int(row.get("seed", seed)) != seed:
+            semantic_errors.append(f"seed alias mismatch for {key}")
+        expected_router_seed = derive_router_seed(seed, method)
+        if int(row.get("router_training_seed", -1)) != expected_router_seed:
+            semantic_errors.append(f"router seed mismatch for {key}")
+        try:
+            status = MethodExecutionStatus(str(row["execution_status"]))
+        except (KeyError, ValueError):
+            semantic_errors.append(f"invalid execution status for {key}")
+            continue
+        value = float(row["value"])
+        if (
+            status
+            in {
+                MethodExecutionStatus.EXECUTABLE,
+                MethodExecutionStatus.EXECUTABLE_WITH_FALLBACK,
+            }
+            and not np.isfinite(value)
+        ):
+            semantic_errors.append(f"executable result is non-finite for {key}")
+        if (
+            status
+            in {
+                MethodExecutionStatus.ABSTAIN_ONLY,
+                MethodExecutionStatus.RESOURCE_BLOCKED,
+                MethodExecutionStatus.NOT_APPLICABLE,
+            }
+            and metric in ranking_outcomes
+            and np.isfinite(value)
+        ):
+            semantic_errors.append(
+                f"blocked prediction entered ranking metric for {key}"
+            )
+    expected_keys = {
+        (dataset, contract, seed, fold, method, metric)
+        for dataset in required_datasets
+        for contract in required_contracts
+        for seed in required_seeds
+        for fold in required_folds
+        for method in required_methods
+        for metric in required_metrics
+    }
+    missing = sorted(expected_keys - actual_keys)
+    unexpected = sorted(actual_keys - expected_keys)
+    complete = not any(
+        (
+            duplicates,
+            semantic_errors,
+            missing,
+            unexpected,
+            actual_datasets != required_datasets,
+            actual_contracts != required_contracts,
+            actual_seeds != required_seeds,
+            actual_folds != required_folds,
+            actual_methods != required_methods,
+        )
+    )
+    return {
+        "complete": complete,
+        "missing_cell_count": len(missing),
+        "unexpected_cell_count": len(unexpected),
+        "duplicate_cell_count": len(duplicates),
+        "semantic_errors": semantic_errors,
+        "datasets": sorted(actual_datasets),
+        "target_contracts": sorted(actual_contracts),
+        "expert_prediction_seeds": sorted(actual_seeds),
+        "folds": sorted(actual_folds),
+        "methods": sorted(actual_methods),
+    }
+
+
+def _paired_improvements(
+    rows: Sequence[Mapping[str, Any]],
+    *,
+    method: str,
+    baseline: str,
+    metric: str,
+    direction: str,
+    dataset: str | None = None,
+) -> tuple[np.ndarray, tuple[int, ...], tuple[int, ...]]:
+    values: dict[tuple[str, str, int, str, str], float] = {}
+    for row in rows:
+        if (
+            str(row["metric"]) != metric
+            or str(row["method"]) not in {method, baseline}
+            or (dataset is not None and str(row["dataset"]) != dataset)
+        ):
+            continue
+        value = float(row["value"])
+        if not np.isfinite(value):
+            continue
+        key = (
+            str(row["dataset"]),
+            str(row["target_contract"]),
+            _expert_seed(row),
+            str(row.get("fold", "")),
+            str(row["method"]),
+        )
+        if key in values:
+            raise ValueError(f"duplicate paired effect row {key}")
+        values[key] = value
+    contexts = {
+        key[:4] for key in values if key[4] == method
+    }
+    if not contexts:
+        raise ValueError(f"paired effect has no rows for {method}/{metric}")
+    missing = [
+        context
+        for context in sorted(contexts)
+        if (*context, baseline) not in values
+    ]
+    if missing:
+        raise ValueError(f"paired effect has missing baseline contexts: {missing}")
+    by_seed: dict[int, list[float]] = defaultdict(list)
+    for context in sorted(contexts):
+        method_value = values[(*context, method)]
+        baseline_value = values[(*context, baseline)]
+        improvement = (
+            method_value - baseline_value
+            if direction == "higher"
+            else baseline_value - method_value
+        )
+        by_seed[context[2]].append(improvement)
+    context_counts = {len(value) for value in by_seed.values()}
+    if len(context_counts) != 1:
+        raise ValueError("paired seeds have unequal target-context coverage")
+    seeds = tuple(sorted(by_seed))
+    return (
+        np.asarray(
+            [float(np.mean(by_seed[seed])) for seed in seeds],
+            dtype=float,
+        ),
+        seeds,
+        tuple(len(by_seed[seed]) for seed in seeds),
+    )
+
+
+def _effect_record(
+    rows: Sequence[Mapping[str, Any]],
+    *,
+    method: str,
+    baseline: str,
+    metric: str,
+    direction: str,
+    minimum_effect: float,
+) -> dict[str, Any]:
+    improvement, seeds, context_counts = _paired_improvements(
+        rows,
+        method=method,
+        baseline=baseline,
+        metric=metric,
+        direction=direction,
+    )
+    zeros = np.zeros_like(improvement)
+    wilcoxon = exact_wilcoxon(improvement, zeros, alternative="greater")
+    permutation = paired_permutation(
+        improvement,
+        zeros,
+        alternative="greater",
+    )
+    low, high = bootstrap_seed_blocks(improvement)
+    return {
+        "method": method,
+        "baseline": baseline,
+        "metric": metric,
+        "direction": direction,
+        "seeds": list(seeds),
+        "contexts_per_seed": list(context_counts),
+        "mean_improvement": float(improvement.mean()),
+        "minimum_effect": float(minimum_effect),
+        "exact_wilcoxon_p": wilcoxon.p_value,
+        "raw_p": permutation.p_value,
+        "paired_permutation_p": permutation.p_value,
+        "seed_block_bootstrap_95": [low, high],
+    }
+
+
+def _apply_holm_to_effect_records(
+    records: Sequence[Mapping[str, Any]],
+    *,
+    alpha: float,
+) -> list[dict[str, Any]]:
+    if not records:
+        return []
+    correction = holm(
+        [float(record["raw_p"]) for record in records],
+        alpha=alpha,
+    )
+    output: list[dict[str, Any]] = []
+    for record, adjusted, reject in zip(
+        records,
+        correction.adjusted,
+        correction.reject,
+        strict=True,
+    ):
+        updated = dict(record)
+        updated["holm_adjusted_p"] = adjusted
+        updated["holm_reject"] = reject
+        interval = updated.get("seed_block_bootstrap_95")
+        ci_support = (
+            True
+            if interval is None
+            else float(interval[0]) >= 0.0
+        )
+        updated["meaningful"] = bool(
+            reject
+            and float(updated["mean_improvement"])
+            >= float(updated["minimum_effect"])
+            and ci_support
+        )
+        output.append(updated)
+    return output
+
+
+def _evaluate_ablation_effects(
+    rows: Sequence[Mapping[str, Any]],
+    schema: Mapping[str, Any],
+) -> list[dict[str, Any]]:
+    records = []
+    for name, test in schema["ablation_tests"].items():
+        record = _effect_record(
+            rows,
+            method="full_corerouter",
+            baseline=f"ablation:{name}",
+            metric=str(test["metric"]),
+            direction=str(test["direction"]),
+            minimum_effect=float(test["minimum_effect"]),
+        )
+        record["ablation"] = name
+        record["required_contribution"] = bool(
+            test["required_contribution"]
+        )
+        records.append(record)
+    return _apply_holm_to_effect_records(
+        records,
+        alpha=float(schema.get("alpha", 0.05)),
+    )
+
+
+def _baseline_comparisons(
+    rows: Sequence[Mapping[str, Any]],
+    schema: Mapping[str, Any],
+) -> list[dict[str, Any]]:
+    records: list[dict[str, Any]] = []
+    positions: dict[str, list[int]] = defaultdict(list)
+    p_values: dict[str, list[float]] = defaultdict(list)
+    thresholds = schema.get("minimum_effects", {})
+    for metric in schema["primary_outcomes"]:
+        direction = "higher" if metric in HIGHER_IS_BETTER else "lower"
+        for baseline in schema["required_strong_baselines"]:
+            record = _effect_record(
+                rows,
+                method="full_corerouter",
+                baseline=str(baseline),
+                metric=str(metric),
+                direction=direction,
+                minimum_effect=float(thresholds.get(metric, 0.0)),
+            )
+            records.append(record)
+            family = _holm_family(str(metric))
+            positions[family].append(len(records) - 1)
+            p_values[family].append(float(record["raw_p"]))
+    for family, values in p_values.items():
+        correction = holm(values, alpha=float(schema.get("alpha", 0.05)))
+        for position, adjusted, reject in zip(
+            positions[family],
+            correction.adjusted,
+            correction.reject,
+            strict=True,
+        ):
+            records[position]["holm_adjusted_p"] = adjusted
+            records[position]["holm_reject"] = reject
+    return records
+
+
+def evaluate_pilot_gate(
+    result: Mapping[str, Any],
+    schema: dict[str, Any],
+) -> dict[str, Any]:
+    _validate_gate_schema(schema)
+    rows = list(result.get("rows", []))
+    coverage = _validate_complete_coverage(rows, schema)
+    if not coverage["complete"]:
+        return {
+            "status": "BLOCKED_INCOMPLETE_PILOT_COVERAGE",
+            "passed": False,
+            "coverage": coverage,
+        }
+    analysis_rows = [*rows, *_derive_regret_rows(rows)]
+    try:
+        comparisons = _baseline_comparisons(analysis_rows, schema)
+        ablations = _evaluate_ablation_effects(analysis_rows, schema)
+    except ValueError as error:
+        return {
+            "status": "BLOCKED_INCOMPLETE_COMPARABLE_EVIDENCE",
+            "passed": False,
+            "coverage": coverage,
+            "reason": str(error),
+        }
+    headline_baselines = (
+        "average_all_feasible",
+        "best_source_validation",
+    )
+    worst_regret = {
+        baseline: _matched_worst_contract_seed_deltas(
+            rows,
+            baseline,
+            metric="contract_regret",
+            direction="lower",
+        )
+        for baseline in headline_baselines
+    }
+    worst_threshold = float(
+        schema.get("effect_thresholds", {}).get(
+            "worst_contract_regret_improvement",
+            0.0,
+        )
+    )
+    robust_threshold = float(
+        schema.get("effect_thresholds", {}).get(
+            "robust_primary_improvement",
+            0.0,
+        )
+    )
+    robust_support = [
+        record
+        for record in comparisons
+        if record["metric"] in ROBUST_OUTCOMES
+        and record["baseline"] in headline_baselines
+        and record["holm_reject"]
+        and record["mean_improvement"] >= robust_threshold
+        and record["seed_block_bootstrap_95"][0] > 0
+    ]
+    required_datasets = [str(value) for value in schema["required_datasets"]]
+    positive_by_dataset = True
+    dataset_effects: dict[str, dict[str, float]] = {}
+    for dataset in required_datasets:
+        dataset_effects[dataset] = {}
+        for baseline in headline_baselines:
+            improvement, _, _ = _paired_improvements(
+                analysis_rows,
+                method="full_corerouter",
+                baseline=baseline,
+                metric="cvar_regret",
+                direction="lower",
+                dataset=dataset,
+            )
+            value = float(improvement.mean())
+            dataset_effects[dataset][baseline] = value
+            positive_by_dataset &= value > robust_threshold
+    auprc_harm_floor = float(
+        schema.get("effect_thresholds", {}).get(
+            "average_auprc_harm_floor",
+            -0.002,
+        )
+    )
+    auprc_guardrails = [
+        record
+        for record in comparisons
+        if record["metric"] == "auprc"
+        and record["baseline"] in headline_baselines
+    ]
+    required_ablation_names = set(
+        schema.get("required_meaningful_ablations", ())
+    )
+    meaningful_by_name = {
+        str(record["ablation"]): bool(record["meaningful"])
+        for record in ablations
+    }
+    routing = list(result.get("routing", []))
+    expected_routing = (
+        len(schema["required_datasets"])
+        * len(schema["required_target_contracts"])
+        * len(schema["required_expert_prediction_seeds"])
+        * len(schema["required_folds"])
+    )
+    full_coverage_rows = [
+        row
+        for row in rows
+        if row["method"] == "full_corerouter"
+        and row["metric"] == "coverage"
+    ]
+    criteria = {
+        "complete_two_dataset_ten_seed_coverage": coverage["complete"],
+        "positive_worst_contract_regret_vs_average": all(
+            value > worst_threshold
+            for value in worst_regret["average_all_feasible"].values()
+        ),
+        "positive_worst_contract_regret_vs_source_best": all(
+            value > worst_threshold
+            for value in worst_regret["best_source_validation"].values()
+        ),
+        "corrected_robust_primary_support": bool(robust_support),
+        "positive_effects_on_both_datasets": positive_by_dataset,
+        "no_material_average_auprc_harm": all(
+            record["mean_improvement"] >= auprc_harm_floor
+            and record["seed_block_bootstrap_95"][0] >= auprc_harm_floor
+            for record in auprc_guardrails
+        ),
+        "no_one_contract_only_effect": all(
+            value > worst_threshold
+            for baseline_values in worst_regret.values()
+            for value in baseline_values.values()
+        ),
+        "all_ablation_effects_evaluated": len(ablations)
+        == len(REQUIRED_ABLATIONS),
+        "meaningful_required_ablations": all(
+            meaningful_by_name.get(name, False)
+            for name in required_ablation_names
+        ),
+        "zero_coverage_full_method_blocked": bool(
+            full_coverage_rows
+            and all(float(row["value"]) > 0 for row in full_coverage_rows)
+        ),
+        "routing_diversity": bool(
+            len(routing) == expected_routing
+            and min(int(record["distinct_experts"]) for record in routing) >= 2
+        ),
+        "routing_stability": bool(
+            len(routing) == expected_routing
+            and max(
+                float(record["perturbation_flip_rate"])
+                for record in routing
+            )
+            <= float(
+                schema.get("effect_thresholds", {}).get(
+                    "maximum_routing_flip_rate",
+                    0.1,
+                )
+            )
+        ),
+        "no_target_label_selection": (
+            result.get("target_label_selection") is False
+            and result.get("oracle_target_selection") is False
+        ),
+        "contract_feasible_headline_oracle": (
+            result.get("headline_oracle") == "contract_feasible_oracle"
+            and result.get("diagnostic_oracle")
+            == "instance_clairvoyant_oracle_ceiling"
+        ),
+        "instance_oracle_excluded_from_methods": not any(
+            row["method"] == "instance_clairvoyant_oracle_ceiling"
+            for row in rows
+        ),
+    }
+    return {
+        "status": "GATE_EVALUATED",
+        "passed": all(criteria.values()),
+        "criteria": criteria,
+        "coverage": coverage,
+        "comparisons": comparisons,
+        "ablation_effects": ablations,
+        "matched_worst_contract_regret_improvements": {
+            baseline: {
+                f"{dataset}:seed{seed}": value
+                for (dataset, seed), value in values.items()
+            }
+            for baseline, values in worst_regret.items()
+        },
+        "robust_supporting_comparisons": robust_support,
+        "dataset_effects": dataset_effects,
+        "pairing_unit": (
+            "matched target contracts within expert-prediction seed"
+        ),
+    }
 
 
 def main() -> int:
@@ -169,158 +828,27 @@ def main() -> int:
     )
     parser.add_argument(
         "--schema",
-        default="results/coregraph_build/PILOT_GO_NO_GO_SCHEMA.json",
+        default="results/coregraph_build/PILOT_GATE_FROZEN_SPEC.json",
     )
     parser.add_argument(
         "--output",
         default="results/coregraph_pilot/gate_report.json",
     )
     args = parser.parse_args()
-    result_path = Path(args.pilot_result)
     schema = json.loads(Path(args.schema).read_text(encoding="utf-8"))
-    _validate_gate_schema(schema)
+    result_path = Path(args.pilot_result)
     if not result_path.exists():
         report = {
             "status": "BLOCKED_MISSING_PILOT_RESULT",
             "passed": False,
-            "criteria": schema["criteria"],
+            "required_datasets": schema["required_datasets"],
+            "required_expert_prediction_seeds": (
+                schema["required_expert_prediction_seeds"]
+            ),
         }
     else:
         result = json.loads(result_path.read_text(encoding="utf-8"))
-        rows = list(result.get("rows", []))
-        methods = {str(row["method"]) for row in rows}
-        baselines = sorted(
-            (REQUIRED_BASELINES | {name for name in methods if name.startswith("expert:")})
-            & methods
-        )
-        missing_baselines = sorted(REQUIRED_BASELINES - methods)
-        if "full_corerouter" not in methods or missing_baselines:
-            report = {
-                "status": "BLOCKED_INCOMPLETE_METHOD_ROWS",
-                "passed": False,
-                "missing_baselines": missing_baselines,
-                "criteria": schema["criteria"],
-            }
-        else:
-            analysis_rows = [*rows, *_derive_regret_rows(rows)]
-            comparisons: list[dict[str, Any]] = []
-            family_p_values = defaultdict(list)
-            family_positions = defaultdict(list)
-            for metric in sorted(HIGHER_IS_BETTER | LOWER_IS_BETTER):
-                for baseline in baselines:
-                    blocks = build_paired_seed_blocks(
-                        analysis_rows,
-                        method="full_corerouter",
-                        baseline=baseline,
-                        metric=metric,
-                    )
-                    method_values = np.asarray(blocks.method_values)
-                    baseline_values = np.asarray(blocks.baseline_values)
-                    improvement = (
-                        method_values - baseline_values
-                        if metric in HIGHER_IS_BETTER
-                        else baseline_values - method_values
-                    )
-                    wilcoxon = exact_wilcoxon(
-                        improvement,
-                        np.zeros_like(improvement),
-                        alternative="greater",
-                    )
-                    permutation = paired_permutation(
-                        improvement,
-                        np.zeros_like(improvement),
-                        alternative="greater",
-                    )
-                    low, high = bootstrap_seed_blocks(improvement)
-                    record = {
-                        "metric": metric,
-                        "baseline": baseline,
-                        "seeds": list(blocks.seeds),
-                        "contexts_per_seed": list(blocks.contexts_per_seed),
-                        "mean_improvement": float(improvement.mean()),
-                        "exact_wilcoxon_p": wilcoxon.p_value,
-                        "paired_permutation_p": permutation.p_value,
-                        "seed_block_bootstrap_95": [low, high],
-                    }
-                    comparisons.append(record)
-                    family = _holm_family(metric)
-                    family_p_values[family].append(permutation.p_value)
-                    family_positions[family].append(len(comparisons) - 1)
-            for family, p_values in family_p_values.items():
-                corrected = holm(p_values, alpha=0.05)
-                for position, adjusted, reject in zip(
-                    family_positions[family],
-                    corrected.adjusted,
-                    corrected.reject,
-                    strict=True,
-                ):
-                    comparisons[position]["holm_adjusted_p"] = adjusted
-                    comparisons[position]["holm_reject"] = reject
-
-            worst_contract = {
-                baseline: _worst_contract_seed_deltas(rows, baseline)
-                for baseline in baselines
-            }
-            worst_contract_gain = all(
-                values and float(np.mean(values)) > 0
-                for values in worst_contract.values()
-            )
-            auprc_comparisons: list[dict[str, Any]] = [
-                row for row in comparisons if row["metric"] == "auprc"
-            ]
-            routing = list(result.get("routing", []))
-            criteria = {
-                "every_predeclared_strong_baseline_compared": (
-                    not missing_baselines
-                    and set(baselines) >= REQUIRED_BASELINES
-                ),
-                "paired_seed_blocks": all(
-                    len(row["seeds"]) >= 2 for row in comparisons
-                ),
-                "worst_contract_gain_from_paired_outcomes": worst_contract_gain,
-                "average_utility_guardrail": all(
-                    row["mean_improvement"] >= -0.002
-                    for row in auprc_comparisons
-                ),
-                "paired_ci_excludes_material_harm": all(
-                    row["seed_block_bootstrap_95"][0] >= -0.002
-                    for row in auprc_comparisons
-                ),
-                "declared_holm_families": all(
-                    "holm_adjusted_p" in row for row in comparisons
-                ),
-                "ablation_contribution": (
-                    REQUIRED_ABLATIONS.issubset(methods)
-                ),
-                "no_oracle_target_information": (
-                    result.get("oracle_target_selection") is False
-                ),
-                "routing_diversity": bool(
-                    routing
-                    and min(
-                        int(record["distinct_experts"])
-                        for record in routing
-                    )
-                    >= 2
-                ),
-                "routing_stability": bool(
-                    routing
-                    and max(
-                        float(record["perturbation_flip_rate"])
-                        for record in routing
-                    )
-                    <= 0.1
-                ),
-            }
-            report = {
-                "status": "GATE_EVALUATED",
-                "passed": all(criteria.values()),
-                "criteria": criteria,
-                "comparisons": comparisons,
-                "worst_contract_seed_deltas": worst_contract,
-                "holm_families": sorted(family_p_values),
-                "pairing_unit": "seed after exact target-context pairing",
-            }
+        report = evaluate_pilot_gate(result, schema)
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(

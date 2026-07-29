@@ -34,7 +34,7 @@ def _seed_block_values(
         context = (
             row["dataset"],
             row["target_contract"],
-            int(row["seed"]),
+            int(row.get("expert_prediction_seed") or row["seed"]),
             row.get("fold", ""),
         )
         if context in by_context:
@@ -83,7 +83,7 @@ def main() -> int:
     input_path = ROOT / args.input
     if not input_path.exists():
         report: dict[str, object] = {
-            "schema": "coregraph_statistical_analysis_v1",
+            "schema": "coregraph_statistical_analysis_v3",
             "status": "BLOCKED_NO_VALIDATED_PAIRED_BLOCKS",
             "results": [],
         }
@@ -148,6 +148,12 @@ def main() -> int:
                         "seeds": seeds,
                         "contexts_per_seed": contexts,
                         "mean_improvement": permutation.mean_difference,
+                        "minimum_effect": float(
+                            family.get("minimum_effects", {}).get(
+                                outcome,
+                                0.0,
+                            )
+                        ),
                         "exact_wilcoxon_p": wilcoxon.p_value,
                         "paired_permutation_p": permutation.p_value,
                         "seed_block_bootstrap_95": list(interval),
@@ -161,11 +167,25 @@ def main() -> int:
         for record, adjusted, reject in zip(
             family_results, correction.adjusted, correction.reject, strict=True
         ):
-            record.update({"holm_adjusted_p": adjusted, "holm_reject": reject})
+            interval = record["seed_block_bootstrap_95"]
+            record.update(
+                {
+                    "holm_adjusted_p": adjusted,
+                    "holm_reject": reject,
+                    "meaningful": bool(
+                        reject
+                        and float(record["mean_improvement"])
+                        >= float(record["minimum_effect"])
+                        and float(interval[0]) >= 0.0
+                    ),
+                }
+            )
         results.append({"family": family_name, "tests": family_results})
     report = {
-        "schema": "coregraph_statistical_analysis_v1",
+        "schema": "coregraph_statistical_analysis_v3",
         "status": "PASS",
+        "inferential_block": "expert_prediction_seed",
+        "router_training_seed_role": "secondary_not_replicated",
         "results": results,
     }
     output = ROOT / args.output

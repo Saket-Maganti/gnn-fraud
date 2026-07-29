@@ -1,0 +1,197 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "schema_version": "coregraph_pilot_gate_v3",
+  "frozen_before_manifest_conversion": true,
+  "required_datasets": [
+    "elliptic",
+    "dgraphfin"
+  ],
+  "required_target_contracts": [
+    "strict_inductive",
+    "isolated_inductive",
+    "transductive_structure"
+  ],
+  "required_expert_prediction_seeds": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "required_folds": [
+    "fold0"
+  ],
+  "required_experts": [
+    "feature_mlp",
+    "gcn",
+    "graphsage"
+  ],
+  "required_strong_baselines": [
+    "average_all_feasible",
+    "best_source_validation",
+    "source_validation_convex_mixture",
+    "graphsafe_confidence_abstention_component",
+    "current_graph_feature_gate_adapter",
+    "learned_no_contract_router",
+    "learned_atomic_contract_router",
+    "MOWST_INSPIRED_REIMPLEMENTATION"
+  ],
+  "required_ablations": [
+    "no_contract",
+    "atomic_contract",
+    "no_regret",
+    "no_budget",
+    "no_resource_mask",
+    "no_stability",
+    "no_abstention",
+    "no_diagnostics"
+  ],
+  "required_contract_metrics": [
+    "auprc",
+    "recall_at_0.5pct",
+    "recall_at_1pct",
+    "recall_at_2pct",
+    "budget_curve_area",
+    "contract_regret",
+    "selective_risk",
+    "coverage",
+    "aurc",
+    "abstention_cost",
+    "compute"
+  ],
+  "primary_outcomes": [
+    "auprc",
+    "recall_at_0.5pct",
+    "recall_at_1pct",
+    "recall_at_2pct",
+    "budget_curve_area",
+    "mean_regret",
+    "maximum_regret",
+    "cvar_regret",
+    "selective_risk",
+    "abstention_cost",
+    "compute"
+  ],
+  "ranking_outcomes": [
+    "auprc",
+    "recall_at_0.5pct",
+    "recall_at_1pct",
+    "recall_at_2pct",
+    "budget_curve_area"
+  ],
+  "holm_families": {
+    "ranking_and_budget": [
+      "auprc",
+      "recall_at_0.5pct",
+      "recall_at_1pct",
+      "recall_at_2pct",
+      "budget_curve_area"
+    ],
+    "robust_risk": [
+      "mean_regret",
+      "maximum_regret",
+      "cvar_regret"
+    ],
+    "deployment": [
+      "selective_risk",
+      "abstention_cost",
+      "compute"
+    ]
+  },
+  "inference": [
+    "exact_wilcoxon",
+    "paired_permutation",
+    "expert_prediction_seed_block_bootstrap"
+  ],
+  "multiplicity": "holm_within_each_declared_outcome_or_ablation_family",
+  "alpha": 0.05,
+  "minimum_effects": {
+    "auprc": -0.002,
+    "recall_at_0.5pct": 0.0,
+    "recall_at_1pct": 0.0,
+    "recall_at_2pct": 0.0,
+    "budget_curve_area": 0.001,
+    "mean_regret": 0.001,
+    "maximum_regret": 0.001,
+    "cvar_regret": 0.001,
+    "selective_risk": 0.001,
+    "abstention_cost": 0.0,
+    "compute": 0.0
+  },
+  "effect_thresholds": {
+    "worst_contract_regret_improvement": 0.001,
+    "robust_primary_improvement": 0.001,
+    "average_auprc_harm_floor": -0.002,
+    "maximum_routing_flip_rate": 0.1
+  },
+  "ablation_tests": {
+    "no_contract": {
+      "metric": "cvar_regret",
+      "direction": "lower",
+      "minimum_effect": 0.001,
+      "required_contribution": true
+    },
+    "atomic_contract": {
+      "metric": "cvar_regret",
+      "direction": "lower",
+      "minimum_effect": 0.001,
+      "required_contribution": true
+    },
+    "no_regret": {
+      "metric": "cvar_regret",
+      "direction": "lower",
+      "minimum_effect": 0.001,
+      "required_contribution": true
+    },
+    "no_budget": {
+      "metric": "budget_curve_area",
+      "direction": "higher",
+      "minimum_effect": 0.001,
+      "required_contribution": true
+    },
+    "no_resource_mask": {
+      "metric": "cvar_regret",
+      "direction": "lower",
+      "minimum_effect": 0.001,
+      "required_contribution": true
+    },
+    "no_stability": {
+      "metric": "auprc",
+      "direction": "higher",
+      "minimum_effect": 0.0,
+      "required_contribution": false
+    },
+    "no_abstention": {
+      "metric": "selective_risk",
+      "direction": "lower",
+      "minimum_effect": 0.0,
+      "required_contribution": false
+    },
+    "no_diagnostics": {
+      "metric": "auprc",
+      "direction": "higher",
+      "minimum_effect": 0.0,
+      "required_contribution": false
+    }
+  },
+  "required_meaningful_ablations": [
+    "no_contract",
+    "atomic_contract",
+    "no_regret",
+    "no_budget",
+    "no_resource_mask"
+  ],
+  "headline_oracle": "contract_feasible_oracle",
+  "diagnostic_oracle": "instance_clairvoyant_oracle_ceiling",
+  "inferential_block": "expert_prediction_seed",
+  "router_training_seed_role": "deterministic_method_specific_secondary_seed_not_an_inferential_block",
+  "matched_worst_case": "minimum_within_seed_of_method_minus_baseline_effects_on_identical_target_contracts",
+  "target_labels_for_selection": false,
+  "blocked_prediction_ordering": "PROHIBITED",
+  "zero_coverage_selective_risk": "UNDEFINED_AND_GATE_BLOCKING"
+}
