@@ -39,7 +39,7 @@ not manuscript author metadata.
 
 ## Final clean-checkout and staged-tree gate
 
-The exact staged tree contains 475 files and 36,198,290 logical file bytes.
+The exact staged tree contains 475 files and 36,198,761 logical file bytes.
 The largest ordinary Git file is the 19,502,682-byte frozen scalar provenance
 CSV. No staged object exceeds 100 MiB.
 
