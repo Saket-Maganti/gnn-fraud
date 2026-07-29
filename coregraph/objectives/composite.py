@@ -5,10 +5,11 @@ Normalisation is explicit:
 - classification, calibration, compute, stability, and abstention are means;
 - contract risks are example means within each declared group and then
   balanced equally across groups;
-- regret is relative to the best feasible expert on each example, aggregated
-  within group, and CVaR is a mean of the worst empirical ``1-alpha`` group
-  regrets;
-- budget loss is a unit-scale ``1 - soft recall`` surrogate.
+- headline regret is relative to one best feasible expert over each whole
+  contract; the instance-clairvoyant oracle is an optional diagnostic only;
+- CVaR is a mean of the worst empirical ``1-alpha`` group regrets;
+- budget losses are computed separately within each constrained contract and
+  balanced over constrained groups.
 
 Consequently every default term is order one; coefficients remain scientific
 hyperparameters and must be frozen on source validation.
@@ -66,9 +67,18 @@ def _group_means(
 
 
 class CompositeObjective:
-    def __init__(self, weights: ObjectiveWeights, *, cvar_alpha: float = 0.8):
+    def __init__(
+        self,
+        weights: ObjectiveWeights,
+        *,
+        cvar_alpha: float = 0.8,
+        include_instance_oracle_diagnostic: bool = False,
+    ):
         self.weights = weights
         self.cvar_alpha = cvar_alpha
+        self.include_instance_oracle_diagnostic = (
+            include_instance_oracle_diagnostic
+        )
 
     def __call__(
         self,
@@ -82,10 +92,12 @@ class CompositeObjective:
         expert_weights: torch.Tensor,
         expert_costs: torch.Tensor,
         stability_penalty: torch.Tensor | None = None,
-        review_k: int | None = None,
+        review_k_by_group: Mapping[int, int | None] | None = None,
         abstention_probability: torch.Tensor | None = None,
         forced_abstention: torch.Tensor | None = None,
-        abstention_capacity: float | None = None,
+        abstention_capacity_by_group: (
+            Mapping[int, float | None] | None
+        ) = None,
         abstention_cost_value: float = 0.0,
     ) -> tuple[torch.Tensor, Mapping[str, torch.Tensor]]:
         if router_scores.ndim != 1 or targets.shape != router_scores.shape:
@@ -142,32 +154,52 @@ class CompositeObjective:
         )
         contract_availability = torch.stack(
             [
-                availability_mask[group_indices == group].bool().any(dim=0)
+                availability_mask[group_indices == group].bool().all(dim=0)
                 for group in groups
             ],
             dim=0,
         )
-        masked_example_expert_risks = torch.where(
-            availability_mask.bool(),
-            expert_losses,
-            torch.full_like(expert_losses, torch.inf),
+        masked_contract_expert_risks = torch.where(
+            contract_availability,
+            contract_expert_risks,
+            torch.full_like(contract_expert_risks, torch.inf),
         )
-        example_feasible = availability_mask.bool().any(dim=-1)
-        example_oracle_risk = masked_example_expert_risks.min(dim=-1).values
-        example_oracle_risk = torch.where(
-            example_feasible,
-            example_oracle_risk,
-            example_oracle_risk.new_full(
-                example_oracle_risk.shape,
+        contract_feasible = contract_availability.any(dim=-1)
+        contract_oracle_risk = masked_contract_expert_risks.min(dim=-1).values
+        contract_oracle_risk = torch.where(
+            contract_feasible,
+            contract_oracle_risk,
+            contract_oracle_risk.new_full(
+                contract_oracle_risk.shape,
                 abstention_cost_value,
             ),
         )
-        oracle_risk, _ = _group_means(
-            example_oracle_risk,
-            group_indices,
-        )
-        regrets = contract_router_risk - oracle_risk
+        regrets = contract_router_risk - contract_oracle_risk
         zero = router_scores.sum() * 0
+        budget_losses: list[torch.Tensor] = []
+        if review_k_by_group is not None:
+            group_ids = {int(group.item()) for group in groups}
+            if set(review_k_by_group) != group_ids:
+                raise ValueError(
+                    "review budget map must cover every contract group exactly"
+                )
+            for group in groups:
+                group_id = int(group.item())
+                review_k = review_k_by_group[group_id]
+                if review_k is not None:
+                    if not isinstance(review_k, int):
+                        raise TypeError("per-contract review K must be an integer")
+                    keep = group_indices == group
+                    budget_losses.append(
+                        soft_recall_at_k_loss(
+                            router_scores[keep],
+                            targets[keep],
+                            review_k,
+                        )
+                    )
+        budget_loss = (
+            torch.stack(budget_losses).mean() if budget_losses else zero
+        )
         terms: dict[str, torch.Tensor] = {
             "average": contract_router_risk.mean(),
             "ranking": pairwise_logistic_ranking_loss(
@@ -175,11 +207,7 @@ class CompositeObjective:
                 targets,
                 score_type=score_type,
             ),
-            "budget": (
-                soft_recall_at_k_loss(router_scores, targets, review_k)
-                if review_k is not None
-                else zero
-            ),
+            "budget": budget_loss,
             "calibration": (
                 soft_brier_loss(
                     router_scores,
@@ -203,16 +231,51 @@ class CompositeObjective:
             "contract_router_risk": contract_router_risk,
             "contract_expert_risks": contract_expert_risks,
             "contract_availability": contract_availability.float(),
-            "feasible_oracle_risk": oracle_risk,
+            "contract_feasible_oracle_risk": contract_oracle_risk,
             "contract_regret": regrets,
         }
-        if abstention_capacity is not None:
-            terms["abstention"] = terms[
-                "abstention"
-            ] + abstention_capacity_penalty(
-                abstain_probability,
-                capacity=abstention_capacity,
+        if self.include_instance_oracle_diagnostic:
+            masked_example_expert_risks = torch.where(
+                availability_mask.bool(),
+                expert_losses,
+                torch.full_like(expert_losses, torch.inf),
             )
+            example_feasible = availability_mask.bool().any(dim=-1)
+            instance_oracle = masked_example_expert_risks.min(dim=-1).values
+            instance_oracle = torch.where(
+                example_feasible,
+                instance_oracle,
+                instance_oracle.new_full(
+                    instance_oracle.shape,
+                    abstention_cost_value,
+                ),
+            )
+            instance_by_contract, _ = _group_means(
+                instance_oracle,
+                group_indices,
+            )
+            terms["instance_clairvoyant_oracle_risk"] = instance_by_contract
+        if abstention_capacity_by_group is not None:
+            group_ids = {int(group.item()) for group in groups}
+            if set(abstention_capacity_by_group) != group_ids:
+                raise ValueError(
+                    "abstention capacity map must cover every contract group exactly"
+                )
+            capacity_penalties = []
+            for group in groups:
+                group_id = int(group.item())
+                capacity = abstention_capacity_by_group[group_id]
+                if capacity is not None:
+                    capacity_penalties.append(
+                        abstention_capacity_penalty(
+                            abstain_probability[group_indices == group],
+                            capacity=capacity,
+                        )
+                    )
+            if capacity_penalties:
+                terms["abstention"] = terms["abstention"] + torch.stack(
+                    capacity_penalties
+                ).mean()
         total = (
             self.weights.average * terms["average"]
             + self.weights.ranking * terms["ranking"]

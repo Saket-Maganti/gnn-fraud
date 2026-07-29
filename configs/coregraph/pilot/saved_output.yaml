@@ -1,4 +1,4 @@
-schema_version: coregraph_saved_output_pilot_v1
+schema_version: coregraph_saved_output_pilot_v3
 prediction_manifest_roots:
   - ${COREGRAPH_SAVED_PREDICTIONS_ROOT}
 required_datasets:
@@ -8,13 +8,12 @@ required_experts:
   - feature_mlp
   - gcn
   - graphsage
-required_protocols:
+required_target_contracts:
   - strict_inductive
   - isolated_inductive
   - transductive_structure
 required_seeds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 review_fraction: 0.01
-router_seed: 20260729
 output: results/coregraph_pilot/saved_output_pilot.json
 target_access: DG_NO_TARGET
 target_labels_for_selection: false

@@ -17,6 +17,7 @@ import torch
 from scipy.optimize import minimize
 from sklearn.linear_model import LogisticRegression
 
+from coregraph.contracts.axes import ContractRole, ReviewMode
 from coregraph.contracts.contract import DeploymentContract
 from coregraph.evaluation.metrics import (
     binary_metrics,
@@ -28,9 +29,9 @@ from coregraph.objectives.classification import binary_cross_entropy_values
 from coregraph.objectives.composite import CompositeObjective, ObjectiveWeights
 from coregraph.objectives.scores import ScoreType, validate_numpy_scores
 from coregraph.routing.abstention import (
-    apply_abstention_capacity,
+    apply_frozen_abstention_decision,
     area_under_risk_coverage_curve,
-    select_abstention_threshold,
+    select_grouped_abstention_threshold,
 )
 from coregraph.routing.stability import consistency_penalty
 from coregraph.tasks.base import align_prediction_rows
@@ -102,6 +103,10 @@ class PredictionArtifact:
         return self.expert_alias_of or self.expert_id
 
     @property
+    def expert_prediction_seed(self) -> int:
+        return self.seed
+
+    @property
     def group_key(self) -> tuple[str, str, str, str, int, str]:
         return (
             self.dataset,
@@ -149,10 +154,18 @@ class SavedSourceGroup:
 class BaselinePrediction:
     scores: np.ndarray
     abstention_probability: np.ndarray
+    abstain: np.ndarray
+    forced_abstention: np.ndarray
     expected_compute: np.ndarray
+    abstention_threshold: float | None
+    abstention_threshold_provenance: str
+    abstention_capacity: float | None
+    abstention_cost: float
+    execution_status: MethodExecutionStatus | str
     learned: bool = False
     adapter: str = ""
     offline_oracle: bool = False
+    diagnostic_only: bool = False
     details: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
@@ -161,13 +174,19 @@ class BaselinePrediction:
             ScoreType.PROBABILITY,
         )
         abstention = np.asarray(self.abstention_probability, dtype=float)
+        decision = np.asarray(self.abstain, dtype=bool)
+        forced = np.asarray(self.forced_abstention, dtype=bool)
         compute = np.asarray(self.expected_compute, dtype=float)
         if (
             scores.ndim != 1
             or abstention.shape != scores.shape
+            or decision.shape != scores.shape
+            or forced.shape != scores.shape
             or compute.shape != scores.shape
         ):
-            raise ValueError("baseline score, abstention, and compute rows must align")
+            raise ValueError(
+                "baseline score, abstention decision, and compute rows must align"
+            )
         if (
             not np.isfinite(abstention).all()
             or np.any(abstention < 0)
@@ -176,6 +195,42 @@ class BaselinePrediction:
             raise ValueError("baseline abstention probabilities must lie in [0,1]")
         if not np.isfinite(compute).all() or np.any(compute < 0):
             raise ValueError("baseline compute must be finite and non-negative")
+        if self.abstention_threshold is not None and np.isnan(
+            self.abstention_threshold
+        ):
+            raise ValueError("abstention thresholds cannot be NaN")
+        if not self.abstention_threshold_provenance:
+            raise ValueError("abstention threshold provenance is required")
+        if (
+            self.abstention_capacity is not None
+            and not 0 <= self.abstention_capacity <= 1
+        ):
+            raise ValueError("baseline abstention capacity must lie in [0,1]")
+        if self.abstention_cost < 0:
+            raise ValueError("baseline abstention cost cannot be negative")
+        status = MethodExecutionStatus(self.execution_status)
+        object.__setattr__(self, "execution_status", status)
+        if np.any(forced & ~decision):
+            raise ValueError("forced abstentions must be present in frozen decision")
+        if status is MethodExecutionStatus.ABSTAIN_ONLY and not decision.all():
+            raise ValueError("ABSTAIN_ONLY requires every decision to abstain")
+        if self.diagnostic_only and not self.offline_oracle:
+            raise ValueError("diagnostic-only predictions must be offline oracles")
+
+    @property
+    def ranking_eligible(self) -> bool:
+        return self.execution_status in {
+            MethodExecutionStatus.EXECUTABLE,
+            MethodExecutionStatus.EXECUTABLE_WITH_FALLBACK,
+        }
+
+
+class MethodExecutionStatus(str, Enum):
+    EXECUTABLE = "EXECUTABLE"
+    EXECUTABLE_WITH_FALLBACK = "EXECUTABLE_WITH_FALLBACK"
+    ABSTAIN_ONLY = "ABSTAIN_ONLY"
+    RESOURCE_BLOCKED = "RESOURCE_BLOCKED"
+    NOT_APPLICABLE = "NOT_APPLICABLE"
 
 
 class PilotAblation(str, Enum):
@@ -198,13 +253,85 @@ class SavedRouterPrediction:
     abstention_probability: np.ndarray
     abstain: np.ndarray
     expected_compute: np.ndarray
+    forced_abstention: np.ndarray
     perturbation_flip_rate: float
     ablation: PilotAblation
     source_train_examples: int
     source_validation_examples: int
     abstention_threshold: float
     abstention_threshold_fitted_on: str
+    source_abstention_capacities: Mapping[int, float | None]
+    target_abstention_capacity: float | None
+    abstention_cost: float
+    expert_prediction_seed: int
+    router_training_seed: int
+    source_fit_hash: str
     early_stopping_source_only: bool = True
+
+
+def derive_router_seed(expert_prediction_seed: int, method: str) -> int:
+    if expert_prediction_seed < 0 or not method:
+        raise ValueError("router seed derivation requires a non-negative seed and method")
+    digest = hashlib.sha256(
+        f"coregraph-router-v3:{expert_prediction_seed}:{method}".encode()
+    ).digest()
+    derived = int.from_bytes(digest[:4], "big") & 0x7FFFFFFF
+    return derived if derived != expert_prediction_seed else (derived + 1) & 0x7FFFFFFF
+
+
+def source_review_k_by_group(
+    contracts: Sequence[DeploymentContract],
+    group_indices: np.ndarray,
+) -> dict[int, int | None]:
+    groups = tuple(int(value) for value in np.unique(group_indices))
+    if groups != tuple(range(len(contracts))):
+        raise ValueError("source contracts and group indices must align exactly")
+    constrained_modes = {
+        contract.budget.review_mode
+        for contract in contracts
+        if contract.budget.review_mode is not ReviewMode.UNCONSTRAINED_RANKING
+    }
+    if len(constrained_modes) > 1:
+        raise ValueError("mixed constrained review modes are unsupported")
+    output: dict[int, int | None] = {}
+    for group, contract in enumerate(contracts):
+        count = int(np.sum(group_indices == group))
+        if contract.budget.review_mode is ReviewMode.UNCONSTRAINED_RANKING:
+            output[group] = None
+        elif contract.budget.review_mode is ReviewMode.FRACTION:
+            fraction = contract.budget.review_fraction
+            if fraction is None:
+                raise ValueError("fractional source budget is missing its fraction")
+            output[group] = min(count, max(1, int(np.ceil(fraction * count))))
+        elif contract.budget.review_mode is ReviewMode.FIXED_K:
+            fixed_k = contract.budget.fixed_k
+            if fixed_k is None:
+                raise ValueError("fixed source budget is missing K")
+            output[group] = min(count, fixed_k)
+        else:  # pragma: no cover - enum exhaustiveness guard
+            raise ValueError("unsupported source review mode")
+    return output
+
+
+def source_abstention_capacity_by_group(
+    contracts: Sequence[DeploymentContract],
+    group_indices: np.ndarray,
+) -> dict[int, float | None]:
+    groups = tuple(int(value) for value in np.unique(group_indices))
+    if groups != tuple(range(len(contracts))):
+        raise ValueError("source contracts and group indices must align exactly")
+    return {
+        group: contract.budget.abstention_capacity
+        for group, contract in enumerate(contracts)
+    }
+
+
+def _model_state_hash(model: torch.nn.Module) -> str:
+    digest = hashlib.sha256()
+    for name, value in sorted(model.state_dict().items()):
+        digest.update(name.encode())
+        digest.update(value.detach().cpu().contiguous().numpy().tobytes())
+    return digest.hexdigest()
 
 
 def discover_prediction_manifests(roots: Sequence[str | Path]) -> list[Path]:
@@ -227,7 +354,7 @@ def load_prediction_artifacts(manifests: Sequence[Path]) -> list[PredictionArtif
         "prediction_unit",
         "contract_coordinate_hash",
         "environment_id",
-        "seed",
+        "expert_prediction_seed",
         "fold",
         "prediction_path",
         "prediction_checksum",
@@ -269,7 +396,7 @@ def load_prediction_artifacts(manifests: Sequence[Path]) -> list[PredictionArtif
                     payload["contract_coordinate_hash"]
                 ),
                 environment_id=str(payload["environment_id"]),
-                seed=int(payload["seed"]),
+                seed=int(payload["expert_prediction_seed"]),
                 fold=str(payload["fold"]),
                 path=prediction_path,
                 checksum=str(payload["prediction_checksum"]),
@@ -294,6 +421,8 @@ def validate_artifact_groups(
     *,
     expected_experts: Sequence[str],
     expected_seeds: Sequence[int],
+    expected_datasets: Sequence[str] | None = None,
+    expected_target_contracts: Sequence[str] | None = None,
 ) -> dict[
     tuple[str, str, str, str, int, str],
     tuple[PredictionArtifact, ...],
@@ -341,6 +470,35 @@ def validate_artifact_groups(
                 f"missing seeds for {contract_fold_key}: "
                 f"{sorted(expected_seed_set - seeds)}"
             )
+    if expected_datasets is not None:
+        expected_dataset_set = set(expected_datasets)
+        actual_dataset_set = {artifact.dataset for artifact in artifacts}
+        if actual_dataset_set != expected_dataset_set:
+            raise ValueError(
+                "prediction manifests do not contain exactly the required "
+                f"datasets; expected={sorted(expected_dataset_set)} "
+                f"actual={sorted(actual_dataset_set)}"
+            )
+    if expected_target_contracts is not None:
+        required_contracts = set(expected_target_contracts)
+        target_coverage: dict[str, set[str]] = defaultdict(set)
+        for artifact in artifacts:
+            if artifact.contract_role == ContractRole.TARGET.value:
+                target_coverage[artifact.dataset].add(
+                    artifact.deployment_contract.contract_id
+                )
+        datasets = (
+            set(expected_datasets)
+            if expected_datasets is not None
+            else set(target_coverage)
+        )
+        for dataset in datasets:
+            if target_coverage[dataset] != required_contracts:
+                raise ValueError(
+                    f"target contract coverage for {dataset} is incomplete; "
+                    f"expected={sorted(required_contracts)} "
+                    f"actual={sorted(target_coverage[dataset])}"
+                )
     return {
         key: tuple(sorted(group, key=lambda artifact: artifact.expert_id))
         for key, group in sorted(groups.items())
@@ -490,6 +648,7 @@ def _learned_gate_baseline(
     target_mask: np.ndarray,
     *,
     atomic: bool,
+    seed: int,
 ) -> tuple[np.ndarray, np.ndarray]:
     rows: list[np.ndarray] = []
     trust: list[np.ndarray] = []
@@ -542,7 +701,7 @@ def _learned_gate_baseline(
     else:
         gate = LogisticRegression(
             max_iter=1000,
-            random_state=0,
+            random_state=seed,
         )
         gate.fit(features, target_values)
         probabilities = gate.predict_proba(target_features_array)
@@ -559,21 +718,155 @@ def _learned_gate_baseline(
     return (masked_weights * target_matrix).sum(axis=1), masked_weights
 
 
+def _group_vector(
+    group_rows: Sequence[np.ndarray],
+    total: int,
+) -> np.ndarray:
+    output = np.empty(total, dtype=int)
+    for group, rows in enumerate(group_rows):
+        output[rows] = group
+    return output
+
+
+def _execution_status(
+    executable_rows: np.ndarray,
+    abstain: np.ndarray,
+    *,
+    fallback_used: bool,
+) -> MethodExecutionStatus:
+    if not executable_rows.all():
+        return MethodExecutionStatus.RESOURCE_BLOCKED
+    if abstain.all():
+        return MethodExecutionStatus.ABSTAIN_ONLY
+    if fallback_used:
+        return MethodExecutionStatus.EXECUTABLE_WITH_FALLBACK
+    return MethodExecutionStatus.EXECUTABLE
+
+
+def _baseline_prediction(
+    *,
+    scores: np.ndarray,
+    abstention_probability: np.ndarray,
+    abstain: np.ndarray,
+    forced_abstention: np.ndarray,
+    expected_compute: np.ndarray,
+    target_capacity: float | None,
+    abstention_cost: float,
+    executable_rows: np.ndarray,
+    fallback_used: bool = False,
+    threshold: float | None = None,
+    threshold_provenance: str = "forced_unavailability_only",
+    learned: bool = False,
+    adapter: str = "",
+    offline_oracle: bool = False,
+    diagnostic_only: bool = False,
+    details: Mapping[str, Any] | None = None,
+) -> BaselinePrediction:
+    return BaselinePrediction(
+        scores=scores,
+        abstention_probability=abstention_probability,
+        abstain=abstain,
+        forced_abstention=forced_abstention,
+        expected_compute=expected_compute,
+        abstention_threshold=threshold,
+        abstention_threshold_provenance=threshold_provenance,
+        abstention_capacity=target_capacity,
+        abstention_cost=abstention_cost,
+        execution_status=_execution_status(
+            executable_rows,
+            abstain,
+            fallback_used=fallback_used,
+        ),
+        learned=learned,
+        adapter=adapter,
+        offline_oracle=offline_oracle,
+        diagnostic_only=diagnostic_only,
+        details={} if details is None else details,
+    )
+
+
+def _select_mowst_routing_threshold(
+    validation_matrix: np.ndarray,
+    validation_labels: np.ndarray,
+    validation_groups: Sequence[np.ndarray],
+    validation_availability: np.ndarray,
+    *,
+    feature_index: int,
+    graph_index: int,
+) -> float:
+    confidence = np.abs(validation_matrix[:, feature_index] - 0.5)
+    upper = np.nextafter(np.max(confidence), np.inf)
+    lower = np.nextafter(np.min(confidence), -np.inf)
+    candidates = np.concatenate(
+        ([upper], np.unique(confidence), [lower])
+    )
+    best: tuple[float, float] | None = None
+    rows = np.arange(len(validation_matrix))
+    for threshold in candidates:
+        choice = np.where(
+            confidence >= threshold,
+            feature_index,
+            graph_index,
+        )
+        alternative = np.where(
+            choice == feature_index,
+            graph_index,
+            feature_index,
+        )
+        chosen_available = validation_availability[rows, choice]
+        alternative_available = validation_availability[rows, alternative]
+        choice = np.where(
+            chosen_available,
+            choice,
+            np.where(alternative_available, alternative, choice),
+        )
+        feasible = validation_availability[rows, choice]
+        group_risks: list[float] = []
+        for group_rows in validation_groups:
+            keep = group_rows[feasible[group_rows]]
+            if not len(keep):
+                group_risks = []
+                break
+            prediction = validation_matrix[keep, choice[keep]]
+            group_risks.append(
+                float(np.mean((prediction - validation_labels[keep]) ** 2))
+            )
+        if not group_risks:
+            continue
+        record = (float(np.mean(group_risks)), float(threshold))
+        if best is None or record < best:
+            best = record
+    if best is None:
+        raise ValueError("Mowst-inspired source validation has no feasible threshold")
+    return best[1]
+
+
 def baseline_scores(
     source_groups: Sequence[SavedSourceGroup],
     *,
+    target_contract: DeploymentContract,
     target_scores: Mapping[str, np.ndarray],
     target_availability: Mapping[str, np.ndarray],
+    target_expert_costs: Mapping[str, float],
+    expert_prediction_seed: int,
+    abstention_cost: float = 0.2,
 ) -> dict[str, BaselinePrediction]:
-    """Fit label-free baselines on the complete source-contract set."""
+    """Fit every comparator on source contracts and freeze target decisions."""
 
     if not source_groups:
         raise ValueError("baseline fitting requires source contracts")
     experts = sorted(target_scores)
     if any(set(group.scores) != set(experts) for group in source_groups):
         raise ValueError("all source and target groups need the same experts")
-    if set(target_availability) != set(experts):
-        raise ValueError("target availability must declare every expert")
+    if (
+        set(target_availability) != set(experts)
+        or set(target_expert_costs) != set(experts)
+    ):
+        raise ValueError(
+            "target availability and costs must declare every expert"
+        )
+    if abstention_cost < 0:
+        raise ValueError("abstention cost cannot be negative")
     target_matrix = np.column_stack([target_scores[name] for name in experts])
     validate_numpy_scores(target_matrix, ScoreType.PROBABILITY)
     target_mask = np.column_stack(
@@ -581,13 +874,16 @@ def baseline_scores(
     )
     if target_matrix.shape != target_mask.shape:
         raise ValueError("target scores and availability must align")
+    target_capacity = target_contract.budget.abstention_capacity
     (
         validation_matrix,
         validation_labels,
         validation_groups,
         validation_availability,
-    ) = (
-        _stack_source_validation(source_groups, experts)
+    ) = _stack_source_validation(source_groups, experts)
+    validation_group_indices = _group_vector(
+        validation_groups,
+        len(validation_matrix),
     )
     validation_risks = np.asarray(
         [
@@ -617,38 +913,75 @@ def baseline_scores(
         )
     best = int(np.argmin(validation_risks))
     costs = np.asarray(
-        [
-            np.mean([group.expert_costs[name] for group in source_groups])
-            for name in experts
-        ]
+        [target_expert_costs[name] for name in experts],
+        dtype=float,
     )
-    output = {
-        f"expert:{name}": BaselinePrediction(
+    output: dict[str, BaselinePrediction] = {}
+    for index, name in enumerate(experts):
+        forced = ~target_mask[:, index]
+        method = f"expert:{name}"
+        output[method] = _baseline_prediction(
             scores=target_matrix[:, index],
-            abstention_probability=(~target_mask[:, index]).astype(float),
+            abstention_probability=forced.astype(float),
+            abstain=forced,
+            forced_abstention=forced,
             expected_compute=target_mask[:, index].astype(float) * costs[index],
-            details={"expert_id": name},
+            target_capacity=target_capacity,
+            abstention_cost=abstention_cost,
+            executable_rows=target_mask[:, index],
+            details={
+                "expert_id": name,
+                "router_training_seed": derive_router_seed(
+                    expert_prediction_seed,
+                    method,
+                ),
+            },
         )
-        for index, name in enumerate(experts)
-    }
+
     feasible_count = target_mask.sum(axis=1)
+    executable_rows = feasible_count > 0
+    forced = ~executable_rows
     feasible_sum = np.where(target_mask, target_matrix, 0.0).sum(axis=1)
     average = np.divide(
         feasible_sum,
         feasible_count,
         out=np.zeros(len(target_matrix)),
-        where=feasible_count > 0,
+        where=executable_rows,
     )
-    output["average_all_feasible"] = BaselinePrediction(
+    output["average_all_feasible"] = _baseline_prediction(
         scores=average,
-        abstention_probability=(feasible_count == 0).astype(float),
+        abstention_probability=forced.astype(float),
+        abstain=forced,
+        forced_abstention=forced,
         expected_compute=(target_mask * costs).sum(axis=1),
+        target_capacity=target_capacity,
+        abstention_cost=abstention_cost,
+        executable_rows=executable_rows,
+        fallback_used=not target_mask.all(),
+        details={
+            "router_training_seed": derive_router_seed(
+                expert_prediction_seed,
+                "average_all_feasible",
+            )
+        },
     )
-    output["best_source_validation"] = BaselinePrediction(
+    best_forced = ~target_mask[:, best]
+    output["best_source_validation"] = _baseline_prediction(
         scores=target_matrix[:, best],
-        abstention_probability=(~target_mask[:, best]).astype(float),
+        abstention_probability=best_forced.astype(float),
+        abstain=best_forced,
+        forced_abstention=best_forced,
         expected_compute=target_mask[:, best].astype(float) * costs[best],
-        details={"selected_expert": experts[best]},
+        target_capacity=target_capacity,
+        abstention_cost=abstention_cost,
+        executable_rows=target_mask[:, best],
+        details={
+            "selected_expert": experts[best],
+            "router_training_seed": derive_router_seed(
+                expert_prediction_seed,
+                "best_source_validation",
+            ),
+        },
     )
     convex_weights = _convex_validation_weights(
         validation_matrix,
@@ -657,45 +990,103 @@ def baseline_scores(
         validation_availability,
     )
     masked_weights = target_mask * convex_weights[None, :]
+    denominator = masked_weights.sum(axis=1, keepdims=True)
     masked_weights = np.divide(
         masked_weights,
-        masked_weights.sum(axis=1, keepdims=True),
+        denominator,
         out=np.zeros_like(masked_weights),
-        where=masked_weights.sum(axis=1, keepdims=True) > 0,
+        where=denominator > 0,
     )
-    output["source_validation_convex_mixture"] = BaselinePrediction(
+    output["source_validation_convex_mixture"] = _baseline_prediction(
         scores=(masked_weights * target_matrix).sum(axis=1),
-        abstention_probability=(feasible_count == 0).astype(float),
+        abstention_probability=forced.astype(float),
+        abstain=forced,
+        forced_abstention=forced,
         expected_compute=(masked_weights * costs).sum(axis=1),
-        details={"weights": dict(zip(experts, convex_weights, strict=True))},
+        target_capacity=target_capacity,
+        abstention_cost=abstention_cost,
+        executable_rows=executable_rows,
+        fallback_used=not target_mask.all(),
+        details={
+            "weights": dict(zip(experts, convex_weights, strict=True)),
+            "router_training_seed": derive_router_seed(
+                expert_prediction_seed,
+                "source_validation_convex_mixture",
+            ),
+        },
     )
 
-    best_scores = target_matrix[:, best]
     from models.graphsafe_v2 import confidence_scores
 
-    graphsafe_confidence = np.clip(
-        confidence_scores(best_scores),
+    validation_graphsafe_confidence = np.clip(
+        confidence_scores(validation_matrix[:, best]),
         0,
         1,
     )
-    output["graphsafe_v2_adapter"] = BaselinePrediction(
-        scores=best_scores,
-        abstention_probability=np.maximum(
-            (~target_mask[:, best]).astype(float),
-            1 - graphsafe_confidence,
+    source_capacities = {
+        index: group.contract.budget.abstention_capacity
+        for index, group in enumerate(source_groups)
+    }
+    graphsafe_threshold = select_grouped_abstention_threshold(
+        torch.tensor(
+            (validation_matrix[:, best] - validation_labels) ** 2,
+            dtype=torch.float32,
         ),
+        torch.tensor(1 - validation_graphsafe_confidence, dtype=torch.float32),
+        torch.tensor(validation_group_indices, dtype=torch.long),
+        capacities=source_capacities,
+        abstention_cost_value=abstention_cost,
+        forced_abstention=torch.tensor(
+            ~validation_availability[:, best],
+            dtype=torch.bool,
+        ),
+    )
+    graphsafe_confidence = np.clip(
+        confidence_scores(target_matrix[:, best]),
+        0,
+        1,
+    )
+    graphsafe_probability = np.maximum(
+        best_forced.astype(float),
+        1 - graphsafe_confidence,
+    )
+    graphsafe_decision = apply_frozen_abstention_decision(
+        torch.tensor(graphsafe_probability, dtype=torch.float32),
+        threshold=graphsafe_threshold.threshold,
+        capacity=target_capacity,
+        forced_abstention=torch.tensor(best_forced),
+    ).numpy()
+    graphsafe_name = "graphsafe_confidence_abstention_component"
+    output[graphsafe_name] = _baseline_prediction(
+        scores=target_matrix[:, best],
+        abstention_probability=graphsafe_probability,
+        abstain=graphsafe_decision,
+        forced_abstention=best_forced,
         expected_compute=target_mask[:, best].astype(float) * costs[best],
-        adapter="models.graphsafe_v2",
+        target_capacity=target_capacity,
+        abstention_cost=abstention_cost,
+        executable_rows=target_mask[:, best],
+        threshold=graphsafe_threshold.threshold,
+        threshold_provenance=graphsafe_threshold.fitted_on,
+        adapter="models.graphsafe_v2.confidence_scores",
         details={
+            "parity_status": "PARTIAL_CONFIDENCE_COMPONENT_NOT_FULL_GRAPHSAFE",
             "source_validation_expert": experts[best],
-            "confidence_adapter": "models.graphsafe_v2.confidence_scores",
+            "router_training_seed": derive_router_seed(
+                expert_prediction_seed,
+                graphsafe_name,
+            ),
         },
     )
+
     feature_index = next(
         (
             index
             for index, name in enumerate(experts)
-            if any(token in name.lower() for token in ("feature", "mlp", "logistic"))
+            if any(
+                token in name.lower()
+                for token in ("feature", "mlp", "logistic")
+            )
         ),
         0,
     )
@@ -704,7 +1095,10 @@ def baseline_scores(
             index
             for index, name in enumerate(experts)
             if index != feature_index
-            and any(token in name.lower() for token in ("graph", "gcn", "sage", "gat"))
+            and any(
+                token in name.lower()
+                for token in ("graph", "gcn", "sage", "gat")
+            )
         ),
         1 if len(experts) > 1 else 0,
     )
@@ -714,7 +1108,16 @@ def baseline_scores(
         validation_availability[:, graph_index]
         & validation_availability[:, feature_index]
     )
-    gate = GraphFeatureGate(mode="logistic", min_validation=4, seed=0).fit(
+    graph_gate_name = "current_graph_feature_gate_adapter"
+    graph_gate_seed = derive_router_seed(
+        expert_prediction_seed,
+        graph_gate_name,
+    )
+    gate = GraphFeatureGate(
+        mode="logistic",
+        min_validation=4,
+        seed=graph_gate_seed,
+    ).fit(
         validation_matrix[gate_training_rows, graph_index],
         validation_matrix[gate_training_rows, feature_index],
         validation_labels[gate_training_rows],
@@ -735,23 +1138,34 @@ def baseline_scores(
         target_matrix[:, feature_index],
         gate_scores,
     )
-    gate_scores = np.where(
-        graph_available | feature_available,
-        gate_scores,
-        0.0,
-    )
-    output["current_graph_feature_gate_adapter"] = BaselinePrediction(
+    gate_executable = graph_available | feature_available
+    gate_forced = ~gate_executable
+    gate_scores = np.where(gate_executable, gate_scores, 0.0)
+    output[graph_gate_name] = _baseline_prediction(
         scores=gate_scores,
-        abstention_probability=(
-            ~(graph_available | feature_available)
-        ).astype(float),
+        abstention_probability=gate_forced.astype(float),
+        abstain=gate_forced,
+        forced_abstention=gate_forced,
         expected_compute=(
             graph_available.astype(float) * costs[graph_index]
             + feature_available.astype(float) * costs[feature_index]
         ),
+        target_capacity=target_capacity,
+        abstention_cost=abstention_cost,
+        executable_rows=gate_executable,
+        fallback_used=bool(np.any(graph_available != feature_available)),
         learned=True,
         adapter="models.graph_feature_gating.GraphFeatureGate",
-        details={"mode": gate.mode, "fallback_used": gate.fallback_used},
+        details={
+            "mode": gate.mode,
+            "fallback_used": gate.fallback_used,
+            "router_training_seed": graph_gate_seed,
+        },
+    )
+    no_contract_name = "learned_no_contract_router"
+    no_contract_seed = derive_router_seed(
+        expert_prediction_seed,
+        no_contract_name,
     )
     no_contract_scores, no_contract_weights = _learned_gate_baseline(
         source_groups,
@@ -759,36 +1173,68 @@ def baseline_scores(
         target_matrix,
         target_mask,
         atomic=False,
+        seed=no_contract_seed,
     )
-    output["learned_no_contract_router"] = BaselinePrediction(
+    output[no_contract_name] = _baseline_prediction(
         scores=no_contract_scores,
-        abstention_probability=(feasible_count == 0).astype(float),
+        abstention_probability=forced.astype(float),
+        abstain=forced,
+        forced_abstention=forced,
         expected_compute=(no_contract_weights * costs).sum(axis=1),
+        target_capacity=target_capacity,
+        abstention_cost=abstention_cost,
+        executable_rows=executable_rows,
+        fallback_used=not target_mask.all(),
         learned=True,
         adapter="coregraph.learned_no_contract_router",
+        details={"router_training_seed": no_contract_seed},
     )
+    atomic_name = "learned_atomic_contract_router"
+    atomic_seed = derive_router_seed(expert_prediction_seed, atomic_name)
     atomic_scores, atomic_weights = _learned_gate_baseline(
         source_groups,
         experts,
         target_matrix,
         target_mask,
         atomic=True,
+        seed=atomic_seed,
     )
-    output["learned_atomic_contract_router"] = BaselinePrediction(
+    output[atomic_name] = _baseline_prediction(
         scores=atomic_scores,
-        abstention_probability=(feasible_count == 0).astype(float),
+        abstention_probability=forced.astype(float),
+        abstain=forced,
+        forced_abstention=forced,
         expected_compute=(atomic_weights * costs).sum(axis=1),
+        target_capacity=target_capacity,
+        abstention_cost=abstention_cost,
+        executable_rows=executable_rows,
+        fallback_used=not target_mask.all(),
         learned=True,
         adapter="coregraph.learned_atomic_contract_router",
-        details={"unseen_target_atomic_id": True},
+        details={
+            "unseen_target_atomic_id": True,
+            "router_training_seed": atomic_seed,
+        },
+    )
+    mowst_threshold = _select_mowst_routing_threshold(
+        validation_matrix,
+        validation_labels,
+        validation_groups,
+        validation_availability,
+        feature_index=feature_index,
+        graph_index=graph_index,
     )
     feature_confidence = np.abs(target_matrix[:, feature_index] - 0.5)
     mowst_choice = np.where(
-        feature_confidence >= 0.25,
+        feature_confidence >= mowst_threshold,
         feature_index,
         graph_index,
     )
-    alternative = np.where(mowst_choice == feature_index, graph_index, feature_index)
+    alternative = np.where(
+        mowst_choice == feature_index,
+        graph_index,
+        feature_index,
+    )
     rows = np.arange(len(target_matrix))
     chosen_available = target_mask[rows, mowst_choice]
     alternative_available = target_mask[rows, alternative]
@@ -798,49 +1244,129 @@ def baseline_scores(
         np.where(alternative_available, alternative, mowst_choice),
     )
     mowst_feasible = target_mask[rows, mowst_choice]
-    mowst_scores = target_matrix[rows, mowst_choice]
-    mowst_scores = np.where(mowst_feasible, mowst_scores, 0.0)
-    output["MOWST_INSPIRED_REIMPLEMENTATION"] = BaselinePrediction(
+    mowst_forced = ~mowst_feasible
+    mowst_scores = np.where(
+        mowst_feasible,
+        target_matrix[rows, mowst_choice],
+        0.0,
+    )
+    mowst_name = "MOWST_INSPIRED_REIMPLEMENTATION"
+    output[mowst_name] = _baseline_prediction(
         scores=mowst_scores,
-        abstention_probability=(~mowst_feasible).astype(float),
-        expected_compute=np.where(mowst_feasible, costs[mowst_choice], 0.0),
-        adapter="MOWST_INSPIRED_REIMPLEMENTATION",
-        details={"official_baseline": False},
+        abstention_probability=mowst_forced.astype(float),
+        abstain=mowst_forced,
+        forced_abstention=mowst_forced,
+        expected_compute=np.where(
+            mowst_feasible,
+            costs[mowst_choice],
+            0.0,
+        ),
+        target_capacity=target_capacity,
+        abstention_cost=abstention_cost,
+        executable_rows=mowst_feasible,
+        fallback_used=bool(np.any(chosen_available != mowst_feasible)),
+        adapter=mowst_name,
+        details={
+            "official_baseline": False,
+            "routing_threshold": mowst_threshold,
+            "routing_threshold_fitted_on": (
+                "source_validation_balanced_contracts"
+            ),
+            "router_training_seed": derive_router_seed(
+                expert_prediction_seed,
+                mowst_name,
+            ),
+        },
     )
     return output
 
 
-def offline_feasible_oracle_ceiling(
+def contract_feasible_oracle(
     *,
     target_scores: Mapping[str, np.ndarray],
     target_availability: Mapping[str, np.ndarray],
     target_expert_costs: Mapping[str, float],
     target_labels: np.ndarray,
 ) -> BaselinePrediction:
-    """Construct the explicitly offline ceiling after all methods are frozen."""
+    """Select one best feasible expert for the entire target contract."""
 
     experts = sorted(target_scores)
     if (
         set(target_availability) != set(experts)
         or set(target_expert_costs) != set(experts)
     ):
-        raise ValueError("offline oracle requires aligned scores, masks, and costs")
+        raise ValueError("contract oracle requires aligned scores, masks, and costs")
     matrix = np.column_stack([target_scores[name] for name in experts])
     validate_numpy_scores(matrix, ScoreType.PROBABILITY)
     availability = np.column_stack(
         [np.asarray(target_availability[name], dtype=bool) for name in experts]
     )
     if matrix.shape != availability.shape:
-        raise ValueError("offline oracle scores and availability must align")
+        raise ValueError("contract oracle scores and availability must align")
     labels = (np.asarray(target_labels).reshape(-1) == 1).astype(float)
     if len(labels) != len(matrix):
-        raise ValueError("offline oracle labels must align with target scores")
+        raise ValueError("contract oracle labels must align with target scores")
     costs = np.asarray([target_expert_costs[name] for name in experts])
-    errors = np.where(
-        availability,
-        np.abs(matrix - labels[:, None]),
+    contract_available = availability.all(axis=0)
+    if not contract_available.any():
+        raise ValueError(
+            "contract feasible oracle requires one expert executable "
+            "for the whole contract"
+        )
+    risks = np.where(
+        contract_available,
+        np.mean((matrix - labels[:, None]) ** 2, axis=0),
         np.inf,
     )
+    chosen = int(np.argmin(risks))
+    forced = np.zeros(len(matrix), dtype=bool)
+    return _baseline_prediction(
+        scores=matrix[:, chosen],
+        abstention_probability=np.zeros(len(matrix)),
+        abstain=forced,
+        forced_abstention=forced,
+        expected_compute=np.full(len(matrix), costs[chosen]),
+        target_capacity=None,
+        abstention_cost=0.0,
+        executable_rows=np.ones(len(matrix), dtype=bool),
+        offline_oracle=True,
+        diagnostic_only=False,
+        adapter="contract_feasible_oracle",
+        details={
+            "oracle_kind": "one_best_feasible_expert_per_contract",
+            "selected_expert": experts[chosen],
+            "target_labels_used_for_offline_headline_oracle_only": True,
+        },
+    )
+
+
+def instance_clairvoyant_oracle_ceiling(
+    *,
+    target_scores: Mapping[str, np.ndarray],
+    target_availability: Mapping[str, np.ndarray],
+    target_expert_costs: Mapping[str, float],
+    target_labels: np.ndarray,
+) -> BaselinePrediction:
+    """Construct the non-deployable per-instance diagnostic ceiling."""
+
+    experts = sorted(target_scores)
+    if (
+        set(target_availability) != set(experts)
+        or set(target_expert_costs) != set(experts)
+    ):
+        raise ValueError("instance oracle requires aligned scores, masks, and costs")
+    matrix = np.column_stack([target_scores[name] for name in experts])
+    validate_numpy_scores(matrix, ScoreType.PROBABILITY)
+    availability = np.column_stack(
+        [np.asarray(target_availability[name], dtype=bool) for name in experts]
+    )
+    if matrix.shape != availability.shape:
+        raise ValueError("instance oracle scores and availability must align")
+    labels = (np.asarray(target_labels).reshape(-1) == 1).astype(float)
+    if len(labels) != len(matrix):
+        raise ValueError("instance oracle labels must align with target scores")
+    costs = np.asarray([target_expert_costs[name] for name in experts])
+    errors = np.where(availability, np.abs(matrix - labels[:, None]), np.inf)
     chosen = errors.argmin(axis=1)
     no_feasible = ~availability.any(axis=1)
     rows = np.arange(len(matrix))
@@ -848,13 +1374,22 @@ def offline_feasible_oracle_ceiling(
     scores[no_feasible] = 0.0
     compute = costs[chosen]
     compute[no_feasible] = 0.0
-    return BaselinePrediction(
+    return _baseline_prediction(
         scores=scores,
         abstention_probability=no_feasible.astype(float),
+        abstain=no_feasible,
+        forced_abstention=no_feasible,
         expected_compute=compute,
+        target_capacity=None,
+        abstention_cost=0.0,
+        executable_rows=~no_feasible,
         offline_oracle=True,
-        adapter="offline_feasible_oracle_ceiling",
-        details={"target_labels_used_for_offline_ceiling_only": True},
+        diagnostic_only=True,
+        adapter="instance_clairvoyant_oracle_ceiling",
+        details={
+            "oracle_kind": "per_instance_clairvoyant_diagnostic_only",
+            "target_labels_used_for_offline_diagnostic_only": True,
+        },
     )
 
 
@@ -945,9 +1480,10 @@ def fit_saved_output_corerouter(
     target_scores: Mapping[str, np.ndarray],
     target_availability: Mapping[str, np.ndarray],
     target_expert_costs: Mapping[str, float],
-    seed: int = 20260729,
+    expert_prediction_seed: int,
     steps: int = 100,
     ablation: PilotAblation = PilotAblation.FULL,
+    abstention_cost: float = 0.2,
 ) -> SavedRouterPrediction:
     """Fit on source-train, stop on source-validation, then freeze for target."""
 
@@ -965,6 +1501,8 @@ def fit_saved_output_corerouter(
         raise ValueError("target expert costs must declare every expert")
     if steps < 1:
         raise ValueError("router steps must be positive")
+    if abstention_cost < 0:
+        raise ValueError("abstention cost cannot be negative")
     train = _assemble_source(source_groups, experts, "train")
     validation = _assemble_source(source_groups, experts, "validation")
     (
@@ -1005,7 +1543,16 @@ def fit_saved_output_corerouter(
         if ablation is PilotAblation.ATOMIC_CONTRACT
         else "factorised"
     )
-    seed_everything(seed)
+    method_name = (
+        "full_corerouter"
+        if ablation is PilotAblation.FULL
+        else f"ablation:{ablation.value}"
+    )
+    router_training_seed = derive_router_seed(
+        expert_prediction_seed,
+        method_name,
+    )
+    seed_everything(router_training_seed)
     model = CoReGraph(
         num_experts=len(experts),
         diagnostic_dim=3,
@@ -1063,18 +1610,23 @@ def fit_saved_output_corerouter(
     best_validation = float("inf")
     stale = 0
     patience = max(2, min(10, steps // 4 or 2))
-    review_fraction = next(
-        (
-            group.contract.budget.review_fraction
-            for group in source_groups
-            if group.contract.budget.review_fraction is not None
-        ),
-        0.01,
+    source_contracts = tuple(group.contract for group in source_groups)
+    train_review_k = source_review_k_by_group(
+        source_contracts,
+        train_groups,
     )
-    review_k = max(1, int(round(float(review_fraction) * len(train_target))))
-    abstention_capacity = target_contract.budget.abstention_capacity
-    if abstention_capacity is None:
-        abstention_capacity = 0.1
+    validation_review_k = source_review_k_by_group(
+        source_contracts,
+        validation_groups,
+    )
+    train_capacities = source_abstention_capacity_by_group(
+        source_contracts,
+        train_groups,
+    )
+    validation_capacities = source_abstention_capacity_by_group(
+        source_contracts,
+        validation_groups,
+    )
     model.train()
     for _ in range(steps):
         output = model(
@@ -1124,19 +1676,19 @@ def fit_saved_output_corerouter(
             expert_weights=output.expert_weights,
             expert_costs=train_cost,
             stability_penalty=stability,
-            review_k=review_k,
+            review_k_by_group=train_review_k,
             abstention_probability=(
                 None
                 if ablation is PilotAblation.NO_ABSTENTION
                 else output.abstention_probability
             ),
             forced_abstention=~train_mask.any(dim=1),
-            abstention_capacity=(
+            abstention_capacity_by_group=(
                 None
                 if ablation is PilotAblation.NO_ABSTENTION
-                else abstention_capacity
+                else train_capacities
             ),
-            abstention_cost_value=0.2,
+            abstention_cost_value=abstention_cost,
         )
         optimiser.zero_grad()
         total.backward()
@@ -1162,22 +1714,19 @@ def fit_saved_output_corerouter(
                 availability_mask=validation_mask,
                 expert_weights=validation_output.expert_weights,
                 expert_costs=validation_cost,
-                review_k=max(
-                    1,
-                    int(round(float(review_fraction) * len(validation_target))),
-                ),
+                review_k_by_group=validation_review_k,
                 abstention_probability=(
                     None
                     if ablation is PilotAblation.NO_ABSTENTION
                     else validation_output.abstention_probability
                 ),
                 forced_abstention=~validation_mask.any(dim=1),
-                abstention_capacity=(
+                abstention_capacity_by_group=(
                     None
                     if ablation is PilotAblation.NO_ABSTENTION
-                    else abstention_capacity
+                    else validation_capacities
                 ),
-                abstention_cost_value=0.2,
+                abstention_cost_value=abstention_cost,
             )
             value = float(validation_loss.item())
         if value < best_validation - 1e-9:
@@ -1191,6 +1740,7 @@ def fit_saved_output_corerouter(
         model.train()
     model.load_state_dict(best_state)
     model.eval()
+    source_fit_hash = _model_state_hash(model)
     with torch.no_grad():
         validation_output = model(
             contracts=validation_contracts,
@@ -1211,11 +1761,13 @@ def fit_saved_output_corerouter(
         threshold = float("inf")
         threshold_fitted_on = "source_validation_disabled_ablation"
     else:
-        selected_threshold = select_abstention_threshold(
+        selected_threshold = select_grouped_abstention_threshold(
             validation_losses,
             validation_output.abstention_probability,
-            capacity=abstention_capacity,
-            abstention_cost_value=0.2,
+            validation_group_tensor,
+            capacities=validation_capacities,
+            abstention_cost_value=abstention_cost,
+            forced_abstention=~validation_mask.any(dim=1),
         )
         threshold = selected_threshold.threshold
         threshold_fitted_on = selected_threshold.fitted_on
@@ -1273,16 +1825,17 @@ def fit_saved_output_corerouter(
             expert_costs=tensor(target_cost_array),
             expert_names=experts,
         )
+    forced_abstention = ~target_mask_array.any(axis=1)
+    target_capacity = target_contract.budget.abstention_capacity
     if ablation is PilotAblation.NO_ABSTENTION:
-        abstain = ~target_mask_array.any(axis=1)
+        abstain = forced_abstention
     else:
-        learned = target_output.abstention_probability >= threshold
-        abstain = apply_abstention_capacity(
+        abstain = apply_frozen_abstention_decision(
             target_output.abstention_probability,
-            abstention_capacity,
+            threshold=threshold,
+            capacity=target_capacity,
             forced_abstention=target_output.all_experts_unavailable,
         )
-        abstain = abstain | learned
     selected = target_output.selected_expert.cpu().numpy()
     perturbed_selected = perturbed.selected_expert.cpu().numpy()
     return SavedRouterPrediction(
@@ -1294,6 +1847,7 @@ def fit_saved_output_corerouter(
         ),
         abstain=abstain.cpu().numpy() if isinstance(abstain, torch.Tensor) else abstain,
         expected_compute=target_output.expected_compute.cpu().numpy(),
+        forced_abstention=forced_abstention,
         perturbation_flip_rate=float(
             np.mean(selected != perturbed_selected)
         ),
@@ -1302,6 +1856,12 @@ def fit_saved_output_corerouter(
         source_validation_examples=len(validation_labels),
         abstention_threshold=threshold,
         abstention_threshold_fitted_on=threshold_fitted_on,
+        source_abstention_capacities=validation_capacities,
+        target_abstention_capacity=target_capacity,
+        abstention_cost=abstention_cost,
+        expert_prediction_seed=expert_prediction_seed,
+        router_training_seed=router_training_seed,
+        source_fit_hash=source_fit_hash,
     )
 
 
@@ -1311,51 +1871,133 @@ def evaluate_saved_output_pilot(
     *,
     dataset: str,
     target_contract: str,
-    seed: int,
+    expert_prediction_seed: int,
+    router_training_seeds: Mapping[str, int],
     fold: str,
 ) -> dict[str, Any]:
     """Score frozen predictions after every fit/hyperparameter is frozen."""
 
     rows: list[dict[str, Any]] = []
+    diagnostics: list[dict[str, Any]] = []
     binary = (np.asarray(target_labels) == 1).astype(float)
-    oracle = candidates.get("offline_feasible_oracle_ceiling")
+    oracle = candidates.get("contract_feasible_oracle")
     if oracle is None:
-        raise ValueError("pilot evaluation requires the offline feasible oracle ceiling")
-    oracle_risk = float(np.mean((oracle.scores - binary) ** 2))
+        raise ValueError("pilot evaluation requires the contract feasible oracle")
+    if not oracle.offline_oracle or oracle.diagnostic_only:
+        raise ValueError(
+            "contract feasible oracle must be an offline headline reference"
+        )
+    oracle_losses = (oracle.scores - binary) ** 2
+    oracle_effective = np.where(
+        oracle.abstain,
+        oracle.abstention_cost,
+        oracle_losses,
+    )
+    oracle_risk = float(np.mean(oracle_effective))
+    measured_methods = {
+        method
+        for method, prediction in candidates.items()
+        if not prediction.diagnostic_only
+        and method != "contract_feasible_oracle"
+    }
+    if set(router_training_seeds) != measured_methods:
+        raise ValueError(
+            "router training seed map must cover measured methods exactly"
+        )
     for method, prediction in sorted(candidates.items()):
-        metrics = binary_metrics(target_labels, prediction.scores)
-        decision = prediction.abstention_probability >= 0.5
+        if method == "contract_feasible_oracle":
+            continue
+        if prediction.diagnostic_only:
+            diagnostics.append(
+                {
+                    "dataset": dataset,
+                    "target_contract": target_contract,
+                    "expert_prediction_seed": int(expert_prediction_seed),
+                    "fold": fold,
+                    "name": method,
+                    "risk": float(
+                        np.mean(
+                            np.where(
+                                prediction.abstain,
+                                prediction.abstention_cost,
+                                (prediction.scores - binary) ** 2,
+                            )
+                        )
+                    ),
+                    "excluded_from_significance": True,
+                    "excluded_from_deployable_methods": True,
+                }
+            )
+            continue
+        router_training_seed = int(router_training_seeds[method])
+        if router_training_seed == expert_prediction_seed:
+            raise ValueError(
+                "router training seed must differ from expert prediction seed"
+            )
+        rank_eligible = prediction.ranking_eligible
+        metrics = (
+            binary_metrics(target_labels, prediction.scores)
+            if rank_eligible
+            else {"auprc": float("nan")}
+        )
+        decision = np.asarray(prediction.abstain, dtype=bool)
         point_losses = (
             (prediction.scores >= 0.5).astype(float) - binary
         ) ** 2
         accepted = ~decision
         selective = (
-            float(point_losses[accepted].mean()) if accepted.any() else 0.0
+            float(point_losses[accepted].mean())
+            if accepted.any()
+            else float("nan")
         )
-        contract_risk = float(np.mean((prediction.scores - binary) ** 2))
+        contract_losses = (prediction.scores - binary) ** 2
+        contract_risk = float(
+            np.mean(
+                np.where(
+                    decision,
+                    prediction.abstention_cost,
+                    contract_losses,
+                )
+            )
+        )
+        valid_headline_risk = (
+            rank_eligible and accepted.any()
+        )
+
+        def ranking_value(function: Any, *args: Any) -> float:
+            return float(function(*args)) if rank_eligible else float("nan")
+
         values = {
             "auprc": metrics["auprc"],
-            "recall_at_0.5pct": recall_at_k(
+            "recall_at_0.5pct": ranking_value(
+                recall_at_k,
                 target_labels,
                 prediction.scores,
                 0.005,
             ),
-            "recall_at_1pct": recall_at_k(
+            "recall_at_1pct": ranking_value(
+                recall_at_k,
                 target_labels,
                 prediction.scores,
                 0.01,
             ),
-            "recall_at_2pct": recall_at_k(
+            "recall_at_2pct": ranking_value(
+                recall_at_k,
                 target_labels,
                 prediction.scores,
                 0.02,
             ),
-            "budget_curve_area": budget_curve_auc(
+            "budget_curve_area": ranking_value(
+                budget_curve_auc,
                 target_labels,
                 prediction.scores,
                 (0.005, 0.01, 0.02),
             ),
-            "contract_regret": contract_risk - oracle_risk,
+            "contract_regret": (
+                contract_risk - oracle_risk
+                if valid_headline_risk
+                else float("nan")
+            ),
             "selective_risk": selective,
             "coverage": float(accepted.mean()),
             "aurc": float(
@@ -1366,6 +2008,11 @@ def evaluate_saved_output_pilot(
                         dtype=torch.float32,
                     ),
                 ).item()
+            )
+            if rank_eligible
+            else float("nan"),
+            "abstention_cost": float(
+                decision.mean() * prediction.abstention_cost
             ),
             "compute": float(np.mean(prediction.expected_compute)),
         }
@@ -1374,18 +2021,63 @@ def evaluate_saved_output_pilot(
                 {
                     "dataset": dataset,
                     "target_contract": target_contract,
-                    "seed": int(seed),
+                    "seed": int(expert_prediction_seed),
+                    "expert_prediction_seed": int(expert_prediction_seed),
+                    "router_training_seed": router_training_seed,
                     "fold": fold,
                     "method": method,
                     "metric": metric,
                     "value": float(value),
+                    "execution_status": MethodExecutionStatus(
+                        prediction.execution_status
+                    ).value,
+                    "abstention_threshold": prediction.abstention_threshold,
+                    "abstention_threshold_provenance": (
+                        prediction.abstention_threshold_provenance
+                    ),
+                    "routing_threshold": prediction.details.get(
+                        "routing_threshold"
+                    ),
+                    "routing_threshold_provenance": prediction.details.get(
+                        "routing_threshold_fitted_on"
+                    ),
+                    "abstention_decision_sha256": hashlib.sha256(
+                        decision.astype(np.uint8).tobytes()
+                    ).hexdigest(),
+                    "accepted_count": int(accepted.sum()),
+                    "abstained_count": int(decision.sum()),
+                    "forced_abstention": bool(
+                        prediction.forced_abstention.any()
+                    ),
+                    "forced_abstention_count": int(
+                        prediction.forced_abstention.sum()
+                    ),
+                    "abstention_capacity": prediction.abstention_capacity,
+                    "abstention_cost_per_decision": prediction.abstention_cost,
                     "offline_oracle": prediction.offline_oracle,
                 }
             )
     return {
-        "schema": "coregraph_saved_output_pilot_v2",
+        "schema": "coregraph_saved_output_pilot_v3",
         "status": "MEASURED_FROM_SAVED_PREDICTIONS",
         "rows": rows,
+        "headline_oracle_reference": {
+            "dataset": dataset,
+            "target_contract": target_contract,
+            "expert_prediction_seed": int(expert_prediction_seed),
+            "fold": fold,
+            "name": "contract_feasible_oracle",
+            "risk": oracle_risk,
+            "selected_expert": oracle.details.get("selected_expert"),
+            "used_for_headline_regret": True,
+            "excluded_from_significance_as_a_method": True,
+            "excluded_from_deployable_methods": True,
+        },
+        "diagnostic_oracles": diagnostics,
         "target_information": "labels_used_for_final_offline_scoring_only",
+        "target_label_selection": False,
         "oracle_target_selection": False,
+        "headline_oracle": "contract_feasible_oracle",
+        "diagnostic_oracle": "instance_clairvoyant_oracle_ceiling",
+        "inferential_block": "expert_prediction_seed",
     }

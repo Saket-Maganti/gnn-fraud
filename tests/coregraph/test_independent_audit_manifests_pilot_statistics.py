@@ -17,8 +17,9 @@ from coregraph.experiments.pilot import (
     SavedSourceGroup,
     align_artifact_group,
     baseline_scores,
+    contract_feasible_oracle,
     fit_saved_output_corerouter,
-    offline_feasible_oracle_ceiling,
+    instance_clairvoyant_oracle_ceiling,
     validate_artifact_groups,
 )
 
@@ -230,14 +231,29 @@ def test_baseline_registry_contains_honest_distinct_methods(
     }
     baselines = baseline_scores(
         sources,
+        target_contract=contract_factory(
+            "target",
+            role=ContractRole.TARGET,
+        ),
         target_scores=target,
         target_availability={
             "feature": np.ones(4, dtype=bool),
             "graph": np.ones(4, dtype=bool),
         },
+        target_expert_costs={"feature": 1.0, "graph": 3.0},
+        expert_prediction_seed=1,
     )
-    baselines["offline_feasible_oracle_ceiling"] = (
-        offline_feasible_oracle_ceiling(
+    baselines["contract_feasible_oracle"] = contract_feasible_oracle(
+        target_scores=target,
+        target_availability={
+            "feature": np.ones(4, dtype=bool),
+            "graph": np.ones(4, dtype=bool),
+        },
+        target_expert_costs={"feature": 1.0, "graph": 3.0},
+        target_labels=np.asarray([1, 2, 1, 2]),
+    )
+    baselines["instance_clairvoyant_oracle_ceiling"] = (
+        instance_clairvoyant_oracle_ceiling(
             target_scores=target,
             target_availability={
                 "feature": np.ones(4, dtype=bool),
@@ -253,18 +269,19 @@ def test_baseline_registry_contains_honest_distinct_methods(
         "average_all_feasible",
         "best_source_validation",
         "source_validation_convex_mixture",
-        "graphsafe_v2_adapter",
+        "graphsafe_confidence_abstention_component",
         "current_graph_feature_gate_adapter",
         "learned_no_contract_router",
         "learned_atomic_contract_router",
         "MOWST_INSPIRED_REIMPLEMENTATION",
-        "offline_feasible_oracle_ceiling",
+        "contract_feasible_oracle",
+        "instance_clairvoyant_oracle_ceiling",
     }
     assert expected <= set(baselines)
-    assert baselines["graphsafe_v2_adapter"].adapter == "models.graphsafe_v2"
+    component = baselines["graphsafe_confidence_abstention_component"]
     assert (
-        baselines["graphsafe_v2_adapter"].details["confidence_adapter"]
-        == "models.graphsafe_v2.confidence_scores"
+        component.details["parity_status"]
+        == "PARTIAL_CONFIDENCE_COMPONENT_NOT_FULL_GRAPHSAFE"
     )
     assert (
         baselines["current_graph_feature_gate_adapter"].adapter
@@ -272,7 +289,8 @@ def test_baseline_registry_contains_honest_distinct_methods(
     )
     assert baselines["learned_no_contract_router"].learned
     assert baselines["learned_atomic_contract_router"].learned
-    assert baselines["offline_feasible_oracle_ceiling"].offline_oracle
+    assert baselines["contract_feasible_oracle"].offline_oracle
+    assert baselines["instance_clairvoyant_oracle_ceiling"].diagnostic_only
 
 
 def test_every_pilot_baseline_respects_all_unavailable_rows(
@@ -300,16 +318,14 @@ def test_every_pilot_baseline_respects_all_unavailable_rows(
     }
     baselines = baseline_scores(
         sources,
+        target_contract=contract_factory(
+            "target",
+            role=ContractRole.TARGET,
+        ),
         target_scores=target,
         target_availability=availability,
-    )
-    baselines["offline_feasible_oracle_ceiling"] = (
-        offline_feasible_oracle_ceiling(
-            target_scores=target,
-            target_availability=availability,
-            target_expert_costs={"feature": 1.0, "graph": 3.0},
-            target_labels=np.asarray([1, 2, 1, 2]),
-        )
+        target_expert_costs={"feature": 1.0, "graph": 3.0},
+        expert_prediction_seed=1,
     )
     for prediction in baselines.values():
         assert prediction.abstention_probability[0] >= 0.5
@@ -345,13 +361,16 @@ def test_source_only_pilot_uses_real_masks_and_declared_ablation(
         target_scores=target_scores,
         target_availability=availability,
         target_expert_costs={"feature": 1.0, "graph": 3.0},
+        expert_prediction_seed=1,
         steps=3,
         ablation=PilotAblation.NO_BUDGET,
     )
     assert prediction.ablation is PilotAblation.NO_BUDGET
     assert prediction.source_train_examples == 8
     assert prediction.source_validation_examples == 8
-    assert prediction.abstention_threshold_fitted_on == "source_validation"
+    assert prediction.abstention_threshold_fitted_on == (
+        "source_validation_balanced_contracts"
+    )
     assert np.all(prediction.routing_weights[~availability["graph"], 1] == 0)
     with pytest.raises(ValueError, match="target availability"):
         fit_saved_output_corerouter(
@@ -363,6 +382,7 @@ def test_source_only_pilot_uses_real_masks_and_declared_ablation(
             target_scores=target_scores,
             target_availability={},
             target_expert_costs={"feature": 1.0, "graph": 3.0},
+            expert_prediction_seed=1,
             steps=1,
         )
 
