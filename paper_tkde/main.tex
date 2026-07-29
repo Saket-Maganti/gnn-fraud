@@ -1,0 +1,51 @@
+\documentclass[10pt,journal]{IEEEtran}
+
+\usepackage{amsmath,amssymb}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{balance}
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{textcomp}
+\usepackage{url}
+\usepackage[caption=false,font=footnotesize,labelfont=sf,textfont=sf]{subfig}
+
+\graphicspath{{figures/}}
+\hyphenation{Fraud-Shift-Bench DGraph-Fin Graph-SAGE}
+
+\newcommand{\system}{FraudShiftBench}
+\newcommand{\auprc}{\operatorname{AUPRC}}
+\newcommand{\auroc}{\operatorname{AUROC}}
+\renewcommand{\arraystretch}{1.08}
+
+\begin{document}
+
+\title{FraudShiftBench: Deployment-Contract Evaluation for Temporal Graph Fraud Detection}
+
+\author{Anonymous Author}
+
+\markboth{IEEE Transactions on Knowledge and Data Engineering, Under Review}%
+{FraudShiftBench: Deployment-Contract Evaluation for Temporal Graph Fraud Detection}
+
+\maketitle
+
+\input{sections/01_abstract}
+\input{sections/02_introduction}
+\input{sections/03_related_work}
+\input{sections/04_deployment_claim_contracts}
+\input{sections/05_benchmark_instantiation}
+\input{sections/06_experimental_design}
+\input{sections/07_results_protocol_architecture}
+\input{sections/08_results_construction_decisions}
+\input{sections/09_framework_validation_graphsafe}
+\input{sections/10_implications_validity_artifact}
+\input{sections/11_conclusion}
+
+\balance
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

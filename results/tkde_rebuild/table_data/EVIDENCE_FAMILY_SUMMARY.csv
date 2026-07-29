@@ -1,0 +1,30 @@
+family,eligibility,cells,datasets,locks
+GraphSAGE-family architecture diagnostic,diagnostic-only,6,elliptic,results/runs_rb11_sage_family/aggregate_manifest.json
+GraphSafe best-branch strengthening,supplement-only,1,Elliptic; DGraphFin,results/runs_rb16_graphsafe_best_branch_strengthening/import_manifest.json
+GraphSafe-TTA saved-output analysis,main case-study eligible,1,Elliptic; DGraphFin,results/runs_rb15_graphsafe_tta/import_manifest.json
+IBM AML baseline grid,main-paper eligible,24,IBM AML-Data,results/v26_imported/V26_IMPORTED_EVIDENCE_LOCK.json
+IBM AML construction/feature ablation,main-paper eligible,52,IBM AML-Data,results/v28_imported/V28_ALL_RUNS_EVIDENCE_LOCK.json
+IBM AML construction/feature ablation,resource-blocked,2,IBM AML-Data,results/v28_imported/V28_ALL_RUNS_EVIDENCE_LOCK.json
+IBM AML resource boundary,resource-blocked,2,IBM AML-Data,results/v26_imported/V26_IMPORTED_EVIDENCE_LOCK.json
+IBM AML stronger graph study,main-paper eligible,8,IBM AML-Data,results/v27_imported/V27_STRONGER_GRAPH_EVIDENCE_LOCK.json
+calibration/review-budget analysis,diagnostic-only,1,inherits V26-V28/RB families,V26/V27/V28 and source-family locks
+compute fairness,diagnostic-only,1,inherits V26-V28/RB families,V26/V27/V28 and source-family locks
+core strict/isolated/transductive benchmark,main-paper eligible,18,dgraphfin;elliptic,results/runs_rb09v3/ARTIFACT_FAMILY.json
+cross-variant transfer summary,diagnostic-only,1,inherits V26-V28/RB families,V26/V27/V28 and source-family locks
+dataset onboarding,diagnostic-only,1,inherits V26-V28/RB families,V26/V27/V28 and source-family locks
+excluded V22 import,excluded,3,not inferable from directory name,kaggle_workspace/manifests/V22_FINAL_GPU_EVIDENCE_LOCK.json
+expected finalization layer,excluded,1,none,V26/V27/V28 and source-family locks
+hidden-test contract,diagnostic-only,1,inherits V26-V28/RB families,V26/V27/V28 and source-family locks
+integrated benchmark summaries,diagnostic-only,1,inherits V26-V28/RB families,V26/V27/V28 and source-family locks
+large-GPU GraphSAGE architecture rerun,resource-blocked,1,dgraphfin,results/runs_rb18_large_gpu_rb11b/import_manifest.json
+loss/control/architecture extension,resource-blocked,1,dgraphfin,kaggle_workspace/manifests/V22_FINAL_GPU_EVIDENCE_LOCK.json
+loss/control/architecture extension,supplement-only,64,dgraphfin;elliptic,kaggle_workspace/manifests/V22_FINAL_GPU_EVIDENCE_LOCK.json
+model onboarding,diagnostic-only,1,inherits V26-V28/RB families,V26/V27/V28 and source-family locks
+public evaluator,diagnostic-only,1,inherits V26-V28/RB families,V26/V27/V28 and source-family locks
+release layer,diagnostic-only,1,inherits V26-V28/RB families,V26/V27/V28 and source-family locks
+resource stress audit,diagnostic-only,1,inherits V26-V28/RB families,V26/V27/V28 and source-family locks
+review-budget/worst-block/cost sensitivity,supplement-only,1,Elliptic; DGraphFin,results/runs_rb17_review_budget_worst_block/import_manifest.json
+temporal-shift/architecture stress,resource-blocked,1,dgraphfin,results/v24_imported/V24_IMPORTED_EVIDENCE_LOCK.json
+temporal-shift/perturbation stress,diagnostic-only,2,dgraphfin,results/v24_imported/V24_IMPORTED_EVIDENCE_LOCK.json
+temporal-shift/perturbation stress,supplement-only,48,dgraphfin;elliptic,results/v24_imported/V24_IMPORTED_EVIDENCE_LOCK.json
+validation-selected conservative GraphSafe policy,main case-study eligible,1,Elliptic; DGraphFin,results/runs_rb15b_graphsafe_conservative_policy/import_manifest.json

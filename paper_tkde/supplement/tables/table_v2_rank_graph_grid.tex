@@ -1,0 +1,24 @@
+\begin{table}[tbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\renewcommand{\arraystretch}{1.12}
+\caption{IBM graph grid: AUPRC and F1@0.5 winners and rank agreement.}
+\label{tab:s-rank-graph_grid}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.11\textwidth} >{\raggedright\arraybackslash}p{0.13\textwidth} r Y Y r l@{}}
+\toprule
+\textbf{Variant} & \textbf{Protocol} & \textbf{Feasible n} & \textbf{AUPRC winner} & \textbf{F1 winner} & \textbf{$\rho$} & \textbf{Disagree} \\
+\midrule
+HI MEDIUM & Early-to-late & 6 & SAGE-edge h64 & DegreeCap & -0.486 & Yes \\
+HI MEDIUM & Late-window & 6 & SAGE-edge h64 & DegreeCap & -0.771 & Yes \\
+HI SMALL & Early-to-late & 7 & GINE h64 & DegreeCap & 0.857 & Yes \\
+HI SMALL & Late-window & 7 & GINE h64 & DegreeCap & 0.786 & Yes \\
+LI MEDIUM & Early-to-late & 6 & SAGE-edge h64 & DegreeCap & -0.086 & Yes \\
+LI MEDIUM & Late-window & 6 & SAGE-edge h64 & DegreeCap & -0.029 & Yes \\
+LI SMALL & Early-to-late & 7 & GINE h64 & DegreeCap & 0.607 & Yes \\
+LI SMALL & Late-window & 7 & GINE h64 & DegreeCap & 0.571 & Yes \\
+\bottomrule
+\end{tabularx}
+\vspace{2pt}
+\begin{minipage}{\textwidth}\footnotesize\emph{Scope and reading.} Spearman correlation is computed over the exact feasible set in each row. F1 uses the saved threshold of 0.5; disagreement is not asserted to be threshold-invariant.\end{minipage}
+\end{table}

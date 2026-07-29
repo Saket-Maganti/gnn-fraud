@@ -1,0 +1,37 @@
+\section{Resource-boundary case studies}
+\label{sec:s-resource-cases-v2}
+
+The resource coordinate records what was attempted under which envelope and how the benchmark treats the outcome. Table~\ref{tab:s-resource-cases} is the compact index; the five cases below give the reviewer-facing interpretation.
+
+\input{tables/table_v2_resource_cases}
+
+\subsection{IBM AML Large guards}
+
+HI-Large and LI-Large stopped at the safe resource guard and produced zero result and prediction files. Evidence exists for the guard and planned configuration; predictive evidence does not exist. The safe wording is that Large lies outside the admitted resource envelope and is unmeasured. It is not permissible to rank Large, infer underperformance, or claim full-10 coverage.
+
+\subsection{Medium GINE T4 out-of-memory}
+
+HI-Medium and LI-Medium GINE h64 each encountered single-T4 CUDA OOM and produced zero of 20 planned outputs. Small GINE performance and the Medium failure record both exist. Medium GINE performance does not. It is excluded from Medium winner sets, matched means, and Pareto sets rather than imputed.
+
+\subsection{Fixed DGraphFin GAT T4 out-of-memory}
+
+The fixed h64/l2 GAT lane has zero of 20 planned results and predictions under the T4 envelope. A memory-reduced h32/l1 diagnostic changes architecture and cannot substitute for the blocked fixed cell. The benchmark may compare their feasibility statuses, not their predictive scores.
+
+\subsection{RB18 and larger-GPU extension status}
+
+The DGraphFin GraphSAGE max-pool extension has preparation commands and status files but no imported result CSV. A larger GPU was requested; no validated runtime record establishes P100, A100, or H100 performance. The safe wording is waiting-for-GPU/unmeasured, not hardware-backed evidence.
+
+\subsection{Memory-reduced exploratory architectures}
+
+Memory-reduced variants can diagnose whether a code path runs under a smaller envelope. They remain exploratory because width, depth, sampling, or features differ from the fixed target. Directory presence, notebook generation, or partial predictions cannot fill a claim scoped to the original architecture.
+
+\subsection{False-promotion protections}
+
+Table~\ref{tab:s-false-promotions-v2} explains how count-only logic could incorrectly promote failed imports, duplicate labels, aliases, diagnostics, and zero-output plans.
+
+\input{tables/table_v2_false_promotions}
+
+Across metric-bearing artifacts, 310 result and 310 prediction files are at risk of naive promotion. The count includes 240 duplicate V24 labels, 38 failed/noncomparable V22 imports, 20 memory-reduced GAT diagnostics, and 12 legacy hardware-alias files. These remain provenance or validation cases, not additional performance evidence.
+
+\paragraph{General treatment.}
+Resource-blocked cells are unmeasured and predictively unordered. A future run on different hardware could produce evidence, but no direction follows from that possibility.

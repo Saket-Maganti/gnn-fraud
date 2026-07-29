@@ -1,0 +1,28 @@
+\begin{table}[tbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\renewcommand{\arraystretch}{1.12}
+\caption{Elliptic dataset card.}
+\label{tab:s-dataset-elliptic}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.23\textwidth} Y@{}}
+\toprule
+\textbf{Field} & \textbf{Verified value} \\
+\midrule
+Origin & real pseudonymized Bitcoin transactions \\
+Prediction unit & transaction node \\
+Graph size & 203,769 nodes; 234,355 source edges; 468,710 message-passing arcs \\
+Features & 165 node; 0 edge \\
+Temporal order & 49 discrete time steps \\
+Protocols/windows & strict/isolated/transductive; train t1-30, val t31-34, test t35-49 \\
+Train/validation/test & 26,905 / 2,989 / 16,670 eligible units \\
+Positive counts & 2,954 / 508 / 1,083 \\
+Test prevalence & 6.497\% \\
+Label mapping & raw 1=illicit->positive 1; raw 2=licit->supervised 0 (repository code 2); unknown excluded \\
+Source surface & \path{data/raw/elliptic_txs_*.csv; results/runs_rb09v3/runs.csv} \\
+Known limitation & The 49 steps are dataset time bins; conclusions do not imply calendar-time or institution-level generalization. \\
+\bottomrule
+\end{tabularx}
+\vspace{2pt}
+\begin{minipage}{\textwidth}\footnotesize\emph{Scope and reading.} Counts and label mappings are recovered from the frozen dataset/task statistics. Unknown node labels remain graph context but never enter supervised masks.\end{minipage}
+\end{table}

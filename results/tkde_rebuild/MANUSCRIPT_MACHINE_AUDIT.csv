@@ -1,0 +1,5 @@
+exists,font_count,kind,overfull_boxes,pages,path,pdffonts_rc,pdfinfo_rc,pdftotext_rc,rerun_warnings,type3_fonts,undefined_citations,undefined_references,word_count
+True,34,pdf,,14,paper_tkde/main.pdf,0,0,0,,[],,,10879
+True,30,pdf,,30,paper_tkde/supplement/supplement.pdf,0,0,0,,[],,,15960
+True,,log,[],,paper_tkde/main.log,,,,0,,0,0,
+True,,log,[],,paper_tkde/supplement/supplement.log,,,,0,,0,0,

@@ -1,0 +1,19 @@
+\begin{table*}[t]
+\caption{Closest benchmark families and the distinctions needed here. ``No'' means that the feature is not a stated benchmark axis; it does not question the rigor of the cited work.}
+\label{tab:related-comparison}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\begin{tabularx}{\textwidth}{@{}p{0.16\textwidth}c p{0.19\textwidth}p{0.10\textwidth}p{0.11\textwidth}p{0.10\textwidth}X@{}}
+\toprule
+Work & Temporal & Graph contract & Capacity & Resources & Predictions & Claim support \\
+\midrule
+GADBench & No & Limited & No & No & Benchmark & No \\
+TGB / BenchTemp & Yes & Inductive tasks & No & Efficiency & Benchmark & No \\
+BAG & Yes & Task/model breadth & No & Scale & Benchmark & No \\
+GAD in the Wild & Partial & Scale/missing attrs. & No & Scale & Limited & No \\
+BetterBench / Eval Factsheets & Generic & Documented & Documented & Documented & Metadata & Descriptive \\
+FraudShiftBench & Yes & Visibility + construction & Top-$K$ + cost & Typed status & Per-seed & Executable \\
+\bottomrule
+\end{tabularx}
+\end{table*}

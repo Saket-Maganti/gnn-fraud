@@ -1,0 +1,29 @@
+\section{Robustness and negative-control results}
+\label{sec:s-robustness}
+
+\subsection{V24 construct audit}
+
+The V24 runner iterated over three temporal-stress strings, but the string was written only to metadata and was never passed to the benchmark harness. Table~\ref{tab:s-v24-audit} summarizes the consequence across the complete family.
+
+\input{tables/table_v2_v24_construct_audit}
+
+For each of 120 dataset/protocol/model/seed base cells, all reported performance metrics are identical under the three labels. Runtime can differ because the harness was rerun. The admissible evidence is therefore one deduplicated representative per base cell as a supplementary protocol rerun; no three-stress comparison is supported.
+
+\subsection{V22 lane completeness}
+
+The older V22 extension covers loss functions, graph negative controls, and additional Elliptic architectures. Before reading its statistics, Table~\ref{tab:s-v22-lanes-v2} establishes which lanes are complete under the canonical lock.
+
+\input{tables/table_v2_v22_lanes}
+
+Five full-10 lanes contain 640 result and prediction references. The fixed DGraphFin GAT h64/l2 lane is T4-OOM with zero of 20 planned outputs. A memory-reduced h32/l1 diagnostic changes width and depth and therefore cannot fill the blocked cell. Three other raw imports containing 38 result and 38 prediction files fail integrity or comparability checks and remain excluded.
+
+\subsection{V22 statistical-family overview}
+
+The complete V22 table contains 198 model-identified paired tests. Table~\ref{tab:s-v22-stats-summary} replaces that microscopic row dump with counts by family and metric, direction, and original BH decision.
+
+\input{tables/table_v2_v22_statistical_summary}
+
+The aggregate shows the composition of the legacy family without creating a new family or selecting only favorable rows. Exact left/right definitions, intervals, effect sizes, raw p-values, and BH values remain in \path{manuscript_assets/tables/V22_STAT_TESTS_FULL10.csv}, indexed in Section~\ref{sec:s-reproduction-artifact}.
+
+\paragraph{What robustness does not establish.}
+These extensions probe losses, controls, and a limited architecture set. They do not repair the fixed blocked GAT cell, validate the V24 stress labels, or widen the primary graph-learning breadth beyond the measured configurations.

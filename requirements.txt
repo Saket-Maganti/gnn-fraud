@@ -26,3 +26,6 @@ kaggle>=1.5.0
 
 # Models
 xgboost>=1.7.0
+
+# Development / testing
+pytest>=8.0

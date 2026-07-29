@@ -1,0 +1,22 @@
+\begin{table}[tbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\renewcommand{\arraystretch}{1.12}
+\caption{Strict-to-isolated paired AUROC effects.}
+\label{tab:s-protocol-auroc}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.13\textwidth} >{\raggedright\arraybackslash}p{0.13\textwidth} r r r >{\raggedright\arraybackslash}p{0.21\textwidth} r r@{}}
+\toprule
+\textbf{Dataset} & \textbf{Model} & \textbf{n} & \textbf{Strict} & \textbf{Isolated} & \textbf{$\Delta$ [95\% CI]} & \textbf{$d_z$} & \textbf{Holm p} \\
+\midrule
+DGraphFin & GCN & 10 & 0.53049 & 0.52091 & -0.00958 [-0.05269, 0.03227] & -0.131 & 1.0000 \\
+DGraphFin & MLP & 10 & 0.52554 & 0.52554 & +0.00000 [0.00000, 0.00000] & 0.000 & 1.0000 \\
+DGraphFin & GraphSAGE & 10 & 0.68688 & 0.65789 & -0.02899 [-0.03921, -0.01956] & -1.748 & 0.0117 \\
+Elliptic & GCN & 10 & 0.87228 & 0.87002 & -0.00226 [-0.00769, 0.00195] & -0.270 & 1.0000 \\
+Elliptic & MLP & 10 & 0.87458 & 0.87458 & +0.00000 [0.00000, 0.00000] & 0.000 & 1.0000 \\
+Elliptic & GraphSAGE & 10 & 0.88744 & 0.86737 & -0.02007 [-0.02172, -0.01816] & -6.602 & 0.0117 \\
+\bottomrule
+\end{tabularx}
+\vspace{2pt}
+\begin{minipage}{\textwidth}\footnotesize\emph{Scope and reading.} All comparisons share seeds 1--10 and identical temporal masks. The intervention changes graph visibility; it does not identify a unique mechanism for the observed response.\end{minipage}
+\end{table}

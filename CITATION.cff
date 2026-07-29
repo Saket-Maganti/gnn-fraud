@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this research artifact, cite the accompanying manuscript."
+title: "FraudShiftBench: Deployment-contract evaluation for temporal graph fraud detection"
+type: software
+authors:
+  - name: "Anonymous authors"
+version: 0.1.0-review
+repository-code: "https://github.com/Saket-Maganti/gnn-fraud"
+license: "LicenseRef-Proprietary"
+keywords:
+  - graph neural networks
+  - fraud detection
+  - temporal shift
+  - evaluation protocols
+  - reproducibility
+preferred-citation:
+  type: article
+  title: "Evaluation Protocols Can Reverse Model Rankings Under Temporal Shift"
+  authors:
+    - name: "Anonymous authors"
+  year: 2026
+

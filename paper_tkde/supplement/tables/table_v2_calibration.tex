@@ -1,0 +1,26 @@
+\begin{table}[tbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\renewcommand{\arraystretch}{1.12}
+\caption{Saved-prediction calibration diagnostics.}
+\label{tab:s-calibration}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.14\textwidth} Y r r r r@{}}
+\toprule
+\textbf{Dataset} & \textbf{Policy} & \textbf{n} & \textbf{ECE} & \textbf{SD} & \textbf{Brier (SD)} \\
+\midrule
+DGraphFin & Best validation branch & 10 & 0.28443 & 0.02093 & 0.09632 (0.01160) \\
+DGraphFin & Feature branch & 10 & 0.28076 & 0.02877 & 0.09356 (0.01546) \\
+DGraphFin & Graph branch & 10 & 0.28443 & 0.02093 & 0.09632 (0.01160) \\
+DGraphFin & GraphSafe conservative & 10 & 0.27507 & 0.02032 & 0.09094 (0.01054) \\
+DGraphFin & Simple average & 10 & 0.28260 & 0.02234 & 0.09295 (0.01241) \\
+Elliptic & Best validation branch & 10 & 0.08760 & 0.01392 & 0.07341 (0.00807) \\
+Elliptic & Feature branch & 10 & 0.13074 & 0.00643 & 0.09912 (0.00441) \\
+Elliptic & Graph branch & 10 & 0.07298 & 0.00779 & 0.06515 (0.00580) \\
+Elliptic & GraphSafe conservative & 10 & 0.09820 & 0.01727 & 0.07899 (0.00848) \\
+Elliptic & Simple average & 10 & 0.09631 & 0.00381 & 0.07059 (0.00255) \\
+\bottomrule
+\end{tabularx}
+\vspace{2pt}
+\begin{minipage}{\textwidth}\footnotesize\emph{Scope and reading.} ECE uses ten bins and is descriptive. These fixed-dataset summaries do not establish calibrated probabilities in a deployment population.\end{minipage}
+\end{table}

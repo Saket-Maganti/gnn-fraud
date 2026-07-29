@@ -1,0 +1,19 @@
+\begin{table}[t]
+\caption{Bounded saved-score comparison over ten seed blocks. Lower illustrative cost risk is better; no GraphSafe contrast survives Holm correction over the declared 48-test family.}
+\label{tab:graphsafe}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.0pt}
+\begin{tabular}{@{}llrrr@{}}
+\toprule
+Data & Method & F1 & R@1\% & Risk \\
+\midrule
+DGraphFin & Best val & 0.036 & 0.014 & 0.473 \\
+DGraphFin & GraphSafe & 0.043 & 0.021 & 0.291 \\
+DGraphFin & Average & 0.036 & 0.014 & 0.452 \\
+Elliptic & Best val & 0.532 & 0.120 & 0.180 \\
+Elliptic & GraphSafe & 0.533 & 0.118 & 0.178 \\
+Elliptic & Average & 0.551 & 0.128 & 0.171 \\
+\bottomrule
+\end{tabular}
+\end{table}

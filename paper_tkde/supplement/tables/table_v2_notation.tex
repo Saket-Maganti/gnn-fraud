@@ -1,0 +1,26 @@
+\begin{table}[tbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\renewcommand{\arraystretch}{1.12}
+\caption{Notation used by the deployment-contract and statistical analyses.}
+\label{tab:s-notation}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.15\textwidth} >{\raggedright\arraybackslash}p{0.22\textwidth} Y@{}}
+\toprule
+\textbf{Symbol} & \textbf{Role} & \textbf{Definition} \\
+\midrule
+$i$ & Prediction unit & Transaction node, account node, or transaction edge, as declared by the dataset card. \\
+$m_i$ & Eligibility & $\mathbb{1}[y_i\neq0]$ for node tasks; unknown units never enter supervised masks. \\
+$z_i$ & Binary target & $\mathbb{1}[y_i=1]$ on eligible node units; IBM uses $z_i\in\{0,1\}$ directly. \\
+$q_i$ & Saved score & Fraud score on the evaluation set under one exact contract. \\
+$\Pi$ & Deployment contract & $(\mathcal{T},\mathcal{V},\mathcal{C},\mathcal{S},\mathcal{B},\mathcal{R})$. \\
+$e$ & Evidence unit & Dataset, prediction unit, contract, construction, model, seed set, metrics, predictions, resources, and provenance. \\
+$c$ & Typed claim & Exact scope, quantifier, comparison, metric, direction, uncertainty rule, and deployment interpretation. \\
+$\mathcal{E}\models c$ & Support & Every required unit is admissible and complete, and the scoped predicate is true. \\
+$\Delta_s$ & Paired effect & Candidate-minus-reference or isolated-minus-strict difference for matched seed block s. \\
+$d_z$ & Paired effect size & $\overline{\Delta}/s_{\Delta}$; undefined variance is not converted to evidence. \\
+\bottomrule
+\end{tabularx}
+\vspace{2pt}
+\begin{minipage}{\textwidth}\footnotesize\emph{Scope and reading.} The prediction unit is part of the evidence type. Consequently, node, account, and transaction-edge values are never pooled into a single leaderboard.\end{minipage}
+\end{table}

@@ -1,0 +1,18 @@
+\begin{table*}[t]
+\caption{Independent deployment-contract coordinates. IBM early-to-late uses labels from the first 50\% but the shared label-free account-history map from the first 60\%; it is not a first-50\%-only feature contract.}
+\label{tab:protocol-visibility}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabularx}{\textwidth}{@{}p{0.12\textwidth}p{0.12\textwidth}p{0.14\textwidth}p{0.19\textwidth}p{0.11\textwidth}p{0.12\textwidth}X@{}}
+\toprule
+Protocol & Label windows & Label-free history & Graph visibility & Selection & Decision & Resource envelope \\
+\midrule
+Strict inductive & chronological & train period & held-out structure only at evaluation & validation F1 & argmax / rank & recorded CPU/CUDA \\
+Isolated inductive & same masks & train period & remove train--held-out edges & validation F1 & argmax / rank & same as strict \\
+Transductive & same masks & full label-free graph & full graph; labels hidden & validation F1 & diagnostic & recorded CPU/CUDA \\
+IBM early-to-late & 50/20/30 labels & first 60\% covariates & shared 60\% account history & fixed schedule & $\tau=0.5$ / budgets & CPU + T4 guards \\
+IBM late holdout & 60/20/20 labels & first 60\% covariates & training-period account history & fixed schedule & $\tau=0.5$ / budgets & CPU + T4 guards \\
+\bottomrule
+\end{tabularx}
+\end{table*}

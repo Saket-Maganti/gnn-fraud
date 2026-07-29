@@ -1,0 +1,7 @@
+dataset,unit,scale,time,prior,features,protocols,scope
+Elliptic,transaction node,"203,769 / 234,355",49 steps; 30/4/15,6.497\%,165 node,strict; isolated; transductive,real; node task
+DGraphFin,account node,"3,700,550 / 4,300,999",20 buckets; 14/2/4,1.095\%,17 node,strict; isolated; transductive,real; node task
+IBM HI-SMALL,transaction edge,"515,088 / 5,078,345",50/20/30; 60/20/20,0.152--0.177\%,8 node + 8 edge,early-to-late; late holdout,synthetic; Small/Medium
+IBM HI-MEDIUM,transaction edge,"2,077,023 / 31,898,238",50/20/30; 60/20/20,0.148--0.167\%,8 node + 8 edge,early-to-late; late holdout,synthetic; Small/Medium
+IBM LI-SMALL,transaction edge,"705,907 / 6,924,049",50/20/30; 60/20/20,0.064--0.067\%,8 node + 8 edge,early-to-late; late holdout,synthetic; Small/Medium
+IBM LI-MEDIUM,transaction edge,"2,032,095 / 31,251,483",50/20/30; 60/20/20,0.058--0.061\%,8 node + 8 edge,early-to-late; late holdout,synthetic; Small/Medium

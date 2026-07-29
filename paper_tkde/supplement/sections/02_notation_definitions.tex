@@ -1,0 +1,56 @@
+\section{Notation and formal definitions}
+\label{sec:s-notation}
+
+\subsection{Prediction units and supervised labels}
+
+Let \(i\) index the declared prediction unit: an Elliptic transaction node, a DGraphFin account node, or an IBM transaction edge. For the node tasks, the repository label code is \(y_i\in\{0,1,2\}\), where 0 is unknown, 1 is illicit/fraud, and 2 is licit/normal. Supervised eligibility and the binary target are
+\begin{equation}
+ m_i=\mathbb{1}[y_i\neq0],
+ \qquad
+ z_i=\mathbb{1}[y_i=1]\quad\text{for }m_i=1.
+\end{equation}
+Unknown units may remain as unlabeled graph context but never enter train, validation, or test masks. IBM stores \(z_i\in\{0,1\}\) directly for each materialized transaction. This typing prevents the raw unknown code from turning the supervised task into a false three-class estimand.
+
+\subsection{Contract, evidence unit, and typed claim}
+
+\begin{definition}[Deployment contract]
+A contract is
+\begin{equation}
+ \Pi=(\mathcal{T},\mathcal{V},\mathcal{C},\mathcal{S},\mathcal{B},\mathcal{R}),
+\end{equation}
+where the coordinates record time, visibility, construction, preprocessing/selection, decision budget or cost, and resources/status. They are separately recorded and non-substitutable, not statistically independent.
+\end{definition}
+
+\begin{definition}[Evidence unit]
+An evidence unit is
+\begin{equation}
+ e=(D,V,U,\Pi,C,M,H,S,Q,P,R,Z),
+\end{equation}
+where \(U\) is the prediction unit, \(H\) the fixed configuration, \(S\) the observed seed set, \(Q\) the metric record, \(P\) the prediction manifest, \(R\) the measured or blocked resource record, and \(Z\) the provenance/integrity state.
+\end{definition}
+
+\begin{definition}[Typed claim]
+A claim is
+\begin{equation}
+ c=(\Omega,q,\Delta,r,d,u,\iota),
+\end{equation}
+where \(\Omega\) is exact scope, \(q\) the quantifier, \(\Delta\) the comparison, \(r\) the metric, \(d\) the direction, \(u\) the uncertainty requirement, and \(\iota\) the deployment interpretation.
+\end{definition}
+
+\begin{definition}[Support]
+For evidence collection \(\Evidence\), \(\Evidence\Supports c\) only if every required scientific cell and seed passes its canonical lock, prediction-dependent claims have complete prediction references, pairing and uncertainty requirements are met, blocked cells remain nonnumeric, and the scoped predicate is true.
+\end{definition}
+
+\input{tables/table_v2_notation}
+
+The notation table is intentionally compact; exact evidence-unit fields and matched identifiers are retained in \path{results/tkde_rebuild/CLAIM_EVIDENCE_LEDGER.csv}. The formal flow is visualized in Fig.~\ref{fig:s-contract-v2}.
+
+\begin{figure}[tbp]
+    \centering
+    \includegraphics[width=0.90\textwidth]{fig01_deployment_contract.pdf}
+    \caption{A deployment contract identifies the evidence unit and the support test applied to a typed claim. Status is an evidence outcome, not a color-coded performance rank.}
+    \label{fig:s-contract-v2}
+\end{figure}
+
+\paragraph{Interpretive limit.}
+Numerical equality across two contracts does not establish that their information access or estimands are interchangeable. Conversely, a numerical difference does not by itself identify which contract coordinate caused the change.

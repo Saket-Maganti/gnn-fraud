@@ -1,0 +1,1062 @@
+{
+  "lanes": [
+    {
+      "actual_json": 180,
+      "actual_prediction_csv": 180,
+      "all_source_chunks_or_runs_pass": true,
+      "compatible_aliases_used": [
+        {
+          "alias_reason": "RB28 DGraphFin 2-seed chunk is grid-compatible with final V22 evidence lane.",
+          "compatibility_alias_for": "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_1_2_DUALGPU_V22",
+          "logical_lane_id": "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_1_2_DUALGPU_V22",
+          "run_id": "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_1_2_DUALGPU_V21"
+        },
+        {
+          "alias_reason": "RB28 DGraphFin 2-seed chunk is grid-compatible with final V22 evidence lane.",
+          "compatibility_alias_for": "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_3_4_DUALGPU_V22",
+          "logical_lane_id": "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_3_4_DUALGPU_V22",
+          "run_id": "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_3_4_DUALGPU_V21"
+        }
+      ],
+      "control_coverage": [],
+      "dataset": "dgraphfin",
+      "dataset_coverage": [
+        "dgraphfin"
+      ],
+      "dry_run_false": true,
+      "duplicate_prediction_cells": [],
+      "duplicate_result_cells": [],
+      "expected_json": 180,
+      "expected_prediction_csv": 180,
+      "extra_seeds": [],
+      "family": "RB28",
+      "final_claim_eligibility": true,
+      "lane_id": "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_FULL10_SEEDS_1_10_DUALGPU_V22",
+      "loss_coverage": [
+        "default",
+        "focal",
+        "weighted_bce"
+      ],
+      "missing_seeds": [],
+      "missing_source_runs": [],
+      "mode": "dgraphfin_2seed_chunks",
+      "model_coverage": [
+        "gcn",
+        "mlp",
+        "sage"
+      ],
+      "nonpass_source_runs": [],
+      "prediction_schema_valid": true,
+      "protocol_coverage": [
+        "inductive_isolated",
+        "strict_inductive"
+      ],
+      "return_code_zero_where_applicable": true,
+      "seed_coverage": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "source_artifacts_traceable_to_kaggleoutputs": true,
+      "source_run_ids_present": [
+        "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_1_2_DUALGPU_V21",
+        "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_3_4_DUALGPU_V21",
+        "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_5_6_DUALGPU_V22",
+        "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_7_8_DUALGPU_V22",
+        "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_9_10_DUALGPU_V22"
+      ],
+      "source_run_ids_required": [
+        "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_1_2_DUALGPU_V22",
+        "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_3_4_DUALGPU_V22",
+        "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_5_6_DUALGPU_V22",
+        "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_7_8_DUALGPU_V22",
+        "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_9_10_DUALGPU_V22"
+      ],
+      "source_run_ids_resolved": [
+        "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_1_2_DUALGPU_V21",
+        "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_3_4_DUALGPU_V21",
+        "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_5_6_DUALGPU_V22",
+        "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_7_8_DUALGPU_V22",
+        "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_9_10_DUALGPU_V22"
+      ],
+      "source_statuses": {
+        "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_1_2_DUALGPU_V21": "PASS_IMPORTED_COMPATIBLE_ALIAS",
+        "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_3_4_DUALGPU_V21": "PASS_IMPORTED_COMPATIBLE_ALIAS",
+        "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_5_6_DUALGPU_V22": "PASS_IMPORTED_SPLIT_PACKAGE",
+        "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_7_8_DUALGPU_V22": "PASS_IMPORTED_SPLIT_PACKAGE",
+        "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_9_10_DUALGPU_V22": "PASS_IMPORTED_SPLIT_PACKAGE"
+      },
+      "status": "PASS_FULL10_MERGED_WITH_COMPATIBLE_ALIASES",
+      "total_prediction_rows_from_result_metadata": 30637260,
+      "version": "V22"
+    },
+    {
+      "actual_json": 180,
+      "actual_prediction_csv": 180,
+      "all_source_chunks_or_runs_pass": true,
+      "compatible_aliases_used": [
+        {
+          "alias_reason": "RB28 Elliptic loss-robustness full10 chunk/package is grid-compatible with final V22 evidence lane.",
+          "compatibility_alias_for": "RB28_ELLIPTIC_LOSS_ROBUSTNESS_FULL10_SEEDS_1_5_V22",
+          "logical_lane_id": "RB28_ELLIPTIC_LOSS_ROBUSTNESS_FULL10_SEEDS_1_10_DUALGPU_V22",
+          "run_id": "RB28_ELLIPTIC_LOSS_ROBUSTNESS_FULL10_SEEDS_1_5_V20"
+        },
+        {
+          "alias_reason": "RB28 Elliptic loss-robustness full10 chunk/package is grid-compatible with final V22 evidence lane.",
+          "compatibility_alias_for": "RB28_ELLIPTIC_LOSS_ROBUSTNESS_FULL10_SEEDS_6_10_V22",
+          "logical_lane_id": "RB28_ELLIPTIC_LOSS_ROBUSTNESS_FULL10_SEEDS_1_10_DUALGPU_V22",
+          "run_id": "RB28_ELLIPTIC_LOSS_ROBUSTNESS_FULL10_SEEDS_6_10_V20"
+        }
+      ],
+      "control_coverage": [],
+      "dataset": "elliptic",
+      "dataset_coverage": [
+        "elliptic"
+      ],
+      "dry_run_false": true,
+      "duplicate_prediction_cells": [],
+      "duplicate_result_cells": [],
+      "expected_json": 180,
+      "expected_prediction_csv": 180,
+      "extra_seeds": [],
+      "family": "RB28",
+      "final_claim_eligibility": true,
+      "lane_id": "RB28_ELLIPTIC_LOSS_ROBUSTNESS_FULL10_SEEDS_1_10_DUALGPU_V22",
+      "loss_coverage": [
+        "default",
+        "focal",
+        "weighted_bce"
+      ],
+      "missing_seeds": [],
+      "missing_source_runs": [],
+      "mode": "direct_full10",
+      "model_coverage": [
+        "gcn",
+        "mlp",
+        "sage"
+      ],
+      "nonpass_source_runs": [],
+      "prediction_schema_valid": true,
+      "protocol_coverage": [
+        "inductive_isolated",
+        "strict_inductive"
+      ],
+      "return_code_zero_where_applicable": true,
+      "seed_coverage": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "source_artifacts_traceable_to_kaggleoutputs": true,
+      "source_run_ids_present": [
+        "RB28_ELLIPTIC_LOSS_ROBUSTNESS_FULL10_SEEDS_1_5_V20",
+        "RB28_ELLIPTIC_LOSS_ROBUSTNESS_FULL10_SEEDS_6_10_V20"
+      ],
+      "source_run_ids_required": [
+        "RB28_ELLIPTIC_LOSS_ROBUSTNESS_FULL10_SEEDS_1_10_DUALGPU_V22"
+      ],
+      "source_run_ids_resolved": [
+        "RB28_ELLIPTIC_LOSS_ROBUSTNESS_FULL10_SEEDS_1_5_V20",
+        "RB28_ELLIPTIC_LOSS_ROBUSTNESS_FULL10_SEEDS_6_10_V20"
+      ],
+      "source_statuses": {
+        "RB28_ELLIPTIC_LOSS_ROBUSTNESS_FULL10_SEEDS_1_5_V20": "PASS_IMPORTED_COMPATIBLE_ALIAS",
+        "RB28_ELLIPTIC_LOSS_ROBUSTNESS_FULL10_SEEDS_6_10_V20": "PASS_IMPORTED_COMPATIBLE_ALIAS"
+      },
+      "status": "PASS_FULL10_MERGED_WITH_COMPATIBLE_ALIASES",
+      "total_prediction_rows_from_result_metadata": 3000600,
+      "version": "V22"
+    },
+    {
+      "actual_json": 80,
+      "actual_prediction_csv": 80,
+      "all_source_chunks_or_runs_pass": true,
+      "compatible_aliases_used": [],
+      "control_coverage": [
+        "feature_shuffle",
+        "label_shuffle"
+      ],
+      "dataset": "dgraphfin",
+      "dataset_coverage": [
+        "dgraphfin"
+      ],
+      "dry_run_false": true,
+      "duplicate_prediction_cells": [],
+      "duplicate_result_cells": [],
+      "expected_json": 80,
+      "expected_prediction_csv": 80,
+      "extra_seeds": [],
+      "family": "RB29",
+      "final_claim_eligibility": true,
+      "lane_id": "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_FULL10_SEEDS_1_10_DUALGPU_V22",
+      "loss_coverage": [
+        "weighted_bce"
+      ],
+      "missing_seeds": [],
+      "missing_source_runs": [],
+      "mode": "dgraphfin_2seed_chunks",
+      "model_coverage": [
+        "mlp",
+        "sage"
+      ],
+      "nonpass_source_runs": [],
+      "prediction_schema_valid": true,
+      "protocol_coverage": [
+        "inductive_isolated",
+        "strict_inductive"
+      ],
+      "return_code_zero_where_applicable": true,
+      "seed_coverage": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "source_artifacts_traceable_to_kaggleoutputs": true,
+      "source_run_ids_present": [
+        "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_1_2_DUALGPU_V22",
+        "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_3_4_DUALGPU_V22",
+        "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_5_6_DUALGPU_V22",
+        "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_7_8_DUALGPU_V22",
+        "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_9_10_DUALGPU_V22"
+      ],
+      "source_run_ids_required": [
+        "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_1_2_DUALGPU_V22",
+        "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_3_4_DUALGPU_V22",
+        "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_5_6_DUALGPU_V22",
+        "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_7_8_DUALGPU_V22",
+        "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_9_10_DUALGPU_V22"
+      ],
+      "source_run_ids_resolved": [
+        "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_1_2_DUALGPU_V22",
+        "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_3_4_DUALGPU_V22",
+        "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_5_6_DUALGPU_V22",
+        "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_7_8_DUALGPU_V22",
+        "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_9_10_DUALGPU_V22"
+      ],
+      "source_statuses": {
+        "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_1_2_DUALGPU_V22": "PASS_IMPORTED_SPLIT_PACKAGE",
+        "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_3_4_DUALGPU_V22": "PASS_IMPORTED_SPLIT_PACKAGE",
+        "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_5_6_DUALGPU_V22": "PASS_IMPORTED_SPLIT_PACKAGE",
+        "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_7_8_DUALGPU_V22": "PASS_IMPORTED_SPLIT_PACKAGE",
+        "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_9_10_DUALGPU_V22": "PASS_IMPORTED_SPLIT_PACKAGE"
+      },
+      "status": "PASS_FULL10",
+      "total_prediction_rows_from_result_metadata": 13616560,
+      "version": "V22"
+    },
+    {
+      "actual_json": 160,
+      "actual_prediction_csv": 160,
+      "all_source_chunks_or_runs_pass": true,
+      "compatible_aliases_used": [],
+      "control_coverage": [
+        "edge_drop",
+        "feature_shuffle",
+        "label_shuffle",
+        "time_shuffle"
+      ],
+      "dataset": "elliptic",
+      "dataset_coverage": [
+        "elliptic"
+      ],
+      "dry_run_false": true,
+      "duplicate_prediction_cells": [],
+      "duplicate_result_cells": [],
+      "expected_json": 160,
+      "expected_prediction_csv": 160,
+      "extra_seeds": [],
+      "family": "RB29",
+      "final_claim_eligibility": true,
+      "lane_id": "RB29_ELLIPTIC_NEGATIVE_CONTROLS_FULL10_SEEDS_1_10_DUALGPU_V22",
+      "loss_coverage": [
+        "weighted_bce"
+      ],
+      "missing_seeds": [],
+      "missing_source_runs": [],
+      "mode": "direct_full10",
+      "model_coverage": [
+        "mlp",
+        "sage"
+      ],
+      "nonpass_source_runs": [],
+      "prediction_schema_valid": true,
+      "protocol_coverage": [
+        "inductive_isolated",
+        "strict_inductive"
+      ],
+      "return_code_zero_where_applicable": true,
+      "seed_coverage": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "source_artifacts_traceable_to_kaggleoutputs": true,
+      "source_run_ids_present": [
+        "RB29_ELLIPTIC_NEGATIVE_CONTROLS_FULL10_SEEDS_1_10_DUALGPU_V22"
+      ],
+      "source_run_ids_required": [
+        "RB29_ELLIPTIC_NEGATIVE_CONTROLS_FULL10_SEEDS_1_10_DUALGPU_V22"
+      ],
+      "source_run_ids_resolved": [
+        "RB29_ELLIPTIC_NEGATIVE_CONTROLS_FULL10_SEEDS_1_10_DUALGPU_V22"
+      ],
+      "source_statuses": {
+        "RB29_ELLIPTIC_NEGATIVE_CONTROLS_FULL10_SEEDS_1_10_DUALGPU_V22": "PASS_IMPORTED_MONOLITHIC"
+      },
+      "status": "PASS_FULL10",
+      "total_prediction_rows_from_result_metadata": 2667200,
+      "version": "V22"
+    },
+    {
+      "actual_json": 0,
+      "actual_prediction_csv": 0,
+      "all_source_chunks_or_runs_pass": false,
+      "compatible_aliases_used": [],
+      "control_coverage": [],
+      "dataset": "dgraphfin",
+      "dataset_coverage": [],
+      "dry_run_false": false,
+      "duplicate_prediction_cells": [],
+      "duplicate_result_cells": [],
+      "expected_json": 20,
+      "expected_prediction_csv": 20,
+      "extra_seeds": [],
+      "family": "RB30",
+      "final_claim_eligibility": false,
+      "lane_id": "RB30_DGRAPHFIN_EXTRA_ARCH_ISOLATED_FULL10_SEEDS_1_10_DUALGPU_V22",
+      "loss_coverage": [],
+      "missing_seeds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "missing_source_runs": [
+        "RB30_DGRAPHFIN_EXTRA_ARCH_ISOLATED_SEEDS_1_2_DUALGPU_V22",
+        "RB30_DGRAPHFIN_EXTRA_ARCH_ISOLATED_SEEDS_3_4_DUALGPU_V22",
+        "RB30_DGRAPHFIN_EXTRA_ARCH_ISOLATED_SEEDS_5_6_DUALGPU_V22",
+        "RB30_DGRAPHFIN_EXTRA_ARCH_ISOLATED_SEEDS_7_8_DUALGPU_V22",
+        "RB30_DGRAPHFIN_EXTRA_ARCH_ISOLATED_SEEDS_9_10_DUALGPU_V22"
+      ],
+      "mode": "dgraphfin_2seed_chunks",
+      "model_coverage": [],
+      "nonpass_source_runs": [],
+      "prediction_schema_valid": true,
+      "protocol_coverage": [],
+      "return_code_zero_where_applicable": false,
+      "seed_coverage": [],
+      "source_artifacts_traceable_to_kaggleoutputs": false,
+      "source_run_ids_present": [],
+      "source_run_ids_required": [
+        "RB30_DGRAPHFIN_EXTRA_ARCH_ISOLATED_SEEDS_1_2_DUALGPU_V22",
+        "RB30_DGRAPHFIN_EXTRA_ARCH_ISOLATED_SEEDS_3_4_DUALGPU_V22",
+        "RB30_DGRAPHFIN_EXTRA_ARCH_ISOLATED_SEEDS_5_6_DUALGPU_V22",
+        "RB30_DGRAPHFIN_EXTRA_ARCH_ISOLATED_SEEDS_7_8_DUALGPU_V22",
+        "RB30_DGRAPHFIN_EXTRA_ARCH_ISOLATED_SEEDS_9_10_DUALGPU_V22"
+      ],
+      "source_run_ids_resolved": [],
+      "source_statuses": {},
+      "status": "BLOCKED_T4_OOM",
+      "total_prediction_rows_from_result_metadata": 0,
+      "version": "V22"
+    },
+    {
+      "actual_json": 40,
+      "actual_prediction_csv": 40,
+      "all_source_chunks_or_runs_pass": true,
+      "compatible_aliases_used": [],
+      "control_coverage": [],
+      "dataset": "elliptic",
+      "dataset_coverage": [
+        "elliptic"
+      ],
+      "dry_run_false": true,
+      "duplicate_prediction_cells": [],
+      "duplicate_result_cells": [],
+      "expected_json": 40,
+      "expected_prediction_csv": 40,
+      "extra_seeds": [],
+      "family": "RB30",
+      "final_claim_eligibility": true,
+      "lane_id": "RB30_ELLIPTIC_EXTRA_ARCH_FULL10_SEEDS_1_10_DUALGPU_V22",
+      "loss_coverage": [
+        "weighted_bce"
+      ],
+      "missing_seeds": [],
+      "missing_source_runs": [],
+      "mode": "direct_full10",
+      "model_coverage": [
+        "gat",
+        "gin"
+      ],
+      "nonpass_source_runs": [],
+      "prediction_schema_valid": true,
+      "protocol_coverage": [
+        "inductive_isolated",
+        "strict_inductive"
+      ],
+      "return_code_zero_where_applicable": true,
+      "seed_coverage": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "source_artifacts_traceable_to_kaggleoutputs": true,
+      "source_run_ids_present": [
+        "RB30_ELLIPTIC_EXTRA_ARCH_FULL10_SEEDS_1_10_DUALGPU_V22"
+      ],
+      "source_run_ids_required": [
+        "RB30_ELLIPTIC_EXTRA_ARCH_FULL10_SEEDS_1_10_DUALGPU_V22"
+      ],
+      "source_run_ids_resolved": [
+        "RB30_ELLIPTIC_EXTRA_ARCH_FULL10_SEEDS_1_10_DUALGPU_V22"
+      ],
+      "source_statuses": {
+        "RB30_ELLIPTIC_EXTRA_ARCH_FULL10_SEEDS_1_10_DUALGPU_V22": "PASS_IMPORTED_MONOLITHIC"
+      },
+      "status": "PASS_FULL10",
+      "total_prediction_rows_from_result_metadata": 666800,
+      "version": "V22"
+    }
+  ],
+  "rows": [
+    {
+      "alias_reason": "RB28 DGraphFin 2-seed chunk is grid-compatible with final V22 evidence lane.",
+      "blocked_status": [],
+      "compatibility_alias_for": "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_1_2_DUALGPU_V22",
+      "count_status": "COUNT_PASS",
+      "dry_run_status": "DRY_RUN_FALSE",
+      "final_claim_eligibility": true,
+      "full10_lane_status": {
+        "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_FULL10_SEEDS_1_10_DUALGPU_V22": "PASS_FULL10_MERGED_WITH_COMPATIBLE_ALIASES"
+      },
+      "imported_status": "PASS_IMPORTED_COMPATIBLE_ALIAS",
+      "logical_lane_id": "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_1_2_DUALGPU_V22",
+      "merge_status": [
+        "PASS_FULL10_MERGED_WITH_COMPATIBLE_ALIASES"
+      ],
+      "original_version_label": "V21",
+      "package_mode": "monolithic zip",
+      "return_code_status": "RETURN_CODE_PASS",
+      "run_id": "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_1_2_DUALGPU_V21",
+      "schema_status": "SCHEMA_PASS",
+      "seed_coverage": [
+        1,
+        2
+      ],
+      "sha256_checksums": [
+        "a750ecdc8a53329822d940e1a39d139f2ac8e98c6f1a85064565a8b75aa5b04f"
+      ],
+      "source_artifact_paths": [
+        "kaggleoutputs/DOWNLOAD_ME_RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_1_2_DUALGPU_V21.zip"
+      ],
+      "split_package_status": "SPLIT_PACKAGE_PASS"
+    },
+    {
+      "alias_reason": "RB28 DGraphFin 2-seed chunk is grid-compatible with final V22 evidence lane.",
+      "blocked_status": [],
+      "compatibility_alias_for": "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_3_4_DUALGPU_V22",
+      "count_status": "COUNT_PASS",
+      "dry_run_status": "DRY_RUN_FALSE",
+      "final_claim_eligibility": true,
+      "full10_lane_status": {
+        "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_FULL10_SEEDS_1_10_DUALGPU_V22": "PASS_FULL10_MERGED_WITH_COMPATIBLE_ALIASES"
+      },
+      "imported_status": "PASS_IMPORTED_COMPATIBLE_ALIAS",
+      "logical_lane_id": "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_3_4_DUALGPU_V22",
+      "merge_status": [
+        "PASS_FULL10_MERGED_WITH_COMPATIBLE_ALIASES"
+      ],
+      "original_version_label": "V21",
+      "package_mode": "split package",
+      "return_code_status": "RETURN_CODE_PASS",
+      "run_id": "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_3_4_DUALGPU_V21",
+      "schema_status": "SCHEMA_PASS",
+      "seed_coverage": [
+        3,
+        4
+      ],
+      "sha256_checksums": [
+        "228db491c1d32dbdff976eab47f8f3fea7d45491358a566520d9676fb2776c90",
+        "62ebc3a81a387364e49e444d32215d29aa329ea4463f28ecfa04f4e1b0ab0f3b",
+        "da9760042715ca628837396532274300649526e07b6f686c3e7b559dc67e9670",
+        "ff9d4faed3cccad8fcf4c203fb1649e1344e4afea74ecb1daa514fbee2f0b66a"
+      ],
+      "source_artifact_paths": [
+        "kaggleoutputs/DOWNLOAD_ME_RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_3_4_DUALGPU_V21__loss_default.zip",
+        "kaggleoutputs/DOWNLOAD_ME_RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_3_4_DUALGPU_V21__loss_focal.zip",
+        "kaggleoutputs/DOWNLOAD_ME_RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_3_4_DUALGPU_V21__loss_weighted_bce.zip",
+        "kaggleoutputs/DOWNLOAD_ME_RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_3_4_DUALGPU_V21__SPLIT_PACKAGE_MANIFEST.json"
+      ],
+      "split_package_status": "SPLIT_PACKAGE_PASS"
+    },
+    {
+      "alias_reason": "",
+      "blocked_status": [],
+      "compatibility_alias_for": "",
+      "count_status": "COUNT_PASS",
+      "dry_run_status": "DRY_RUN_FALSE",
+      "final_claim_eligibility": true,
+      "full10_lane_status": {
+        "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_FULL10_SEEDS_1_10_DUALGPU_V22": "PASS_FULL10_MERGED_WITH_COMPATIBLE_ALIASES"
+      },
+      "imported_status": "PASS_IMPORTED_SPLIT_PACKAGE",
+      "logical_lane_id": "",
+      "merge_status": [
+        "PASS_FULL10_MERGED_WITH_COMPATIBLE_ALIASES"
+      ],
+      "original_version_label": "",
+      "package_mode": "split package",
+      "return_code_status": "RETURN_CODE_PASS",
+      "run_id": "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_5_6_DUALGPU_V22",
+      "schema_status": "SCHEMA_PASS",
+      "seed_coverage": [
+        5,
+        6
+      ],
+      "sha256_checksums": [
+        "c1b790c8380ab53d2a66b45e37833df07d10961ddef2bc996b58357ddada6adf",
+        "ace1cebc0b204dff44c5fb59db6a789ee0543a6a72ba053ccf60fc22c6385b0e",
+        "6a17084f95255eb4942608308b25a0a4475962088a23c68f3b29db9ef15411cd",
+        "e585dcfaa08d5c77ca4b93e3debc6dcc293a2aed1b2c30d901ae0f772f8e8fb1"
+      ],
+      "source_artifact_paths": [
+        "kaggleoutputs/DOWNLOAD_ME_RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_5_6_DUALGPU_V22__loss_default.zip",
+        "kaggleoutputs/DOWNLOAD_ME_RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_5_6_DUALGPU_V22__loss_focal.zip",
+        "kaggleoutputs/DOWNLOAD_ME_RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_5_6_DUALGPU_V22__loss_weighted_bce.zip",
+        "kaggleoutputs/DOWNLOAD_ME_RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_5_6_DUALGPU_V22__SPLIT_PACKAGE_MANIFEST.json"
+      ],
+      "split_package_status": "SPLIT_PACKAGE_PASS"
+    },
+    {
+      "alias_reason": "",
+      "blocked_status": [],
+      "compatibility_alias_for": "",
+      "count_status": "COUNT_PASS",
+      "dry_run_status": "DRY_RUN_FALSE",
+      "final_claim_eligibility": true,
+      "full10_lane_status": {
+        "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_FULL10_SEEDS_1_10_DUALGPU_V22": "PASS_FULL10_MERGED_WITH_COMPATIBLE_ALIASES"
+      },
+      "imported_status": "PASS_IMPORTED_SPLIT_PACKAGE",
+      "logical_lane_id": "",
+      "merge_status": [
+        "PASS_FULL10_MERGED_WITH_COMPATIBLE_ALIASES"
+      ],
+      "original_version_label": "",
+      "package_mode": "split package",
+      "return_code_status": "RETURN_CODE_PASS",
+      "run_id": "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_7_8_DUALGPU_V22",
+      "schema_status": "SCHEMA_PASS",
+      "seed_coverage": [
+        7,
+        8
+      ],
+      "sha256_checksums": [
+        "a1fb52d6f7794fa8be98a6edc9111c740ff66cb3b99256318724cdbbca35ee71",
+        "f77982dac505f4e10c9d4ce19d1b5eef9eb83f7f248739e806c61bc1e9920637",
+        "aef84dde57bbf5df2d860b12b0f737ba80a41b03ce116b3dfd056adcec9464d5",
+        "e92f30cf796832998c987c4edeab5d415510eb72c32745656ef243416abf8601"
+      ],
+      "source_artifact_paths": [
+        "kaggleoutputs/DOWNLOAD_ME_RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_7_8_DUALGPU_V22__loss_default.zip",
+        "kaggleoutputs/DOWNLOAD_ME_RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_7_8_DUALGPU_V22__loss_focal.zip",
+        "kaggleoutputs/DOWNLOAD_ME_RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_7_8_DUALGPU_V22__loss_weighted_bce.zip",
+        "kaggleoutputs/DOWNLOAD_ME_RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_7_8_DUALGPU_V22__SPLIT_PACKAGE_MANIFEST.json"
+      ],
+      "split_package_status": "SPLIT_PACKAGE_PASS"
+    },
+    {
+      "alias_reason": "",
+      "blocked_status": [],
+      "compatibility_alias_for": "",
+      "count_status": "COUNT_PASS",
+      "dry_run_status": "DRY_RUN_FALSE",
+      "final_claim_eligibility": true,
+      "full10_lane_status": {
+        "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_FULL10_SEEDS_1_10_DUALGPU_V22": "PASS_FULL10_MERGED_WITH_COMPATIBLE_ALIASES"
+      },
+      "imported_status": "PASS_IMPORTED_SPLIT_PACKAGE",
+      "logical_lane_id": "",
+      "merge_status": [
+        "PASS_FULL10_MERGED_WITH_COMPATIBLE_ALIASES"
+      ],
+      "original_version_label": "",
+      "package_mode": "split package",
+      "return_code_status": "RETURN_CODE_PASS",
+      "run_id": "RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_9_10_DUALGPU_V22",
+      "schema_status": "SCHEMA_PASS",
+      "seed_coverage": [
+        9,
+        10
+      ],
+      "sha256_checksums": [
+        "b5b0e9dc710c645207ad1f2f5163abbd899bd523fc0c285531778e21f25c4fb6",
+        "a9816a529c0b72ffef442a505db0616229d0ed3b5e4f18f2dabfab8086459af5",
+        "cf8bba6b1d8953ac6679b3cfdf96b6eaa88d55d2c2c26fb19b773e79fb3feca0",
+        "8699c6628fac70fb19ff98c3784eca4fd7af0e03ba7114dc803095ebad140c1c"
+      ],
+      "source_artifact_paths": [
+        "kaggleoutputs/DOWNLOAD_ME_RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_9_10_DUALGPU_V22__loss_default.zip",
+        "kaggleoutputs/DOWNLOAD_ME_RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_9_10_DUALGPU_V22__loss_focal.zip",
+        "kaggleoutputs/DOWNLOAD_ME_RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_9_10_DUALGPU_V22__loss_weighted_bce.zip",
+        "kaggleoutputs/DOWNLOAD_ME_RB28_DGRAPHFIN_LOSS_ROBUSTNESS_ISOLATED_SEEDS_9_10_DUALGPU_V22__SPLIT_PACKAGE_MANIFEST.json"
+      ],
+      "split_package_status": "SPLIT_PACKAGE_PASS"
+    },
+    {
+      "alias_reason": "RB28 Elliptic loss-robustness full10 chunk/package is grid-compatible with final V22 evidence lane.",
+      "blocked_status": [],
+      "compatibility_alias_for": "RB28_ELLIPTIC_LOSS_ROBUSTNESS_FULL10_SEEDS_1_5_V22",
+      "count_status": "COUNT_PASS",
+      "dry_run_status": "DRY_RUN_FALSE",
+      "final_claim_eligibility": true,
+      "full10_lane_status": {
+        "RB28_ELLIPTIC_LOSS_ROBUSTNESS_FULL10_SEEDS_1_10_DUALGPU_V22": "PASS_FULL10_MERGED_WITH_COMPATIBLE_ALIASES"
+      },
+      "imported_status": "PASS_IMPORTED_COMPATIBLE_ALIAS",
+      "logical_lane_id": "RB28_ELLIPTIC_LOSS_ROBUSTNESS_FULL10_SEEDS_1_10_DUALGPU_V22",
+      "merge_status": [
+        "PASS_FULL10_MERGED_WITH_COMPATIBLE_ALIASES"
+      ],
+      "original_version_label": "V20",
+      "package_mode": "monolithic zip",
+      "return_code_status": "RETURN_CODE_PASS",
+      "run_id": "RB28_ELLIPTIC_LOSS_ROBUSTNESS_FULL10_SEEDS_1_5_V20",
+      "schema_status": "SCHEMA_PASS",
+      "seed_coverage": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "sha256_checksums": [
+        "6f558b96c6ca99caad59f306d37d39e5445f0d3a7165e2ef8fee054b69e01df4"
+      ],
+      "source_artifact_paths": [
+        "kaggleoutputs/RB28_ELLIPTIC_LOSS_ROBUSTNESS_FULL10_SEEDS_1_5_V20.zip"
+      ],
+      "split_package_status": "SPLIT_PACKAGE_PASS"
+    },
+    {
+      "alias_reason": "RB28 Elliptic loss-robustness full10 chunk/package is grid-compatible with final V22 evidence lane.",
+      "blocked_status": [],
+      "compatibility_alias_for": "RB28_ELLIPTIC_LOSS_ROBUSTNESS_FULL10_SEEDS_6_10_V22",
+      "count_status": "COUNT_PASS",
+      "dry_run_status": "DRY_RUN_FALSE",
+      "final_claim_eligibility": true,
+      "full10_lane_status": {
+        "RB28_ELLIPTIC_LOSS_ROBUSTNESS_FULL10_SEEDS_1_10_DUALGPU_V22": "PASS_FULL10_MERGED_WITH_COMPATIBLE_ALIASES"
+      },
+      "imported_status": "PASS_IMPORTED_COMPATIBLE_ALIAS",
+      "logical_lane_id": "RB28_ELLIPTIC_LOSS_ROBUSTNESS_FULL10_SEEDS_1_10_DUALGPU_V22",
+      "merge_status": [
+        "PASS_FULL10_MERGED_WITH_COMPATIBLE_ALIASES"
+      ],
+      "original_version_label": "V20",
+      "package_mode": "monolithic zip",
+      "return_code_status": "RETURN_CODE_PASS",
+      "run_id": "RB28_ELLIPTIC_LOSS_ROBUSTNESS_FULL10_SEEDS_6_10_V20",
+      "schema_status": "SCHEMA_PASS",
+      "seed_coverage": [
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "sha256_checksums": [
+        "7ce509d5bf2866989af899f0e6a26e95433564e60d468fe4de35248741427846"
+      ],
+      "source_artifact_paths": [
+        "kaggleoutputs/RB28_ELLIPTIC_LOSS_ROBUSTNESS_FULL10_SEEDS_6_10_V20.zip"
+      ],
+      "split_package_status": "SPLIT_PACKAGE_PASS"
+    },
+    {
+      "alias_reason": "",
+      "blocked_status": [],
+      "compatibility_alias_for": "",
+      "count_status": "COUNT_PASS",
+      "dry_run_status": "DRY_RUN_FALSE",
+      "final_claim_eligibility": false,
+      "full10_lane_status": {},
+      "imported_status": "FAIL_MISSING_SEED",
+      "logical_lane_id": "",
+      "merge_status": [],
+      "original_version_label": "",
+      "package_mode": "raw output directory",
+      "return_code_status": "RETURN_CODE_PASS",
+      "run_id": "RB28_ELLIPTIC_LOSS_ROBUSTNESS_SEEDS_1_2_DUALGPU_V22",
+      "schema_status": "SCHEMA_PASS",
+      "seed_coverage": [
+        1
+      ],
+      "sha256_checksums": [
+        "79509f475e5b354e523f068c9c3f1b2cd8d732bc150552f741710ad23ed4fa17"
+      ],
+      "source_artifact_paths": [
+        "kaggle_workspace/imported_outputs/v22_dualgpu_disk_safe/RB28_ELLIPTIC_LOSS_ROBUSTNESS_SEEDS_1_2_DUALGPU_V22/RB28_ELLIPTIC_LOSS_ROBUSTNESS_SEEDS_1_2_DUALGPU_V22"
+      ],
+      "split_package_status": "SPLIT_PACKAGE_FAIL"
+    },
+    {
+      "alias_reason": "",
+      "blocked_status": [],
+      "compatibility_alias_for": "",
+      "count_status": "COUNT_PASS",
+      "dry_run_status": "DRY_RUN_FALSE",
+      "final_claim_eligibility": false,
+      "full10_lane_status": {},
+      "imported_status": "EXCLUDED_NOT_COMPARABLE",
+      "logical_lane_id": "",
+      "merge_status": [],
+      "original_version_label": "",
+      "package_mode": "raw output directory",
+      "return_code_status": "RETURN_CODE_FAIL",
+      "run_id": "RB28_ELLIPTIC_LOSS_ROBUSTNESS_SMOKE_2SEED_V20",
+      "schema_status": "SCHEMA_PASS",
+      "seed_coverage": [
+        1,
+        2
+      ],
+      "sha256_checksums": [
+        "8ad447cb11474fa491e14df64d408125b63ba77af9b3be0e75996df4180cfdcf"
+      ],
+      "source_artifact_paths": [
+        "kaggle_workspace/imported_outputs/v20/RB28_ELLIPTIC_LOSS_ROBUSTNESS_SMOKE_2SEED_V20_DATA_MOUNT/RB28_ELLIPTIC_LOSS_ROBUSTNESS_SMOKE_2SEED_V20_DATA_MOUNT"
+      ],
+      "split_package_status": "SPLIT_PACKAGE_PASS"
+    },
+    {
+      "alias_reason": "",
+      "blocked_status": [],
+      "compatibility_alias_for": "",
+      "count_status": "COUNT_PASS",
+      "dry_run_status": "DRY_RUN_FALSE",
+      "final_claim_eligibility": true,
+      "full10_lane_status": {
+        "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_FULL10_SEEDS_1_10_DUALGPU_V22": "PASS_FULL10"
+      },
+      "imported_status": "PASS_IMPORTED_SPLIT_PACKAGE",
+      "logical_lane_id": "",
+      "merge_status": [
+        "PASS_FULL10"
+      ],
+      "original_version_label": "",
+      "package_mode": "split package",
+      "return_code_status": "RETURN_CODE_PASS",
+      "run_id": "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_1_2_DUALGPU_V22",
+      "schema_status": "SCHEMA_PASS",
+      "seed_coverage": [
+        1,
+        2
+      ],
+      "sha256_checksums": [
+        "c21a4f7366f4bf5f5546d41c5e951093d025bf803c3f760e1ad36819cc7b462f",
+        "96778f2f853d0ad5bc6e4e8c723629ce843dbe3cc85d004ad47802054b84b6da",
+        "865a646556f596caf606c88d5a4d3ce5d42e93285f84ba390df3300946c28db9"
+      ],
+      "source_artifact_paths": [
+        "kaggleoutputs/DOWNLOAD_ME_RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_1_2_DUALGPU_V22__control_feature_shuffle.zip",
+        "kaggleoutputs/DOWNLOAD_ME_RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_1_2_DUALGPU_V22__control_label_shuffle.zip",
+        "kaggleoutputs/DOWNLOAD_ME_RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_1_2_DUALGPU_V22__SPLIT_PACKAGE_MANIFEST.json"
+      ],
+      "split_package_status": "SPLIT_PACKAGE_PASS"
+    },
+    {
+      "alias_reason": "",
+      "blocked_status": [],
+      "compatibility_alias_for": "",
+      "count_status": "COUNT_PASS",
+      "dry_run_status": "DRY_RUN_FALSE",
+      "final_claim_eligibility": true,
+      "full10_lane_status": {
+        "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_FULL10_SEEDS_1_10_DUALGPU_V22": "PASS_FULL10"
+      },
+      "imported_status": "PASS_IMPORTED_SPLIT_PACKAGE",
+      "logical_lane_id": "",
+      "merge_status": [
+        "PASS_FULL10"
+      ],
+      "original_version_label": "",
+      "package_mode": "split package",
+      "return_code_status": "RETURN_CODE_PASS",
+      "run_id": "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_3_4_DUALGPU_V22",
+      "schema_status": "SCHEMA_PASS",
+      "seed_coverage": [
+        3,
+        4
+      ],
+      "sha256_checksums": [
+        "ccc2b7a700913291305bc138f88f8cf543da5d537ee3cde44821b6fa425f53ab",
+        "31c51cdc41d6a84a78f9b25fecb636e1c9a00db8841b65a31905ef1825e9f918",
+        "7ea6dad0b4d55b2c6a738ed2ddd1daf37f2326e7b537569752b7d4d665f92b69"
+      ],
+      "source_artifact_paths": [
+        "kaggleoutputs/DOWNLOAD_ME_RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_3_4_DUALGPU_V22__control_feature_shuffle.zip",
+        "kaggleoutputs/DOWNLOAD_ME_RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_3_4_DUALGPU_V22__control_label_shuffle.zip",
+        "kaggleoutputs/DOWNLOAD_ME_RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_3_4_DUALGPU_V22__SPLIT_PACKAGE_MANIFEST.json"
+      ],
+      "split_package_status": "SPLIT_PACKAGE_PASS"
+    },
+    {
+      "alias_reason": "",
+      "blocked_status": [],
+      "compatibility_alias_for": "",
+      "count_status": "COUNT_PASS",
+      "dry_run_status": "DRY_RUN_FALSE",
+      "final_claim_eligibility": true,
+      "full10_lane_status": {
+        "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_FULL10_SEEDS_1_10_DUALGPU_V22": "PASS_FULL10"
+      },
+      "imported_status": "PASS_IMPORTED_SPLIT_PACKAGE",
+      "logical_lane_id": "",
+      "merge_status": [
+        "PASS_FULL10"
+      ],
+      "original_version_label": "",
+      "package_mode": "split package",
+      "return_code_status": "RETURN_CODE_PASS",
+      "run_id": "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_5_6_DUALGPU_V22",
+      "schema_status": "SCHEMA_PASS",
+      "seed_coverage": [
+        5,
+        6
+      ],
+      "sha256_checksums": [
+        "df801233f1d7a6c02463fdabbef707b77d595b5ab471bb4b0f8c3cbf8f97465e",
+        "edd8891b71be432bfdad7abfb512bc40e084990fbb50a18fef507dcf8d2c0d0f",
+        "486889ac5475996b457f92727de78fe391d5d2b268c60c109bf76f65444bb323"
+      ],
+      "source_artifact_paths": [
+        "kaggleoutputs/DOWNLOAD_ME_RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_5_6_DUALGPU_V22__control_feature_shuffle.zip",
+        "kaggleoutputs/DOWNLOAD_ME_RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_5_6_DUALGPU_V22__control_label_shuffle.zip",
+        "kaggleoutputs/DOWNLOAD_ME_RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_5_6_DUALGPU_V22__SPLIT_PACKAGE_MANIFEST.json"
+      ],
+      "split_package_status": "SPLIT_PACKAGE_PASS"
+    },
+    {
+      "alias_reason": "",
+      "blocked_status": [],
+      "compatibility_alias_for": "",
+      "count_status": "COUNT_PASS",
+      "dry_run_status": "DRY_RUN_FALSE",
+      "final_claim_eligibility": true,
+      "full10_lane_status": {
+        "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_FULL10_SEEDS_1_10_DUALGPU_V22": "PASS_FULL10"
+      },
+      "imported_status": "PASS_IMPORTED_SPLIT_PACKAGE",
+      "logical_lane_id": "",
+      "merge_status": [
+        "PASS_FULL10"
+      ],
+      "original_version_label": "",
+      "package_mode": "split package",
+      "return_code_status": "RETURN_CODE_PASS",
+      "run_id": "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_7_8_DUALGPU_V22",
+      "schema_status": "SCHEMA_PASS",
+      "seed_coverage": [
+        7,
+        8
+      ],
+      "sha256_checksums": [
+        "498f5233e99495ea0a2e45d6bb4d348f360d35318d03caf81de37e4bd81ecb13",
+        "8fc68813b2a2a31b25dc2dc0ebb54863dfa362787b63ed7c82fa8bd69ead6f8e",
+        "a6071ad597848e8540f919410c904eb480c45c63f575e6c4efa2721675fd7b33"
+      ],
+      "source_artifact_paths": [
+        "kaggleoutputs/DOWNLOAD_ME_RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_7_8_DUALGPU_V22__control_feature_shuffle.zip",
+        "kaggleoutputs/DOWNLOAD_ME_RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_7_8_DUALGPU_V22__control_label_shuffle.zip",
+        "kaggleoutputs/DOWNLOAD_ME_RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_7_8_DUALGPU_V22__SPLIT_PACKAGE_MANIFEST.json"
+      ],
+      "split_package_status": "SPLIT_PACKAGE_PASS"
+    },
+    {
+      "alias_reason": "",
+      "blocked_status": [],
+      "compatibility_alias_for": "",
+      "count_status": "COUNT_PASS",
+      "dry_run_status": "DRY_RUN_FALSE",
+      "final_claim_eligibility": true,
+      "full10_lane_status": {
+        "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_FULL10_SEEDS_1_10_DUALGPU_V22": "PASS_FULL10"
+      },
+      "imported_status": "PASS_IMPORTED_SPLIT_PACKAGE",
+      "logical_lane_id": "",
+      "merge_status": [
+        "PASS_FULL10"
+      ],
+      "original_version_label": "",
+      "package_mode": "split package",
+      "return_code_status": "RETURN_CODE_PASS",
+      "run_id": "RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_9_10_DUALGPU_V22",
+      "schema_status": "SCHEMA_PASS",
+      "seed_coverage": [
+        9,
+        10
+      ],
+      "sha256_checksums": [
+        "b841aa23be087c2b9f8f44973d0baa4cae018d9bc79b96f7919f48db9936d03b",
+        "45fef482b141e39eaab3be03b2d013f8bb245d90f549f9c9dea97c0dd725799f",
+        "27566dc68f2536582b65c361828617b034b2f9a489f3516f91add56595c36e3c"
+      ],
+      "source_artifact_paths": [
+        "kaggleoutputs/DOWNLOAD_ME_RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_9_10_DUALGPU_V22__control_feature_shuffle.zip",
+        "kaggleoutputs/DOWNLOAD_ME_RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_9_10_DUALGPU_V22__control_label_shuffle.zip",
+        "kaggleoutputs/DOWNLOAD_ME_RB29_DGRAPHFIN_NEGATIVE_CONTROLS_ISOLATED_SEEDS_9_10_DUALGPU_V22__SPLIT_PACKAGE_MANIFEST.json"
+      ],
+      "split_package_status": "SPLIT_PACKAGE_PASS"
+    },
+    {
+      "alias_reason": "",
+      "blocked_status": [],
+      "compatibility_alias_for": "",
+      "count_status": "COUNT_PASS",
+      "dry_run_status": "DRY_RUN_FALSE",
+      "final_claim_eligibility": true,
+      "full10_lane_status": {
+        "RB29_ELLIPTIC_NEGATIVE_CONTROLS_FULL10_SEEDS_1_10_DUALGPU_V22": "PASS_FULL10"
+      },
+      "imported_status": "PASS_IMPORTED_MONOLITHIC",
+      "logical_lane_id": "",
+      "merge_status": [
+        "PASS_FULL10"
+      ],
+      "original_version_label": "",
+      "package_mode": "monolithic zip",
+      "return_code_status": "RETURN_CODE_PASS",
+      "run_id": "RB29_ELLIPTIC_NEGATIVE_CONTROLS_FULL10_SEEDS_1_10_DUALGPU_V22",
+      "schema_status": "SCHEMA_PASS",
+      "seed_coverage": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "sha256_checksums": [
+        "1433d0ef054741da8cd5db75eaf7777f171096fcd2f8e1000aea79468d671767"
+      ],
+      "source_artifact_paths": [
+        "kaggleoutputs/DOWNLOAD_ME_RB29_ELLIPTIC_NEGATIVE_CONTROLS_FULL10_SEEDS_1_10_DUALGPU_V22.zip"
+      ],
+      "split_package_status": "SPLIT_PACKAGE_PASS"
+    },
+    {
+      "alias_reason": "",
+      "blocked_status": [],
+      "compatibility_alias_for": "",
+      "count_status": "COUNT_PASS",
+      "dry_run_status": "DRY_RUN_FALSE",
+      "final_claim_eligibility": true,
+      "full10_lane_status": {
+        "RB30_ELLIPTIC_EXTRA_ARCH_FULL10_SEEDS_1_10_DUALGPU_V22": "PASS_FULL10"
+      },
+      "imported_status": "PASS_IMPORTED_MONOLITHIC",
+      "logical_lane_id": "",
+      "merge_status": [
+        "PASS_FULL10"
+      ],
+      "original_version_label": "",
+      "package_mode": "monolithic zip",
+      "return_code_status": "RETURN_CODE_PASS",
+      "run_id": "RB30_ELLIPTIC_EXTRA_ARCH_FULL10_SEEDS_1_10_DUALGPU_V22",
+      "schema_status": "SCHEMA_PASS",
+      "seed_coverage": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "sha256_checksums": [
+        "77af3e9813845cedd973303829b5f1c3dd18c1c9c3fbdb57e825d7200c6e59b8"
+      ],
+      "source_artifact_paths": [
+        "kaggleoutputs/DOWNLOAD_ME_RB30_ELLIPTIC_EXTRA_ARCH_FULL10_SEEDS_1_10_DUALGPU_V22.zip"
+      ],
+      "split_package_status": "SPLIT_PACKAGE_PASS"
+    },
+    {
+      "alias_reason": "",
+      "blocked_status": [],
+      "compatibility_alias_for": "",
+      "count_status": "COUNT_PASS",
+      "dry_run_status": "DRY_RUN_FALSE",
+      "final_claim_eligibility": false,
+      "full10_lane_status": {},
+      "imported_status": "FAIL_DUPLICATE",
+      "logical_lane_id": "",
+      "merge_status": [],
+      "original_version_label": "",
+      "package_mode": "raw output directory",
+      "return_code_status": "RETURN_CODE_PASS",
+      "run_id": "RB30_ELLIPTIC_EXTRA_ARCH_SEEDS_1_2_DUALGPU_V22",
+      "schema_status": "SCHEMA_PASS",
+      "seed_coverage": [
+        1
+      ],
+      "sha256_checksums": [
+        "e6afb4315147f71612a87e55b007b560829ba6b15b856dac85f0e2f1a8754f1c"
+      ],
+      "source_artifact_paths": [
+        "kaggle_workspace/imported_outputs/v22_dualgpu_disk_safe/RB30_ELLIPTIC_EXTRA_ARCH_SEEDS_1_2_DUALGPU_V22/RB30_ELLIPTIC_EXTRA_ARCH_SEEDS_1_2_DUALGPU_V22"
+      ],
+      "split_package_status": "SPLIT_PACKAGE_PASS"
+    }
+  ],
+  "version": "V22"
+}

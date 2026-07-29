@@ -1,0 +1,61 @@
+\section{Support-relation properties and controlled validation}
+\label{sec:s-support}
+
+\subsection{Properties}
+
+The support relation treats benchmark reporting as a measurement problem: claims, operational interpretations, and evidence scopes are recorded together~\cite{jacobs2021measurement,reuel2024betterbench,bordes2025evalfacts}. Table~\ref{tab:s-support-properties} summarizes the five properties used by the validator.
+
+\input{tables/table_v2_support_properties}
+
+\begin{proposition}[Scope monotonicity of requirements]
+If \(c'\) widens \(c\) by adding datasets, protocols, models, seeds, or resource regimes while holding the predicate fixed, then \(\Required(c)\subseteq\Required(c')\).
+\end{proposition}
+\begin{proof}[Proof sketch]
+The requirement builder retains every named cell and auxiliary record and adds the widened scope. It never deletes an existing requirement. The property concerns requirements; it does not make truth monotone.
+\end{proof}
+
+\begin{proposition}[Evidence restriction]
+If \(e\) is the only admissible witness for an element of \(\Required(c)\), then removing \(e\) breaks support for \(c\).
+\end{proposition}
+\begin{proof}
+The required element becomes uncovered. Duplicate files with the same validated scientific key do not create a second independent witness.
+\end{proof}
+
+\begin{proposition}[Rank invariance under increasing calibration]
+If \(g\) is strictly increasing and tie order is unchanged, replacing \(q_i\) with \(g(q_i)\) preserves AUROC and AUPRC but may change decisions at a fixed numerical threshold.
+\end{proposition}
+\begin{proof}
+The rank metrics depend on score order, which \(g\) preserves. The selected set \(\{i:q_i\geq\tau\}\) need not equal \(\{i:g(q_i)\geq\tau\}\).
+\end{proof}
+
+\begin{proposition}[Protocol non-substitutability]
+A result under \(\Pi_1\) cannot satisfy a requirement scoped to \(\Pi_2\) when the contracts differ on a claim-relevant coordinate, absent a separate invariance argument.
+\end{proposition}
+\begin{proof}[Proof sketch]
+The contract is part of the scientific key. Changing a claim-relevant coordinate changes admissible information or the evaluation condition.
+\end{proof}
+
+\begin{proposition}[Resource separation]
+A resource-blocked cell has no predictive ordering relation to a measured cell.
+\end{proposition}
+\begin{proof}
+The blocked cell has no observed AUPRC, AUROC, or F1. It can be compared only as a feasibility outcome under \(\mathcal{R}\).
+\end{proof}
+
+\subsection{Controlled implementation validation}
+
+Table~\ref{tab:s-validation-cases} reports the complete controlled suite. Each case starts from a frozen claim/evidence relation and changes one required property in a sandbox: scope, seed completeness, prediction presence, integrity, construct identity, resource state, or direction.
+
+\input{tables/table_v2_validation_cases}
+
+All 14 observed statuses equal their expected statuses. FV08 rejects the V24 stress-label interpretation because the label never reached the harness; FV11 rejects the sender-receiver alias as an independent method; FV14 rejects a first-50\%-only description of IBM account histories. These cases show that the implementation preserves the declared status distinctions.
+
+\begin{figure}[tbp]
+    \centering
+    \includegraphics[width=0.86\textwidth]{fig08_claim_support_validation.pdf}
+    \caption{Observed transitions for the 14 controlled claim/evidence mutations. The suite tests conformance to the project specification, not universal validator correctness.}
+    \label{fig:s-support-validation-v2}
+\end{figure}
+
+\paragraph{What this does not establish.}
+The schema, cases, and implementation were authored in the same project. Passing the suite does not prove ontology completeness, scientific truth, causal validity, curator agreement, fairness, or responsible deployment.

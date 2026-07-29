@@ -1,0 +1,12 @@
+# Training Configuration
+
+Recovered optimizer, loss, threshold, batching, width, depth, and selection settings by family.
+
+family,optimizer,learning_rate,weight_decay,loss,max_epochs_or_iterations,early_stopping,selection,threshold_rule,batch_or_forward,architecture
+Elliptic protocol grid,AdamW,1e-3,5e-4,class-weighted CE,200,40 checks (inactive within cap),validation F1,argmax over 3 repository label codes,full graph forward,h256/l3/dropout .5
+DGraphFin protocol grid,AdamW,1e-3,5e-4,class-weighted CE,200,40 checks (inactive within cap),validation F1,argmax over 3 repository label codes,full graph forward,h64/l2/dropout .5
+IBM LR,LBFGS family (scikit-learn),library default,library default,balanced class weight,max_iter 500,none,training only,score >= .5,CPU,standardized features
+IBM HistGB,histogram gradient boosting,.06,n/a,binary log loss,160,none,training only,score >= .5,CPU,library defaults otherwise
+IBM GraphSAGE-derived h32,AdamW,1e-3,1e-4,positive-weighted BCE,20,none,fixed seed,score >= .5,"edge minibatches 65,536",h32/dropout .1
+IBM h64 graph grid,AdamW,1e-3,1e-4,positive-weighted BCE,30,none,fixed seed,score >= .5,"edge minibatches 32,768",h64/dropout .1
+

@@ -1,0 +1,29 @@
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.10}
+\begin{longtable}{@{}p{0.14\textwidth} p{0.10\textwidth} p{0.07\textwidth} p{0.07\textwidth} p{0.12\textwidth} p{0.09\textwidth} p{0.13\textwidth} p{0.13\textwidth}@{}}
+\caption{Optimization, validation selection, and decision settings.}\label{tab:s-training-cards}\\
+\toprule
+\textbf{Family} & \textbf{Optimizer} & \textbf{LR} & \textbf{Weight decay} & \textbf{Loss} & \textbf{Iterations} & \textbf{Selection} & \textbf{Decision/batch} \\
+\midrule
+\endfirsthead
+\caption[]{Optimization, validation selection, and decision settings. (continued)}\\
+\toprule
+\textbf{Family} & \textbf{Optimizer} & \textbf{LR} & \textbf{Weight decay} & \textbf{Loss} & \textbf{Iterations} & \textbf{Selection} & \textbf{Decision/batch} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{8}{r}{\footnotesize Continued on next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+Elliptic protocol grid & AdamW & 1e-3 & 5e-4 & class-weighted CE & 200 & validation F1 & argmax over 3 repository label codes; full graph forward \\
+DGraphFin protocol grid & AdamW & 1e-3 & 5e-4 & class-weighted CE & 200 & validation F1 & argmax over 3 repository label codes; full graph forward \\
+IBM LR & LBFGS family (scikit-learn) & library default & library default & balanced class weight & max\_iter 500 & training only & score >= .5; CPU \\
+IBM HistGB & histogram gradient boosting & .06 & n/a & binary log loss & 160 & training only & score >= .5; CPU \\
+IBM GraphSAGE-derived h32 & AdamW & 1e-3 & 1e-4 & positive-weighted BCE & 20 & fixed seed & score >= .5; edge minibatches 65,536 \\
+IBM h64 graph grid & AdamW & 1e-3 & 1e-4 & positive-weighted BCE & 30 & fixed seed & score >= .5; edge minibatches 32,768 \\
+\end{longtable}
+\noindent\footnotesize\emph{Scope and reading.} Node-grid checkpoints are selected by validation F1. IBM saved F1 uses 0.5. Deterministic library baselines may repeat exactly across nominal seeds; those repetitions are not reinterpreted as independent stochastic fits.\par
+\endgroup

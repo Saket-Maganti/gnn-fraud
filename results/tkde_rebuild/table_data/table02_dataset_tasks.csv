@@ -1,0 +1,7 @@
+task,origin_unit,nodes,edges,features,test,positives,test_prevalence,windows
+Elliptic,real / tx node,203769,234355,165 node / 0 edge,"16,670","1,083",6.497%,t1--30 / 31--34 / 35--49
+DGraphFin,real / account node,3700550,4300999,17 node / 0 edge,"170,207","1,863",1.095%,t1--14 / 15--16 / 17--20
+IBM hi-small,synthetic / tx edge,515088,5078345,8 node / 8 edge,"1,015,669--1,523,504","1,797--2,321",0.152--0.177%,50/20/30; 60/20/20
+IBM hi-medium,synthetic / tx edge,2077023,31898238,8 node / 8 edge,"6,379,648--9,569,472","10,642--14,147",0.148--0.167%,50/20/30; 60/20/20
+IBM li-small,synthetic / tx edge,705907,6924049,8 node / 8 edge,"1,384,810--2,077,215","925--1,334",0.064--0.067%,50/20/30; 60/20/20
+IBM li-medium,synthetic / tx edge,2032095,31251483,8 node / 8 edge,"6,250,297--9,375,445","3,783--5,392",0.058--0.061%,50/20/30; 60/20/20

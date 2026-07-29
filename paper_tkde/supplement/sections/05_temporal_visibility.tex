@@ -1,0 +1,28 @@
+\section{Temporal windows and visibility matrices}
+\label{sec:s-visibility}
+
+\subsection{Node-task contracts}
+
+Strict-inductive and isolated-inductive use identical temporal masks and training subgraphs. During evaluation, strict-inductive exposes the held-out structure with labels hidden. Isolated-inductive removes every edge with exactly one endpoint in the held-out union, so held-out nodes can communicate among themselves but not across the train/held-out boundary. The transductive comparator exposes the full graph during training and evaluation while withholding validation/test labels from the loss.
+
+Table~\ref{tab:s-protocol-cards} separates these access choices from selection and decision rules.
+
+\input{tables/table_v2_protocol_cards}
+
+The key interpretation is visibility sensitivity under fixed masks, not a causal decomposition of homophily, degree shift, oversmoothing, or temporal mechanisms.
+
+\subsection{Access matrix}
+
+Table~\ref{tab:s-visibility-matrix} states labeled access, validation use, test-feature access, graph access, historical covariates, selection/threshold, and resource scope independently.
+
+\input{tables/table_v2_visibility_matrix}
+
+Test labels are never exposed. Test features or structure may be visible when the declared deployment contract permits them. Calling all non-label access \emph{leakage} would collapse scientifically different contracts; failing to disclose it would be equally misleading.
+
+\subsection{IBM temporal windows}
+
+IBM late-window uses 60/20/20 chronological masks. Early-to-late uses 50/20/30 classifier masks, but both protocols reuse an account-history matrix constructed from the first 60\% of transactions. Thus early-to-late receives label-free covariates from 50--60\%, half of its nominal validation interval.
+
+\input{tables/table_v2_ibm_windows}
+
+The exact denominators and prevalences explain why raw values remain context-specific. The shared 60\% history is not test-label leakage, yet it prevents a pure first-50\%-only information claim and blocks causal attribution of protocol differences to label-window timing alone.

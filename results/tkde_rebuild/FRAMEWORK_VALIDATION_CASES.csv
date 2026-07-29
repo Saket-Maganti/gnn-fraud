@@ -1,0 +1,15 @@
+case_id,base_claim,mutation,required_evidence_units,observed_evidence_units,required_seeds,observed_min_seeds,prediction_complete,integrity_state,construct_state,resource_state,direction_state,expected_status,observed_status,pass
+FV01,C01 Elliptic visibility ranking,none; complete locked grid,6,6,10,10,True,PASS,PASS,MEASURED,NOT_TESTED_BY_GATE,SUPPORTED,SUPPORTED,True
+FV02,C01 Elliptic visibility ranking,remove one model/protocol cell in sandbox,6,5,10,10,True,PASS,PASS,MEASURED,NOT_TESTED_BY_GATE,BLOCKED_INCOMPLETE_SCOPE,BLOCKED_INCOMPLETE_SCOPE,True
+FV03,C01 Elliptic visibility ranking,remove seed 10 from one cell in sandbox,6,6,10,9,True,PASS,PASS,MEASURED,NOT_TESTED_BY_GATE,BLOCKED_INCOMPLETE_SEEDS,BLOCKED_INCOMPLETE_SEEDS,True
+FV04,C01 Elliptic visibility ranking,erase one prediction-manifest reference in sandbox,6,6,10,10,False,PASS,PASS,MEASURED,NOT_TESTED_BY_GATE,BLOCKED_MISSING_PREDICTIONS,BLOCKED_MISSING_PREDICTIONS,True
+FV05,C10 Small GINE AUPRC result,widen scope from Small to Medium,6,6,10,0,False,PASS,PASS,T4_CUDA_OOM,NOT_TESTED_BY_GATE,RESOURCE_BLOCKED,RESOURCE_BLOCKED,True
+FV06,C05 IBM AML baseline grid,widen scope from Small/Medium to all official variants,26,26,10,0,False,PASS,PASS,SAFE_RESOURCE_BLOCKED_LARGE,NOT_TESTED_BY_GATE,RESOURCE_BLOCKED,RESOURCE_BLOCKED,True
+FV07,V22 loss robustness,substitute a partial failed import for a full10 lane,1,1,10,1,True,FAIL_MISSING_SEED,PASS,MEASURED,NOT_TESTED_BY_GATE,EXCLUDED_INTEGRITY,EXCLUDED_INTEGRITY,True
+FV08,V24 temporal stress,treat three metadata labels as distinct temporal windows,3,3,10,10,True,PASS,STRESS_ARGUMENT_NOT_PASSED_TO_HARNESS,MEASURED,NOT_TESTED_BY_GATE,EXCLUDED_CONSTRUCT_INVALID,EXCLUDED_CONSTRUCT_INVALID,True
+FV09,DGraphFin fixed GAT performance,promote the T4-OOM cell to a predictive comparison,1,1,10,0,False,PASS,PASS,BLOCKED_T4_OOM,NOT_TESTED_BY_GATE,RESOURCE_BLOCKED,RESOURCE_BLOCKED,True
+FV10,DGraphFin GraphSAGE max-pool rerun,promote runbook/status files without imported rows,1,1,10,0,False,PASS,PASS,BLOCKED_WAITING_FOR_GPU,NOT_TESTED_BY_GATE,RESOURCE_BLOCKED,RESOURCE_BLOCKED,True
+FV11,IBM sender-receiver construction,count the contract alias as an independent replication,8,8,10,10,True,PASS,IDENTICAL_IMPLEMENTATION_ALIAS,MEASURED,NOT_TESTED_BY_GATE,EXCLUDED_CONSTRUCT_INVALID,EXCLUDED_CONSTRUCT_INVALID,True
+FV12,C04 universal graph harm,widen mixed scoped results into a universal directional claim,1,1,10,10,True,PASS,PASS,MEASURED,CONTRADICTED,REFUTED_IN_SCOPE,REFUTED_IN_SCOPE,True
+FV13,C17 universal GraphSafe improvement,widen bounded mixed case study to universal dominance,1,1,10,10,True,PASS,PASS,MEASURED,CONTRADICTED,REFUTED_IN_SCOPE,REFUTED_IN_SCOPE,True
+FV14,IBM early-to-late visibility,describe the shared first-60% label-free node-history map as first-50% training-only features,1,1,10,10,True,PASS,FEATURE_VISIBILITY_CONTRACT_MISSTATED,MEASURED,NOT_TESTED_BY_GATE,EXCLUDED_CONSTRUCT_INVALID,EXCLUDED_CONSTRUCT_INVALID,True

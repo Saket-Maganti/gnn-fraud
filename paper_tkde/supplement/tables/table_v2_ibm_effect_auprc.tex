@@ -1,0 +1,36 @@
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.10}
+\begin{longtable}{@{}p{0.08\textwidth} p{0.18\textwidth} r r p{0.24\textwidth} r r p{0.10\textwidth}@{}}
+\caption{Dependence-aware matched IBM AUPRC effects relative to SAGE-edge h64.}\label{tab:s-ibm-effect-auprc}\\
+\toprule
+\textbf{Size} & \textbf{Candidate} & \textbf{Reference} & \textbf{Candidate} & \textbf{$\Delta$ [95\% CI]} & \textbf{$d_z$} & \textbf{Holm p} & \textbf{Context signs} \\
+\midrule
+\endfirsthead
+\caption[]{Dependence-aware matched IBM AUPRC effects relative to SAGE-edge h64. (continued)}\\
+\toprule
+\textbf{Size} & \textbf{Candidate} & \textbf{Reference} & \textbf{Candidate} & \textbf{$\Delta$ [95\% CI]} & \textbf{$d_z$} & \textbf{Holm p} & \textbf{Context signs} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{8}{r}{\footnotesize Continued on next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+Medium & DegreeCap & 0.02844 & 0.00758 & -0.02086 [-0.02248, -0.01935] & -7.854 & 0.0117 & +0 / -4 / 0:0 \\
+Medium & DegreeOnly & 0.02844 & 0.01783 & -0.01061 [-0.01287, -0.00821] & -2.674 & 0.0117 & +0 / -4 / 0:0 \\
+Medium & NoEdge & 0.02844 & 0.01638 & -0.01206 [-0.01395, -0.01022] & -3.783 & 0.0117 & +0 / -4 / 0:0 \\
+Medium & RecentWindow & 0.02844 & 0.01520 & -0.01324 [-0.01543, -0.01092] & -3.408 & 0.0117 & +0 / -4 / 0:0 \\
+Medium & Sender-receiver alias & 0.02844 & 0.02844 & +0.00000 [0.00000, 0.00000] & 0.621 & 1.0000 & +0 / -0 / 0:4 \\
+Medium & ShuffledEdge & 0.02844 & 0.01636 & -0.01208 [-0.01324, -0.01089] & -6.042 & 0.0117 & +0 / -4 / 0:0 \\
+Small & DegreeCap & 0.00752 & 0.01182 & +0.00430 [-0.00036, 0.00971] & 0.504 & 0.4648 & +3 / -1 / 0:0 \\
+Small & DegreeOnly & 0.00752 & 0.00381 & -0.00371 [-0.00547, -0.00202] & -1.264 & 0.0156 & +0 / -4 / 0:0 \\
+Small & GINE h64 & 0.00752 & 0.01942 & +0.01190 [0.00934, 0.01447] & 2.697 & 0.0137 & +4 / -0 / 0:0 \\
+Small & NoEdge & 0.00752 & 0.00485 & -0.00267 [-0.00423, -0.00109] & -0.973 & 0.0820 & +0 / -4 / 0:0 \\
+Small & RecentWindow & 0.00752 & 0.00418 & -0.00334 [-0.00553, -0.00148] & -0.976 & 0.0137 & +0 / -4 / 0:0 \\
+Small & Sender-receiver alias & 0.00752 & 0.00752 & +0.00000 [0.00000, 0.00000] & 0.000 & 1.0000 & +0 / -0 / 0:4 \\
+Small & ShuffledEdge & 0.00752 & 0.00422 & -0.00330 [-0.00487, -0.00197] & -1.329 & 0.0137 & +0 / -4 / 0:0 \\
+\end{longtable}
+\noindent\footnotesize\emph{Scope and reading.} Inference uses ten seed blocks after averaging four fixed HI/LI-by-protocol contexts within seed. The context-sign column summarizes heterogeneity; the complete 208 context rows remain in the artifact. The sender-receiver row is an identity diagnostic.\par
+\endgroup

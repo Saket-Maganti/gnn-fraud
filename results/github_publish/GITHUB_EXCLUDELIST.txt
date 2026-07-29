@@ -1,0 +1,122 @@
+# Fail-closed exclusions for the public curated branch.
+
+# Local Git/editor/agent state and environments.
+.git/
+.claude/
+.cursor/
+.vscode/
+.idea/
+gnn_env/
+venv/
+.venv/
+env/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+**/__pycache__/
+**/*.py[cod]
+**/.DS_Store
+.DS_Store
+**/.ipynb_checkpoints/
+__MACOSX/
+
+# Raw datasets, private working data, and model/checkpoint payloads.
+data/raw/
+data/_pyg_elliptic/
+data/elliptic_bitcoin_dataset/
+**/*.npz
+**/*.npy
+**/*.parquet
+**/*.pkl
+**/*.pt
+**/*.pth
+best_model.pt
+best_evolve_model.pt
+
+# Raw predictions and row-level/private analysis payloads. Safe files whose
+# names explicitly say manifest, index, summary, audit, or provenance may enter
+# only when individually allowlisted.
+**/predictions/
+**/prediction_exports/
+**/raw_predictions/
+results/runs/graph_harm/node_level_graph_harm.csv
+results/runs/rb01_graph_harm/node_level_graph_harm.csv
+results/runs/rb01_graph_harm/harm_predictor_features.csv
+
+# Provider workspaces, imported outputs, logs, and generated notebook staging.
+kaggle/.bundle_stage/
+kaggle/notebooks/
+kaggle_workspace/*
+!kaggle_workspace/manifests/
+kaggle_workspace/manifests/*
+!kaggle_workspace/manifests/V22_FINAL_GPU_EVIDENCE_LOCK.json
+kaggleresults/
+kaggleoutputs/
+logs/*.log
+results/cpu_runs/
+
+# Backups, freezes, prompt packs, archives, and duplicate release packages.
+_rb_refresh_archive_2026-06-20/
+gnn-fraud_tkde_rebuild_backup_*/
+gnn-fraud_tkde_visual_backup_*/
+freezes/
+promptpacks/
+tmp/
+releases/
+v24_evidence_package/
+v25_evidence_package/
+gpu_runbooks_package/
+journal_kbs_tkde_package/
+artifact_package/
+advisor_packet/
+reviewer_packet/
+professorspace/
+**/*.zip
+**/*.tar
+**/*.tar.gz
+**/*.tgz
+**/*.7z
+
+# Obsolete or intermediate manuscript trees and duplicate compiled PDFs.
+gnnpaper/
+runs_paper/
+fraudshiftbench_paper/
+paper/*.md
+paper_tkde/*.md
+paper_tkde/template/
+paper_tkde/template_original/
+paper_tkde/main.pdf
+paper_tkde/supplement/supplement.pdf
+paper_tkde/**/*.aux
+paper_tkde/**/*.bbl
+paper_tkde/**/*.blg
+paper_tkde/**/*.fdb_latexmk
+paper_tkde/**/*.fls
+paper_tkde/**/*.log
+paper_tkde/**/*.out
+paper_tkde/**/*.synctex.gz
+paper_tkde/**/*.toc
+
+# Page renders, contact sheets, scanner configuration payloads, and visual
+# backups are audit-only local material.
+results/tkde_visual_rebuild/before/
+results/tkde_visual_rebuild/baseline_pages/
+results/tkde_visual_rebuild/baseline_contact_sheets/
+results/tkde_visual_rebuild/final_pages/
+results/tkde_visual_rebuild/final_contact_sheets/
+results/tkde_visual_rebuild/validation/anonymization.json
+results/tkde_visual_rebuild/audits/*.json
+results/tkde_rebuild/STARTING_STATE.md
+results/tkde_visual_rebuild/STARTING_VISUAL_STATE.md
+
+# Sensitive files and private machine configuration.
+.env
+.env.*
+.netrc
+kaggle.json
+credentials.json
+id_rsa
+id_ed25519
+**/*.pem
+**/*.key
+cookies.txt
