@@ -11,6 +11,7 @@ results:
     statement: theory/theorem_compositional.tex
     implementation: coregraph/theory/compositional_bound.py
     numerical_check: compositional_bound
+    formula: 2*sum(axis_errors)+2*interaction_residual+router_approximation_error
     scope: observed axis values with bounded estimation interaction and routing terms
   feasible_oracle_monotonicity:
     status: PROVED

@@ -16,6 +16,7 @@ from coregraph.contracts.axes import (
     SelectionAxis,
     TimeSpec,
     VisibilityAxis,
+    VisibilitySpec,
 )
 from coregraph.contracts.contract import DeploymentContract
 
@@ -51,14 +52,37 @@ class ContractSplit:
             raise ValueError("target contract leaked into source contract training")
         if self.atomic_target_id_seen:
             raise ValueError("atomic target contract IDs cannot be seen in held-out evaluation")
+        expected_selection = {
+            AccessRegime.DG_NO_TARGET: SelectionAxis.NO_TARGET_ACCESS,
+            AccessRegime.TTA_UNLABELLED_TARGET: (
+                SelectionAxis.UNLABELLED_TARGET_ADAPTATION
+            ),
+            AccessRegime.FEW_LABEL_TARGET: SelectionAxis.FEW_LABEL_ADAPTATION,
+        }[self.access_regime]
+        for contract in self.target:
+            if contract.role is not ContractRole.TARGET:
+                raise ValueError("split target contracts must have target role")
+            if contract.access_regime is not self.access_regime:
+                raise ValueError("target contract and split access regimes disagree")
+            if contract.selection is not expected_selection:
+                raise ValueError("target selection policy and split access regime disagree")
 
     def manifest(self) -> dict[str, object]:
         return {
             "split_id": self.split_id,
             "family": self.family.value,
-            "access_regime": self.access_regime.value,
+            "access_regime": self.target[0].access_regime.value,
             "source_contract_ids": [contract.contract_id for contract in self.source],
             "target_contract_ids": [contract.contract_id for contract in self.target],
+            "target_coordinate_hashes": [
+                contract.coordinate_hash for contract in self.target
+            ],
+            "target_access_regimes": [
+                contract.access_regime.value for contract in self.target
+            ],
+            "target_selection_policies": [
+                contract.selection.value for contract in self.target
+            ],
             "target_labels_for_selection": "FORBIDDEN"
             if self.access_regime is not AccessRegime.FEW_LABEL_TARGET
             else "ACCOUNTED_FEW_LABEL_BUDGET_ONLY",
@@ -71,7 +95,7 @@ def compose_contracts(
     dataset_id: str,
     task_id: str,
     time_values: Sequence[TimeSpec],
-    visibility_values: Sequence[VisibilityAxis],
+    visibility_values: Sequence[VisibilitySpec | VisibilityAxis],
     construction_values: Sequence[ConstructionSpec],
     selection_values: Sequence[SelectionAxis],
     budget_values: Sequence[BudgetSpec],
@@ -90,6 +114,11 @@ def compose_contracts(
         )
     ):
         time, visibility, construction, selection, budget, resource = coordinates
+        visibility_spec = (
+            VisibilitySpec.from_v2(visibility)
+            if isinstance(visibility, VisibilityAxis)
+            else visibility
+        )
         access = (
             AccessRegime.TTA_UNLABELLED_TARGET
             if selection is SelectionAxis.UNLABELLED_TARGET_ADAPTATION
@@ -102,7 +131,7 @@ def compose_contracts(
                 environment_id=f"env_{index:05d}",
                 role=ContractRole.SOURCE,
                 time=time,
-                visibility=visibility,
+                visibility=visibility_spec,
                 construction=construction,
                 selection=selection,
                 budget=budget,
@@ -127,7 +156,7 @@ def leave_one_contract_out(
     if not 0 <= target_index < len(contracts):
         raise IndexError("target contract index out of range")
     target_base = contracts[target_index]
-    target = target_base.as_role(
+    target = target_base.with_access_regime(access_regime).as_role(
         ContractRole.TARGET,
         environment_id=f"{target_base.environment_id}_target",
     )
@@ -189,7 +218,7 @@ def leave_one_axis_value_out(
         family=family,
         source=tuple(contract.as_role(ContractRole.SOURCE) for contract in source_base),
         target=tuple(
-            contract.as_role(
+            contract.with_access_regime(access_regime).as_role(
                 ContractRole.TARGET,
                 environment_id=f"{contract.environment_id}_target",
             )

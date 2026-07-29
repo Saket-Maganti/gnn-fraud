@@ -2,9 +2,13 @@
 
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Iterable, Optional, Sequence, Tuple
+from pathlib import Path
+from typing import Any, Iterable, Mapping, Optional, Sequence, Tuple
+
+import yaml
 
 from coregraph.contracts.contract import DeploymentContract
 from coregraph.contracts.serialization import to_primitive
@@ -72,6 +76,13 @@ class SupportStatus(_Value):
     DIAGNOSTIC_ONLY = "DIAGNOSTIC_ONLY"
     REFUTED_IN_SCOPE = "REFUTED_IN_SCOPE"
     NOT_APPLICABLE = "NOT_APPLICABLE"
+
+
+class ScopeRelation(_Value):
+    EXACT = "EXACT"
+    NARROWER = "NARROWER"
+    WIDER = "WIDER"
+    INCOMPATIBLE = "INCOMPATIBLE"
 
 
 @dataclass(frozen=True)
@@ -150,6 +161,11 @@ class TypedClaim:
     contradiction_direction: str = ""
     theoretical: bool = False
     applicable: bool = True
+    proof_artifact: str = ""
+    proof_artifact_hash: str = ""
+    proof_status_artifact: str = ""
+    proof_status_hash: str = ""
+    proof_status_key: str = ""
 
 
 @dataclass(frozen=True)
@@ -194,14 +210,28 @@ class SupportEngine:
                 curator_judgment_required=False,
             )
         if claim.theoretical and not evidence:
+            if self._verified_theory_artifacts(claim):
+                return SupportReport(
+                    claim_id=claim.claim_id,
+                    status=SupportStatus.SUPPORTED_THEORETICALLY,
+                    statistical_requirement_result="NOT_APPLICABLE",
+                    predictive_ordering_permitted=False,
+                    curator_judgment_required=False,
+                )
             return SupportReport(
                 claim_id=claim.claim_id,
-                status=SupportStatus.SUPPORTED_THEORETICALLY,
+                status=SupportStatus.BLOCKED_INCOMPLETE_SCOPE,
+                missing_requirements=("verified_theory_artifacts_missing",),
                 statistical_requirement_result="NOT_APPLICABLE",
                 predictive_ordering_permitted=False,
             )
 
-        scope_widening = requested_scope is not None and requested_scope != claim.scope
+        scope_relation = (
+            ScopeRelation.EXACT
+            if requested_scope is None
+            else self.scope_relation(claim.scope, requested_scope)
+        )
+        scope_widening = scope_relation is ScopeRelation.WIDER
         candidates: list[EvidenceUnitV2] = []
         excluded: list[tuple[str, str]] = []
         missing: list[str] = []
@@ -252,6 +282,8 @@ class SupportEngine:
 
         if scope_widening:
             missing.append("requested_scope_widens_typed_claim")
+        elif scope_relation is ScopeRelation.INCOMPATIBLE:
+            missing.append("requested_scope_incompatible")
 
         datasets = {unit.dataset for unit in candidates}
         for dataset in predicate.datasets:
@@ -316,7 +348,11 @@ class SupportEngine:
         elif statistical_requirement_met is False:
             status = SupportStatus.BLOCKED_INCOMPLETE_SCOPE
             missing.append("statistical_requirement_failed")
-        elif any(unit.resource_state is ResourceState.RESOURCE_BLOCKED for unit in evidence):
+        elif any(
+            unit.resource_state is ResourceState.RESOURCE_BLOCKED
+            or unit.data_status is DataStatus.RESOURCE_BLOCKED
+            for unit in candidates
+        ) or any(reason == "resource" for _, reason in excluded):
             status = SupportStatus.SUPPORTED_WITH_RESOURCE_BOUNDARY
         else:
             status = SupportStatus.SUPPORTED
@@ -348,6 +384,24 @@ class SupportEngine:
         predicate: EvidencePredicate,
         unit: EvidenceUnitV2,
     ) -> str:
+        if unit.task_type != claim.task_type or unit.prediction_unit != claim.prediction_unit:
+            return "task_unit"
+        checks = (
+            (predicate.datasets, unit.dataset),
+            (predicate.task_types, unit.task_type),
+            (predicate.prediction_units, unit.prediction_unit),
+            (predicate.variants, unit.dataset_variant),
+            (predicate.model_contracts, unit.model_contract),
+        )
+        if any(allowed and value not in allowed for allowed, value in checks):
+            return "scope"
+        if predicate.required_metrics and not set(predicate.required_metrics).issubset(unit.metric_family):
+            return "metric"
+        if predicate.contract_projection:
+            actual = unit.deployment_contract.claim_projection(predicate.contract_axes)
+            expected = dict(predicate.contract_projection)
+            if actual != expected:
+                return "contract"
         if unit.data_status is DataStatus.RESOURCE_BLOCKED:
             return "resource"
         if unit.data_status is DataStatus.MISSING:
@@ -377,25 +431,63 @@ class SupportEngine:
             return "resource"
         if unit.resource_state is ResourceState.UNKNOWN:
             return "resource_unknown"
-        if unit.task_type != claim.task_type or unit.prediction_unit != claim.prediction_unit:
-            return "task_unit"
-        checks = (
-            (predicate.datasets, unit.dataset),
-            (predicate.task_types, unit.task_type),
-            (predicate.prediction_units, unit.prediction_unit),
-            (predicate.variants, unit.dataset_variant),
-            (predicate.model_contracts, unit.model_contract),
-        )
-        if any(allowed and value not in allowed for allowed, value in checks):
-            return "scope"
-        if predicate.required_metrics and not set(predicate.required_metrics).issubset(unit.metric_family):
-            return "metric"
-        if predicate.contract_projection:
-            actual = unit.deployment_contract.claim_projection(predicate.contract_axes)
-            expected = dict(predicate.contract_projection)
-            if actual != expected:
-                return "contract"
         return ""
+
+    @staticmethod
+    def scope_relation(claim_scope: str, requested_scope: str) -> ScopeRelation:
+        """Compare slash-delimited hierarchical scopes explicitly."""
+
+        claim_parts = tuple(part for part in claim_scope.split("/") if part)
+        requested_parts = tuple(
+            part for part in requested_scope.split("/") if part
+        )
+        if claim_parts == requested_parts:
+            return ScopeRelation.EXACT
+        if requested_parts[: len(claim_parts)] == claim_parts:
+            return ScopeRelation.NARROWER
+        if claim_parts[: len(requested_parts)] == requested_parts:
+            return ScopeRelation.WIDER
+        return ScopeRelation.INCOMPATIBLE
+
+    @staticmethod
+    def _verified_theory_artifacts(claim: TypedClaim) -> bool:
+        if not claim.proof_status_key:
+            return False
+        paths_and_hashes = (
+            (claim.proof_artifact, claim.proof_artifact_hash),
+            (claim.proof_status_artifact, claim.proof_status_hash),
+        )
+        resolved_paths: list[Path] = []
+        for value, expected in paths_and_hashes:
+            if not value or len(expected) != 64:
+                return False
+            path = Path(value)
+            if not path.is_absolute():
+                path = Path.cwd() / path
+            if not path.is_file():
+                return False
+            actual = hashlib.sha256(path.read_bytes()).hexdigest()
+            if actual != expected:
+                return False
+            resolved_paths.append(path)
+        try:
+            status_payload = yaml.safe_load(
+                resolved_paths[1].read_text(encoding="utf-8")
+            )
+        except (OSError, yaml.YAMLError, UnicodeDecodeError):
+            return False
+        if not isinstance(status_payload, Mapping):
+            return False
+        results = status_payload.get("results")
+        if not isinstance(results, Mapping):
+            return False
+        record = results.get(claim.proof_status_key)
+        if not isinstance(record, Mapping) or record.get("status") != "PROVED":
+            return False
+        statement = record.get("statement")
+        return isinstance(statement, str) and resolved_paths[0].as_posix().endswith(
+            statement
+        )
 
     @staticmethod
     def _pairing_diagnostics(
