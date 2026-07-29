@@ -38,7 +38,9 @@ def _artifact(
         dataset="fixture",
         task="node_classification",
         prediction_unit="node",
+        protocol_id="strict_inductive",
         contract_coordinate_hash=contract.coordinate_hash,
+        contract_id=contract.contract_id,
         environment_id=contract.environment_id,
         seed=seed,
         fold="fold0",
@@ -48,6 +50,30 @@ def _artifact(
         code_hash="b" * 40,
         contract_role=contract.role.value,
         deployment_contract=contract,
+        permitted_splits=(
+            ("train", "validation")
+            if contract.role is ContractRole.SOURCE
+            else ("test",)
+        ),
+        evaluation_split=(
+            "validation"
+            if contract.role is ContractRole.SOURCE
+            else "test"
+        ),
+        row_scope_policy="filter_and_audit",
+        label_mapping={"0": "unknown", "1": "fraud", "2": "normal"},
+        positive_label_id=1,
+        provider_split_mapping={
+            "train": "train",
+            "validation": "validation",
+            "test": "test",
+            "unscored": "unscored",
+        },
+        compute_cost_provenance="fixture_declared",
+        original_prediction_path=str(path),
+        original_prediction_checksum=hashlib.sha256(
+            path.read_bytes()
+        ).hexdigest(),
     )
 
 
@@ -67,6 +93,8 @@ def _write_predictions(
                 "score",
                 "y_true",
                 "split",
+                "label_known",
+                "timestamp",
                 "expert_id",
             ),
         )
@@ -78,6 +106,8 @@ def _write_predictions(
                     "score": 0.8 - 0.5 * index,
                     "y_true": labels[index],
                     "split": splits[index],
+                    "label_known": "true",
+                    "timestamp": index,
                     "expert_id": expert,
                 }
             )

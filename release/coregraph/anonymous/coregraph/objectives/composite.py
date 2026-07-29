@@ -232,7 +232,7 @@ class CompositeObjective:
             "contract_expert_risks": contract_expert_risks,
             "contract_availability": contract_availability.float(),
             "contract_feasible_oracle_risk": contract_oracle_risk,
-            "contract_regret": regrets,
+            "bce_surrogate_contract_regret": regrets,
         }
         if self.include_instance_oracle_diagnostic:
             masked_example_expert_risks = torch.where(

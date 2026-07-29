@@ -17,13 +17,15 @@
    scopes pass SupportEngine.
 8. **Paper:** no result placeholder is converted into a factual claim without
    an eligible evidence unit; target-year policy/template is confirmed.
-9. **Pilot semantics:** the V3 frozen gate requires Elliptic and DGraphFin,
+9. **Pilot semantics:** the V4 frozen gate requires Elliptic and DGraphFin,
    every target contract, expert-prediction seeds 1--10, all methods,
-   meaningful corrected ablations, positive matched-contract robust effects
-   on both datasets, AUPRC harm limits, routing diversity/stability, and no
-   target-label selection.
-10. **Pilot authorization:** manifest conversion, a dry-run exact-completeness
-    audit, and third independent review must pass before `--execute` is used.
+   meaningful corrected ablations, dataset-stratified robust effects positive
+   on both datasets with corrected support on at least one, AUPRC harm limits,
+   routing diversity/stability, and no target-label selection. Protocol aliases,
+   coordinate hashes, and complete contract IDs remain distinct.
+10. **Pilot authorization:** V4 manifest conversion, a no-training
+    exact-completeness/registry/leakage audit, and fourth independent review
+    must pass before `--execute` is used.
 
 Failure of gates 1–2 stops local commit. Failure of gates 3–8 blocks heavy
 execution, headline claims, release, or push as applicable; blockers must be

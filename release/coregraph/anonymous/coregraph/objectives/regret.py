@@ -1,4 +1,4 @@
-"""Feasible-oracle contract regret."""
+"""Feasible-oracle regret under one caller-declared, common risk."""
 
 from __future__ import annotations
 

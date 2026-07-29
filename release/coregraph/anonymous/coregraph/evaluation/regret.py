@@ -1,4 +1,9 @@
-"""Offline contract-regret summaries."""
+"""Loss-parametric regret summaries.
+
+Callers must supply router and oracle risks measured with one identical,
+explicitly declared loss. Pilot result schemas use loss-specific names rather
+than exporting these generic helper labels.
+"""
 
 from __future__ import annotations
 

@@ -55,12 +55,16 @@ coregraph-lint:
 
 coregraph-typecheck:
 	$(PY) -m mypy coregraph/contracts coregraph/routing coregraph/objectives \
-		coregraph/experts coregraph/experiments/pilot.py \
+		coregraph/experts coregraph/data/leakage.py \
+		coregraph/experiments/pilot.py \
+		coregraph/experiments/manifest_conversion.py \
+		coregraph/experiments/protocol_registry.py \
 		coregraph/experiments/contract_splits.py coregraph/evaluation/statistics.py \
 		coregraph/evaluation/metrics.py coregraph/evidence.py coregraph/theory \
 		scripts/coregraph/run_statistical_analysis.py \
 		scripts/coregraph/evaluate_pilot_gate.py \
 		scripts/coregraph/run_saved_output_pilot.py \
+		scripts/coregraph/convert_prediction_manifests_v4.py \
 		--ignore-missing-imports --show-error-codes
 
 coregraph-test:
@@ -73,10 +77,16 @@ coregraph-coverage:
 	$(PY) -m coverage report --include='coregraph/routing/*' --fail-under=85
 	$(PY) -m coverage report --include='coregraph/objectives/*' --fail-under=85
 	$(PY) -m coverage report --include='coregraph/experiments/pilot.py' --fail-under=85
+	$(PY) -m coverage report --include='coregraph/experiments/manifest_conversion.py' --fail-under=85
+	$(PY) -m coverage report --include='coregraph/experiments/protocol_registry.py' --fail-under=85
+	$(PY) -m coverage report --include='coregraph/data/leakage.py' --fail-under=85
 	$(PY) -m coverage report --include='coregraph/evaluation/statistics.py' --fail-under=85
 	$(PY) -m coverage report --include='coregraph/evidence.py' --fail-under=85
 	$(PY) -m coverage report --include='coregraph/experiments/contract_splits.py' --fail-under=85
 	$(PY) -m coverage report --include='scripts/coregraph/evaluate_pilot_gate.py' --fail-under=85
+	# The runner file retains the separately authorised empirical execution
+	# branch; this gate covers its exercised plan/validate-only surface.
+	$(PY) -m coverage report --include='scripts/coregraph/run_saved_output_pilot.py' --fail-under=50
 
 coregraph-local-gates: coregraph-compile coregraph-lint coregraph-typecheck coregraph-test coregraph-coverage
 	$(PY) scripts/coregraph/check_theory_numerically.py

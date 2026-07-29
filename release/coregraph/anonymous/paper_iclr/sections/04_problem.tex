@@ -10,7 +10,7 @@ $\mathcal C_s$ are labelled for training. A target contract
 $c_t\notin\mathcal C_s$ may combine axis values observed separately in
 $\mathcal C_s$.
 
-Let expert $e$ emit a score $s_e(x;G_c)$ and incur offline risk
+Let expert $e$ emit a score $s_e(x;G_c)$ and incur a declared offline risk
 $R_c(e)$. A router emits weights
 $w_\theta(x,c,d)\in\Delta^{|\mathcal A(c)|}$ from the contract and label-free
 diagnostics $d$. Infeasible experts are masked before normalisation. The routed
@@ -21,7 +21,8 @@ score is
 The contract-level feasible oracle is
 $R_c^\star=\min_{e\in\mathcal A(c)}R_c(e)$: it chooses one feasible expert for
 the whole contract after each expert risk has been aggregated over that
-contract. Offline contract regret is
+contract. For headline evaluation, $R_c$ is mean Brier risk and offline
+\emph{Brier contract regret} is
 $\mathrm{Reg}_c(\theta)=R_c(\theta)-R_c^\star$.
 The oracle is never queried at deployment.
 An instance-clairvoyant oracle that changes expert per example is a diagnostic
@@ -34,3 +35,8 @@ transaction outcomes are never pooled as independent rows in one leaderboard.
 Target contract metadata and an operational target capacity may be known at
 inference; target labels are not available for fitting, threshold selection,
 or routing.
+
+The optimisation surrogate is binary cross-entropy and is reported, when
+needed, as BCE-surrogate contract regret. Selective risk is the zero--one
+error on accepted predictions. These quantities have different losses and are
+not compared numerically under a shared generic regret label.
