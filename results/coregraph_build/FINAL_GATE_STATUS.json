@@ -1,0 +1,29 @@
+{
+  "schema": "coregraph_final_gate_status_v1",
+  "verdict": "COREGRAPH_BUILD_COMPLETE_BASELINES_PENDING_EXTERNAL_INTEGRATION",
+  "local_build_complete": true,
+  "execution_performed": {
+    "provider_downloads": false,
+    "full_dataset_training": false,
+    "multi_seed_campaigns": false,
+    "kaggle_runs": false,
+    "long_gpu_cpu_runs": false
+  },
+  "gates": {
+    "frozen_tkde_boundary": "PASS_249_FILES",
+    "compile_lint_typed_core": "PASS",
+    "tests": "PASS_94",
+    "coverage": "77_PERCENT",
+    "cpu_one_epoch_smoke": "PASS",
+    "theory": "PASS_3_PROVED_WITH_GATES",
+    "notebooks": "PASS_12",
+    "paper_skeleton": "PASS_7_PAGE_VISUAL_QA",
+    "anonymous_release": "PASS_67_PACKAGED_TESTS",
+    "saved_output_pilot": "BLOCKED_INCOMPLETE_METHOD_ROWS",
+    "provider_manifests": "BLOCKED_NOT_STAGED",
+    "official_baseline_parity": "BLOCKED_PENDING_INTEGRATION",
+    "graphmetro_eerm_licences": "BLOCKED_NO_VERIFIED_LICENCE"
+  },
+  "push_authorized": false,
+  "push_performed": false
+}

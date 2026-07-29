@@ -1,0 +1,26 @@
+issue_id,closure,implementation_evidence,validation_evidence,status
+CG-P0-001,Ranking metrics rejected for threshold selection,coregraph/evaluation/metrics.py,test_threshold_and_budget_selection_are_separate,VALIDATED
+CG-P0-002,Correct monotone Holm step-down,coregraph/evaluation/corrections.py,test_corrections_match_statsmodels;test_holm_stops_after_first_failure_and_rejects_nan,VALIDATED
+CG-P0-003,Binomial logistic calibration slope/intercept,coregraph/evaluation/calibration.py,test_calibration_suite_and_degenerate_guard,VALIDATED
+CG-P0-004,Average ranks and typed-ID top-K ties,coregraph/evaluation/metrics.py,test_budget_topk_is_stable_on_ties,VALIDATED
+CG-P0-005,Fold-specific causal graph views,coregraph/data/graph_views.py,test_temporal_graph_views_have_no_future_edges,VALIDATED
+CG-P0-006,Checked-step deterministic patience,coregraph/experiments/runner.py,test_deterministic_early_stopping,VALIDATED
+CG-P0-007,Hash schema status result and prediction resume checks,coregraph/experiments/resume.py,test_runner_smoke_and_resume;test_result_checksum_mutation_invalidates_resume,VALIDATED
+CG-P0-008,First-incident DGraphFin timing,coregraph/data/dgraphfin_v2.py,test_dgraph_first_incident_time_is_immune_to_future_lifecycle_events,VALIDATED
+CG-P0-009,DGraphFin direction type and timestamps preserved,coregraph/data/dgraphfin_v2.py,test_temporal_graph_views_have_no_future_edges,VALIDATED
+CG-P0-010,T-Finance temporal pseudo-time rejected,coregraph/data/tfinance_v2.py,test_tfinance_temporal_claim_rejects_edge_order_proxy,VALIDATED
+CG-P0-011,Official status metadata and diagnostic legacy guards,coregraph/experts/base.py;coregraph/experts/graph_experts.py,test_all_named_official_adapters_are_pinned,VALIDATED
+CG-P0-012,Sampled GNN execution and pre-allocation memory guard,coregraph/experts/sampled_graph_expert.py;coregraph/experts/graph_experts.py,test_one_epoch_sampled_gcn_uses_fold_specific_views;test_full_graph_guard_fails_before_oom,VALIDATED
+CG-P0-013,Node edge and transaction adapters,coregraph/tasks/,test_task_adapters_emit_typed_ids_and_budget_units,VALIDATED
+CG-P0-014,Six-axis contract and typed support APIs,coregraph/contracts/;coregraph/evidence.py,test_contracts.py;test_evidence_support.py,VALIDATED
+CG-P0-015,Distinct factorised masked CoReGraph method,coregraph/method.py;coregraph/routing/,test_router_objectives.py,VALIDATED
+CG-P0-016,History-free identity-scanned release package,scripts/coregraph/build_anonymous_release.py;scripts/coregraph/audit_anonymous_release.py,ANONYMOUS_RELEASE_AUDIT.json,VALIDATED
+CG-P0-017,Component licence statuses fail closed,external_baselines/BASELINE_REGISTRY.yaml,BASELINE_REGISTRY_AUDIT.json,BLOCKED_EXTERNAL
+CG-P0-018,Diagnostic label and access metadata enforced,coregraph/routing/diagnostics.py,test_label_requiring_diagnostic_is_rejected,VALIDATED
+CG-P0-019,Temporal folds bound to audited GraphViews,coregraph/data/contract_dataset.py;coregraph/data/leakage.py,test_one_epoch_sampled_gcn_uses_fold_specific_views,VALIDATED
+CG-P0-020,Target adaptation access regime audited,coregraph/data/leakage.py,test_access_audit_blocks_target_fit,VALIDATED
+CG-P1-021,Elliptic++ unique occurrence and join-rate guards,coregraph/data/ellipticpp_v2.py,test_ellipticpp_rejects_duplicate_occurrence,VALIDATED
+CG-P1-022,Pinned official process adapters and parity schema,coregraph/experts/official_adapters/;external_baselines/,test_official_adapters.py,PENDING_EXTERNAL_PARITY
+CG-P1-023,Held-out contract composition and atomic-ID guards,coregraph/experiments/contract_splits.py,test_observed_axis_unseen_combination_split,VALIDATED
+CG-P1-024,Exact resource masks feasible oracle regret and compute,coregraph/routing/router.py;coregraph/objectives/,test_resource_mask_is_exact_and_all_missing_abstains;test_regret_compute_and_abstention_semantics,VALIDATED
+CG-P1-025,Frozen analysis families and matrices,configs/coregraph/analysis_families.yaml;configs/coregraph/run_matrices/,ANALYSIS_PLAN_FREEZE.json,VALIDATED

@@ -1,0 +1,24 @@
+\begin{theorem}[Fixed-mixture regret; \texttt{PROVED}]
+Consider two experts and two contracts. On contract one their risks are
+$(0,\delta_1)$ and on contract two they are $(\delta_2,0)$, where
+$\delta_1,\delta_2>0$. A contract-independent randomised mixture that selects
+expert one with probability $w$ has worst-contract regret at least
+\[
+  \frac{\delta_1\delta_2}{\delta_1+\delta_2}>0.
+\]
+The bound is tight, while a contract-aware selector has zero regret.
+\end{theorem}
+
+\begin{proof}
+The mixture regrets are $(1-w)\delta_1$ and $w\delta_2$. Their maximum is
+minimised when they are equal, since decreasing either side of the intersection
+increases the other maximum. Solving
+$(1-w)\delta_1=w\delta_2$ gives
+$w^\star=\delta_1/(\delta_1+\delta_2)$ and the stated value. A
+contract-aware selector chooses expert one on contract one and expert two on
+contract two.
+\end{proof}
+
+\paragraph{Failure of the premise.}
+If either gap is zero, or one expert is optimal on both contracts, the positive
+lower bound need not hold.

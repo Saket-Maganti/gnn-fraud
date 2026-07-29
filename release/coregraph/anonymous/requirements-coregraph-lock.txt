@@ -1,0 +1,15 @@
+# Pre-run lock layered over the frozen repository runtime.
+numpy==1.26.4
+scipy==1.15.2
+scikit-learn==1.7.2
+statsmodels==0.14.5
+patsy==1.0.2
+pandas==2.3.3
+PyYAML==6.0.2
+torch==2.2.2
+torch-geometric==2.5.3
+pytest==8.4.2
+coverage==7.10.6
+ruff==0.12.11
+mypy==1.17.1
+types-PyYAML==6.0.12.20250915

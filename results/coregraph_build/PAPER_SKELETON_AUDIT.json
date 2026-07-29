@@ -1,0 +1,9 @@
+{
+  "blocked_empirical_claims": 8,
+  "claims": 12,
+  "failures": [],
+  "schema": "coregraph_paper_skeleton_audit_v1",
+  "sections": 10,
+  "status": "PASS",
+  "target_year_template_status": "RECHECK_WHEN_PUBLISHED"
+}

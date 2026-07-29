@@ -1,0 +1,24 @@
+schema: coregraph_claim_fixture_v1
+claim_ids:
+  - contract_serialisation
+  - source_target_separation
+  - temporal_view_safety
+  - task_identifier_alignment
+  - missing_graph_fallback
+  - resource_mask_zero_mass
+  - factorised_unseen_combination
+  - atomic_unknown_token
+  - no_contract_baseline
+  - worst_contract_regret
+  - cvar_contract_risk
+  - budget_recall
+  - calibration_brier
+  - abstention_coverage
+  - routing_stability
+  - synthetic_fixed_mixture
+  - synthetic_resource_mask
+  - official_baseline_parity
+  - licence_boundary
+  - five_seed_screening
+  - ten_seed_confirmatory
+  - anonymous_release

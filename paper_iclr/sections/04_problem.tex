@@ -1,0 +1,29 @@
+\section{Problem formulation}
+
+A deployment contract is
+$c=(c^{\mathrm{time}},c^{\mathrm{vis}},c^{\mathrm{build}},
+c^{\mathrm{select}},c^{\mathrm{budget}},c^{\mathrm{resource}})$.
+Each coordinate is typed. It determines an admissible graph view
+$G_c$, a prediction unit, target-access regime, feasible expert set
+$\mathcal A(c)$, and operational metric. Source contracts
+$\mathcal C_s$ are labelled for training. A target contract
+$c_t\notin\mathcal C_s$ may combine axis values observed separately in
+$\mathcal C_s$.
+
+Let expert $e$ emit a score $s_e(x;G_c)$ and incur offline risk
+$R_c(e)$. A router emits weights
+$w_\theta(x,c,d)\in\Delta^{|\mathcal A(c)|}$ from the contract and label-free
+diagnostics $d$. Infeasible experts are masked before normalisation. The routed
+score is
+\[
+  s_\theta(x,c)=\sum_{e\in\mathcal A(c)}w_{\theta,e}(x,c,d)s_e(x;G_c).
+\]
+The feasible oracle is $R_c^\star=\min_{e\in\mathcal A(c)}R_c(e)$ and
+offline contract regret is
+$\mathrm{Reg}_c(\theta)=R_c(\theta)-R_c^\star$.
+The oracle is never queried at deployment.
+
+We distinguish domain generalisation with no target access,
+unlabelled target adaptation, and few-label target adaptation. Thresholds,
+target priors, and diagnostics inherit this access type. Node, edge, and
+transaction outcomes are never pooled as independent rows in one leaderboard.

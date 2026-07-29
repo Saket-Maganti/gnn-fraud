@@ -1,0 +1,32 @@
+\section{Experimental design}
+
+\paragraph{Surfaces.}
+Fraud tasks comprise Elliptic and DGraphFin node prediction, Elliptic++ as a
+correlated temporal corroboration, and IBM AML Small/Medium transaction-edge
+prediction. T-Finance is included only if source, licence, and genuine
+timestamps pass audit. General graph OOD uses three task-compatible GOOD node
+settings. Controlled synthetic regimes vary feature and graph signal,
+homophily, direction, drift, missing inputs, resource masks, and review budget.
+
+\paragraph{Splits and access.}
+Primary evaluation holds out unseen combinations of observed axis values.
+Leave-one-axis-value, resource, budget, construction, visibility, temporal, and
+random-environment splits are secondary controls. Domain generalisation,
+unlabelled TTA, and few-label access are separate families.
+
+\paragraph{Baselines and ablations.}
+Baselines include individual feature/graph/tree/temporal experts, simple
+averaging, source-validation selection, Mowst, GraphMETRO when licensed,
+task-compatible graph OOD, official TGN, Group DRO, VREx, GraphSafe, atomic
+contract routing, no-contract routing, and the offline feasible oracle. Pending
+or unlicensed official code is excluded rather than approximated under its
+name. Ablations remove contract axes, interactions, diagnostics, regret, CVaR,
+budget, compute, stability, fallback, or abstention.
+
+\paragraph{Outcomes and inference.}
+Primary outcomes are worst-contract AUPRC, worst-contract Recall@1\%, mean,
+maximum, and CVaR regret, average AUPRC, budget-curve area,
+compute-normalised utility, and routing stability. Inference is paired by seed
+within a fixed dataset/contract. Contexts are averaged within seed; exact or
+resampling tests replace normal approximations at ten seeds. Holm correction is
+predeclared for main comparisons.

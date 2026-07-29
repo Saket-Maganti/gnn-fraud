@@ -1,0 +1,11 @@
+work,year,graph_ood,heterogeneous_experts,contract_factorisation,unseen_contract_combinations,resource_masks,review_budget,worst_contract_regret,routing_stability,difference_from_coregraph,source_status
+GOOD,2022,yes,no,no,benchmark environments,no,no,no,no,"Benchmark infrastructure rather than heterogeneous resource-aware routing",peer_reviewed
+CIGA,2022,yes,no,no,no,no,no,no,no,"Invariant subgraph learning rather than expert routing",peer_reviewed
+EERM,2022,yes,no,no,no,no,no,no,no,"Graph-edit environment exploration rather than contract-conditioned experts",peer_reviewed
+GMoE,2023,not primary,message-passing experts,no,no,implicit compute,no,no,no,"Routes within a GNN across aggregation experts",peer_reviewed
+Mowst,2024,not primary,feature plus graph,no,no,biased activation,no,no,no,"Two-modality confidence routing without deployment-contract composition",peer_reviewed
+GraphMETRO,2024,yes,aligned shift experts,shift components,complex shift composition,no,no,no,no,"Closest graph-shift MoE; lacks typed selection budget and resource contract",peer_reviewed
+STEM-GNN,2026,yes,tokenized GNN experts,no,shift/corruption tests,no,no,no,yes,"Concurrent preprint on stable frozen GNN routing; not assumed peer reviewed",preprint
+FraudShiftBench,2026,evaluation protocols,GraphSafe bounded,no,no,resource boundaries,review metrics,no,no,"Prior benchmark/evaluation infrastructure not CoReGraph method novelty",frozen_prior_asset
+CoReGraph,current,yes,feature graph temporal tree,yes,yes,yes,yes,yes,yes,"Claimed distinction subject to direct baseline results and novelty recheck",proposed
+FG-EGCN,unresolved,unknown,unknown,unknown,unknown,unknown,unknown,unknown,unknown,"Identity not verified from primary source; do not cite until resolved",blocked_identity

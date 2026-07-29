@@ -1,0 +1,51 @@
+{
+  "criteria": [
+    {
+      "id": "strongest_baseline_identified",
+      "required": true
+    },
+    {
+      "direction": "greater",
+      "id": "improvement_on_elliptic_and_dgraphfin",
+      "metric": "auprc",
+      "required": true
+    },
+    {
+      "direction": "greater",
+      "id": "worst_contract_gain",
+      "metric": "worst_contract_auprc",
+      "required": true
+    },
+    {
+      "id": "average_utility_guardrail",
+      "metric": "average_auprc_delta",
+      "minimum": -0.002,
+      "required": true
+    },
+    {
+      "id": "paired_ci_excludes_material_harm",
+      "required": true
+    },
+    {
+      "id": "ablation_contribution",
+      "required": true
+    },
+    {
+      "id": "no_oracle_target_information",
+      "required": true
+    },
+    {
+      "id": "routing_diversity",
+      "minimum_distinct_experts": 2,
+      "required": true
+    },
+    {
+      "id": "routing_stability",
+      "maximum_flip_rate": 0.1,
+      "required": true
+    }
+  ],
+  "passed": false,
+  "status": "BLOCKED_INCOMPLETE_METHOD_ROWS",
+  "strongest_baseline": null
+}

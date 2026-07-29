@@ -7,7 +7,9 @@ PYTESTS = \
 	tests/test_fraudshiftbench_red_team_integrity.py \
 	tests/test_tkde_visual_release_audits.py
 
-.PHONY: help compile test unittest support claims figures tables paper delta public-audit
+.PHONY: help compile test unittest support claims figures tables paper delta public-audit \
+	coregraph-compile coregraph-lint coregraph-typecheck coregraph-test \
+	coregraph-local-gates
 
 help:
 	@echo "Dataset-free targets: compile test unittest support claims figures tables paper delta public-audit"
@@ -44,3 +46,26 @@ delta:
 
 public-audit:
 	$(PY) scripts/github_publish/validate_public_tree.py .
+
+coregraph-compile:
+	$(PY) -m compileall -q coregraph scripts/coregraph tests/coregraph
+
+coregraph-lint:
+	$(PY) -m ruff check coregraph scripts/coregraph tests/coregraph --select F,I
+
+coregraph-typecheck:
+	$(PY) -m mypy coregraph/contracts coregraph/routing coregraph/objectives \
+		coregraph/evidence.py --ignore-missing-imports --show-error-codes
+
+coregraph-test:
+	$(PY) -m pytest -q
+
+coregraph-local-gates: coregraph-compile coregraph-lint coregraph-typecheck coregraph-test
+	$(PY) scripts/coregraph/check_theory_numerically.py
+	$(PY) scripts/coregraph/validate_theory_status.py
+	$(PY) scripts/coregraph/validate_notebooks.py
+	$(PY) scripts/coregraph/run_coregraph_smoke.py
+	$(PY) scripts/coregraph/validate_paper_skeleton.py
+	$(PY) scripts/coregraph/build_anonymous_release.py
+	$(PY) scripts/coregraph/audit_anonymous_release.py
+	$(PY) scripts/coregraph/hash_frozen_assets.py --verify

@@ -1,0 +1,8 @@
+regime: budget_changes_expert
+seed: 108
+num_nodes: 512
+time_steps: 4
+class_prior: 0.1
+feature_signal: 1.5
+graph_signal: 1.5
+review_budget: 0.05

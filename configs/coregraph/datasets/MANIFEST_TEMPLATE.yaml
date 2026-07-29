@@ -1,0 +1,19 @@
+schema: coregraph_dataset_manifest_v1
+dataset_id: REPLACE
+provider: REPLACE
+licence: REPLACE
+task: REPLACE
+prediction_unit: REPLACE
+raw_files:
+  - path: REPLACE_RELATIVE_PATH
+    sha256: REPLACE_SHA256
+    bytes: 0
+temporal_semantics:
+  timestamp_source: REPLACE
+  is_true_event_time: false
+  permitted_time_claims: []
+label_mapping:
+  unknown: 0
+  fraud: 1
+  normal: 2
+manual_download_required: true

@@ -1,0 +1,21 @@
+legacy_surface,legacy_role,new_surface,compatibility_rule,frozen_regeneration_allowed,validation
+fraudshiftbench.protocols.ProtocolContract,historical protocol metadata,coregraph.contracts.DeploymentContract,One-way explicit adapter only; legacy strings are mapped to validated coordinates and preserved in notes,No,Compatibility fixtures for all default contracts
+fraudshiftbench.evidence.EvidenceUnit,historical evidence gate input,coregraph.evidence.EvidenceUnitV2,Import adapter records legacy provenance and never upgrades integrity or construct state,No,Legacy 22-claim fixture validation
+fraudshiftbench.claims.ClaimGate,bounded legacy gate,coregraph.evidence.TypedClaim and SupportEngine,No replacement of historical PASS/BLOCKED records; V2 reports are new artifacts,No,Mutation and scope-widening tests
+data.datasets.base.FraudDataset,node-only legacy schema,coregraph.tasks.TaskBatch and adapters,Legacy PyG object is wrapped without changing labels or masks,No,Node prediction parity fixture
+data.datasets.elliptic,legacy Elliptic loader,coregraph.data.EllipticV2Adapter,V2 preserves official time and label convention but creates explicit GraphViews,No,Fixture parity for IDs labels masks and directed transform
+data.datasets.dgraphfin,historical lifecycle-median contract,coregraph.data.DGraphFinV2Adapter,Historical results retain their definition; V2 timing variants are scientifically non-interchangeable,No,Future-event timing and edge-semantics tests
+data.datasets.ellipticpp,legacy correlated-domain loader,coregraph.data.EllipticPlusPlusV2Adapter,V2 strengthens validation and retains correlated-domain flag,No,Schema and join fixture
+data.datasets.tfinance,historical pseudo-time-capable loader,coregraph.data.TFinanceV2Adapter,V2 temporal claims require genuine timestamps and audited quality,No,Missing timestamp rejection
+models.registry,simplified model factory,coregraph.experts.ExpertRegistry,Legacy models remain callable but receive explicit diagnostic status in the new registry,No,No diagnostic-as-official test
+models.modern_gnn.GraphTransformer;GPS;PCGNN,diagnostic architectures,coregraph.experts.LegacyModelExpert,Always labelled DIAGNOSTIC_APPROXIMATION until parity evidence exists,No,Status and warning test
+models.temporal_gnn.SnapshotTGN,discrete-time diagnostic,coregraph.experts.LegacyModelExpert,Never advertised as official TGN; alias is not used for headline baseline,No,Temporal official-status test
+models.graphsafe_v2,selective saved-output case study,coregraph.experts.GraphSafeAdapter,Baseline only and scope-bounded,No,Baseline label test
+models.graph_feature_gating,two-expert validation gate,coregraph.experts.LegacyGateAdapter,Baseline only; CoReRouter is separate code and identity,No,Method separation test
+models.graph_harm_detector,mixed diagnostic utility,coregraph.routing.DiagnosticRegistry,Only label-free coordinates allowed at target; label-dependent signals are source-only,No,Leakage metadata test
+models.rolling_validation,time-window planner,coregraph.experiments.contract_splits plus graph views,Time ranges may be imported but V2 rebuilds admissible structure per fold,No,Future-edge test
+models.protocol_mitigation,legacy selection utility,coregraph.evaluation.thresholds,V2 fixes do not change historical outputs,No,Known-bug regression fixture
+fraudshiftbench.result_analysis,legacy saved-output analysis,coregraph.evaluation statistics calibration and ranking,V2 corrected implementations are isolated and explicitly versioned,No,Trusted-library parity
+experiments._multi_harness,legacy experiment harness,coregraph.experiments.Runner,New evidence must not use legacy graph visibility or filename resume,No,Stale-hash and leakage tests
+paper_tkde and paper/pdf,frozen completed paper,paper_iclr,No copy-compress or CoReGraph rebranding; only citations to prior infrastructure,No,Hash gate and manuscript scan
+results/tkde_*;results/v*_imported;results/runs_rb09v3,frozen scientific evidence,results/coregraph_build and results/coregraph_pilot,Read-only discovery is allowed; no writes or regenerated derived tables,No,Full-boundary SHA-256 comparison
