@@ -7,12 +7,10 @@ Authoritative frozen branch: `origin/codex/curated-fraudshiftbench-2026`
 
 ## Repository and isolation
 
-The authoritative checkout at `/Users/saketmaganti/Projects/gnn-fraud` is on an
-unborn, heavily modified branch. It is not safe for new development and was not
-changed. This audit runs in the requested sibling worktree
-`/Users/saketmaganti/Projects/gnn-fraud-coregraph`, created directly from the
-curated commit. Raw data is absent from the curated tree and will remain
-external.
+The authoritative checkout was on an unborn, heavily modified branch. It is
+not safe for new development and was not changed. This audit runs in the
+requested dedicated sibling worktree, created directly from the curated commit.
+Raw data is absent from the curated tree and will remain external.
 
 ## Frozen scientific boundary
 

@@ -11,7 +11,7 @@ multi-seed campaign is permitted.
 | 2026-07-29 | `git status --short`; branch/remotes/log inspection in authoritative checkout | Protect user work and identify base | Authoritative checkout dirty and on unborn branch; left untouched |
 | 2026-07-29 | `git fetch --all --prune` | Obtain curated branch reference | Complete |
 | 2026-07-29 | Verify commit `2dec25eac1d7a8951f9d4639f49e889c4c9ca486` | Confirm immutable base | Commit exists on `origin/codex/curated-fraudshiftbench-2026` |
-| 2026-07-29 | `git worktree add -b codex/coregraph-iclr-buildout-2026 /Users/saketmaganti/Projects/gnn-fraud-coregraph 2dec25e...` | Isolate CoReGraph development | Complete |
+| 2026-07-29 | `git worktree add -b codex/coregraph-iclr-buildout-2026 <COREGRAPH_WORKTREE> 2dec25e...` | Isolate CoReGraph development | Complete |
 | 2026-07-29 | Read-only inventory and targeted source inspection | Audit protocols evidence loaders models harness metrics CI and paper boundary | Complete; issues recorded in risk register |
 | 2026-07-29 | `.venv/bin/python -m pytest -q` before CoReGraph edits | Establish frozen regression baseline | 27 passed |
 | 2026-07-29 | `scripts/coregraph/hash_frozen_assets.py --write` | Freeze TKDE scientific boundary | 249 tracked files hashed |
@@ -30,3 +30,4 @@ multi-seed campaign is permitted.
 | 2026-07-29 | `coverage run --source=coregraph -m pytest -q` | Measure implementation coverage | 94 tests passed; 77% statement coverage |
 | 2026-07-29 | Anonymous package build/audit and packaged test run | Validate history-free release | Identity audit pass; 67 packaged tests pass |
 | 2026-07-29 | `scripts/coregraph/hash_frozen_assets.py --verify` | Recheck frozen boundary | `ZERO_TKDE_SCIENTIFIC_DELTAS (249 files)` |
+| 2026-07-29 | Exported-tree public-safety audit and narrow scanner/path repair | Remove private worktree paths and distinguish source modules from prediction payloads | Zero public-tree findings after repair; local gates and frozen boundary pass |
