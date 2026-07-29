@@ -77,7 +77,7 @@ def test_dgraph_first_incident_time_is_immune_to_future_lifecycle_events() -> No
         edge_timestamps=np.asarray([1.0, 2.0, 999.0]),
         timing=DGraphTiming.FIRST_INCIDENT_EVENT,
     )
-    assert np.array_equal(early, with_future)
+    assert np.array_equal(early, with_future, equal_nan=True)
 
 
 def test_dgraph_v2_preserves_directed_typed_timed_edges(contract_factory) -> None:

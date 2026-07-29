@@ -1,8 +1,12 @@
 {
   "all_pass": true,
   "compositional_bound": {
+    "adversarial_above_bound_rejected": true,
+    "formula": "2*sum(axis_errors)+2*interaction_residual+router_approximation_error",
+    "near_tight_ratio": 0.9999999999,
     "pass": true,
-    "proof_status": "PROVED"
+    "proof_status": "PROVED",
+    "total_bound": 0.27
   },
   "fixed_mixture": {
     "analytic_lower_bound": 0.18749999999999997,
@@ -13,5 +17,11 @@
   "resource_mask": {
     "pass": true,
     "proof_status": "PROVED"
+  },
+  "xor_interaction": {
+    "declared_interaction_residual_covers_case": true,
+    "pass": true,
+    "proof_status": "COUNTEREXAMPLE",
+    "pure_factorisation_fails": true
   }
 }

@@ -8,7 +8,15 @@ from typing import Optional, Tuple
 
 import numpy as np
 
-from coregraph.contracts.axes import ConstructionAxis, VisibilityAxis
+from coregraph.contracts.axes import (
+    ConstructionSpec,
+    EdgeFeaturePolicy,
+    EdgeVisibility,
+    HistoryPolicy,
+    NodeVisibility,
+    Orientation,
+    TopologyTransform,
+)
 from coregraph.contracts.contract import DeploymentContract
 
 
@@ -28,7 +36,7 @@ class GraphView:
     time_cutoff: Optional[float]
     source_mask: np.ndarray
     target_mask: np.ndarray
-    construction: ConstructionAxis
+    construction: ConstructionSpec
     contract: DeploymentContract
     provenance: Tuple[Tuple[str, str], ...]
     role: ViewRole
@@ -88,6 +96,21 @@ def _filter_edges(
     return keep
 
 
+def _degree_cap_mask(edge_index: np.ndarray, cap: int) -> np.ndarray:
+    """Deterministically cap total observed incidence while preserving order."""
+
+    degree: dict[int, int] = {}
+    keep = np.zeros(edge_index.shape[1], dtype=bool)
+    for index, (source, target) in enumerate(edge_index.T):
+        left, right = int(source), int(target)
+        if degree.get(left, 0) >= cap or degree.get(right, 0) >= cap:
+            continue
+        keep[index] = True
+        degree[left] = degree.get(left, 0) + 1
+        degree[right] = degree.get(right, 0) + 1
+    return keep
+
+
 def _view(
     *,
     role: ViewRole,
@@ -101,45 +124,103 @@ def _view(
     cutoff: float,
     contract: DeploymentContract,
     allow_all_nodes: bool,
+    provider_directed: bool,
 ) -> GraphView:
-    if contract.visibility in {
-        VisibilityAxis.MISSING_GRAPH,
-        VisibilityAxis.ISOLATED_INDUCTIVE,
-    }:
+    if allow_all_nodes or contract.visibility.node_visibility is NodeVisibility.ALL_NODES:
+        visible_nodes = node_ids
+    else:
         visible_nodes = node_ids[node_timestamps <= cutoff]
+    no_edges = (
+        contract.visibility.edge_visibility is EdgeVisibility.NONE
+        or contract.construction.topology_transform
+        in {TopologyTransform.NO_GRAPH, TopologyTransform.DEGREE_ONLY}
+        or contract.construction.history_policy is HistoryPolicy.NONE
+    )
+    if no_edges:
         keep = np.zeros(edge_index.shape[1], dtype=bool)
     else:
-        visible_nodes = node_ids if allow_all_nodes else node_ids[node_timestamps <= cutoff]
         recent = (
             contract.construction.recent_window
-            if contract.construction.mode is ConstructionAxis.RECENT_WINDOW
+            if contract.construction.history_policy is HistoryPolicy.RECENT_WINDOW
             else None
+        )
+        must_respect_cutoff = (
+            not allow_all_nodes
+            or contract.visibility.historical_only
+            or contract.construction.history_policy is HistoryPolicy.RECENT_WINDOW
+            or contract.visibility.edge_visibility
+            is EdgeVisibility.HISTORICAL_BY_CUTOFF
         )
         keep = _filter_edges(
             edge_index,
             visible_nodes,
             edge_timestamps,
-            None if allow_all_nodes else cutoff,
+            cutoff if must_respect_cutoff else None,
             recent_window=recent,
         )
+        if (
+            contract.construction.topology_transform
+            is TopologyTransform.DEGREE_CAPPED
+        ):
+            assert contract.construction.degree_cap is not None
+            selected = np.flatnonzero(keep)
+            capped = _degree_cap_mask(
+                edge_index[:, selected],
+                contract.construction.degree_cap,
+            )
+            keep[selected[~capped]] = False
     visible_times = node_timestamps[np.isin(node_ids, visible_nodes)]
     source_mask = visible_times <= source_limit
     target_mask = visible_times >= target_start
-    directed = contract.construction.mode is ConstructionAxis.DIRECTED
+    selected_edges = edge_index[:, keep].copy()
+    selected_timestamps = (
+        edge_timestamps[keep].copy() if edge_timestamps is not None else None
+    )
+    selected_attributes = (
+        edge_attributes[keep].copy() if edge_attributes is not None else None
+    )
+    directed = (
+        contract.construction.orientation is Orientation.DIRECTED
+        or (
+            contract.construction.orientation is Orientation.PRESERVE_PROVIDER
+            and provider_directed
+        )
+    )
+    if contract.construction.orientation is Orientation.UNDIRECTED:
+        selected_edges = np.concatenate([selected_edges, selected_edges[::-1]], axis=1)
+        if selected_timestamps is not None:
+            selected_timestamps = np.concatenate(
+                [selected_timestamps, selected_timestamps]
+            )
+        if selected_attributes is not None:
+            selected_attributes = np.concatenate(
+                [selected_attributes, selected_attributes],
+                axis=0,
+            )
+    if contract.construction.topology_transform is TopologyTransform.SHUFFLED:
+        selected_edges = selected_edges[:, ::-1].copy()
+        if selected_timestamps is not None:
+            selected_timestamps = selected_timestamps[::-1].copy()
+        if selected_attributes is not None:
+            selected_attributes = selected_attributes[::-1].copy()
+    if contract.construction.edge_feature_policy is EdgeFeaturePolicy.DROP:
+        selected_attributes = None
+    elif (
+        contract.construction.edge_feature_policy is EdgeFeaturePolicy.SHUFFLE
+        and selected_attributes is not None
+        and len(selected_attributes) > 1
+    ):
+        selected_attributes = np.roll(selected_attributes, 1, axis=0)
     return GraphView(
         visible_node_ids=visible_nodes.copy(),
-        edge_index=edge_index[:, keep].copy(),
+        edge_index=selected_edges,
         directed=directed,
-        edge_attributes=(
-            edge_attributes[keep].copy() if edge_attributes is not None else None
-        ),
-        edge_timestamps=(
-            edge_timestamps[keep].copy() if edge_timestamps is not None else None
-        ),
+        edge_attributes=selected_attributes,
+        edge_timestamps=selected_timestamps,
         time_cutoff=None if allow_all_nodes else float(cutoff),
         source_mask=source_mask.astype(bool),
         target_mask=target_mask.astype(bool),
-        construction=contract.construction.mode,
+        construction=contract.construction,
         contract=contract,
         provenance=(
             ("builder", "coregraph.data.graph_views.build_temporal_graph_views"),
@@ -161,6 +242,7 @@ def build_temporal_graph_views(
     validation_cutoff: float,
     target_cutoff: float,
     contract: DeploymentContract,
+    provider_directed: bool = True,
 ) -> GraphViewBundle:
     """Construct train/validation/target views under an explicit contract."""
 
@@ -176,7 +258,10 @@ def build_temporal_graph_views(
     if edge_attributes is not None:
         edge_attributes = np.asarray(edge_attributes)
 
-    transductive = contract.visibility is VisibilityAxis.TRANSDUCTIVE_STRUCTURE
+    transductive = (
+        contract.visibility.node_visibility is NodeVisibility.ALL_NODES
+        and contract.visibility.edge_visibility is EdgeVisibility.ALL_EDGES
+    )
     train = _view(
         role=ViewRole.TRAIN,
         node_ids=node_ids,
@@ -189,6 +274,7 @@ def build_temporal_graph_views(
         cutoff=train_cutoff,
         contract=contract,
         allow_all_nodes=transductive,
+        provider_directed=provider_directed,
     )
     validation = _view(
         role=ViewRole.VALIDATION,
@@ -202,6 +288,7 @@ def build_temporal_graph_views(
         cutoff=validation_cutoff,
         contract=contract,
         allow_all_nodes=transductive,
+        provider_directed=provider_directed,
     )
     target = _view(
         role=ViewRole.TARGET,
@@ -215,7 +302,8 @@ def build_temporal_graph_views(
         cutoff=target_cutoff,
         contract=contract,
         allow_all_nodes=transductive
-        or contract.visibility is VisibilityAxis.TEST_TIME_GRAPH_AVAILABLE,
+        or contract.visibility.test_time_graph_access,
+        provider_directed=provider_directed,
     )
     return GraphViewBundle(train=train, validation=validation, target=target)
 
@@ -232,8 +320,10 @@ def audit_view_bundle(
         bundle.train.edge_timestamps > train_cutoff
     ):
         violations.append("future_edges_in_train")
+    visibility = bundle.validation.contract.visibility
     transductive = (
-        bundle.validation.contract.visibility is VisibilityAxis.TRANSDUCTIVE_STRUCTURE
+        visibility.node_visibility is NodeVisibility.ALL_NODES
+        and visibility.edge_visibility is EdgeVisibility.ALL_EDGES
     )
     if not transductive and bundle.validation.node_set.intersection(
         int(v) for v in test_node_ids

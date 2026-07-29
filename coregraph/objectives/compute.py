@@ -34,6 +34,10 @@ def expected_compute_cost(
     expert_weights: torch.Tensor,
     costs: torch.Tensor,
 ) -> torch.Tensor:
-    if expert_weights.shape[-1] != costs.numel():
-        raise ValueError("one compute cost is required per expert")
+    if costs.shape == (expert_weights.shape[-1],):
+        pass
+    elif costs.shape != expert_weights.shape:
+        raise ValueError(
+            "compute costs must be per expert or per example-expert"
+        )
     return (expert_weights * costs).sum(dim=-1).mean()

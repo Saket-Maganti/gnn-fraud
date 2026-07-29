@@ -18,6 +18,9 @@ class SyntheticRegime(str, Enum):
     INTERACTION_BREAKS_FACTORISATION = "interaction_breaks_factorisation"
     RESOURCE_MASK = "resource_mask"
     BUDGET_CHANGES_EXPERT = "budget_changes_expert"
+    NOISY_CONTRACT_METADATA = "noisy_contract_metadata"
+    ALL_EXPERTS_UNAVAILABLE = "all_experts_unavailable"
+    CALIBRATION_MISMATCH = "calibration_mismatch"
 
 
 @dataclass(frozen=True)
@@ -38,7 +41,9 @@ class SyntheticControls:
     concept_shift: float = 0.0
     missing_feature_fraction: float = 0.0
     missing_graph: bool = False
+    feature_expert_available: bool = True
     graph_expert_available: bool = True
+    contract_metadata_noise: float = 0.0
     review_budget: float = 0.01
     label_delay: int = 0
     seed: int = 0
@@ -54,6 +59,7 @@ class SyntheticControls:
             "edge_deletion",
             "missing_feature_fraction",
             "review_budget",
+            "contract_metadata_noise",
         ):
             value = getattr(self, name)
             if not 0 <= value <= 1:
@@ -134,6 +140,16 @@ def generate_contract_shift(
         overrides = {"feature_signal": 0.4, "graph_signal": 3.0, "graph_expert_available": False}
     elif regime is SyntheticRegime.BUDGET_CHANGES_EXPERT:
         overrides = {"feature_signal": 1.5, "graph_signal": 1.5, "review_budget": 0.05}
+    elif regime is SyntheticRegime.NOISY_CONTRACT_METADATA:
+        overrides = {"contract_metadata_noise": 0.25}
+    elif regime is SyntheticRegime.ALL_EXPERTS_UNAVAILABLE:
+        overrides = {
+            "feature_expert_available": False,
+            "graph_expert_available": False,
+            "missing_graph": True,
+        }
+    elif regime is SyntheticRegime.CALIBRATION_MISMATCH:
+        overrides = {"feature_signal": 2.0, "graph_signal": 2.0}
     parameters = {**base.__dict__, **overrides}
     effective = SyntheticControls(**parameters)
     rng = np.random.default_rng(effective.seed)
@@ -194,6 +210,12 @@ def generate_contract_shift(
         # signal across more positives, inducing budget-dependent preference.
         graph_scores[positives[: max(1, len(positives) // 4)]] = 0.99
         feature_scores[positives] = np.linspace(0.95, 0.65, len(positives))
+        negatives = np.where(labels == 0)[0]
+        feature_scores[negatives[: max(1, len(negatives) // 100)]] = 0.98
+    if regime is SyntheticRegime.CALIBRATION_MISMATCH:
+        calibrated = np.where(labels == 1, 0.8, 0.2)
+        feature_scores = calibrated
+        graph_scores = np.sqrt(calibrated)
 
     additive_axis_effect = (
         regime is not SyntheticRegime.INTERACTION_BREAKS_FACTORISATION
@@ -208,7 +230,7 @@ def generate_contract_shift(
         edge_index=edges,
         expert_scores={"feature": feature_scores, "graph": graph_scores},
         expert_available={
-            "feature": True,
+            "feature": effective.feature_expert_available,
             "graph": effective.graph_expert_available and not effective.missing_graph,
         },
         controls=effective,
@@ -221,6 +243,7 @@ def generate_contract_shift(
             "interaction_residual": interaction_residual,
             "review_budget": effective.review_budget,
             "label_delay": effective.label_delay,
+            "contract_metadata_noise": effective.contract_metadata_noise,
         },
     )
 

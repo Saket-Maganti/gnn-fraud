@@ -128,6 +128,7 @@ class TaskAdapter(ABC):
             "y_true",
             "label_known",
             "score",
+            "score_type",
             "expert_id",
             "config_hash",
         )
@@ -190,6 +191,9 @@ def align_prediction_rows(
     common = set.intersection(*ids_by_expert.values())
     if not common:
         raise ValueError("experts have no aligned prediction identifiers")
+    reference_ids = next(iter(ids_by_expert.values()))
+    if any(ids != reference_ids for ids in ids_by_expert.values()):
+        raise ValueError("expert prediction identifier sets do not match exactly")
     ids = np.asarray(sorted(common))
     scores: dict[str, np.ndarray] = {}
     labels: Optional[np.ndarray] = None
