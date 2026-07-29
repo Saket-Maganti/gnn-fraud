@@ -107,6 +107,24 @@ def raw_prediction_path(rel: str) -> bool:
     lower = rel.lower()
     if "prediction" not in lower:
         return False
+    payload_suffixes = {
+        ".arrow",
+        ".csv",
+        ".feather",
+        ".json",
+        ".jsonl",
+        ".npy",
+        ".npz",
+        ".parquet",
+        ".pickle",
+        ".pkl",
+        ".pt",
+        ".pth",
+        ".tsv",
+        ".txt",
+    }
+    if Path(lower).suffix not in payload_suffixes:
+        return False
     safe_markers = (
         "manifest",
         "index",
@@ -117,7 +135,7 @@ def raw_prediction_path(rel: str) -> bool:
         "summary",
         "provenance",
     )
-    return not any(marker in lower for marker in safe_markers) and not lower.endswith(".md")
+    return not any(marker in lower for marker in safe_markers)
 
 
 def scan(root: Path) -> list[Finding]:

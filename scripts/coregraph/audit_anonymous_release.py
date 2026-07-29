@@ -34,7 +34,7 @@ TEXT_SUFFIXES = {
     ".sh",
 }
 PATTERNS = (
-    re.compile(r"/Users/[A-Za-z0-9._-]+"),
+    re.compile(r"/" + r"Users/[A-Za-z0-9._-]+"),
     re.compile(r"\bSaket\s+Maganti\b", re.IGNORECASE),
     re.compile(r"saket" r"maganti", re.IGNORECASE),
     re.compile(r"[A-Za-z0-9._%+-]+@(?!example\.org)[A-Za-z0-9.-]+\.[A-Za-z]{2,}"),
