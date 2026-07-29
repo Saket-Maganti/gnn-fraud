@@ -40,7 +40,7 @@ class PairedSeedBlocks:
     method_values: tuple[float, ...]
     baseline_values: tuple[float, ...]
     contexts_per_seed: tuple[int, ...]
-    aggregation: str = "mean_target_contracts_within_seed"
+    aggregation: str = "mean_matched_target_contracts_within_expert_prediction_seed"
 
 
 def build_paired_seed_blocks(
@@ -63,7 +63,11 @@ def build_paired_seed_blocks(
         key = (
             str(row["dataset"]),
             str(row["target_contract"]),
-            int(row["seed"]),
+            int(
+                row["expert_prediction_seed"]
+                if "expert_prediction_seed" in row
+                else row["seed"]
+            ),
             str(row.get("fold", "")),
             str(row["method"]),
         )

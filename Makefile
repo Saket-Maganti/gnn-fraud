@@ -68,13 +68,15 @@ coregraph-test:
 
 coregraph-coverage:
 	$(PY) -m coverage erase
-	$(PY) -m coverage run --source=coregraph -m pytest -q
+	$(PY) -m coverage run --source=coregraph,scripts/coregraph -m pytest -q
 	$(PY) -m coverage report --include='coregraph/contracts/*' --fail-under=85
 	$(PY) -m coverage report --include='coregraph/routing/*' --fail-under=85
 	$(PY) -m coverage report --include='coregraph/objectives/*' --fail-under=85
 	$(PY) -m coverage report --include='coregraph/experiments/pilot.py' --fail-under=85
+	$(PY) -m coverage report --include='coregraph/evaluation/statistics.py' --fail-under=85
 	$(PY) -m coverage report --include='coregraph/evidence.py' --fail-under=85
 	$(PY) -m coverage report --include='coregraph/experiments/contract_splits.py' --fail-under=85
+	$(PY) -m coverage report --include='scripts/coregraph/evaluate_pilot_gate.py' --fail-under=85
 
 coregraph-local-gates: coregraph-compile coregraph-lint coregraph-typecheck coregraph-test coregraph-coverage
 	$(PY) scripts/coregraph/check_theory_numerically.py
