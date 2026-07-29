@@ -85,13 +85,15 @@ def test_evaluation_uses_frozen_abstention_decision_not_probability_cutoff() -> 
         labels,
         candidates,
         dataset="elliptic",
-        target_contract="strict_inductive",
+        target_protocol_id="strict_inductive",
+        target_contract_coordinate_hash="a" * 64,
+        target_contract_id="target:" + "b" * 16,
         expert_prediction_seed=1,
         router_training_seeds={"method": 101},
         fold="fold0",
     )
     assert _metric(result, "method", "coverage") == 1.0
-    assert _metric(result, "method", "selective_risk") == 0.0
+    assert _metric(result, "method", "selective_zero_one_risk") == 0.0
     assert _row(result, "method", "coverage")["accepted_count"] == 4
     assert len(
         str(
@@ -120,12 +122,16 @@ def test_zero_coverage_is_undefined_and_pays_abstention_cost() -> None:
         labels,
         candidates,
         dataset="elliptic",
-        target_contract="strict_inductive",
+        target_protocol_id="strict_inductive",
+        target_contract_coordinate_hash="a" * 64,
+        target_contract_id="target:" + "b" * 16,
         expert_prediction_seed=1,
         router_training_seeds={"zero_coverage": 101},
         fold="fold0",
     )
-    assert np.isnan(_metric(result, "zero_coverage", "selective_risk"))
+    assert np.isnan(
+        _metric(result, "zero_coverage", "selective_zero_one_risk")
+    )
     assert _metric(result, "zero_coverage", "abstention_cost") == pytest.approx(0.3)
 
 
@@ -326,7 +332,9 @@ def test_unavailable_single_expert_never_enters_ranking_metrics() -> None:
             ),
         },
         dataset="elliptic",
-        target_contract="strict_inductive",
+        target_protocol_id="strict_inductive",
+        target_contract_coordinate_hash="a" * 64,
+        target_contract_id="target:" + "b" * 16,
         expert_prediction_seed=1,
         router_training_seeds={"expert:blocked": 101},
         fold="fold0",
