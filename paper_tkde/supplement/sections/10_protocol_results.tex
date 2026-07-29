@@ -1,0 +1,34 @@
+\section{Elliptic and DGraphFin protocol results}
+\label{sec:s-protocol-results}
+
+\subsection{Scientific question and matched scope}
+
+The primary question is whether changing only strict-versus-isolated graph visibility leaves each architecture invariant. Both sides use the same dataset, temporal masks, model configuration, and seeds. Tables~\ref{tab:s-protocol-auprc}--\ref{tab:s-protocol-f1} report all 18 aggregate effects; the complete 180 seed rows remain in the artifact.
+
+\subsection{AUPRC}
+
+\input{tables/table_v2_protocol_effect_auprc}
+
+The MLP delta is exactly zero on both datasets, as expected for a graph-only intervention. On Elliptic, GraphSAGE changes from 0.61139 to 0.47969 (\(\Delta=-0.13170\)), while GCN changes from 0.46664 to 0.56046 (\(\Delta=0.09382\)); both Holm values are 0.0117. The leading model among MLP, GCN, and GraphSAGE therefore changes from GraphSAGE under strict visibility to GCN under isolated visibility. DGraphFin GraphSAGE declines from 0.02270 to 0.01781 (\(\Delta=-0.00489\), Holm \(p=0.0156\)), but remains the top model in the tested set.
+
+\begin{figure}[tbp]
+    \centering
+    \includegraphics[width=0.86\textwidth]{fig02_protocol_architecture_effects.pdf}
+    \caption{Paired strict-to-isolated AUPRC effects. The feature-only control remains invariant while graph-model direction and magnitude depend on architecture and dataset.}
+    \label{fig:s-protocol-effects-v2}
+\end{figure}
+
+\subsection{AUROC}
+
+\input{tables/table_v2_protocol_effect_auroc}
+
+AUROC responses do not supply a common sign that could replace the AUPRC result. The aggregate table is retained because rank metrics can disagree, but the paper's Elliptic leaderboard statement is specifically scoped to AUPRC.
+
+\subsection{F1}
+
+\input{tables/table_v2_protocol_effect_f1}
+
+F1 is checkpoint/decision-rule dependent and must be interpreted alongside the selection description in Section~\ref{sec:s-optimization}. Its paired effects confirm that a graph visibility change can alter decision-level behavior, but they do not imply that isolation is uniformly beneficial or harmful.
+
+\paragraph{Boundary.}
+These results show architecture- and dataset-dependent sensitivity to the recorded visibility intervention. They do not identify a causal mechanism such as homophily, degree shift, or oversmoothing, and they do not generalize to every GNN family.

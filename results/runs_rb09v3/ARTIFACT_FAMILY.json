@@ -1,0 +1,64 @@
+{
+ "artifact_family": "RB09v3_structure_decay_10seed",
+ "created_utc": "2026-06-21T08:10:09.877832+00:00",
+ "source_folders": [
+  "dgraphfin_10seed_inductive_isolated",
+  "dgraphfin_10seed_strict_inductive",
+  "dgraphfin_10seed_transductive",
+  "elliptic_10seed_inductive_isolated",
+  "elliptic_10seed_strict_inductive",
+  "elliptic_10seed_transductive"
+ ],
+ "datasets": [
+  "dgraphfin",
+  "elliptic"
+ ],
+ "models": [
+  "gcn",
+  "mlp",
+  "sage"
+ ],
+ "protocols": [
+  "inductive_isolated",
+  "strict_inductive",
+  "transductive"
+ ],
+ "seeds": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10
+ ],
+ "n_run_rows": 180,
+ "n_prediction_files": 180,
+ "graph_modes": {
+  "inductive_isolated|inductive_isolated_eval": 60,
+  "strict_inductive|inductive_subgraph": 60,
+  "transductive|full_graph": 60
+ },
+ "isolation": {
+  "separate_root": "results/runs_rb09v3",
+  "does_not_touch": [
+   "results/runs (RB02)",
+   "results/runs_rb01 (RB01)",
+   "RB09 2-seed pilots"
+  ]
+ },
+ "deprecated_aliases": {
+  "chronological": "byte-identical alias of strict_inductive; NOT run here"
+ },
+ "excluded": [
+  "random",
+  "gat"
+ ],
+ "config": {
+  "dgraphfin": "hidden=64,layers=2",
+  "elliptic": "hidden=256,layers=3 (default)"
+ }
+}

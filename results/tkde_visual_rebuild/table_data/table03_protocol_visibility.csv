@@ -1,0 +1,6 @@
+protocol,label_windows,label_free_history,graph_visibility,selection,decision,resources
+Strict inductive,chronological,train period,held-out structure only at evaluation,validation F1,argmax / rank,recorded CPU/CUDA
+Isolated inductive,same masks,train period,remove train--held-out edges,validation F1,argmax / rank,same as strict
+Transductive,same masks,full label-free graph,full graph; labels hidden,validation F1,diagnostic,recorded CPU/CUDA
+IBM early-to-late,50/20/30 labels,first 60\% covariates,shared 60\% account history,fixed schedule,$\tau=0.5$ / budgets,CPU + T4 guards
+IBM late holdout,60/20/20 labels,first 60\% covariates,training-period account history,fixed schedule,$\tau=0.5$ / budgets,CPU + T4 guards

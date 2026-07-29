@@ -1,0 +1,36 @@
+# Review Budget Curves
+
+Precision and recall at 0.5%, 1%, and 2% review capacities from saved predictions/policy rows.
+
+dataset,method,budget_pct,n,n_context_rows,precision_mean,precision_std,recall_mean,recall_std,source
+dgraphfin,best_val_branch,0.5,10,60,0.014241001564945167,0.005746129486986153,0.006512792986222882,0.0026278595399421355,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+dgraphfin,best_val_branch,1.0,10,60,0.01504208259933447,0.0057662949953958985,0.013750223653605249,0.0052710683720661455,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+dgraphfin,best_val_branch,2.0,10,60,0.0159128732256485,0.005354812124020016,0.02908391483270705,0.00978697546016543,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+dgraphfin,feature_only,0.5,10,60,0.014319248826291042,0.010288845429468835,0.00654857756307028,0.004705365703654023,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+dgraphfin,feature_only,1.0,10,60,0.01606968095517711,0.012427788065800978,0.014689568795848939,0.011360452536800372,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+dgraphfin,feature_only,2.0,10,60,0.014459128732256415,0.012143839270622521,0.026426910001789178,0.022195261790912368,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+dgraphfin,graph_only,0.5,10,60,0.014241001564945167,0.005746129486986153,0.006512792986222882,0.0026278595399421355,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+dgraphfin,graph_only,1.0,10,60,0.01504208259933447,0.0057662949953958985,0.013750223653605249,0.0052710683720661455,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+dgraphfin,graph_only,2.0,10,60,0.0159128732256485,0.005354812124020016,0.02908391483270705,0.00978697546016543,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+dgraphfin,graphsafe_conservative,0.5,10,60,0.020989827856024983,0.005532186824876358,0.009599212739309311,0.0025300178071898374,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+dgraphfin,graphsafe_conservative,1.0,10,60,0.022881190056762528,0.006180640102540001,0.020916085167292847,0.00564982828482321,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+dgraphfin,graphsafe_conservative,2.0,10,60,0.02209985315712183,0.0061475676476045165,0.04039184111647874,0.011235892560436595,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+dgraphfin,simple_average,0.5,10,60,0.014847417840375535,0.0077314966322358705,0.0067901234567900705,0.003535821326175503,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+dgraphfin,simple_average,1.0,10,60,0.015639068310823998,0.007770214683723271,0.01429593845052777,0.007102885456994484,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+dgraphfin,simple_average,2.0,10,60,0.01551150269211938,0.007580842758662942,0.028350331007335795,0.013855485557298625,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+elliptic,best_val_branch,0.5,10,60,0.8291666666666668,0.04516232166932818,0.06431209602954749,0.003502894755515762,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+elliptic,best_val_branch,1.0,10,60,0.7785429141716567,0.048225272198990275,0.12005232379193595,0.007436399314156406,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+elliptic,best_val_branch,2.0,10,60,0.692065868263473,0.047142969837236766,0.21343490304709137,0.014539013781751682,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+elliptic,feature_only,0.5,10,60,0.6746031746031746,0.05257832517024283,0.052323791935980246,0.004078097243121324,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+elliptic,feature_only,1.0,10,60,0.6481037924151696,0.06352512959350928,0.09993844259772235,0.009795657102600238,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+elliptic,feature_only,2.0,10,60,0.5822355289421158,0.06238070501757685,0.1795629424438288,0.019238370707175146,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+elliptic,graph_only,0.5,10,60,0.865079365079365,0.03117598875500708,0.06709756848260999,0.0024180822303052543,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+elliptic,graph_only,1.0,10,60,0.8353293413173652,0.03590657542402347,0.1288088642659279,0.005536840347010084,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+elliptic,graph_only,2.0,10,60,0.7628243512974051,0.039425754411106795,0.23525700215450907,0.01215900459216035,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+elliptic,graphsafe_conservative,0.5,10,60,0.8154761904761905,0.041228696760605026,0.06325023084025848,0.0031977936545621696,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+elliptic,graphsafe_conservative,1.0,10,60,0.7623752495009979,0.043171155433582985,0.1175592489996922,0.006657047975446326,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+elliptic,graphsafe_conservative,2.0,10,60,0.6765469061876248,0.042915332110754704,0.20864881502000615,0.013235199376723976,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+elliptic,simple_average,0.5,10,60,0.8601190476190477,0.0638921066811568,0.06671283471837484,0.004955620462804414,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+elliptic,simple_average,1.0,10,60,0.8276447105788423,0.05559050458272466,0.12762388427208365,0.008572127668804273,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+elliptic,simple_average,2.0,10,60,0.7680139720558883,0.0447901663985145,0.23685749461372732,0.013813403118286096,results/runs_rb17_review_budget_worst_block/rb17_results.csv
+

@@ -1,0 +1,21 @@
+\section{IBM AML baseline results}
+\label{sec:s-ibm-baselines-v2}
+
+\subsection{Scientific question and evidence set}
+
+The baseline question is: among logistic regression, histogram gradient boosting, and the h32 SAGE-derived edge classifier, how do mean AUPRC values compare across HI/LI, Small/Medium, and the two temporal contracts? The locked V26 surface contains 24 configuration cells, each represented by ten saved rows and prediction exports.
+
+\input{tables/table_v2_ibm_baselines}
+
+Histogram gradient boosting has the highest mean AUPRC in all eight exact variant/protocol contexts. This is a descriptive result within the three-model synthetic baseline grid. It does not establish that tree models are universally superior for AML, and it does not compare against resource-blocked Large variants.
+
+\subsection{Uncertainty and deterministic rows}
+
+Each table entry reports mean and a ten-row bootstrap interval. Some logistic-regression cells are identical across nominal seeds and therefore have zero-width intervals. The table leaves that determinism visible; repeated execution confirms the pipeline output but does not increase independent stochastic evidence.
+
+\subsection{Scale and prevalence}
+
+Raw AUPRC is reported because it is the metric used by the claims. HI/LI and Small/Medium differ in test prevalence, so values are not pooled. Normalized AUPRC remains a diagnostic lift over within-cell prevalence rather than a universal, prevalence-invariant score.
+
+\paragraph{Boundary.}
+IBM AML-Data is synthetic and the early-to-late covariate map includes the shared first-60\% label-free history. Baseline differences cannot be generalized to a production bank or causally attributed to label windows alone.

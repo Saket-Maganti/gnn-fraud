@@ -1,0 +1,21 @@
+\begin{table}[tbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\renewcommand{\arraystretch}{1.12}
+\caption{IBM transaction-classifier cards.}
+\label{tab:s-ibm-models}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.20\textwidth} Y Y >{\raggedright\arraybackslash}p{0.20\textwidth}@{}}
+\toprule
+\textbf{Model} & \textbf{Input/computation} & \textbf{Scientific role} & \textbf{Configuration} \\
+\midrule
+Logistic regression & standardized transaction features & linear non-graph baseline & balanced classes; max\_iter=500 \\
+Histogram gradient boosting & transaction features & nonlinear tabular baseline & 160 iterations; learning rate 0.06 \\
+GraphSAGE-derived edge classifier h32 & training-history endpoint/neighborhood summaries plus edge features & small IBM graph baseline & 20 epochs; batch 65,536 \\
+Edge-aware GraphSAGE-derived edge classifier h64 & training-history endpoint/neighborhood summaries plus edge features & reference for graph-feature/construction ablations & 30 epochs; batch 32,768 \\
+GINE h64 & one GINE layer and edge head & edge-conditioned message-passing architecture & 30 epochs; batch 32,768; Small only \\
+\bottomrule
+\end{tabularx}
+\vspace{2pt}
+\begin{minipage}{\textwidth}\footnotesize\emph{Scope and reading.} The h32/h64 systems are static one-hop GraphSAGE-derived edge classifiers. Medium GINE is resource-blocked and has no performance value.\end{minipage}
+\end{table}

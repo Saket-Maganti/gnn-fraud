@@ -1,0 +1,22 @@
+path,size_bytes,size_mib,threshold_band,decision,rationale
+kaggle_workspace/upload_bundles/gnn_fraud_repo_code_kaggle_clean.zip,1701959903,1623.115,>100 MiB,exclude,"Environment, raw data, workspace output, backup, or private worktree."
+.claude/worktrees/zealous-leakey-fb8a45/data/_pyg_elliptic/raw/elliptic_txs_features.csv,689683771,657.734,>100 MiB,exclude,"Environment, raw data, workspace output, backup, or private worktree."
+data/raw/elliptic_txs_features.csv,689683771,657.734,>100 MiB,exclude,"Environment, raw data, workspace output, backup, or private worktree."
+kaggle_workspace/upload_bundles/gnn_fraud_runtime_fullcode_v14_20260628_141352.zip,475418922,453.395,>100 MiB,exclude,"Environment, raw data, workspace output, backup, or private worktree."
+data/raw/dgraphfin.npz,384466778,366.656,>100 MiB,exclude,"Environment, raw data, workspace output, backup, or private worktree."
+results/runs/graph_harm/node_level_graph_harm.csv,318606600,303.847,>100 MiB,replace by manifest/checksum,Row-level or prediction-adjacent payload is not needed in the public source tree.
+kaggle_workspace/upload_bundles/gnn_fraud_runtime_fullcode_20260627_200437.zip,264544894,252.290,>100 MiB,exclude,"Environment, raw data, workspace output, backup, or private worktree."
+results/runs/rb01_graph_harm/harm_predictor_features.csv,231871767,221.130,>100 MiB,replace by manifest/checksum,Row-level or prediction-adjacent payload is not needed in the public source tree.
+kaggle_workspace/upload_bundles/ziIqUhK2,210897331,201.127,>100 MiB,exclude,"Environment, raw data, workspace output, backup, or private worktree."
+gnn_env/lib/python3.10/site-packages/torch/lib/libtorch_cpu.dylib,166941312,159.208,>100 MiB,exclude,"Environment, raw data, workspace output, backup, or private worktree."
+.claude/worktrees/zealous-leakey-fb8a45/data/_pyg_elliptic/processed/data.pt,140277004,133.779,>100 MiB,exclude,"Environment, raw data, workspace output, backup, or private worktree."
+results/runs/rb01_graph_harm/node_level_graph_harm.csv,139305194,132.852,>100 MiB,replace by manifest/checksum,Row-level or prediction-adjacent payload is not needed in the public source tree.
+kaggle_workspace/ieee-fraud-detection.zip,123856947,118.119,>100 MiB,exclude,"Environment, raw data, workspace output, backup, or private worktree."
+gnn_env/lib/python3.10/site-packages/wandb/bin/wandb-core,60235042,57.445,>50 MiB,exclude,"Environment, raw data, workspace output, backup, or private worktree."
+gnn-fraud_tkde_visual_backup_20260710_224421_IST/release/kaggleoutputs/rb23/RB23_ELLIPTIC_HPARAM_ROBUSTNESS_FULL10_V14.zip,24100437,22.984,>10 MiB,exclude,"Environment, raw data, workspace output, backup, or private worktree."
+gnn_env/bin/ruff,24001632,22.890,>10 MiB,exclude,"Environment, raw data, workspace output, backup, or private worktree."
+gnn_env/lib/python3.10/site-packages/numpy/.dylibs/libopenblas64_.0.dylib,23198400,22.124,>10 MiB,exclude,"Environment, raw data, workspace output, backup, or private worktree."
+kaggleresults/runs_outputs.zip,22789809,21.734,>10 MiB,exclude,"Environment, raw data, workspace output, backup, or private worktree."
+gnn_env/lib/python3.10/site-packages/torch/lib/libtorch_python.dylib,20615296,19.660,>10 MiB,exclude,"Environment, raw data, workspace output, backup, or private worktree."
+gnn-fraud_tkde_visual_backup_20260710_224421_IST/results/tkde_rebuild/NUMBER_PROVENANCE_MAP.csv,19502682,18.599,>10 MiB,exclude,"Environment, raw data, workspace output, backup, or private worktree."
+results/tkde_rebuild/NUMBER_PROVENANCE_MAP.csv,19502682,18.599,>10 MiB,include normal Git,"Frozen 6,796-record scalar provenance map; below 25 MiB."

@@ -1,0 +1,24 @@
+\begin{table}[tbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\renewcommand{\arraystretch}{1.12}
+\caption{Metric cards distinguish ranking, decision, capacity, and calibration questions.}
+\label{tab:s-metric-cards}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.16\textwidth} >{\raggedright\arraybackslash}p{0.12\textwidth} Y Y@{}}
+\toprule
+\textbf{Metric} & \textbf{Type} & \textbf{Estimand} & \textbf{Interpretation boundary} \\
+\midrule
+AUPRC & Rank & Area under precision-recall curve & Primary rare-event ranking metric; interpreted against within-cell prevalence. \\
+AUROC & Rank & Probability a random positive outranks a random negative & Can remain high when precision is poor under severe imbalance. \\
+F1@0.5 & Decision & Harmonic mean of precision and recall & IBM operating point only; not threshold-invariant. \\
+Precision/Recall@b & Capacity & Top K scores where K is the declared review fraction & Reported at 0.5\%, 1\%, and 2\%; queue-capacity conditioned. \\
+Normalized AUPRC & Diagnostic & AUPRC divided by test prevalence & Lift context only; not a prevalence-invariant universal metric. \\
+Brier score & Calibration & Mean squared probability error & Descriptive on saved predictions; lower is better. \\
+ECE & Calibration & Ten-bin expected calibration error & Binning dependent and descriptive. \\
+Cost risk & Decision & FP + 5 FN divided by evaluation size & Illustrative 1:5 scenario, not bank monetary loss. \\
+\bottomrule
+\end{tabularx}
+\vspace{2pt}
+\begin{minipage}{\textwidth}\footnotesize\emph{Scope and reading.} No metric substitutes for another. In particular, monotone calibration cannot repair an AUPRC ranking, and fixed-threshold F1 cannot stand in for every review policy.\end{minipage}
+\end{table}

@@ -1,0 +1,19 @@
+\begin{table}[tbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\renewcommand{\arraystretch}{1.12}
+\caption{Node-classifier cards for Elliptic and DGraphFin.}
+\label{tab:s-node-models}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.16\textwidth} Y Y >{\raggedright\arraybackslash}p{0.22\textwidth}@{}}
+\toprule
+\textbf{Model} & \textbf{Computation} & \textbf{Scientific role} & \textbf{Configuration} \\
+\midrule
+MLP & node features only & negative control for graph-visibility intervention & Elliptic h256/l3; DGraphFin h64/l2 \\
+GCN & normalized neighborhood aggregation & tests spectral-style smoothing under visibility change & Elliptic h256/l3; DGraphFin h64/l2 \\
+GraphSAGE & mean neighborhood aggregation & tests inductive aggregation under visibility change & Elliptic h256/l3; DGraphFin h64/l2 \\
+\bottomrule
+\end{tabularx}
+\vspace{2pt}
+\begin{minipage}{\textwidth}\footnotesize\emph{Scope and reading.} The MLP is the graph-visibility negative control. The grid does not establish class-wide behavior for modern temporal or heterogeneous GNNs.\end{minipage}
+\end{table}

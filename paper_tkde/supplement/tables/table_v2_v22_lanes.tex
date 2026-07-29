@@ -1,0 +1,22 @@
+\begin{table}[tbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\renewcommand{\arraystretch}{1.12}
+\caption{Canonical V22 robustness lanes and feasibility status.}
+\label{tab:s-v22-lanes-v2}
+\begin{tabularx}{\textwidth}{@{}Y >{\raggedright\arraybackslash}p{0.21\textwidth} r r r@{}}
+\toprule
+\textbf{Scientific lane} & \textbf{Status} & \textbf{Result rows} & \textbf{Prediction files} & \textbf{Prediction rows} \\
+\midrule
+DGraphFin loss robustness & \texttt{PASS\_\allowbreak{}FULL10\_\allowbreak{}MERGED\_\allowbreak{}WITH\_\allowbreak{}COMPATIBLE\_\allowbreak{}ALIASES} & 180 & 180 & 30,637,260 \\
+Elliptic loss robustness & \texttt{PASS\_\allowbreak{}FULL10\_\allowbreak{}MERGED\_\allowbreak{}WITH\_\allowbreak{}COMPATIBLE\_\allowbreak{}ALIASES} & 180 & 180 & 3,000,600 \\
+DGraphFin negative controls & \texttt{PASS\_\allowbreak{}FULL10} & 80 & 80 & 13,616,560 \\
+Elliptic negative controls & \texttt{PASS\_\allowbreak{}FULL10} & 160 & 160 & 2,667,200 \\
+DGraphFin fixed GAT h64/l2 & \texttt{BLOCKED\_\allowbreak{}T4\_\allowbreak{}OOM} & 0 & 0 & 0 \\
+Elliptic GAT/GIN & \texttt{PASS\_\allowbreak{}FULL10} & 40 & 40 & 666,800 \\
+\bottomrule
+\end{tabularx}
+\vspace{2pt}
+\begin{minipage}{\textwidth}\footnotesize\emph{Scope and reading.} Five lanes are complete. DGraphFin GAT h64/l2 is T4-OOM; the memory-reduced diagnostic is a different configuration and cannot fill this cell.\end{minipage}
+\end{table}

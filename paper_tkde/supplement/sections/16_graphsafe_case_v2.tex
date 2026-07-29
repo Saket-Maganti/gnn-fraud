@@ -1,0 +1,38 @@
+\section{GraphSafe-TTA case study}
+\label{sec:s-graphsafe-v2}
+
+\subsection{Policy definition}
+
+GraphSafe is a post-training switch over aligned feature and graph prediction files. It does not retrain either branch. For each prediction it combines absolute score disagreement, within-split percentile-rank disagreement, and mean binary entropy. Validation-set 95th percentiles scale the terms:
+\begin{equation}
+ \rho_i=\frac{d_i^{\mathrm{score}}/a_s+d_i^{\mathrm{rank}}/a_r+
+ 0.5h_i/a_h}{2.5}.
+\end{equation}
+A validation search chooses cutoff \(\gamma\) and decision threshold \(\tau\), and
+\begin{equation}
+ q_i^{\mathrm{GS}}=
+ \begin{cases}
+ q_i^{\mathrm{graph}}, & \rho_i\leq\gamma,\\
+ q_i^{\mathrm{feature}}, & \rho_i>\gamma.
+ \end{cases}
+\end{equation}
+Test labels are used only for final evaluation. Comparators include each branch, the validation-selected branch, and simple averaging. Additional saved-output diagnostics use validation-weighted averaging, temperature scaling, prior correction, and rolling thresholds~\cite{guo2017calibration,saerens2002prior,geifman2017selective}.
+
+\subsection{Aggregate policy outcomes}
+
+Table~\ref{tab:s-graphsafe-summary} first averages six graph-model/protocol contexts within seed and then summarizes ten seeds.
+
+\input{tables/table_v2_graphsafe_summary}
+
+On DGraphFin, GraphSafe conservative has mean F1 0.04257, AUPRC 0.01901, Recall@1\% 0.02092, and cost risk 0.29128; simple averaging has 0.03647, 0.01625, 0.01430, and 0.45220. On Elliptic, simple averaging is stronger on F1 (0.55130 versus 0.53325), AUPRC (0.53292 versus 0.48762), Recall@1\% (0.12762 versus 0.11756), and cost risk (0.17086 versus 0.17831). Both the favorable and negative comparisons are central to the bounded interpretation.
+
+\subsection{Multiplicity-aware comparison}
+
+Table~\ref{tab:s-graphsafe-paired} reports the 12 GraphSafe-conservative contrasts against simple averaging. The full correction family contains 48 comparator-metric tests.
+
+\input{tables/table_v2_graphsafe_paired}
+
+The DGraphFin GraphSafe AUPRC difference is 0.00275 with 95\% CI \([0.00113,0.00451]\), but Holm \(p=0.3906\). The Elliptic difference is \(-0.04530\), CI \([-0.05466,-0.03622]\), with Holm \(p=0.0938\). No one of the 48 adjusted tests is below 0.05.
+
+\paragraph{What this case establishes.}
+The saved-output surface demonstrates how a typed support system retains mixed operational evidence and strong comparators. It does not establish universal GraphSafe dominance, ranking repair, automatic AML deployment, or a correction of rank metrics by calibration.

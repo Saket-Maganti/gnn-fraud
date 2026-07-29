@@ -1,0 +1,26 @@
+\begin{table}[tbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\renewcommand{\arraystretch}{1.12}
+\caption{Precision and recall at a 1\% review budget.}
+\label{tab:s-review-budget-1pct}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.14\textwidth} Y r r r r@{}}
+\toprule
+\textbf{Dataset} & \textbf{Policy} & \textbf{n} & \textbf{Precision} & \textbf{SD} & \textbf{Recall (SD)} \\
+\midrule
+DGraphFin & Best validation branch & 10 & 0.0150 & 0.0058 & 0.0138 (0.0053) \\
+DGraphFin & Feature branch & 10 & 0.0161 & 0.0124 & 0.0147 (0.0114) \\
+DGraphFin & Graph branch & 10 & 0.0150 & 0.0058 & 0.0138 (0.0053) \\
+DGraphFin & GraphSafe conservative & 10 & 0.0229 & 0.0062 & 0.0209 (0.0056) \\
+DGraphFin & Simple average & 10 & 0.0156 & 0.0078 & 0.0143 (0.0071) \\
+Elliptic & Best validation branch & 10 & 0.7785 & 0.0482 & 0.1201 (0.0074) \\
+Elliptic & Feature branch & 10 & 0.6481 & 0.0635 & 0.0999 (0.0098) \\
+Elliptic & Graph branch & 10 & 0.8353 & 0.0359 & 0.1288 (0.0055) \\
+Elliptic & GraphSafe conservative & 10 & 0.7624 & 0.0432 & 0.1176 (0.0067) \\
+Elliptic & Simple average & 10 & 0.8276 & 0.0556 & 0.1276 (0.0086) \\
+\bottomrule
+\end{tabularx}
+\vspace{2pt}
+\begin{minipage}{\textwidth}\footnotesize\emph{Scope and reading.} The six model/protocol contexts are averaged within seed before the ten-seed summary. Review-budget results are capacity-conditioned and do not replace AUPRC.\end{minipage}
+\end{table}

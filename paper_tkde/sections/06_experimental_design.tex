@@ -1,0 +1,37 @@
+\section{Experimental Design and Statistical Methodology}
+\label{sec:experimental-design}
+
+The experiments answer six questions. RQ1 asks whether changing graph visibility changes a temporal fraud result. RQ2 asks whether that change is consistent across architectures and datasets. RQ3 studies graph construction, scale, and class-prior regime on IBM AML-Data. RQ4 compares ranking metrics with fixed-threshold and review-budget decisions. RQ5 treats runtime and memory feasibility as part of the deployment contract. RQ6 tests whether the support relation rejects incomplete or incorrectly widened claims. A saved-output GraphSafe analysis is retained as a bounded case study, not as a seventh method leaderboard.
+
+\subsection{Experiment Families and Controls}
+
+The visibility experiment is a fully crossed grid over Elliptic and DGraphFin; MLP, GCN, and mean-aggregating GraphSAGE; strict-inductive, isolated-inductive, and transductive evaluation; and seeds 1--10. The primary intervention compares strict with isolated visibility because their temporal masks and training graph are identical. The feature-only MLP is the negative control: a graph-only intervention should leave its scores unchanged. Transductive rows are useful context, but they are not substituted for either inductive contract.
+
+The IBM study has two parts. A baseline grid compares balanced logistic regression, histogram gradient boosting, and a GraphSAGE-derived edge classifier with 32 hidden units. A matched graph grid uses the edge-aware h64 classifier as its reference and varies original edge attributes, zeroed attributes, shuffled attributes, degree-only features, degree capping, recent-history construction, and GINE where feasible. Each measured cell has ten seeds. We rank methods only within the same variant, temporal protocol, and feasible configuration set. The account--account sender--receiver row is an implementation alias of the reference construction, so it is an equivalence check rather than an independent replication.
+
+\subsection{Optimization, Selection, and Compute}
+
+The Elliptic and DGraphFin neural models use full-graph forward passes, class-weighted cross-entropy, AdamW with learning rate $10^{-3}$ and weight decay $5\times10^{-4}$, cosine decay, gradient clipping at 1, and dropout 0.5. Elliptic uses three 256-unit layers; DGraphFin uses two 64-unit layers. Training is capped at 200 epochs. Validation F1 is evaluated at epoch 1 and every ten epochs. The configured patience is 40 validation checks, which cannot be reached within this cap; the procedure therefore selects the best scheduled validation checkpoint rather than stopping early. Repository labels are three-coded, but loss and evaluation exclude unknown nodes; illicit/fraud is the positive class.
+
+For IBM AML-Data, balanced logistic regression uses standardized transaction features and at most 500 iterations. Histogram gradient boosting uses 160 iterations and learning rate 0.06. The h32 graph classifier is trained for 20 epochs with edge batches of 65,536. The h64 reference, its matched controls, and GINE use 30 epochs and batches of 32,768. These graph models use AdamW with learning rate $10^{-3}$, weight decay $10^{-4}$, positive-weighted binary cross-entropy, and dropout 0.1. Saved IBM F1 uses a fixed threshold of 0.5; it is therefore an operating-point result, not a validation-optimized upper bound.
+
+The imported commands record CUDA execution for the two real-data grid and configuration-specific elapsed time for IBM. IBM feasibility and out-of-memory records are tied to a single Tesla T4 envelope. A legacy path token containing ``P100'' is an alias: its runtime record identifies CUDA device 0 and the validation layer normalizes it to the T4 lane. We do not infer hardware from path names. Runtime comparisons are made only inside a common experiment family and matching variant/protocol cell.
+
+\subsection{Metrics and Operational Quantities}
+
+AUROC measures positive--negative ordering; average precision (AUPRC) summarizes the precision--recall ranking and is emphasized for the highly imbalanced tasks \cite{saito2015pr}. For context, the supplement reports $\mathrm{AUPRC}/\pi_{\mathrm{test}}$, where $\pi_{\mathrm{test}}$ is test prevalence. This ratio is descriptive lift over the prevalence baseline, not a prevalence-invariant replacement metric. F1 is the harmonic mean of precision and recall at the family-specific threshold described above.
+
+For a review fraction $b\in\{0.005,0.01,0.02\}$, $K=\lceil bN\rceil$ and Precision@$K$ and Recall@$K$ are computed after a stable descending score sort. The saved-output analysis also reports
+\begin{equation}
+  R_{1,5}=\frac{\mathrm{FP}+5\,\mathrm{FN}}{N},
+  \label{eq:cost-risk}
+\end{equation}
+which encodes one declared false-positive cost and a fivefold false-negative cost. Other cost ratios are sensitivity analyses, not claims about a bank's actual loss function. Expected calibration error and Brier score diagnose probability quality; worst-block regret compares a policy with the hindsight-best saved branch within each time block. These quantities proxy screening behavior. They do not establish downstream investigative value.
+
+\subsection{Uncertainty and Multiple Comparisons}
+
+All principal summaries use seeds 1--10. We report the arithmetic mean and sample standard deviation. Confidence intervals are deterministic two-sided 95\% percentile intervals from 10,000 bootstrap resamples with a fixed analysis seed \cite{efron1979bootstrap}. Aligned comparisons use the two-sided Wilcoxon signed-rank test and paired Cohen's $d_z$; zero differences return $p=1$. Holm's step-down procedure controls family-wise error \cite{holm1979}.
+
+We declare the correction families used in the rebuilt analysis. For the visibility grid, Holm correction is applied separately for AUPRC, AUROC, and F1, each over the six dataset--model strict-versus-isolated comparisons. IBM construction effects pair candidate and reference on variant, protocol, and seed. The four variant--protocol contexts are fixed benchmark conditions rather than 40 exchangeable units, so we average their paired differences within seed before inference. A complete size therefore has ten inferential seed blocks from 40 raw matched rows; the supplement also reports every context-specific ten-seed effect. Small and Medium are separated, and Holm correction is applied within each size--metric family. GINE contributes Small pairs only. Rank correlations across feasible configuration means are descriptive.
+
+GraphSafe inference uses ten seed blocks. Within each seed, the six protocol--model contexts are averaged first; the inferential sample is therefore $n=10$, not 60. The declared family contains four saved-output methods versus simple averaging, two datasets, and six metrics, for 48 paired comparisons. Holm correction spans all 48. Blocked cells have no imputed score, receive no rank, and are absent from paired and Pareto sets.

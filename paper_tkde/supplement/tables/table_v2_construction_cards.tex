@@ -1,0 +1,22 @@
+\begin{table}[tbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\renewcommand{\arraystretch}{1.12}
+\caption{Matched IBM graph-construction and feature interventions.}
+\label{tab:s-construction-cards}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.16\textwidth} Y Y >{\raggedright\arraybackslash}p{0.20\textwidth}@{}}
+\toprule
+\textbf{Construction} & \textbf{Operation} & \textbf{Question} & \textbf{Matched scope} \\
+\midrule
+NoEdge & zero transaction attributes; structure retained & tests edge-attribute contribution & matched to h64 reference \\
+ShuffledEdge & edge attributes permuted within temporal masks & destroys edge-feature alignment while preserving marginal values & matched to h64 reference \\
+DegreeOnly & endpoint-degree attributes replace transaction features & tests structural summaries without original attributes & matched to h64 reference \\
+DegreeCap & q=.995 cap on training structure & tests hub sensitivity and resource/performance tradeoff & matched to h64 reference \\
+RecentWindow & most recent 50\% of training edges & tests recency and reduced computation & matched to h64 reference \\
+Sender-receiver alias & Restates the already materialized sender-to-receiver transaction edges & Contract identity check; no new transformation & Diagnostic only; never counted as an independent method \\
+\bottomrule
+\end{tabularx}
+\vspace{2pt}
+\begin{minipage}{\textwidth}\footnotesize\emph{Scope and reading.} Every intervention retains variant, protocol, seed, optimizer schedule, and h64 reference family unless the operation itself changes training structure. The sender-receiver row is an alias, not replication.\end{minipage}
+\end{table}

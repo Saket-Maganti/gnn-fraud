@@ -4,7 +4,7 @@ Elliptic Bitcoin Dataset loader.
 Supports node features, edge features, temporal splits, and per-timestep slicing.
 
 Download from Kaggle:
-    kaggle datasets download ellipticco/elliptic-data-set -p data/raw/ --unzip
+    kaggle datasets download -d ellipticco/elliptic-data-set -p data/raw/ --unzip
 
 Files expected in data/raw/:
     elliptic_txs_features.csv
@@ -18,8 +18,9 @@ import numpy as np
 import torch
 from torch_geometric.data import Data
 from torch_geometric.utils import to_undirected
-from sklearn.preprocessing import StandardScaler
 from typing import Tuple, Dict, Optional
+
+from data.feature_scaling import resolve_scaler_mode, scale_features
 
 RAW_DIR       = os.path.join(os.path.dirname(__file__), "raw")
 PROCESSED_DIR = os.path.join(os.path.dirname(__file__), "processed")
@@ -39,8 +40,10 @@ def load_elliptic_raw() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         if not os.path.exists(p):
             raise FileNotFoundError(
                 f"Missing {name}: {p}\n"
-                "Download: kaggle datasets download ellipticco/elliptic-data-set "
-                "-p data/raw/ --unzip"
+                "Download: kaggle datasets download -d ellipticco/elliptic-data-set "
+                "-p data/raw/ --unzip\n"
+                "If Kaggle creates data/raw/elliptic_bitcoin_dataset/, move the three "
+                "CSV files directly into data/raw/."
             )
     features = pd.read_csv(paths["features"], header=None)
     classes  = pd.read_csv(paths["classes"])
@@ -57,6 +60,8 @@ def preprocess(
     classes:    pd.DataFrame,
     edges:      pd.DataFrame,
     normalize:  bool = True,
+    scaler_mode: Optional[str] = None,
+    fit_mask:   Optional[np.ndarray] = None,
     use_edge_features: bool = False,
 ) -> Data:
     """
@@ -67,16 +72,23 @@ def preprocess(
         cols 2-95  : 94 local features
         cols 96-166: 72 aggregated neighbourhood features
 
+    Scaling defaults to **full_population** (legacy behaviour) when only
+    ``normalize=True`` is passed. Pass ``scaler_mode='train_only'`` with an
+    optional ``fit_mask`` for temporal-safe scaling.
+
     Returns Data with:
         x, y, edge_index, edge_attr (if use_edge_features)
-        node_ids, time_step, train_mask, test_mask
+        node_ids, time_step, train_mask, test_mask, scaler_mode
     """
+    mode = resolve_scaler_mode(
+        scaler_mode,
+        normalize=normalize if scaler_mode is None else None,
+        default="full_population",
+    )
+
     node_ids  = features.iloc[:, 0].values
     time_step = features.iloc[:, 1].values.astype(int)
     feat_mat  = features.iloc[:, 2:].values.astype(np.float32)
-
-    if normalize:
-        feat_mat = StandardScaler().fit_transform(feat_mat)
 
     # Labels: unknown=0, illicit=1, licit=2
     id2label  = dict(zip(classes["txId"], classes["class"].astype(str)))
@@ -85,6 +97,12 @@ def preprocess(
         [label_map.get(id2label.get(txid, "unknown"), 0) for txid in node_ids],
         dtype=np.int64
     )
+
+    if mode == "train_only" and fit_mask is None:
+        labeled = y != 0
+        fit_mask = labeled & (time_step <= 34)
+
+    feat_mat, mode = scale_features(feat_mat, fit_mask, mode)
 
     # Edges
     id2idx    = {txid: idx for idx, txid in enumerate(node_ids)}
@@ -115,6 +133,7 @@ def preprocess(
     data.time_step  = torch.tensor(time_step, dtype=torch.long)
     data.train_mask = torch.tensor(train_mask, dtype=torch.bool)
     data.test_mask  = torch.tensor(test_mask,  dtype=torch.bool)
+    data.scaler_mode = mode
     return data
 
 

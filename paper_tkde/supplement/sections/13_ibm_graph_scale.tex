@@ -1,0 +1,50 @@
+\section{IBM graph-construction and scale results}
+\label{sec:s-ibm-graph-scale}
+
+\subsection{Dependence-aware matched design}
+
+Each candidate is paired to SAGE-edge h64 by variant, protocol, and seed. The four fixed HI/LI-by-protocol differences are averaged within seed before bootstrap and Wilcoxon inference, so \(n=10\), not 40. The following tables report every candidate-size aggregate for AUPRC, AUROC, and F1; all 208 context-specific sensitivities remain machine-readable.
+
+\subsection{AUPRC effects}
+
+\input{tables/table_v2_ibm_effect_auprc}
+
+NoEdge changes mean AUPRC by \(-0.00267\) on Small and \(-0.01206\) on Medium. All four context means are negative at each scale, but only Medium survives Holm correction (\(p=0.0117\), versus 0.0820 on Small). ShuffledEdge changes AUPRC by \(-0.00330\) and \(-0.01208\), with Holm values 0.0137 and 0.0117. These matched controls support a bounded role for transaction-feature alignment in this implementation, not a causal statement about all AML graphs.
+
+GINE improves Small AUPRC by 0.01190 (95\% CI \([0.00934,0.01447]\), Holm \(p=0.0137\)) with all four context means positive. Medium GINE is absent because it exhausted T4 memory; Small-only performance is not averaged into a complete Small/Medium claim.
+
+\subsection{AUROC effects}
+
+\input{tables/table_v2_ibm_effect_auroc}
+
+AUROC sometimes moves in the opposite direction from AUPRC. RecentWindow on Medium lowers AUPRC but raises mean AUROC by 0.02525. This tradeoff is retained rather than reduced to a winner label.
+
+\subsection{F1 effects}
+
+\input{tables/table_v2_ibm_effect_f1}
+
+GINE's Small F1 change is \(-0.00206\), but its corrected test is not significant (\(p=0.252\)). DegreeCap and RecentWindow can improve fixed-threshold F1 while lowering AUPRC. These results are specific to the saved threshold of 0.5.
+
+\begin{figure}[tbp]
+    \centering
+    \includegraphics[width=0.88\textwidth]{fig05_matched_ablation_effects.pdf}
+    \caption{Matched IBM effects relative to SAGE-edge h64. Intervals use ten seed blocks after fixed-context aggregation; Small-only GINE and blocked Medium cells are not pooled.}
+    \label{fig:s-ibm-effects-v2}
+\end{figure}
+
+\subsection{Configuration-specific runtime and feasibility}
+
+Table~\ref{tab:s-ibm-runtime-small} gives every Small configuration its own AUPRC and elapsed runner time.
+
+\input{tables/table_v2_ibm_runtime_small}
+
+GINE takes approximately 9.1 times the h64 reference runtime in the aggregated Small comparison. Its higher AUPRC therefore does not imply universal deployability or dominance under every resource objective.
+
+Table~\ref{tab:s-ibm-runtime-medium} gives the corresponding Medium cells and retains blocked GINE rows as nonnumeric statuses.
+
+\input{tables/table_v2_ibm_runtime_medium}
+
+RecentWindow reduces aggregated Medium mean runtime from 275.19 to 141.65 seconds, while changing AUPRC by \(-0.01324\), AUROC by \(+0.02525\), and F1 by \(+0.00419\). Pareto flags are computed only within the same variant/protocol cell. Runtime is not normalized across hardware or implementations.
+
+\paragraph{Sensitivity location.}
+The complete context rows, including reference/candidate means, intervals, effect sizes, descriptive p-values, and source paths, remain at \path{results/tkde_rebuild/IBM_MATCHED_ABLATION_CONTEXT_EFFECTS.csv}. Their checksum and schema are reported in Table~\ref{tab:s-raw-artifacts}.

@@ -1,0 +1,25 @@
+\begin{table}[tbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\renewcommand{\arraystretch}{1.12}
+\caption{Aggregate view of the 198 V22 paired tests.}
+\label{tab:s-v22-stats-summary}
+\begin{tabularx}{\textwidth}{@{}l l r r r r Y@{}}
+\toprule
+\textbf{Family} & \textbf{Metric} & \textbf{Tests} & \textbf{$\Delta>0$} & \textbf{$\Delta<0$} & \textbf{BH p<0.05} & \textbf{Machine-readable source} \\
+\midrule
+RB28 & AUPRC & 36 & 21 & 15 & 18 & \path{manuscript_assets/tables/V22_STAT_TESTS_FULL10.csv} \\
+RB28 & AUROC & 36 & 15 & 21 & 17 & \path{manuscript_assets/tables/V22_STAT_TESTS_FULL10.csv} \\
+RB28 & F1 & 36 & 13 & 23 & 20 & \path{manuscript_assets/tables/V22_STAT_TESTS_FULL10.csv} \\
+RB29 & AUPRC & 28 & 10 & 18 & 20 & \path{manuscript_assets/tables/V22_STAT_TESTS_FULL10.csv} \\
+RB29 & AUROC & 28 & 11 & 17 & 20 & \path{manuscript_assets/tables/V22_STAT_TESTS_FULL10.csv} \\
+RB29 & F1 & 28 & 14 & 14 & 23 & \path{manuscript_assets/tables/V22_STAT_TESTS_FULL10.csv} \\
+RB30 & AUPRC & 2 & 2 & 0 & 0 & \path{manuscript_assets/tables/V22_STAT_TESTS_FULL10.csv} \\
+RB30 & AUROC & 2 & 2 & 0 & 1 & \path{manuscript_assets/tables/V22_STAT_TESTS_FULL10.csv} \\
+RB30 & F1 & 2 & 0 & 2 & 2 & \path{manuscript_assets/tables/V22_STAT_TESTS_FULL10.csv} \\
+\bottomrule
+\end{tabularx}
+\vspace{2pt}
+\begin{minipage}{\textwidth}\footnotesize\emph{Scope and reading.} Signs are left-minus-right as declared in the source. This aggregate is a navigation aid; it does not create a new hypothesis family or mix the older BH values with the primary Holm families.\end{minipage}
+\end{table}

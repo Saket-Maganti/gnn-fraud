@@ -90,7 +90,7 @@ if [[ ! -f "$FEATURES" ]]; then
     echo "  ERROR: kaggle CLI not found and dataset missing. Cannot continue."
     echo "         Install kaggle: pip install kaggle"
     echo "         Then add your API key: https://www.kaggle.com/settings > API > Create Token"
-    echo "         Save the token to ~/.kaggle/kaggle.json (chmod 600)"
+    echo "         Set KAGGLE_CONFIG_DIR and save the token as kaggle.json there (chmod 600)"
     exit 1
   fi
 fi

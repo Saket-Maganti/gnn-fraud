@@ -1,0 +1,21 @@
+\begin{table}[tbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\renewcommand{\arraystretch}{1.12}
+\caption{Properties enforced by the typed support relation.}
+\label{tab:s-support-properties}
+\begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}p{0.25\textwidth} Y@{}}
+\toprule
+\textbf{ID} & \textbf{Property} & \textbf{Operational consequence} \\
+\midrule
+P1 & Scope monotonicity & Widening a claim adds requirements; it cannot erase requirements already named. \\
+P2 & Evidence restriction & Removing the only admissible witness for a required element breaks support. \\
+P3 & Rank invariance & Strictly increasing score calibration preserves AUROC/AUPRC ordering but may change a fixed-threshold decision. \\
+P4 & Protocol non-substitutability & A result under one claim-relevant visibility or selection coordinate cannot fill another without an invariance argument. \\
+P5 & Resource separation & A resource-blocked cell is measurable for feasibility but unordered by predictive performance. \\
+\bottomrule
+\end{tabularx}
+\vspace{2pt}
+\begin{minipage}{\textwidth}\footnotesize\emph{Scope and reading.} These are specification and ordering properties, not claims that the ontology is complete or that the validator establishes scientific truth.\end{minipage}
+\end{table}

@@ -1,0 +1,19 @@
+\begin{table}[t]
+\caption{Unmeasured resource cells. Status is a feasibility outcome under the declared envelope, never a predictive score.}
+\label{tab:resource-boundaries}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{2.2pt}
+\begin{tabularx}{\columnwidth}{@{}p{0.23\columnwidth}p{0.18\columnwidth}p{0.24\columnwidth}X@{}}
+\toprule
+Cell & Envelope & Status & Benchmark treatment \\
+\midrule
+IBM AML HI-Large & safe resource guard & \textsc{guard-\allowbreak blocked} & excluded from predictive ranks, matched means, and Pareto sets \\
+IBM AML LI-Large & safe resource guard & \textsc{guard-\allowbreak blocked} & excluded from predictive ranks, matched means, and Pareto sets \\
+IBM AML HI-Medium GINE h64 & single Tesla T4 CUDA OOM & \textsc{t4-oom} & excluded from predictive ranks, matched means, and Pareto sets \\
+IBM AML LI-Medium GINE h64 & single Tesla T4 CUDA OOM & \textsc{t4-oom} & excluded from predictive ranks, matched means, and Pareto sets \\
+DGraphFin GAT h64/l2 & Tesla T4 CUDA OOM & \textsc{t4-oom} & excluded from predictive ranks, matched means, and Pareto sets \\
+DGraphFin GraphSAGE max-pool rerun & larger GPU required & \textsc{unmeasured} & excluded from predictive ranks, matched means, and Pareto sets \\
+\bottomrule
+\end{tabularx}
+\end{table}

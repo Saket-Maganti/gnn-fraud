@@ -1,0 +1,25 @@
+{
+  "blocked_runs": [],
+  "claimable": true,
+  "counts": {
+    "actual_prediction_files": 80,
+    "actual_result_json": 80,
+    "expected_prediction_files": 80,
+    "expected_result_json": 80
+  },
+  "created_at_utc": "2026-07-07T10:07:54+00:00",
+  "import_manifest_csv": "results/v27_imported/V27_STRONGER_GRAPH_IMPORT_MANIFEST.csv",
+  "policy": {
+    "blocked_runs_not_empirical": true,
+    "execute_required": true,
+    "no_dry_run": true,
+    "no_zip_temp": true,
+    "prediction_exports_required": true,
+    "zero_return_codes_required": true
+  },
+  "prediction_manifest_csv": "results/v27_imported/V27_PREDICTION_EXPORT_MANIFEST.csv",
+  "source_inventory_csv": "results/v27_imported/V27_STRONGER_GRAPH_ZIP_INVENTORY.csv",
+  "status": "PASS",
+  "validation_errors": [],
+  "version": "V27"
+}
