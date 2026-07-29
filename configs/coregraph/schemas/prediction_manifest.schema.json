@@ -1,32 +1,66 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "CoReGraphPredictionManifestV2",
+  "title": "CoReGraphPredictionManifestV3",
   "type": "object",
   "required": [
     "expert_id",
     "dataset",
-    "contract_id",
+    "task",
+    "prediction_unit",
+    "contract_coordinate_hash",
+    "environment_id",
+    "seed",
+    "fold",
     "contract_role",
     "deployment_contract",
-    "task_type",
-    "prediction_unit",
     "prediction_path",
     "prediction_checksum",
-    "config_hash"
+    "config_hash",
+    "code_hash",
+    "expert_available",
+    "availability_reason_codes",
+    "compute_cost",
+    "score_type"
   ],
   "properties": {
-    "expert_id": {"type": "string"},
-    "dataset": {"type": "string"},
-    "contract_id": {"type": "string"},
-    "contract_role": {"enum": ["source", "target"]},
-    "deployment_contract": {"type": "object"},
-    "task_type": {
-      "enum": ["node_classification", "edge_classification", "transaction_classification"]
+    "expert_id": {"type": "string", "minLength": 1},
+    "expert_alias_of": {"type": "string"},
+    "dataset": {"type": "string", "minLength": 1},
+    "task": {
+      "enum": [
+        "node_classification",
+        "edge_classification",
+        "transaction_classification"
+      ]
     },
     "prediction_unit": {"enum": ["node", "edge", "transaction"]},
+    "contract_coordinate_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "environment_id": {"type": "string", "minLength": 1},
+    "seed": {"type": "integer", "minimum": 0},
+    "fold": {"type": ["string", "integer"]},
+    "contract_role": {"enum": ["source", "target"]},
+    "deployment_contract": {"type": "object"},
     "prediction_path": {"type": "string"},
-    "prediction_checksum": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-    "config_hash": {"type": "string"}
+    "prediction_checksum": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "config_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "code_hash": {
+      "type": "string",
+      "pattern": "^([0-9a-f]{40}|[0-9a-f]{64})$"
+    },
+    "expert_available": {"type": "boolean"},
+    "availability_reason_codes": {
+      "type": "array",
+      "items": {"type": "string"},
+      "minItems": 1
+    },
+    "compute_cost": {"type": "number", "minimum": 0},
+    "score_type": {"enum": ["PROBABILITY", "LOGIT", "RANK_SCORE"]}
   },
   "additionalProperties": true
 }

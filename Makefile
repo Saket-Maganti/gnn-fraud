@@ -9,7 +9,7 @@ PYTESTS = \
 
 .PHONY: help compile test unittest support claims figures tables paper delta public-audit \
 	coregraph-compile coregraph-lint coregraph-typecheck coregraph-test \
-	coregraph-local-gates
+	coregraph-coverage coregraph-local-gates
 
 help:
 	@echo "Dataset-free targets: compile test unittest support claims figures tables paper delta public-audit"
@@ -51,19 +51,36 @@ coregraph-compile:
 	$(PY) -m compileall -q coregraph scripts/coregraph tests/coregraph
 
 coregraph-lint:
-	$(PY) -m ruff check coregraph scripts/coregraph tests/coregraph --select F,I
+	$(PY) -m ruff check coregraph scripts/coregraph tests/coregraph
 
 coregraph-typecheck:
 	$(PY) -m mypy coregraph/contracts coregraph/routing coregraph/objectives \
-		coregraph/evidence.py --ignore-missing-imports --show-error-codes
+		coregraph/experts coregraph/experiments/pilot.py \
+		coregraph/experiments/contract_splits.py coregraph/evaluation/statistics.py \
+		coregraph/evaluation/metrics.py coregraph/evidence.py coregraph/theory \
+		scripts/coregraph/run_statistical_analysis.py \
+		scripts/coregraph/evaluate_pilot_gate.py \
+		scripts/coregraph/run_saved_output_pilot.py \
+		--ignore-missing-imports --show-error-codes
 
 coregraph-test:
 	$(PY) -m pytest -q
 
-coregraph-local-gates: coregraph-compile coregraph-lint coregraph-typecheck coregraph-test
+coregraph-coverage:
+	$(PY) -m coverage erase
+	$(PY) -m coverage run --source=coregraph -m pytest -q
+	$(PY) -m coverage report --include='coregraph/contracts/*' --fail-under=85
+	$(PY) -m coverage report --include='coregraph/routing/*' --fail-under=85
+	$(PY) -m coverage report --include='coregraph/objectives/*' --fail-under=85
+	$(PY) -m coverage report --include='coregraph/experiments/pilot.py' --fail-under=85
+	$(PY) -m coverage report --include='coregraph/evidence.py' --fail-under=85
+	$(PY) -m coverage report --include='coregraph/experiments/contract_splits.py' --fail-under=85
+
+coregraph-local-gates: coregraph-compile coregraph-lint coregraph-typecheck coregraph-test coregraph-coverage
 	$(PY) scripts/coregraph/check_theory_numerically.py
 	$(PY) scripts/coregraph/validate_theory_status.py
 	$(PY) scripts/coregraph/validate_notebooks.py
+	$(PY) scripts/coregraph/run_synthetic_method_checks.py
 	$(PY) scripts/coregraph/run_coregraph_smoke.py
 	$(PY) scripts/coregraph/validate_paper_skeleton.py
 	$(PY) scripts/coregraph/build_anonymous_release.py

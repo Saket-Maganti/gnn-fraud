@@ -24,9 +24,11 @@ name. Ablations remove contract axes, interactions, diagnostics, regret, CVaR,
 budget, compute, stability, fallback, or abstention.
 
 \paragraph{Outcomes and inference.}
-Primary outcomes are worst-contract AUPRC, worst-contract Recall@1\%, mean,
-maximum, and CVaR regret, average AUPRC, budget-curve area,
-compute-normalised utility, and routing stability. Inference is paired by seed
-within a fixed dataset/contract. Contexts are averaged within seed; exact or
-resampling tests replace normal approximations at ten seeds. Holm correction is
-predeclared for main comparisons.
+Primary outcomes are AUPRC, Recall@0.5\%, Recall@1\%, Recall@2\%,
+budget-curve area, mean, maximum, and CVaR regret, selective risk, and compute.
+Inference pairs exact dataset--task--target-contract--fold contexts, averages
+contexts within seed, and treats the seed as the inferential block. Exact
+Wilcoxon, paired permutation, and seed-block bootstrap analyses replace normal
+approximations. Holm families are frozen before any final-run outcomes are
+inspected. Worst-contract comparisons use paired target-contract outcomes or
+contract regret rather than minima of unpaired raw scores.

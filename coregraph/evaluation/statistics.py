@@ -4,13 +4,15 @@ from __future__ import annotations
 
 import itertools
 from dataclasses import dataclass
-from typing import Mapping, Sequence
+from typing import Mapping, Sequence, TypeAlias
 
 import numpy as np
 from scipy.stats import binomtest, wilcoxon
 
+FloatArrayLike: TypeAlias = Sequence[float] | np.ndarray
 
-def _diffs(a: Sequence[float], b: Sequence[float]) -> np.ndarray:
+
+def _diffs(a: FloatArrayLike, b: FloatArrayLike) -> np.ndarray:
     left = np.asarray(a, dtype=float)
     right = np.asarray(b, dtype=float)
     if left.shape != right.shape:
@@ -32,9 +34,82 @@ class PairedInference:
     interpretation: str = "fixed_dataset_seed_block"
 
 
+@dataclass(frozen=True)
+class PairedSeedBlocks:
+    seeds: tuple[int, ...]
+    method_values: tuple[float, ...]
+    baseline_values: tuple[float, ...]
+    contexts_per_seed: tuple[int, ...]
+    aggregation: str = "mean_target_contracts_within_seed"
+
+
+def build_paired_seed_blocks(
+    rows: Sequence[Mapping[str, float | int | str]],
+    *,
+    method: str,
+    baseline: str,
+    metric: str,
+) -> PairedSeedBlocks:
+    """Pair exact target contexts, then aggregate contexts within each seed."""
+
+    selected = [
+        row
+        for row in rows
+        if str(row["metric"]) == metric
+        and str(row["method"]) in {method, baseline}
+    ]
+    values: dict[tuple[str, str, int, str, str], float] = {}
+    for row in selected:
+        key = (
+            str(row["dataset"]),
+            str(row["target_contract"]),
+            int(row["seed"]),
+            str(row.get("fold", "")),
+            str(row["method"]),
+        )
+        if key in values:
+            raise ValueError(f"duplicate paired context row: {key}")
+        values[key] = float(row["value"])
+    contexts = {
+        (dataset, contract, seed, fold)
+        for dataset, contract, seed, fold, _ in values
+    }
+    missing = [
+        context
+        for context in sorted(contexts)
+        if (*context, method) not in values or (*context, baseline) not in values
+    ]
+    if missing:
+        raise ValueError(f"paired seed blocks have missing method rows: {missing}")
+    if not contexts:
+        raise ValueError("paired seed blocks contain no aligned rows")
+    by_seed: dict[int, list[tuple[float, float]]] = {}
+    for context in sorted(contexts):
+        seed = context[2]
+        by_seed.setdefault(seed, []).append(
+            (values[(*context, method)], values[(*context, baseline)])
+        )
+    counts = {len(pairs) for pairs in by_seed.values()}
+    if len(counts) != 1:
+        raise ValueError("paired seeds have unequal target-context coverage")
+    seeds = tuple(sorted(by_seed))
+    return PairedSeedBlocks(
+        seeds=seeds,
+        method_values=tuple(
+            float(np.mean([pair[0] for pair in by_seed[seed]]))
+            for seed in seeds
+        ),
+        baseline_values=tuple(
+            float(np.mean([pair[1] for pair in by_seed[seed]]))
+            for seed in seeds
+        ),
+        contexts_per_seed=tuple(len(by_seed[seed]) for seed in seeds),
+    )
+
+
 def exact_wilcoxon(
-    a: Sequence[float],
-    b: Sequence[float],
+    a: FloatArrayLike,
+    b: FloatArrayLike,
     *,
     alternative: str = "two-sided",
 ) -> PairedInference:
@@ -60,8 +135,8 @@ def exact_wilcoxon(
 
 
 def sign_test(
-    a: Sequence[float],
-    b: Sequence[float],
+    a: FloatArrayLike,
+    b: FloatArrayLike,
     *,
     alternative: str = "two-sided",
 ) -> PairedInference:
@@ -82,8 +157,8 @@ def sign_test(
 
 
 def paired_permutation(
-    a: Sequence[float],
-    b: Sequence[float],
+    a: FloatArrayLike,
+    b: FloatArrayLike,
     *,
     alternative: str = "two-sided",
     n_permutations: int = 100_000,
@@ -118,7 +193,7 @@ def paired_permutation(
     )
 
 
-def paired_effect_size(differences: Sequence[float]) -> float:
+def paired_effect_size(differences: FloatArrayLike) -> float:
     values = np.asarray(differences, dtype=float)
     if len(values) < 2:
         return 0.0
@@ -127,7 +202,7 @@ def paired_effect_size(differences: Sequence[float]) -> float:
 
 
 def bootstrap_seed_blocks(
-    differences: Sequence[float],
+    differences: FloatArrayLike,
     *,
     n_bootstrap: int = 10_000,
     seed: int = 20260729,
