@@ -1,6 +1,6 @@
 {
   "schema": "coregraph_independent_audit_gate_status_v2",
-  "verdict": "PENDING_DRAFT_PR_CI_AND_SECOND_REVIEW_HANDOFF",
+  "verdict": "COREGRAPH_INDEPENDENT_AUDIT_REPAIRS_COMPLETE_READY_FOR_SECOND_REVIEW",
   "scientific_core_repairs_complete": true,
   "execution_readiness_claimed": false,
   "execution_performed": {
@@ -36,7 +36,8 @@
     "frozen_tkde_boundary": "ZERO_TKDE_SCIENTIFIC_DELTAS_249_FILES"
   },
   "external_or_empirical_gates": {
-    "draft_pr_ci": "PENDING",
+    "draft_pr_ci": "PASS_4_NO_HEAVY_CHECKS_ON_REPAIR_COMMIT",
+    "validated_repair_commit": "a11cec7286d3db88eda47ee40b99794add0f79a4",
     "saved_output_pilot": "NOT_RUN_REQUIRES_SEPARATE_REVIEW",
     "provider_manifests": "NOT_CONNECTED",
     "official_baseline_parity": "NOT_ATTEMPTED",
@@ -45,7 +46,8 @@
   "git": {
     "branch": "codex/coregraph-iclr-buildout-2026",
     "draft_pr": 2,
-    "normal_fast_forward_push_complete": false,
+    "draft_pr_open_and_draft": true,
+    "normal_fast_forward_push_complete": true,
     "force_push": false,
     "merge": false
   }
