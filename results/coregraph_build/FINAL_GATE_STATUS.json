@@ -77,6 +77,7 @@
     "notebooks": "PASS_12",
     "paper": "PASS_8_PAGE_PLACEHOLDER_8_CLAIMS_BLOCKED",
     "anonymous_release": "PASS_250_FILES_PACKAGE_TESTS",
+    "public_tree": "PASS_COMMITTED_TREE_ZERO_FINDINGS",
     "frozen_tkde_boundary": "ZERO_TKDE_SCIENTIFIC_DELTAS_249_FILES"
   },
   "frozen_specs": {
