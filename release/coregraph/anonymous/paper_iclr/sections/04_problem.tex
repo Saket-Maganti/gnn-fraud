@@ -18,12 +18,19 @@ score is
 \[
   s_\theta(x,c)=\sum_{e\in\mathcal A(c)}w_{\theta,e}(x,c,d)s_e(x;G_c).
 \]
-The feasible oracle is $R_c^\star=\min_{e\in\mathcal A(c)}R_c(e)$ and
-offline contract regret is
+The contract-level feasible oracle is
+$R_c^\star=\min_{e\in\mathcal A(c)}R_c(e)$: it chooses one feasible expert for
+the whole contract after each expert risk has been aggregated over that
+contract. Offline contract regret is
 $\mathrm{Reg}_c(\theta)=R_c(\theta)-R_c^\star$.
 The oracle is never queried at deployment.
+An instance-clairvoyant oracle that changes expert per example is a diagnostic
+ceiling only and is excluded from headline regret and significance.
 
 We distinguish domain generalisation with no target access,
 unlabelled target adaptation, and few-label target adaptation. Thresholds,
 target priors, and diagnostics inherit this access type. Node, edge, and
 transaction outcomes are never pooled as independent rows in one leaderboard.
+Target contract metadata and an operational target capacity may be known at
+inference; target labels are not available for fitting, threshold selection,
+or routing.

@@ -9,10 +9,13 @@ explanations. Probability and logit mixtures are never interchanged
 implicitly; rank scores cannot enter calibration or entropy computations.
 
 The saved-output pilot predeclares each single expert, feasible averaging,
-source-validation best expert, a source-validation convex mixture, the actual
-GraphSafe V2 compatibility implementation, the current graph-feature gate,
-learned atomic- and no-contract routers, a clearly labelled
-`MOWST_INSPIRED_REIMPLEMENTATION`, and an offline feasible-oracle ceiling.
+source-validation best expert, a source-validation convex mixture, the partial
+`graphsafe_confidence_abstention_component`, the current graph-feature gate,
+learned atomic- and no-contract routers, and the source-trained
+`MOWST_INSPIRED_REIMPLEMENTATION`. The partial GraphSafe component is not a
+full GraphSafe comparator. Headline regret uses one contract-level feasible
+oracle expert for the whole contract. The instance-clairvoyant oracle is an
+offline diagnostic ceiling excluded from significance and deployable methods.
 CoReGraph may be called robust only when held-out-combination, worst-contract,
 CVaR, calibration, and budget results are complete.
 
@@ -22,3 +25,13 @@ may receive positive mass when its graph, edge-feature, memory, or licence
 requirements are unmet. An all-unavailable row bypasses attention, assigns
 zero expert weight, selects expert `-1`, emits the declared blend sentinel,
 and forces abstention to one.
+
+The frozen source-validation abstention threshold and decision are preserved
+exactly. Source-contract abstention capacities govern fitting; target
+operational capacity can constrain only the final label-free decision.
+Fallback produces an executable prediction from another allowed expert,
+whereas abstention produces no accepted prediction. Every method-contract row
+declares its execution state, and unavailable scores never enter ranking
+metrics. Expert-prediction seed is the inferential block; router-training seed
+is derived deterministically per method or ablation and is never counted as a
+replication.

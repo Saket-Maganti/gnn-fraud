@@ -154,10 +154,10 @@ def test_composite_objective_derives_group_risks_and_backpropagates(
         expert_weights=output.expert_weights,
         expert_costs=torch.tensor([1.0, 3.0]),
         stability_penalty=output.expert_weights.square().mean(),
-        review_k=2,
+        review_k_by_group={0: 2, 1: 2},
         abstention_probability=output.abstention_probability,
         forced_abstention=~availability.any(dim=1),
-        abstention_capacity=0.25,
+        abstention_capacity_by_group={0: 0.25, 1: 0.25},
         abstention_cost_value=0.2,
     )
     assert terms["contract_router_risk"].shape == (2,)
@@ -174,7 +174,7 @@ def test_composite_objective_derives_group_risks_and_backpropagates(
     assert any(gradient is not None and gradient.abs().sum() > 0 for gradient in router_grads)
 
 
-def test_feasible_oracle_respects_example_level_availability() -> None:
+def test_feasible_oracle_requires_whole_contract_availability() -> None:
     objective = CompositeObjective(ObjectiveWeights(robust_regret=1.0))
     _, terms = objective(
         router_scores=torch.tensor([0.9, 0.1]),
@@ -185,7 +185,7 @@ def test_feasible_oracle_respects_example_level_availability() -> None:
         availability_mask=torch.tensor([[True, False], [False, True]]),
         expert_weights=torch.tensor([[1.0, 0.0], [0.0, 1.0]]),
         expert_costs=torch.tensor([1.0, 1.0]),
+        abstention_cost_value=0.3,
     )
-    assert terms["feasible_oracle_risk"].item() == pytest.approx(
-        -np.log(0.9),
-    )
+    assert terms["contract_availability"].tolist() == [[0.0, 0.0]]
+    assert terms["contract_feasible_oracle_risk"].item() == pytest.approx(0.3)
