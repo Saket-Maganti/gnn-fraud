@@ -1,6 +1,11 @@
 # CoReGraph third-review handoff
 
-Status: `LOCAL_DETERMINISTIC_GATES_PASS_DRAFT_PR_CI_PENDING`.
+Verdict:
+`COREGRAPH_PILOT_SEMANTICS_CLOSED_READY_FOR_MANIFEST_CONVERSION_REVIEW`.
+
+All local deterministic gates and all four no-heavy draft-PR checks pass on
+validated repair commit `c81bb7ff0397c129eaf7845adf8e4b08fe61d67f`.
+PR #2 remains open and draft.
 
 Review the pilot V3 semantics and frozen gate, not empirical performance. No
 real prediction was connected and no pilot or multi-seed experiment ran.

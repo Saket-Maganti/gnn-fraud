@@ -1,6 +1,10 @@
 # CoReGraph second-review pilot-semantics repair report
 
-Status: `LOCAL_DETERMINISTIC_GATES_PASS_DRAFT_PR_CI_PENDING`.
+Verdict:
+`COREGRAPH_PILOT_SEMANTICS_CLOSED_READY_FOR_MANIFEST_CONVERSION_REVIEW`.
+
+All four no-heavy draft-PR checks pass on validated repair commit
+`c81bb7ff0397c129eaf7845adf8e4b08fe61d67f`.
 
 The thirteen second-review findings are repaired in deterministic code,
 regression tests, frozen schemas, theory scope, documentation, and paper

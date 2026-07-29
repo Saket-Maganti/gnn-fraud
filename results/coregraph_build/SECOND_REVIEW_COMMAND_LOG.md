@@ -57,3 +57,7 @@ passed. One typed-core job exposed a pre-existing platform-sensitive exact
 float assertion (`1.0000001192092896 == 1`) in the router mask test. The
 assertion was repaired to use numerical tolerance; no scientific computation
 or acceptance threshold changed.
+
+The repair was revalidated locally, committed as `c81bb7f`, and pushed by
+normal fast-forward. Both audit and both typed-core jobs then passed. PR #2
+remained open and draft.

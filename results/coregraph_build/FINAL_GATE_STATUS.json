@@ -1,6 +1,6 @@
 {
   "schema": "coregraph_pilot_semantics_closure_gate_v3",
-  "verdict": "LOCAL_DETERMINISTIC_GATES_PASS_DRAFT_PR_CI_PENDING",
+  "verdict": "COREGRAPH_PILOT_SEMANTICS_CLOSED_READY_FOR_MANIFEST_CONVERSION_REVIEW",
   "pilot_semantics_closed_locally": true,
   "execution_readiness_claimed": false,
   "execution_performed": {
@@ -39,7 +39,8 @@
     "frozen_tkde_boundary": "ZERO_TKDE_SCIENTIFIC_DELTAS_249_FILES"
   },
   "external_or_empirical_gates": {
-    "draft_pr_ci": "PENDING_FIRST_REPAIR_PUSH",
+    "draft_pr_ci": "PASS_4_NO_HEAVY_CHECKS_ON_VALIDATED_REPAIR_COMMIT",
+    "validated_repair_commit": "c81bb7ff0397c129eaf7845adf8e4b08fe61d67f",
     "manifest_conversion": "NOT_STARTED",
     "dry_run_completeness_audit": "NOT_RUN",
     "third_independent_review": "REQUIRED",
@@ -49,6 +50,8 @@
   "git": {
     "branch": "codex/coregraph-iclr-buildout-2026",
     "draft_pr": 2,
+    "draft_pr_open_and_draft": true,
+    "normal_fast_forward_push_complete": true,
     "force_push": false,
     "merge": false
   }
