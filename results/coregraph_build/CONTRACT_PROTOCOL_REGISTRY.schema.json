@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CoReGraphContractProtocolRegistryV4",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "frozen_before_manifest_conversion",
+    "protocols"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "coregraph_contract_protocol_registry_v4"
+    },
+    "frozen_before_manifest_conversion": {
+      "const": true
+    },
+    "protocols": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": [
+          "protocol_id",
+          "visibility_profile",
+          "allowed_contract_roles",
+          "semantic_definition"
+        ],
+        "properties": {
+          "protocol_id": {
+            "enum": [
+              "strict_inductive",
+              "isolated_inductive",
+              "transductive_structure"
+            ]
+          },
+          "visibility_profile": {
+            "enum": [
+              "strict_inductive",
+              "isolated_inductive",
+              "transductive_structure"
+            ]
+          },
+          "allowed_contract_roles": {
+            "type": "array",
+            "items": {
+              "enum": ["source", "target"]
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "semantic_definition": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
