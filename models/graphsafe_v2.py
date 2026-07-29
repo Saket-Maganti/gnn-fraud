@@ -10,6 +10,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Iterable
 
+import numpy as np
+
 
 @dataclass(frozen=True)
 class GraphSafeV2Config:
@@ -71,6 +73,19 @@ def _confidence(row: dict[str, Any], config: GraphSafeV2Config) -> float:
 
 def _prediction(row: dict[str, Any], config: GraphSafeV2Config) -> int:
     return 1 if _float(row.get("score")) >= config.decision_threshold else 0
+
+
+def confidence_scores(
+    scores: Iterable[float],
+    config: GraphSafeV2Config | None = None,
+) -> np.ndarray:
+    """Expose the label-free GraphSafe confidence used for selective routing."""
+
+    selected = config or GraphSafeV2Config()
+    return np.asarray(
+        [_confidence({"score": float(score)}, selected) for score in scores],
+        dtype=float,
+    )
 
 
 def selective_risk_rows(rows: list[dict[str, Any]], config: GraphSafeV2Config | None = None) -> list[dict[str, Any]]:

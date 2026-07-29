@@ -1,15 +1,15 @@
 {
-  "aggregate_sha256": "b3759bca55deeb48097acd0f30e706cbfeb3309f5fba5538d0336b742f1f7791",
+  "aggregate_sha256": "d9afc6bc5beda8a71671770aa593acb6a705f127a115102d8a9430e7c6fdb6fd",
   "files": {
-    "configs/coregraph/analysis_families.yaml": "80336889c900ed1458e9a682a57672b64b0240792c84782dbc0dbac21865993b",
-    "configs/coregraph/run_matrices/ABLATION_GRID.csv": "73e4f58efc88f4b677cf9ca6b49e366fb5dbc4d3a471d65dce4a811f4c8d2a65",
-    "configs/coregraph/run_matrices/FINAL_10SEED_GRID.csv": "6ae91cd2f64771943c16ba32d48b1ce3f17af57cd4a8da38ce0663f43aba4f4c",
-    "configs/coregraph/run_matrices/FRAUD_GRID.csv": "c6a6692167582264d0aa0c6d69c8830756c371888c69a75068a873a1db553b9d",
-    "configs/coregraph/run_matrices/GOOD_GRID.csv": "aa71399b61932d542df761c0795f133b8abded5ba67e38478f2543dd81ce9606",
-    "configs/coregraph/run_matrices/MASTER_EXPERIMENT_MATRIX.csv": "cf6426601bfbf618fae921251541b743ff79c5f2aaba04ace0f7597cd47c747f",
-    "configs/coregraph/run_matrices/RESOURCE_GRID.csv": "0ff0a13a3d37f5a79128535dd83256348985261b4e5548f34e76bbedfe965967",
-    "configs/coregraph/run_matrices/SCREENING_5SEED_GRID.csv": "fb973edd64b90d2eee71843112ab926a432a670cffb7ec1ebf5b01f68ed2b1cf",
-    "configs/coregraph/run_matrices/THEORY_SYNTHETIC_GRID.csv": "fbfedff878b5113d213d7b136a5ef6a5b08fd657eb0f2ce7e804feba0a3c6627"
+    "configs/coregraph/analysis_families.yaml": "6be55fcdd40fac94bd7339a0c74c24ee5251412cbbee7bac78898346d86efb67",
+    "configs/coregraph/run_matrices/ABLATION_GRID.csv": "50f41ef1f252df0250217b0344ccfd087c92373ed6b2d71eef9205332371f710",
+    "configs/coregraph/run_matrices/FINAL_10SEED_GRID.csv": "8d3e5982ebfa2d58e1977ca1dfb9f81eb7adb12ab2123bad3be6248b3cdb4d2e",
+    "configs/coregraph/run_matrices/FRAUD_GRID.csv": "1797615cefaa551e7196fa48901597915238f5b4403b1d3d366b02c7be664fad",
+    "configs/coregraph/run_matrices/GOOD_GRID.csv": "35106669f85ec6013a7e568ec95b56e121bf1cf4f36e1dbf2e1bff532bb2fe59",
+    "configs/coregraph/run_matrices/MASTER_EXPERIMENT_MATRIX.csv": "56a0131d7b32735801822294eba6b4f93e5434182fc0756304b7959d494af847",
+    "configs/coregraph/run_matrices/RESOURCE_GRID.csv": "73304908e786c4bed4c3e4633eb99d9eda1032cc8633755ad274e1bc1b08f639",
+    "configs/coregraph/run_matrices/SCREENING_5SEED_GRID.csv": "48a6100b07e0580f0e741ef7494fe776d983168298096f6c6c0bf9af725fd224",
+    "configs/coregraph/run_matrices/THEORY_SYNTHETIC_GRID.csv": "ed95fcbaa78e862e67d99fc795ad2111eddb8e4892001d89813afbd81d183b15"
   },
   "note": "Regenerate only before inspecting final-run outcomes.",
   "schema": "coregraph_analysis_freeze_v1"

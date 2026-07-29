@@ -32,13 +32,16 @@ jobs:
           make coregraph-typecheck
 
       - name: Unit, mutation, and frozen regression tests
-        run: make coregraph-test
+        run: |
+          make coregraph-test
+          make coregraph-coverage
 
       - name: Theory, notebook, paper, release, and frozen-asset gates
         run: |
           python scripts/coregraph/check_theory_numerically.py
           python scripts/coregraph/validate_theory_status.py
           python scripts/coregraph/validate_notebooks.py
+          python scripts/coregraph/run_synthetic_method_checks.py
           python scripts/coregraph/run_coregraph_smoke.py
           python scripts/coregraph/validate_paper_skeleton.py
           python scripts/coregraph/build_anonymous_release.py

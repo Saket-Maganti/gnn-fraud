@@ -1,37 +1,49 @@
-schema: coregraph_analysis_plan_v1
+schema: coregraph_analysis_plan_v2
 frozen_before_final_runs: true
-primary_metric: worst_contract_auprc
-secondary_metrics:
-  - feasible_oracle_regret
-  - cvar_0_2_auprc
-  - recall_at_budget
-  - brier
-  - expected_compute
-pairing_unit: dataset_task_contract_seed
-aggregation_unit: seed_context
+pairing_unit: seed_after_exact_dataset_task_target_contract_fold_pairing
+contract_rows_as_independent_seeds: prohibited
+primary_outcomes:
+  - auprc
+  - recall_at_0.5pct
+  - recall_at_1pct
+  - recall_at_2pct
+  - budget_curve_area
+  - mean_regret
+  - maximum_regret
+  - cvar_regret
+  - selective_risk
+  - compute
+inference:
+  - exact_wilcoxon
+  - paired_permutation
+  - seed_block_bootstrap
 families:
-  confirmatory_primary:
-    hypotheses:
-      - coregraph_vs_best_single_worst_contract
-      - coregraph_vs_graphsafe_regret
-      - coregraph_vs_no_contract_heldout_combination
+  ranking_and_budget:
+    outcomes:
+      - auprc
+      - recall_at_0.5pct
+      - recall_at_1pct
+      - recall_at_2pct
+      - budget_curve_area
+    comparisons: every_predeclared_strong_baseline
     correction: holm
     alpha: 0.05
-    test: paired_permutation
-  confirmatory_calibration:
-    hypotheses:
-      - coregraph_vs_best_single_brier
-      - coregraph_vs_best_single_adaptive_ece
+  robust_risk:
+    outcomes:
+      - mean_regret
+      - maximum_regret
+      - cvar_regret
+    comparisons: every_predeclared_strong_baseline
     correction: holm
     alpha: 0.05
-    test: paired_bootstrap
-  exploratory_ablations:
-    hypotheses:
-      - all_preregistered_ablation_contrasts
-    correction: benjamini_hochberg
+  deployment:
+    outcomes:
+      - selective_risk
+      - compute
+    comparisons: every_predeclared_strong_baseline
+    correction: holm
     alpha: 0.05
-    test: exact_wilcoxon_or_sign
 missingness:
-  resource_blocked: report_and_exclude_from_infeasible_oracle
+  resource_blocked: report_and_exclude_from_predictive_ordering
   failed: report_no_imputation
   missing_seed: blocks_confirmatory_claim
