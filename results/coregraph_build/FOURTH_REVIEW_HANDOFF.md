@@ -74,6 +74,7 @@ same reason. They are not recorded as passes.
 - Eight-page placeholder paper and claim audit: pass; eight empirical claims
   remain blocked.
 - Anonymous release: 250 files; identity/path audit and package tests pass.
+- Committed public tree: zero findings.
 - Frozen boundary: `ZERO_TKDE_SCIENTIFIC_DELTAS` for all 249 files.
 
 ## Confirmed non-actions

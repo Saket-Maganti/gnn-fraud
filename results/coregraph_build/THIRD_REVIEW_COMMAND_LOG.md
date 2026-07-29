@@ -17,6 +17,7 @@ roots supplied in the governing specification.
 | Theory/synthetic/smoke | Numerical theory gate; theorem-status gate; synthetic method checks; one-epoch CPU smoke | Dataset-free scientific and execution checks | PASS |
 | Notebook/paper | Notebook validation; ICLR placeholder PDF build; paper skeleton and claim audit | Keep empirical placeholders blocked and ensure renderability | PASS_8_PAGES |
 | Anonymous package | Anonymous release build and audit with package tests | Validate identity/path hygiene and package execution | PASS_250_FILES |
+| Public tree | Export committed `HEAD` with `git archive`; run `validate_public_tree.py` | Audit the exact committed public tree without local environments or caches | PASS_ZERO_FINDINGS |
 | Frozen boundary | `hash_frozen_assets.py --verify` | Verify the 249 frozen FraudShiftBench/TKDE files byte-for-byte | ZERO_TKDE_SCIENTIFIC_DELTAS |
 
 This log is append-only for the duration of the third-review pass.
