@@ -9,6 +9,7 @@ from typing import Sequence
 import numpy as np
 
 from coregraph.data.graph_views import GraphView
+from coregraph.objectives.scores import ScoreType, numpy_probabilities
 
 
 class DiagnosticLevel(str, Enum):
@@ -62,17 +63,22 @@ DIAGNOSTIC_REGISTRY: dict[str, DiagnosticSpec] = {
 }
 
 
-def score_diagnostics(expert_scores: np.ndarray) -> dict[str, np.ndarray]:
+def score_diagnostics(
+    expert_scores: np.ndarray,
+    *,
+    score_type: ScoreType,
+) -> dict[str, np.ndarray]:
     scores = np.asarray(expert_scores, dtype=float)
     if scores.ndim != 2:
         raise ValueError("expert_scores must have shape [examples, experts]")
-    clipped = np.clip(scores, 1e-8, 1 - 1e-8)
+    probability = numpy_probabilities(scores, score_type)
+    clipped = np.clip(probability, 1e-8, 1 - 1e-8)
     entropy = -(clipped * np.log(clipped) + (1 - clipped) * np.log(1 - clipped))
     return {
-        "confidence": np.abs(scores - 0.5) * 2,
+        "confidence": np.abs(probability - 0.5) * 2,
         "entropy": entropy,
         "score_disagreement": np.std(scores, axis=1),
-        "predicted_prevalence": np.asarray([scores.mean()]),
+        "predicted_prevalence": np.asarray([probability.mean()]),
     }
 
 

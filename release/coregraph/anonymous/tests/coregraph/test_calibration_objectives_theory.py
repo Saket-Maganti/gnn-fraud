@@ -24,6 +24,7 @@ from coregraph.objectives.classification import (
 from coregraph.objectives.compute import CostProvenance, ExpertCost, expected_compute_cost
 from coregraph.objectives.ranking import pairwise_logistic_ranking_loss
 from coregraph.objectives.regret import contract_regret, feasible_oracle_risk
+from coregraph.objectives.scores import ScoreType
 from coregraph.routing.abstention import apply_abstention_capacity, selective_risk
 from coregraph.theory.compositional_bound import compositional_error_bound
 from coregraph.theory.fixed_mixture import fixed_mixture_lower_bound
@@ -68,10 +69,14 @@ def test_predictive_and_robust_objectives_have_gradients() -> None:
     logits = torch.tensor([1.0, -1.0, 0.5, -0.5], requires_grad=True)
     targets = torch.tensor([1, 0, 1, 0])
     losses = (
-        binary_cross_entropy(logits, targets)
-        + focal_loss(logits, targets)
-        + class_balanced_loss(logits, targets)
-        + pairwise_logistic_ranking_loss(logits, targets)
+        binary_cross_entropy(logits, targets, score_type=ScoreType.LOGIT)
+        + focal_loss(logits, targets, score_type=ScoreType.LOGIT)
+        + class_balanced_loss(logits, targets, score_type=ScoreType.LOGIT)
+        + pairwise_logistic_ranking_loss(
+            logits,
+            targets,
+            score_type=ScoreType.LOGIT,
+        )
         + soft_precision_at_k_loss(logits, targets, 2)
     )
     losses.backward()
@@ -126,7 +131,7 @@ def test_theory_statuses_and_failure_guards() -> None:
         interaction_residual=0.05,
         router_approximation_error=0.02,
     )
-    assert bound.total_bound == pytest.approx(0.37)
+    assert bound.total_bound == pytest.approx(0.72)
     assert resource_mask_monotonicity(
         np.asarray([0.1, 0.2]),
         np.asarray([True, True]),

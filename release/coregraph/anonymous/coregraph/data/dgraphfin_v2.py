@@ -94,7 +94,8 @@ class DGraphFinV2Adapter:
             labelled_observation_time=labelled_observation_time,
         )
         buckets = quantile_buckets(node_time, n_buckets)
-        labeled = labels != 0
+        observed = np.isfinite(node_time)
+        labeled = (labels != 0) & observed
         train_mask = labeled & (buckets <= train_bucket)
         validation_mask = labeled & (buckets > train_bucket) & (
             buckets <= validation_bucket
@@ -149,6 +150,7 @@ class DGraphFinV2Adapter:
                 ("direction", "preserved"),
                 ("edge_type", "preserved"),
                 ("edge_timestamp", "preserved"),
+                ("unobserved_nodes_excluded", str(int((~observed).sum()))),
                 ("legacy_results_interchangeable", "false"),
             ),
         )

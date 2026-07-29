@@ -5,8 +5,9 @@ import pytest
 import torch
 
 from coregraph.contracts.axes import ContractRole, VisibilityAxis
-from coregraph.experiments.pilot import fit_saved_output_corerouter
+from coregraph.experiments.pilot import SavedSourceGroup, fit_saved_output_corerouter
 from coregraph.objectives.cvar import empirical_cvar, variational_cvar
+from coregraph.objectives.scores import ScoreType
 from coregraph.routing.diagnostics import validate_target_diagnostics
 from coregraph.routing.router import CoReRouter
 from coregraph.routing.stability import consistency_penalty, routing_flip_rate
@@ -16,8 +17,10 @@ def test_resource_mask_is_exact_and_all_missing_abstains() -> None:
     router = CoReRouter(num_experts=3, contract_dim=4, diagnostic_dim=2)
     output = router(
         expert_scores=torch.tensor([[0.1, 0.8, 0.3], [0.2, 0.4, 0.9]]),
+        score_type=ScoreType.PROBABILITY,
         contract_embedding=torch.zeros((2, 4)),
-        diagnostics=torch.zeros((2, 2)),
+        shared_diagnostics=torch.zeros((2, 2)),
+        per_expert_diagnostics=torch.zeros((2, 3, 0)),
         availability_mask=torch.tensor([[True, False, True], [False, False, False]]),
         expert_costs=torch.tensor([1.0, 2.0, 3.0]),
     )
@@ -58,15 +61,28 @@ def test_saved_output_corerouter_never_receives_target_labels(contract_factory) 
         "graph": np.asarray([0.9, 0.1, 0.8, 0.2, 0.7, 0.3]),
     }
     source = [
-        (contract_factory("source_one"), scores_a, labels, splits),
-        (
-            contract_factory(
+        SavedSourceGroup(
+            contract=contract_factory("source_one"),
+            scores=scores_a,
+            labels=labels,
+            splits=splits,
+            availability={
+                name: np.ones(len(labels), dtype=bool) for name in scores_a
+            },
+            expert_costs={"feature": 1.0, "graph": 2.0},
+        ),
+        SavedSourceGroup(
+            contract=contract_factory(
                 "source_two",
                 visibility=VisibilityAxis.HISTORICAL_ONLY,
             ),
-            scores_b,
-            labels,
-            splits,
+            scores=scores_b,
+            labels=labels,
+            splits=splits,
+            availability={
+                name: np.ones(len(labels), dtype=bool) for name in scores_b
+            },
+            expert_costs={"feature": 1.0, "graph": 2.0},
         ),
     ]
     target = contract_factory("target", role=ContractRole.TARGET)
@@ -74,6 +90,10 @@ def test_saved_output_corerouter_never_receives_target_labels(contract_factory) 
         source,
         target_contract=target,
         target_scores=scores_a,
+        target_availability={
+            name: np.ones(len(labels), dtype=bool) for name in scores_a
+        },
+        target_expert_costs={"feature": 1.0, "graph": 2.0},
         steps=2,
     )
     assert predicted.scores.shape == labels.shape

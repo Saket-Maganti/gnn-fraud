@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Iterable, Sequence
+from typing import Iterable, Sequence, TypeAlias
 
 import numpy as np
 from scipy.stats import rankdata
@@ -16,16 +16,19 @@ from sklearn.metrics import (
     roc_auc_score,
 )
 
+IntegerArrayLike: TypeAlias = Sequence[int] | np.ndarray
+FloatArrayLike: TypeAlias = Sequence[float] | np.ndarray
 
-def _binary(labels: Sequence[int], positive_label: int = 1) -> np.ndarray:
+
+def _binary(labels: IntegerArrayLike, positive_label: int = 1) -> np.ndarray:
     y = np.asarray(labels).reshape(-1)
     keep = y != 0
     return (y[keep] == positive_label).astype(int)
 
 
 def _prepare(
-    labels: Sequence[int],
-    scores: Sequence[float],
+    labels: IntegerArrayLike,
+    scores: FloatArrayLike,
     positive_label: int = 1,
 ) -> tuple[np.ndarray, np.ndarray]:
     raw = np.asarray(labels).reshape(-1)
@@ -39,14 +42,14 @@ def _prepare(
     return y, score[keep]
 
 
-def average_ranks(scores: Sequence[float], *, ascending: bool = True) -> np.ndarray:
+def average_ranks(scores: FloatArrayLike, *, ascending: bool = True) -> np.ndarray:
     values = np.asarray(scores, dtype=float)
     ranked = rankdata(values if ascending else -values, method="average")
     return np.asarray(ranked, dtype=float)
 
 
 def deterministic_top_k(
-    scores: Sequence[float],
+    scores: FloatArrayLike,
     k: int,
     *,
     identifiers: Sequence[object] | None = None,
@@ -65,8 +68,8 @@ def deterministic_top_k(
 
 
 def precision_at_k(
-    labels: Sequence[int],
-    scores: Sequence[float],
+    labels: IntegerArrayLike,
+    scores: FloatArrayLike,
     k: int | float,
     positive_label: int = 1,
 ) -> float:
@@ -78,8 +81,8 @@ def precision_at_k(
 
 
 def recall_at_k(
-    labels: Sequence[int],
-    scores: Sequence[float],
+    labels: IntegerArrayLike,
+    scores: FloatArrayLike,
     k: int | float,
     positive_label: int = 1,
 ) -> float:
@@ -98,8 +101,8 @@ def _resolve_k(k: int | float, n: int) -> int:
 
 
 def budget_curve_auc(
-    labels: Sequence[int],
-    scores: Sequence[float],
+    labels: IntegerArrayLike,
+    scores: FloatArrayLike,
     budgets: Sequence[float],
     *,
     metric: str = "recall",
@@ -116,8 +119,8 @@ def budget_curve_auc(
 
 
 def binary_metrics(
-    labels: Sequence[int],
-    scores: Sequence[float],
+    labels: IntegerArrayLike,
+    scores: FloatArrayLike,
     *,
     threshold: float = 0.5,
     positive_label: int = 1,
@@ -149,8 +152,8 @@ class ThresholdSelection:
 
 
 def select_threshold_on_validation(
-    labels: Sequence[int],
-    scores: Sequence[float],
+    labels: IntegerArrayLike,
+    scores: FloatArrayLike,
     *,
     objective: str,
     thresholds: Iterable[float] | None = None,
@@ -197,7 +200,7 @@ def select_threshold_on_validation(
 
 
 def select_budget_cutoff(
-    scores: Sequence[float],
+    scores: FloatArrayLike,
     *,
     budget: int | float,
 ) -> tuple[float, int]:

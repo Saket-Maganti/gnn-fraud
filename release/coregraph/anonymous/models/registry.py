@@ -25,7 +25,7 @@ edge attributes, etc.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Tuple
+from typing import Callable, Tuple
 
 import torch.nn as nn
 
@@ -37,8 +37,9 @@ from models.gnn import (
 from models.modern_gnn import GraphTransformer, GPS, PCGNN, BWGNN, GIN
 from models.temporal_gnn import SnapshotTGN
 
+ModelFactory = Callable[..., nn.Module]
 
-LEGACY_MODELS = {
+LEGACY_MODELS: dict[str, ModelFactory] = {
     "gcn":          GCN,
     "sage":         GraphSAGE,
     "graphsage":    GraphSAGE,
@@ -87,7 +88,7 @@ def _snapshot_tgn_light(in_channels: int, out_channels: int = 3, **_ignored) -> 
                        num_layers=1, heads=1, dropout=0.3, time_dim=16)
 
 
-MODERN_MODELS = {
+MODERN_MODELS: dict[str, ModelFactory] = {
     "graph_transformer": GraphTransformer,
     "transformer":       GraphTransformer,  # alias
     "gps":               GPS,
@@ -99,7 +100,7 @@ MODERN_MODELS = {
     "beta_wavelet":      BWGNN,              # alias
 }
 
-TEMPORAL_MODELS = {
+TEMPORAL_MODELS: dict[str, ModelFactory] = {
     "snapshot_tgn":       SnapshotTGN,
     "tgn":                SnapshotTGN,        # alias
     "snapshot_tgn_light": _snapshot_tgn_light,  # optional light config

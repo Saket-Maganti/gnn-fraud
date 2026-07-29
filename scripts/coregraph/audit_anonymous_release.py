@@ -8,6 +8,7 @@ import json
 import re
 import subprocess
 import sys
+import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -86,11 +87,36 @@ def main() -> int:
     )
     if smoke.returncode != 0:
         failures.append(f"package_import:{smoke.stderr[-500:]}")
+    test_environment = dict(os.environ)
+    test_environment["PYTHONDONTWRITEBYTECODE"] = "1"
+    package_tests = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "pytest",
+            "-q",
+            "-p",
+            "no:cacheprovider",
+            "tests/coregraph",
+        ],
+        cwd=PACKAGE,
+        check=False,
+        capture_output=True,
+        text=True,
+        env=test_environment,
+    )
+    if package_tests.returncode != 0:
+        failures.append(f"package_tests:{package_tests.stdout[-500:]}")
     report = {
         "schema": "coregraph_anonymous_audit_v1",
         "status": "PASS" if not failures else "FAIL",
         "failures": failures,
         "package": "release/coregraph/anonymous",
+        "package_tests": (
+            "PASS"
+            if package_tests.returncode == 0
+            else f"FAIL_EXIT_{package_tests.returncode}"
+        ),
     }
     output = ROOT / "results/coregraph_build/ANONYMOUS_RELEASE_AUDIT.json"
     output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")

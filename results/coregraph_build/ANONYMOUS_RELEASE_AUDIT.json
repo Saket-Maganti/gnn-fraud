@@ -1,6 +1,7 @@
 {
   "failures": [],
   "package": "release/coregraph/anonymous",
+  "package_tests": "PASS",
   "schema": "coregraph_anonymous_audit_v1",
   "status": "PASS"
 }

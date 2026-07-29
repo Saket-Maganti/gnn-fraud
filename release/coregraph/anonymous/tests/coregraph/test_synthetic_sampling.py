@@ -20,7 +20,11 @@ def test_all_synthetic_regimes_are_deterministic(regime: SyntheticRegime) -> Non
     right = generate_contract_shift(regime, controls)
     assert np.array_equal(left.labels, right.labels)
     assert np.array_equal(left.edge_index, right.edge_index)
-    assert oracle_expert_ranking(left)
+    ranking = oracle_expert_ranking(left)
+    if regime is SyntheticRegime.ALL_EXPERTS_UNAVAILABLE:
+        assert ranking == []
+    else:
+        assert ranking
 
 
 def test_sampling_is_deterministic_and_temporal() -> None:
