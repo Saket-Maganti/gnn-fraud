@@ -50,7 +50,7 @@ def build_paired_seed_blocks(
     baseline: str,
     metric: str,
 ) -> PairedSeedBlocks:
-    """Pair exact target contexts, then aggregate contexts within each seed."""
+    """Pair exact target contexts inside exactly one dataset."""
 
     selected = [
         row
@@ -62,7 +62,12 @@ def build_paired_seed_blocks(
     for row in selected:
         key = (
             str(row["dataset"]),
-            str(row["target_contract"]),
+            str(
+                row.get(
+                    "target_protocol_id",
+                    row.get("target_contract", ""),
+                )
+            ),
             int(
                 row["expert_prediction_seed"]
                 if "expert_prediction_seed" in row
@@ -87,6 +92,12 @@ def build_paired_seed_blocks(
         raise ValueError(f"paired seed blocks have missing method rows: {missing}")
     if not contexts:
         raise ValueError("paired seed blocks contain no aligned rows")
+    datasets = {context[0] for context in contexts}
+    if len(datasets) != 1:
+        raise ValueError(
+            "paired seed blocks must be dataset-stratified; "
+            "numeric seeds have no cross-dataset pairing meaning"
+        )
     by_seed: dict[int, list[tuple[float, float]]] = {}
     for context in sorted(contexts):
         seed = context[2]
@@ -221,6 +232,39 @@ def bootstrap_seed_blocks(
     indices = rng.integers(0, len(values), size=(n_bootstrap, len(values)))
     means = values[indices].mean(axis=1)
     low, high = np.quantile(means, [0.025, 0.975])
+    return float(low), float(high)
+
+
+def hierarchical_dataset_bootstrap(
+    differences_by_dataset: Mapping[str, FloatArrayLike],
+    *,
+    n_bootstrap: int = 10_000,
+    seed: int = 20260729,
+) -> tuple[float, float]:
+    """Bootstrap datasets first, then seed blocks inside sampled datasets."""
+
+    if not differences_by_dataset:
+        raise ValueError("dataset-stratified bootstrap requires datasets")
+    datasets = tuple(sorted(differences_by_dataset))
+    values: dict[str, np.ndarray] = {}
+    for dataset in datasets:
+        array = np.asarray(differences_by_dataset[dataset], dtype=float)
+        if array.ndim != 1 or not len(array) or not np.isfinite(array).all():
+            raise ValueError(
+                "every dataset requires a finite non-empty seed-block vector"
+            )
+        values[dataset] = array
+    rng = np.random.default_rng(seed)
+    estimates = np.empty(n_bootstrap, dtype=float)
+    for index in range(n_bootstrap):
+        sampled_datasets = rng.choice(datasets, size=len(datasets), replace=True)
+        dataset_means = []
+        for dataset in sampled_datasets:
+            array = values[str(dataset)]
+            sampled = rng.choice(array, size=len(array), replace=True)
+            dataset_means.append(float(sampled.mean()))
+        estimates[index] = float(np.mean(dataset_means))
+    low, high = np.quantile(estimates, [0.025, 0.975])
     return float(low), float(high)
 
 
