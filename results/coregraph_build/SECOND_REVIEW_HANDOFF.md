@@ -1,6 +1,10 @@
 # CoReGraph second-review handoff
 
-Status: local deterministic gates pass; draft-PR CI pending.
+Status:
+`COREGRAPH_INDEPENDENT_AUDIT_REPAIRS_COMPLETE_READY_FOR_SECOND_REVIEW`.
+
+Local deterministic gates and all four required no-heavy draft-PR checks pass
+on repair commit `a11cec7286d3db88eda47ee40b99794add0f79a4`. PR #2 remains open and draft.
 
 Review the scientific repair, not empirical results: no pilot or heavy run was
 performed.
@@ -28,3 +32,10 @@ performed.
 - Do not infer execution readiness from this repair verdict.
 - Confirm PR #2 is still draft and that its branch advanced only by normal
   fast-forward commits.
+
+## Execution-readiness boundary
+
+This verdict closes the independent scientific-core repair pass only. It is
+not an execution-readiness verdict. Provider manifests, real saved
+predictions, official-baseline parity, and the saved-output pilot remain
+unconnected or unexecuted and require a separate review.

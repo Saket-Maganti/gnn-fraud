@@ -1,7 +1,7 @@
 # CoReGraph independent-audit repair report
 
-Local deterministic verdict:
-`REPAIRS_COMPLETE_DRAFT_PR_CI_PENDING`.
+Final scientific-core repair verdict:
+`COREGRAPH_INDEPENDENT_AUDIT_REPAIRS_COMPLETE_READY_FOR_SECOND_REVIEW`.
 
 This pass repairs the scientific-core defects enumerated in
 `COREGRAPH_INDEPENDENT_AUDIT_METHOD_AND_PILOT_REPAIR.md`. It does not run or
@@ -60,8 +60,9 @@ area. Compileall, full Ruff, the 50-module mypy surface, theory, synthetic
 method checks, one-epoch CPU smoke, notebooks, paper build/audit, sanitized
 public-tree audit, anonymous release, and the 249-file frozen boundary pass.
 Exact results are recorded in `INDEPENDENT_AUDIT_COMMAND_LOG.md`,
-`TEST_COVERAGE_REPORT.md`, and `FINAL_GATE_STATUS.json`. The preferred final
-verdict remains gated on the draft PR CI run.
+`TEST_COVERAGE_REPORT.md`, and `FINAL_GATE_STATUS.json`. All four required
+no-heavy draft-PR checks passed on repair commit
+`a11cec7286d3db88eda47ee40b99794add0f79a4`; PR #2 remains open and draft.
 
 ## Explicit non-execution statement
 

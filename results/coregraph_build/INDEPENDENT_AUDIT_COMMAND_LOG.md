@@ -24,6 +24,10 @@ deterministic repair and validation pass; forbidden heavy actions are not run.
 | Anonymous release | Build plus import/checksum/anonymity/package-test audit | PASS |
 | Public tree | Validate sanitized intended tracked/untracked tree, excluding ignored local tooling | PASS; zero findings |
 | Frozen boundary | `python scripts/coregraph/hash_frozen_assets.py --verify` after final local gates | PASS; `ZERO_TKDE_SCIENTIFIC_DELTAS (249 files)` |
+| Focused commits | Commit scientific core, pilot/inference gates, and anonymous/audit handoff separately | PASS; `bf32c09`, `3ff0944`, `a11cec7` |
+| Fast-forward push | Fetch target branch, verify remote is an ancestor, then `git push origin codex/coregraph-iclr-buildout-2026` | PASS; normal fast-forward `67a3a3e..a11cec7`; no force push |
+| Draft PR CI | Both push and pull-request variants of `curated-no-training-ci/audit` and `coregraph-no-heavy-ci/typed-core` | PASS; four of four checks on repair commit `a11cec7286d3db88eda47ee40b99794add0f79a4` |
+| Draft-state check | `gh pr view 2 --json state,isDraft,headRefOid` | PASS; PR #2 remains open and draft |
 
 ## Explicit non-execution record
 
@@ -35,5 +39,5 @@ deterministic repair and validation pass; forbidden heavy actions are not run.
 - Multi-seed experiment executed: **no**
 - Frozen FraudShiftBench/TKDE assets modified: **no**
 
-Subsequent deterministic gate commands and exact results are appended as each
-repair wave completes.
+The repair commit passed every required deterministic local and draft-PR gate.
+The documentation-only closeout commit does not change scientific code.
