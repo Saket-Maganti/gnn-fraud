@@ -41,6 +41,7 @@ from coregraph.experiments.contract_splits import (
 )
 from coregraph.experiments.pilot import (
     BaselinePrediction,
+    MethodExecutionStatus,
     SavedSourceGroup,
     discover_prediction_manifests,
     evaluate_saved_output_pilot,
@@ -423,7 +424,7 @@ def test_manifest_loader_and_pilot_long_form_metrics(
         "prediction_unit": "node",
         "contract_coordinate_hash": contract.coordinate_hash,
         "environment_id": contract.environment_id,
-        "seed": 1,
+        "expert_prediction_seed": 1,
         "fold": "fold0",
         "prediction_path": predictions.name,
         "prediction_checksum": checksum,
@@ -465,13 +466,28 @@ def test_manifest_loader_and_pilot_long_form_metrics(
         "method": BaselinePrediction(
             scores=np.asarray([0.9, 0.1, 0.8, 0.2]),
             abstention_probability=np.asarray([0.1, 0.2, 0.3, 0.4]),
+            abstain=np.zeros(4, dtype=bool),
+            forced_abstention=np.zeros(4, dtype=bool),
             expected_compute=np.asarray([1.0, 1.0, 1.0, 1.0]),
+            abstention_threshold=0.8,
+            abstention_threshold_provenance="source_validation",
+            abstention_capacity=0.5,
+            abstention_cost=0.2,
+            execution_status=MethodExecutionStatus.EXECUTABLE,
         ),
-        "offline_feasible_oracle_ceiling": BaselinePrediction(
+        "contract_feasible_oracle": BaselinePrediction(
             scores=np.asarray([1.0, 0.0, 1.0, 0.0]),
             abstention_probability=np.zeros(4),
+            abstain=np.zeros(4, dtype=bool),
+            forced_abstention=np.zeros(4, dtype=bool),
             expected_compute=np.ones(4),
+            abstention_threshold=None,
+            abstention_threshold_provenance="offline_contract_oracle",
+            abstention_capacity=None,
+            abstention_cost=0.0,
+            execution_status=MethodExecutionStatus.EXECUTABLE,
             offline_oracle=True,
+            diagnostic_only=False,
         ),
     }
     result = evaluate_saved_output_pilot(
@@ -479,7 +495,8 @@ def test_manifest_loader_and_pilot_long_form_metrics(
         candidates,
         dataset="fixture",
         target_contract="target",
-        seed=1,
+        expert_prediction_seed=1,
+        router_training_seeds={"method": 101},
         fold="fold0",
     )
     assert result["status"] == "MEASURED_FROM_SAVED_PREDICTIONS"
@@ -493,6 +510,7 @@ def test_manifest_loader_and_pilot_long_form_metrics(
         "selective_risk",
         "coverage",
         "aurc",
+        "abstention_cost",
         "compute",
     }
     with pytest.raises(ValueError, match="oracle"):
@@ -501,7 +519,8 @@ def test_manifest_loader_and_pilot_long_form_metrics(
             {"method": candidates["method"]},
             dataset="fixture",
             target_contract="target",
-            seed=1,
+            expert_prediction_seed=1,
+            router_training_seeds={"method": 101},
             fold="fold0",
         )
 

@@ -94,6 +94,7 @@ def test_saved_output_corerouter_never_receives_target_labels(contract_factory) 
             name: np.ones(len(labels), dtype=bool) for name in scores_a
         },
         target_expert_costs={"feature": 1.0, "graph": 2.0},
+        expert_prediction_seed=1,
         steps=2,
     )
     assert predicted.scores.shape == labels.shape
