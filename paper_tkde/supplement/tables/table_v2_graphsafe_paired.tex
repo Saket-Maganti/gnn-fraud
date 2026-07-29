@@ -1,0 +1,35 @@
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.10}
+\begin{longtable}{@{}p{0.13\textwidth} p{0.20\textwidth} p{0.09\textwidth} r p{0.25\textwidth} r@{}}
+\caption{GraphSafe conservative minus simple-average paired effects.}\label{tab:s-graphsafe-paired}\\
+\toprule
+\textbf{Dataset} & \textbf{Metric} & \textbf{Direction} & \textbf{$\Delta$} & \textbf{95\% CI} & \textbf{Holm p} \\
+\midrule
+\endfirsthead
+\caption[]{GraphSafe conservative minus simple-average paired effects. (continued)}\\
+\toprule
+\textbf{Dataset} & \textbf{Metric} & \textbf{Direction} & \textbf{$\Delta$} & \textbf{95\% CI} & \textbf{Holm p} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{6}{r}{\footnotesize Continued on next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+DGraphFin & auprc & higher & +0.00275 & [0.00113, 0.00451] & 0.3906 \\
+DGraphFin & average block regret & lower & +0.16112 & [0.06278, 0.28531] & 0.2246 \\
+DGraphFin & cost sensitive risk & lower & +0.16092 & [0.06409, 0.28513] & 0.2246 \\
+DGraphFin & f1 & higher & +0.00610 & [0.00370, 0.00868] & 0.1094 \\
+DGraphFin & recall at 1pct & higher & +0.00662 & [0.00402, 0.00944] & 0.0938 \\
+DGraphFin & worst block regret & lower & +0.16603 & [0.06420, 0.29419] & 0.2246 \\
+Elliptic & auprc & higher & -0.04530 & [-0.05466, -0.03622] & 0.0938 \\
+Elliptic & average block regret & lower & -0.00667 & [-0.00825, -0.00515] & 0.0938 \\
+Elliptic & cost sensitive risk & lower & -0.00745 & [-0.00887, -0.00610] & 0.0938 \\
+Elliptic & f1 & higher & -0.01804 & [-0.02384, -0.01223] & 0.0938 \\
+Elliptic & recall at 1pct & higher & -0.01006 & [-0.01371, -0.00648] & 0.1094 \\
+Elliptic & worst block regret & lower & -0.03058 & [-0.04066, -0.01922] & 0.1094 \\
+\end{longtable}
+\noindent\footnotesize\emph{Scope and reading.} The correction family contains all 48 saved-prediction comparator tests, not only the 12 rows shown here. No adjusted p-value is below 0.05; therefore this case does not establish universal dominance or ranking repair.\par
+\endgroup

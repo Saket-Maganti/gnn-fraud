@@ -1,0 +1,37 @@
+\section{Benchmark Instantiation}
+\label{sec:instantiation}
+
+\subsection{Datasets and prediction units}
+Table~\ref{tab:datasets} describes the evaluated tasks. Elliptic is a real, pseudonymized Bitcoin transaction graph with 203,769 transaction nodes, 234,355 source edges, and 49 time steps \cite{weber2019aml}. Its chronological labeled split contains 26,905/2,989/16,670 train/validation/test nodes; the test set has 1,083 illicit transactions. DGraphFin is a real anonymized account graph with 3,700,550 users and 4,300,999 directed source edges \cite{huang2022dgraph}. Incident-edge timestamps define 20 equal-count temporal buckets, with 947,462/107,932/170,207 eligible accounts in the three splits and 1,863 test positives.
+
+IBM AML-Data contains synthetic directed transactions generated under higher- and lower-illicit-ratio regimes \cite{altman2023ibmaml}. We evaluate Small and Medium variants. They range from 5.08 to 31.90 million transaction edges and from 515,088 to 2,077,023 account nodes. Test prevalence ranges from 0.058\% to 0.177\%, depending on variant and temporal window. Each transaction has eight attributes: log paid and received amounts, coded payment and receiving currencies, payment format, hour, weekday, and month. Eight account-history features record in/out counts, amount sums, and means. Large variants are retained in the contract as resource-blocked cells with no performance values.
+
+These datasets do not define a common supervised object. Elliptic predicts a transaction-node label, DGraphFin an account-node label, and IBM a transaction-edge label. Their priors, graph semantics, and candidate sets differ. We use them to test whether a qualitative claim survives across task contracts, not to crown a pooled winner.
+
+\input{tables/table02_dataset_tasks}
+
+\subsection{Instantiated temporal and visibility contracts}
+Table~\ref{tab:protocol-visibility} separates label windows, label-free history, graph visibility, model selection, decision policy, and resources. None of these coordinates substitutes for another.
+
+\input{tables/table03_protocol_visibility}
+
+Elliptic and DGraphFin use fixed chronological masks under three structural views. In \emph{strict-inductive} evaluation, the model is fitted on the training subgraph; held-out structure becomes available only for evaluation and held-out labels remain hidden. \emph{Isolated-inductive} uses the same label masks but removes cross-split edges from the held-out evaluation components. This intervention isolates reliance on connections across temporal partitions. In the \emph{transductive} diagnostic, full graph structure is visible while validation and test labels remain hidden. Strict versus isolated is the main matched contrast; transductive results are not treated as a deployment default.
+
+IBM uses stable chronological sorting under two label partitions. The late-window holdout assigns 60/20/20\% of transactions to train, validation, and test. Early-to-late transfer uses 50/20/30\%. Both protocols reuse one account-history matrix constructed from the first 60\% of transactions and no fraud labels. For late-window holdout, that interval equals the classifier's training period. For early-to-late transfer, it includes label-free covariates from the 50--60\% interval, which is the first half of its validation window. The early-to-late contract is therefore a 50\% label-training protocol with 60\% historical-covariate visibility, not a first-50\%-only inductive graph. We expose this distinction because collapsing covariate and label availability would state a stronger protocol than the implementation supports.
+
+\subsection{Models and graph constructions}
+The real-graph protocol grid compares an MLP negative control with GCN \cite{kipf2017gcn} and mean-aggregating GraphSAGE \cite{hamilton2017graphsage}. For node representation $h_v^{(\ell)}$, the latter computes
+\begin{equation}
+ h_v^{(\ell+1)}=\sigma\!\left(W^{(\ell)}
+ [h_v^{(\ell)}\,\Vert\,\operatorname{mean}_{u\in\mathcal{N}_{\Pi}(v)}h_u^{(\ell)}]\right),
+ \label{eq:sage}
+\end{equation}
+where $\mathcal{N}_{\Pi}(v)$ changes with graph visibility. The MLP omits that term, so its strict--isolated difference is a check that the intervention touches graph access rather than the feature or label masks.
+
+The IBM baseline grid includes balanced logistic regression, histogram gradient boosting \cite{friedman2001gbm}, and a one-hop GraphSAGE-derived edge classifier. The latter concatenates each endpoint's eight history features with the mean history vector of its training-neighborhood, then appends the transaction attributes before a two-layer edge head. The stronger reference uses the same computation at width 64. It is an edge classifier over fixed one-hop summaries, not an unqualified implementation of full-neighborhood end-to-end GraphSAGE.
+
+Matched controls modify one part of this reference. NoEdge zeros the eight transaction attributes. ShuffledEdge permutes them within each temporal split, preserving their marginal values but removing edge-level alignment. DegreeOnly replaces them with log endpoint in/out degrees. DegreeCap removes training edges incident to accounts above the 0.995 active-degree quantile. RecentWindow retains the most recent 50\% of training edges. A one-layer edge-conditioned GIN variant (GINE) \cite{hu2020pretraining} instead learns node messages conditioned on edge attributes and scores edges from the two learned endpoint embeddings plus their transaction attributes. The account--account sender--receiver row merely records the already materialized directed transaction projection; it is an implementation alias, not another construction or independent result.
+
+The supplement gives separate model, construction, and optimization cards at readable scale. The main paper retains the definitions needed to interpret the interventions but does not reproduce the full configuration inventory.
+
+Small and Medium results use ten seeds per completed cell. The declared resource envelope includes preprocessing limits, prediction-export disk limits, measured runtime, and GPU failures. Medium GINE and the fixed DGraphFin GAT configuration exhausted Tesla T4 memory; the IBM Large lanes were stopped by a safe resource guard. These cells remain visible as feasibility outcomes and are excluded from performance ranks. A reduced DGraphFin GAT diagnostic does not fill the missing fixed-configuration cell.

@@ -27,11 +27,12 @@ gnn-fraud/
 # Option A: Upload via Kaggle API
 !pip install -q kaggle
 # Upload your kaggle.json API key first, then:
-!kaggle datasets download -d ellipticco/elliptic-data-set
-!unzip -q elliptic-data-set.zip -d data/raw/
+!kaggle datasets download -d ellipticco/elliptic-data-set -p data/raw/ --unzip
+!mv data/raw/elliptic_bitcoin_dataset/*.csv data/raw/ 2>/dev/null || true
 
 # Option B: Mount Google Drive (if you have the files there)
 from google.colab import drive
 drive.mount('/content/drive')
-!cp -r "/content/drive/MyDrive/elliptic_bitcoin_dataset/" data/raw/
+!mkdir -p data/raw
+!cp "/content/drive/MyDrive/elliptic_bitcoin_dataset/"*.csv data/raw/
 ```

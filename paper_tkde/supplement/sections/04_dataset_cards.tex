@@ -1,0 +1,31 @@
+\section{Dataset cards}
+\label{sec:s-datasets}
+
+The three dataset families differ in prediction unit, label eligibility, graph semantics, temporal construction, prevalence, and empirical scope. They are therefore presented as separate cards rather than compressed into one cross-task leaderboard.
+
+\subsection{Elliptic}
+
+Elliptic is a real, pseudonymized Bitcoin transaction graph~\cite{weber2019aml}. Nodes are transactions with 165 features and 49 discrete time steps. The loader symmetrizes the 234,355 source edges to 468,710 message-passing arcs. Unknown transactions can contribute unlabeled context but are excluded from supervised denominators.
+
+\input{tables/table_v2_dataset_elliptic}
+
+The card answers which units are scored and how the chronological masks are formed. It does not make the 49 bins equivalent to calendar time or establish behavior on another blockchain.
+
+\subsection{DGraphFin}
+
+DGraphFin is a real, anonymized financial-user graph~\cite{huang2022dgraph}. The task scores account nodes. Raw background classes 2 and 3 are mapped to unknown and excluded from supervised masks. Node time is the median timestamp of incident edges, followed by 20 equal-count buckets; isolated nodes receive the global median timestamp.
+
+\input{tables/table_v2_dataset_dgraphfin}
+
+The equal-count bucket construction is an implementation choice. It supports the reported fixed split but not a claim about a particular calendar horizon or bank workflow.
+
+\subsection{IBM AML-Data}
+
+IBM AML-Data is synthetic financial-transaction data, not bank production evidence~\cite{altman2023ibmaml}. The task scores directed transaction edges in HI/LI Small/Medium account networks. HI and LI identify generation regimes with different laundering frequencies; they are not severity labels.
+
+\input{tables/table_v2_dataset_ibm}
+
+The measured graphs range from roughly 5.1 million to 31.9 million transaction edges. Their scale is useful for resource and construction analysis, but one synthetic generator does not establish representativeness across institutions, typologies, jurisdictions, or adversarial adaptation.
+
+\paragraph{Cross-dataset interpretation.}
+Elliptic transaction nodes, DGraphFin account nodes, and IBM transaction edges answer different questions. Their raw AUPRC values, prevalences, and feasible models are retained within typed evidence units and never averaged into a universal score.

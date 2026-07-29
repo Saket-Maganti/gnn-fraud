@@ -1,0 +1,31 @@
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.10}
+\begin{longtable}{@{}p{0.27\textwidth} p{0.16\textwidth} r p{0.15\textwidth} p{0.31\textwidth}@{}}
+\caption{Reviewer-facing experiment-family to evidence-lock map.}\label{tab:s-provenance-map}\\
+\toprule
+\textbf{Scientific family} & \textbf{Eligibility} & \textbf{Cells} & \textbf{Datasets} & \textbf{Canonical lock} \\
+\midrule
+\endfirsthead
+\caption[]{Reviewer-facing experiment-family to evidence-lock map. (continued)}\\
+\toprule
+\textbf{Scientific family} & \textbf{Eligibility} & \textbf{Cells} & \textbf{Datasets} & \textbf{Canonical lock} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{5}{r}{\footnotesize Continued on next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+IBM AML baseline grid & main-paper eligible & 24 & IBM AML-Data & \path{results/v26_imported/V26_IMPORTED_EVIDENCE_LOCK.json} \\
+IBM AML construction/feature ablation & main-paper eligible & 52 & IBM AML-Data & \path{results/v28_imported/V28_ALL_RUNS_EVIDENCE_LOCK.json} \\
+IBM AML stronger graph study & main-paper eligible & 8 & IBM AML-Data & \path{results/v27_imported/V27_STRONGER_GRAPH_EVIDENCE_LOCK.json} \\
+core strict/isolated/transductive benchmark & main-paper eligible & 18 & dgraphfin;elliptic & \path{results/runs_rb09v3/ARTIFACT_FAMILY.json} \\
+loss/control/architecture extension & supplement-only & 64 & dgraphfin;elliptic & \path{kaggle_workspace/manifests/V22_FINAL_GPU_EVIDENCE_LOCK.json} \\
+review-budget/worst-block/cost sensitivity & supplement-only & 1 & Elliptic; DGraphFin & \path{results/runs_rb17_review_budget_worst_block/import_manifest.json} \\
+temporal-shift/perturbation stress & supplement-only & 48 & dgraphfin;elliptic & \path{results/v24_imported/V24_IMPORTED_EVIDENCE_LOCK.json} \\
+validation-selected conservative GraphSafe policy & main case-study eligible & 1 & Elliptic; DGraphFin & \path{results/runs_rb15b_graphsafe_conservative_policy/import_manifest.json} \\
+\end{longtable}
+\noindent\footnotesize\emph{Scope and reading.} The complete 247-record evidence inventory and 6,796-record scalar map remain machine-readable. This table shows only the core paths a reviewer needs to follow the printed results.\par
+\endgroup

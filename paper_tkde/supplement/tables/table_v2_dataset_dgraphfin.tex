@@ -1,0 +1,28 @@
+\begin{table}[tbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\renewcommand{\arraystretch}{1.12}
+\caption{DGraphFin dataset card.}
+\label{tab:s-dataset-dgraphfin}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.23\textwidth} Y@{}}
+\toprule
+\textbf{Field} & \textbf{Verified value} \\
+\midrule
+Origin & real anonymized financial user graph \\
+Prediction unit & account/user node \\
+Graph size & 3,700,550 nodes; 4,300,999 source edges; 7,994,520 message-passing arcs \\
+Features & 17 node; 0 edge \\
+Temporal order & 20 equal-count incident-edge timestamp buckets \\
+Protocols/windows & strict/isolated/transductive; train t1-14, val t15-16, test t17-20 \\
+Train/validation/test & 947,462 / 107,932 / 170,207 eligible units \\
+Positive counts & 12,543 / 1,103 / 1,863 \\
+Test prevalence & 1.095\% \\
+Label mapping & raw 1=fraud->positive 1; raw 0=normal->supervised 0 (repository code 2); raw 2/3 background excluded \\
+Source surface & \path{data/raw/dgraphfin.npz; results/runs_rb09v3/runs.csv} \\
+Known limitation & Time is a median incident-edge timestamp placed into equal-count buckets, not a calendar deployment schedule. \\
+\bottomrule
+\end{tabularx}
+\vspace{2pt}
+\begin{minipage}{\textwidth}\footnotesize\emph{Scope and reading.} Counts and label mappings are recovered from the frozen dataset/task statistics. Unknown node labels remain graph context but never enter supervised masks.\end{minipage}
+\end{table}

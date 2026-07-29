@@ -1,0 +1,56 @@
+name: curated-no-training-ci
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: pip
+
+      - name: Public-tree audit
+        run: python scripts/github_publish/validate_public_tree.py .
+
+      - name: Install publication dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-publication.txt
+
+      - name: Compile Python
+        run: make compile
+
+      - name: Curated pytest suite
+        run: make test
+
+      - name: Corrected unittest discovery
+        run: make unittest
+
+      - name: Claim-language audit
+        run: python scripts/audit_claim_language.py
+
+      - name: Manifest and LaTeX source sanity
+        run: |
+          test -s results/tkde_rebuild/CLAIM_EVIDENCE_LEDGER.csv
+          test -s results/tkde_rebuild/EVIDENCE_INVENTORY.csv
+          test -s results/tkde_visual_rebuild/FROZEN_SCIENTIFIC_INPUT_HASHES.csv
+          test -s paper_tkde/main.tex
+          test -s paper_tkde/supplement/supplement.tex
+          test -s paper/pdf/FraudShiftBench_TKDE_main.pdf
+          test -s paper/pdf/FraudShiftBench_TKDE_supplement.pdf
+
+# Deliberately skipped in hosted CI: dataset acquisition, model training,
+# provider/Kaggle jobs, GPU tests, raw-prediction tests, and the full TeX build.
+# The curated source and final PDFs are checked; a strict local paper build is
+# recorded in docs/CLEAN_REPOSITORY_VALIDATION.md.

@@ -1,0 +1,151 @@
+{
+  "created_at_utc": "2026-07-02T15:31:58+00:00",
+  "frozen_parent_evidence": [
+    {
+      "claim_eligible": true,
+      "lane": "rb44_dgraphfin",
+      "source_version": "V24/V25",
+      "status": "VALIDATED_PARENT_EVIDENCE",
+      "v26_ibm_aml_relabel": false
+    },
+    {
+      "claim_eligible": false,
+      "lane": "v25_elliptic",
+      "source_version": "V24/V25",
+      "status": "FOUND_RAW_ARTIFACTS_ONLY",
+      "v26_ibm_aml_relabel": false
+    },
+    {
+      "claim_eligible": true,
+      "lane": "v25_dgraphfin",
+      "source_version": "V24/V25",
+      "status": "VALIDATED_PARENT_EVIDENCE",
+      "v26_ibm_aml_relabel": false
+    }
+  ],
+  "policy": {
+    "no_fake_outputs": true,
+    "no_synthetic_pass": true,
+    "no_v26_ibm_aml_claim_without_imported_pass": true,
+    "parent_evidence_not_relabelled_as_v26_ibm_aml": true
+  },
+  "source_reports": {
+    "artifact_manifest": "results/v26_imported/V26_IMPORTED_ARTIFACT_MANIFEST.json",
+    "bridge": "results/v26_imported/V25_TO_V26_EVIDENCE_BRIDGE.json",
+    "merge_index": "results/v26_imported/V26_IBM_AML_FULL10_MERGE_INDEX.json"
+  },
+  "status": "PASS",
+  "v26_ibm_aml_variants": [
+    {
+      "actual_json": 60,
+      "actual_prediction_files": 60,
+      "claim_scope": "ibm_aml_hi_small_official_small_full10",
+      "dataset": "ibm_aml_hi_small",
+      "pass_pair_chunks": 5,
+      "run_count": 5,
+      "seed_coverage": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "status": "FULL10_PASS",
+      "variant": "hi-small"
+    },
+    {
+      "actual_json": 60,
+      "actual_prediction_files": 60,
+      "claim_scope": "ibm_aml_hi_medium_official_medium_full10",
+      "dataset": "ibm_aml_hi_medium",
+      "pass_pair_chunks": 5,
+      "run_count": 5,
+      "seed_coverage": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "status": "FULL10_PASS",
+      "variant": "hi-medium"
+    },
+    {
+      "actual_json": 0,
+      "actual_prediction_files": 0,
+      "claim_scope": "not empirical evidence",
+      "dataset": "ibm_aml_hi_large",
+      "pass_pair_chunks": 0,
+      "run_count": 0,
+      "seed_coverage": [],
+      "status": "SAFE_RESOURCE_BLOCKED",
+      "variant": "hi-large"
+    },
+    {
+      "actual_json": 60,
+      "actual_prediction_files": 60,
+      "claim_scope": "ibm_aml_li_small_official_small_full10",
+      "dataset": "ibm_aml_li_small",
+      "pass_pair_chunks": 5,
+      "run_count": 5,
+      "seed_coverage": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "status": "FULL10_PASS",
+      "variant": "li-small"
+    },
+    {
+      "actual_json": 60,
+      "actual_prediction_files": 60,
+      "claim_scope": "ibm_aml_li_medium_official_medium_full10",
+      "dataset": "ibm_aml_li_medium",
+      "pass_pair_chunks": 5,
+      "run_count": 5,
+      "seed_coverage": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "status": "FULL10_PASS",
+      "variant": "li-medium"
+    },
+    {
+      "actual_json": 0,
+      "actual_prediction_files": 0,
+      "claim_scope": "not empirical evidence",
+      "dataset": "ibm_aml_li_large",
+      "pass_pair_chunks": 0,
+      "run_count": 0,
+      "seed_coverage": [],
+      "status": "SAFE_RESOURCE_BLOCKED",
+      "variant": "li-large"
+    }
+  ],
+  "version": "V26"
+}

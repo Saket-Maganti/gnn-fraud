@@ -1,0 +1,37 @@
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.10}
+\begin{longtable}{@{}p{0.07\textwidth} p{0.18\textwidth} p{0.38\textwidth} p{0.15\textwidth} p{0.15\textwidth}@{}}
+\caption{Controlled support-relation validation cases (14 of 14 matched the expected status).}\label{tab:s-validation-cases}\\
+\toprule
+\textbf{Case} & \textbf{Base claim} & \textbf{Controlled mutation} & \textbf{Expected} & \textbf{Observed} \\
+\midrule
+\endfirsthead
+\caption[]{Controlled support-relation validation cases (14 of 14 matched the expected status). (continued)}\\
+\toprule
+\textbf{Case} & \textbf{Base claim} & \textbf{Controlled mutation} & \textbf{Expected} & \textbf{Observed} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{5}{r}{\footnotesize Continued on next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+FV01 & C01 Elliptic visibility ranking & none; complete locked grid & \texttt{SUPPORTED} & \texttt{SUPPORTED} \\
+FV02 & C01 Elliptic visibility ranking & remove one model/protocol cell in sandbox & \texttt{BLOCKED\_\allowbreak{}INCOMPLETE\_\allowbreak{}SCOPE} & \texttt{BLOCKED\_\allowbreak{}INCOMPLETE\_\allowbreak{}SCOPE} \\
+FV03 & C01 Elliptic visibility ranking & remove seed 10 from one cell in sandbox & \texttt{BLOCKED\_\allowbreak{}INCOMPLETE\_\allowbreak{}SEEDS} & \texttt{BLOCKED\_\allowbreak{}INCOMPLETE\_\allowbreak{}SEEDS} \\
+FV04 & C01 Elliptic visibility ranking & erase one prediction-manifest reference in sandbox & \texttt{BLOCKED\_\allowbreak{}MISSING\_\allowbreak{}PREDICTIONS} & \texttt{BLOCKED\_\allowbreak{}MISSING\_\allowbreak{}PREDICTIONS} \\
+FV05 & C10 Small GINE AUPRC result & widen scope from Small to Medium & \texttt{RESOURCE\_\allowbreak{}BLOCKED} & \texttt{RESOURCE\_\allowbreak{}BLOCKED} \\
+FV06 & C05 IBM AML baseline grid & widen scope from Small/Medium to all official variants & \texttt{RESOURCE\_\allowbreak{}BLOCKED} & \texttt{RESOURCE\_\allowbreak{}BLOCKED} \\
+FV07 & V22 loss robustness & substitute a partial failed import for a full10 lane & \texttt{EXCLUDED\_\allowbreak{}INTEGRITY} & \texttt{EXCLUDED\_\allowbreak{}INTEGRITY} \\
+FV08 & V24 temporal stress & treat three metadata labels as distinct temporal windows & \texttt{EXCLUDED\_\allowbreak{}CONSTRUCT\_\allowbreak{}INVALID} & \texttt{EXCLUDED\_\allowbreak{}CONSTRUCT\_\allowbreak{}INVALID} \\
+FV09 & DGraphFin fixed GAT performance & promote the T4-OOM cell to a predictive comparison & \texttt{RESOURCE\_\allowbreak{}BLOCKED} & \texttt{RESOURCE\_\allowbreak{}BLOCKED} \\
+FV10 & DGraphFin GraphSAGE max-pool rerun & promote runbook/status files without imported rows & \texttt{RESOURCE\_\allowbreak{}BLOCKED} & \texttt{RESOURCE\_\allowbreak{}BLOCKED} \\
+FV11 & IBM sender-receiver construction & count the contract alias as an independent replication & \texttt{EXCLUDED\_\allowbreak{}CONSTRUCT\_\allowbreak{}INVALID} & \texttt{EXCLUDED\_\allowbreak{}CONSTRUCT\_\allowbreak{}INVALID} \\
+FV12 & C04 universal graph harm & widen mixed scoped results into a universal directional claim & \texttt{REFUTED\_\allowbreak{}IN\_\allowbreak{}SCOPE} & \texttt{REFUTED\_\allowbreak{}IN\_\allowbreak{}SCOPE} \\
+FV13 & C17 universal GraphSafe improvement & widen bounded mixed case study to universal dominance & \texttt{REFUTED\_\allowbreak{}IN\_\allowbreak{}SCOPE} & \texttt{REFUTED\_\allowbreak{}IN\_\allowbreak{}SCOPE} \\
+FV14 & IBM early-to-late visibility & describe the shared first-60\% label-free node-history map as first-50\% training-only features & \texttt{EXCLUDED\_\allowbreak{}CONSTRUCT\_\allowbreak{}INVALID} & \texttt{EXCLUDED\_\allowbreak{}CONSTRUCT\_\allowbreak{}INVALID} \\
+\end{longtable}
+\noindent\footnotesize\emph{Scope and reading.} The cases localize incomplete scope, missing seeds or predictions, integrity and construct failures, resource blocks, and directional refutation. They are project-authored conformance tests, not external validation.\par
+\endgroup

@@ -1,0 +1,21 @@
+\section{Optimization, selection, and thresholding}
+\label{sec:s-optimization}
+
+Table~\ref{tab:s-training-cards} consolidates optimizer, learning rate, regularization, loss, schedule, validation selection, threshold, and batching. These choices are scientific coordinates because changing selection or threshold can change a decision-level conclusion even when score rankings are fixed.
+
+\input{tables/table_v2_training_cards}
+
+\subsection{Node-grid selection}
+
+Elliptic and DGraphFin use AdamW, class-weighted cross-entropy, cosine learning-rate decay, and a 200-epoch cap. Validation F1 is checked at epoch 1 and every ten epochs. Configured patience is 40 validation checks, so it cannot fire within the cap; the saved row is the best scheduled validation checkpoint. Python, NumPy, and PyTorch seeds are fixed per run, and features are standardized on training rows.
+
+\subsection{IBM fitting and decisions}
+
+The IBM tree and logistic baselines run on CPU. The h32 and h64 graph-derived classifiers use positive-weighted binary cross-entropy and edge minibatches. Saved IBM F1 uses threshold 0.5. No later threshold search is retroactively applied to those rows. Runtime records report the actual backend; a legacy path token containing P100 is not hardware evidence and is normalized to the recorded T4/CUDA lane.
+
+\subsection{Deterministic baselines}
+
+Some library baselines repeat exactly across nominal seeds. Their ten rows document repeated pipeline evaluation and confirm deterministic output under the saved configuration, but they are not reinterpreted as ten independent stochastic fits. Zero variance remains visible in the aggregate intervals.
+
+\paragraph{Interpretive limit.}
+The settings reproduce the saved evidence surface. They do not establish that the hyperparameter grid is exhaustive or optimal for another institution, time period, hardware stack, or model implementation.

@@ -1,0 +1,19 @@
+\begin{table}[tbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\renewcommand{\arraystretch}{1.12}
+\caption{Rank, decision, prevalence, and calibration claims.}
+\label{tab:s-claims-decision}
+\begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}p{0.16\textwidth} Y Y Y@{}}
+\toprule
+\textbf{ID} & \textbf{Status} & \textbf{Exact scoped subject} & \textbf{Permitted wording} & \textbf{Prohibited generalization} \\
+\midrule
+C06 & \texttt{SUPPORTED} & IBM AML Small/Medium locked V26-V28 cells & rank and decision metrics answer different questions and disagree in the evaluated cells & higher AUROC implies better operational decisions \\
+C14 & \texttt{DIAGNOSTIC\_\allowbreak{}ONLY} & IBM AML V26-V28 cells with recorded test prevalence & prevalence-normalized AUPRC contextualizes raw values & normalized AUPRC is prevalence-invariant performance \\
+C18 & \texttt{SUPPORTED\_\allowbreak{}THEORETICALLY} & binary scoring with no tie-order changes & rank invariance under strictly monotone transforms & calibration necessarily improves AUPRC/AUROC \\
+\bottomrule
+\end{tabularx}
+\vspace{2pt}
+\begin{minipage}{\textwidth}\footnotesize\emph{Scope and reading.} Status and scope text are copied from the frozen 22-claim ledger. Exact matched evidence-unit identifiers remain in the machine-readable ledger rather than in these reviewer-facing cells.\end{minipage}
+\end{table}

@@ -1,0 +1,29 @@
+\section{Metrics and statistical procedure}
+\label{sec:s-statistics-v2}
+
+\subsection{Estimands}
+
+AUPRC is the primary ranking metric under severe imbalance because ROC curves can obscure low precision~\cite{saito2015pr}. AUROC, fixed-threshold F1, review-budget precision/recall, calibration, and illustrative cost answer different questions. Table~\ref{tab:s-metric-cards} states each estimand and its boundary.
+
+\input{tables/table_v2_metric_cards}
+
+At review fraction \(b\), \(K=\lceil b|I|\rceil\) and the top \(K\) scores form the queue. The cost scenario is
+\begin{equation}
+ R_c(\tau)=\frac{FP(\tau)+5FN(\tau)}{|I|},
+\end{equation}
+which is a 1:5 illustration rather than an estimate of bank loss~\cite{bahnsen2015cost}. Calibration is summarized by Brier score and ten-bin ECE; ECE remains binning-dependent~\cite{guo2017calibration}.
+
+\subsection{Paired uncertainty and correction}
+
+Primary cells use seeds 1--10. Arithmetic means and sample standard deviations describe the saved rows. Confidence intervals use 10,000 deterministic percentile-bootstrap resamples with random seed 20260710~\cite{efron1979bootstrap}. Paired effects match seed \(s\) on each side, and
+\begin{equation}
+ d_z=\frac{\overline{\Delta}}{s_\Delta}.
+\end{equation}
+Two-sided Wilcoxon signed-rank tests operate on nonzero paired differences; all-zero contrasts receive \(p=1\). Holm correction is applied within the declared primary families~\cite{holm1979}. The older V22 robustness table retains its existing Benjamini-Hochberg values and is not mixed into the new families~\cite{benjamini1995}.
+
+\input{tables/table_v2_statistical_families}
+
+For IBM construction effects, the four fixed HI/LI-by-protocol context differences are averaged within seed before inference, yielding ten seed blocks rather than 40 exchangeable pairs. GraphSafe similarly averages six contexts within seed before its ten-pair analysis. The statistical-family table makes these independent units explicit.
+
+\paragraph{What the intervals do not establish.}
+Ten seeds quantify optimization variation on fixed datasets and splits. Resampling does not create institution-level or future-period observations. A confidence interval excluding zero does not override a nonsignificant family-adjusted test, and resource-blocked cells remain absent rather than imputed.

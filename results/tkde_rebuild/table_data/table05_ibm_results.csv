@@ -1,0 +1,17 @@
+panel,variant,protocol,col1,col2,col3,col4,col5
+A,hi-small,Early,0.0657 $\pm$ 0.0098,0.0144 $\pm$ 0.0000,0.0038 $\pm$ 0.0014,HistGB,HistGB
+A,hi-small,Late,0.0964 $\pm$ 0.0091,0.0173 $\pm$ 0.0000,0.0071 $\pm$ 0.0042,HistGB,HistGB
+A,hi-medium,Early,0.0890 $\pm$ 0.0095,0.0139 $\pm$ 0.0000,0.0248 $\pm$ 0.0060,HistGB,HistGB
+A,hi-medium,Late,0.1693 $\pm$ 0.0108,0.0157 $\pm$ 0.0000,0.0371 $\pm$ 0.0124,HistGB,LR
+A,li-small,Early,0.0126 $\pm$ 0.0022,0.0039 $\pm$ 0.0000,0.0021 $\pm$ 0.0010,HistGB,HistGB
+A,li-small,Late,0.0171 $\pm$ 0.0023,0.0040 $\pm$ 0.0000,0.0022 $\pm$ 0.0009,HistGB,HistGB
+A,li-medium,Early,0.0143 $\pm$ 0.0014,0.0037 $\pm$ 0.0000,0.0069 $\pm$ 0.0024,HistGB,SAGE-h32
+A,li-medium,Late,0.0297 $\pm$ 0.0068,0.0040 $\pm$ 0.0000,0.0078 $\pm$ 0.0019,HistGB,SAGE-h32
+B,hi-small,Early,0.0103 $\pm$ 0.0076,GINE 0.0261 $\pm$ 0.0061,DegreeCap 0.8739 $\pm$ 0.0114,DegreeCap 0.0181 $\pm$ 0.0048,Small only
+B,hi-small,Late,0.0110 $\pm$ 0.0042,GINE 0.0313 $\pm$ 0.0059,DegreeCap 0.8867 $\pm$ 0.0148,DegreeCap 0.0266 $\pm$ 0.0114,Small only
+B,hi-medium,Early,0.0424 $\pm$ 0.0086,Ref-h64 0.0424 $\pm$ 0.0086,Recent 0.9339 $\pm$ 0.0027,DegreeCap 0.0195 $\pm$ 0.0080,GINE blocked
+B,hi-medium,Late,0.0500 $\pm$ 0.0085,Ref-h64 0.0500 $\pm$ 0.0085,Recent 0.9333 $\pm$ 0.0029,DegreeCap 0.0221 $\pm$ 0.0081,GINE blocked
+B,li-small,Early,0.0032 $\pm$ 0.0017,GINE 0.0097 $\pm$ 0.0021,DegreeCap 0.8667 $\pm$ 0.0345,DegreeCap 0.0079 $\pm$ 0.0025,Small only
+B,li-small,Late,0.0057 $\pm$ 0.0019,GINE 0.0106 $\pm$ 0.0025,Ref-h64 0.8776 $\pm$ 0.0226,DegreeCap 0.0086 $\pm$ 0.0025,Small only
+B,li-medium,Early,0.0103 $\pm$ 0.0029,Ref-h64 0.0103 $\pm$ 0.0029,Recent 0.9105 $\pm$ 0.0061,DegreeCap 0.0075 $\pm$ 0.0023,GINE blocked
+B,li-medium,Late,0.0111 $\pm$ 0.0032,Ref-h64 0.0111 $\pm$ 0.0032,Recent 0.9073 $\pm$ 0.0162,DegreeCap 0.0067 $\pm$ 0.0006,GINE blocked

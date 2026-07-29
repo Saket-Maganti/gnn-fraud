@@ -1,0 +1,29 @@
+record_type,family,variant,protocol,context_label,config,config_label,metric,value,rank,p_value,n_configurations,auprc_winner,f1_winner,winner_disagrees,selected_example
+cell_correlation,baseline_grid,hi-medium,early_to_late_transfer,HI-M / early,,,spearman_auprc_vs_f1,1.0,,0.0,3,hist_gradient_boosting_edge_features,hist_gradient_boosting_edge_features,False,False
+cell_correlation,graph_grid,hi-medium,early_to_late_transfer,HI-M / early,,,spearman_auprc_vs_f1,-0.4857142857142857,,0.3287230320699709,6,edge_aware_graphsage_h64,degree_capped_bipartite,True,False
+cell_correlation,baseline_grid,hi-medium,late_window_holdout,HI-M / late,,,spearman_auprc_vs_f1,-1.0,,0.0,3,hist_gradient_boosting_edge_features,logistic_regression_edge_features,True,False
+cell_correlation,graph_grid,hi-medium,late_window_holdout,HI-M / late,,,spearman_auprc_vs_f1,-0.7714285714285715,,0.0723965014577259,6,edge_aware_graphsage_h64,degree_capped_bipartite,True,True
+cell_correlation,baseline_grid,hi-small,early_to_late_transfer,HI-S / early,,,spearman_auprc_vs_f1,1.0,,0.0,3,hist_gradient_boosting_edge_features,hist_gradient_boosting_edge_features,False,False
+cell_correlation,graph_grid,hi-small,early_to_late_transfer,HI-S / early,,,spearman_auprc_vs_f1,0.8571428571428573,,0.0136973266153256,7,gine_light_h64,degree_capped_bipartite,True,False
+cell_correlation,baseline_grid,hi-small,late_window_holdout,HI-S / late,,,spearman_auprc_vs_f1,1.0,,0.0,3,hist_gradient_boosting_edge_features,hist_gradient_boosting_edge_features,False,False
+cell_correlation,graph_grid,hi-small,late_window_holdout,HI-S / late,,,spearman_auprc_vs_f1,0.7857142857142859,,0.0362384626798271,7,gine_light_h64,degree_capped_bipartite,True,False
+cell_correlation,baseline_grid,li-medium,early_to_late_transfer,LI-M / early,,,spearman_auprc_vs_f1,-0.5,,0.6666666666666667,3,hist_gradient_boosting_edge_features,graphsage_edge_minibatch_h32,True,False
+cell_correlation,graph_grid,li-medium,early_to_late_transfer,LI-M / early,,,spearman_auprc_vs_f1,-0.0857142857142857,,0.8717434402332361,6,edge_aware_graphsage_h64,degree_capped_bipartite,True,False
+cell_correlation,baseline_grid,li-medium,late_window_holdout,LI-M / late,,,spearman_auprc_vs_f1,-0.5,,0.6666666666666667,3,hist_gradient_boosting_edge_features,graphsage_edge_minibatch_h32,True,False
+cell_correlation,graph_grid,li-medium,late_window_holdout,LI-M / late,,,spearman_auprc_vs_f1,-0.0285714285714285,,0.9571545189504372,6,edge_aware_graphsage_h64,degree_capped_bipartite,True,False
+cell_correlation,baseline_grid,li-small,early_to_late_transfer,LI-S / early,,,spearman_auprc_vs_f1,1.0,,0.0,3,hist_gradient_boosting_edge_features,hist_gradient_boosting_edge_features,False,False
+cell_correlation,graph_grid,li-small,early_to_late_transfer,LI-S / early,,,spearman_auprc_vs_f1,0.6071428571428572,,0.1482311614811614,7,gine_light_h64,degree_capped_bipartite,True,False
+cell_correlation,baseline_grid,li-small,late_window_holdout,LI-S / late,,,spearman_auprc_vs_f1,1.0,,0.0,3,hist_gradient_boosting_edge_features,hist_gradient_boosting_edge_features,False,False
+cell_correlation,graph_grid,li-small,late_window_holdout,LI-S / late,,,spearman_auprc_vs_f1,0.5714285714285715,,0.1802019889115274,7,gine_light_h64,degree_capped_bipartite,True,False
+example_rank,graph_grid,hi-medium,late_window_holdout,HI-M / late,edge_aware_graphsage_h64,Ref,auprc,0.0499825078302734,1.0,,6,edge_aware_graphsage_h64,degree_capped_bipartite,True,True
+example_rank,graph_grid,hi-medium,late_window_holdout,HI-M / late,edge_aware_graphsage_h64,Ref,f1,0.0126840247665008,6.0,,6,edge_aware_graphsage_h64,degree_capped_bipartite,True,True
+example_rank,graph_grid,hi-medium,late_window_holdout,HI-M / late,edge_aware_graphsage_h64_degree_only,Degree,auprc,0.0326194395106207,2.0,,6,edge_aware_graphsage_h64,degree_capped_bipartite,True,True
+example_rank,graph_grid,hi-medium,late_window_holdout,HI-M / late,edge_aware_graphsage_h64_degree_only,Degree,f1,0.0180915743702357,3.0,,6,edge_aware_graphsage_h64,degree_capped_bipartite,True,True
+example_rank,graph_grid,hi-medium,late_window_holdout,HI-M / late,edge_aware_graphsage_h64_no_edge_features,No edge,auprc,0.0298891656152444,3.0,,6,edge_aware_graphsage_h64,degree_capped_bipartite,True,True
+example_rank,graph_grid,hi-medium,late_window_holdout,HI-M / late,edge_aware_graphsage_h64_no_edge_features,No edge,f1,0.0147903705308606,4.0,,6,edge_aware_graphsage_h64,degree_capped_bipartite,True,True
+example_rank,graph_grid,hi-medium,late_window_holdout,HI-M / late,edge_aware_graphsage_h64_shuffled_edge_features,Shuffle,auprc,0.0297003823532502,4.0,,6,edge_aware_graphsage_h64,degree_capped_bipartite,True,True
+example_rank,graph_grid,hi-medium,late_window_holdout,HI-M / late,edge_aware_graphsage_h64_shuffled_edge_features,Shuffle,f1,0.0135156104219311,5.0,,6,edge_aware_graphsage_h64,degree_capped_bipartite,True,True
+example_rank,graph_grid,hi-medium,late_window_holdout,HI-M / late,recent_window_only_graph,Recent,auprc,0.0289492282206032,5.0,,6,edge_aware_graphsage_h64,degree_capped_bipartite,True,True
+example_rank,graph_grid,hi-medium,late_window_holdout,HI-M / late,recent_window_only_graph,Recent,f1,0.021238093421004,2.0,,6,edge_aware_graphsage_h64,degree_capped_bipartite,True,True
+example_rank,graph_grid,hi-medium,late_window_holdout,HI-M / late,degree_capped_bipartite,Degree cap,auprc,0.0127403006538809,6.0,,6,edge_aware_graphsage_h64,degree_capped_bipartite,True,True
+example_rank,graph_grid,hi-medium,late_window_holdout,HI-M / late,degree_capped_bipartite,Degree cap,f1,0.0221475363163674,1.0,,6,edge_aware_graphsage_h64,degree_capped_bipartite,True,True

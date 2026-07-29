@@ -1,0 +1,51 @@
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.10}
+\begin{longtable}{@{}p{0.11\textwidth} p{0.13\textwidth} p{0.19\textwidth} p{0.16\textwidth} r p{0.16\textwidth}@{}}
+\caption{IBM Small configuration-level AUPRC, runtime, and feasibility.}\label{tab:s-ibm-runtime-small}\\
+\toprule
+\textbf{Variant} & \textbf{Protocol} & \textbf{Configuration} & \textbf{Status} & \textbf{AUPRC / seconds} & \textbf{Within-cell treatment} \\
+\midrule
+\endfirsthead
+\caption[]{IBM Small configuration-level AUPRC, runtime, and feasibility. (continued)}\\
+\toprule
+\textbf{Variant} & \textbf{Protocol} & \textbf{Configuration} & \textbf{Status} & \textbf{AUPRC / seconds} & \textbf{Within-cell treatment} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{6}{r}{\footnotesize Continued on next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+HI SMALL & Early-to-late & DegreeCap & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.01285 / 27.89 & Pareto \\
+HI SMALL & Early-to-late & DegreeOnly & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00513 / 31.61 & Measured, non-Pareto \\
+HI SMALL & Early-to-late & GINE h64 & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.02608 / 264.47 & Pareto \\
+HI SMALL & Early-to-late & NoEdge & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00387 / 35.00 & Measured, non-Pareto \\
+HI SMALL & Early-to-late & RecentWindow & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00496 / 16.64 & Pareto \\
+HI SMALL & Early-to-late & SAGE-edge h64 & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.01025 / 33.27 & Measured, non-Pareto \\
+HI SMALL & Early-to-late & ShuffledEdge & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00412 / 32.52 & Measured, non-Pareto \\
+HI SMALL & Late-window & DegreeCap & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.02574 / 39.06 & Pareto \\
+HI SMALL & Late-window & DegreeOnly & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00624 / 44.52 & Measured, non-Pareto \\
+HI SMALL & Late-window & GINE h64 & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.03125 / 363.32 & Pareto \\
+HI SMALL & Late-window & NoEdge & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.01052 / 48.70 & Measured, non-Pareto \\
+HI SMALL & Late-window & RecentWindow & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00682 / 29.69 & Pareto \\
+HI SMALL & Late-window & SAGE-edge h64 & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.01100 / 47.21 & Measured, non-Pareto \\
+HI SMALL & Late-window & ShuffledEdge & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00752 / 50.12 & Measured, non-Pareto \\
+LI SMALL & Early-to-late & DegreeCap & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00389 / 42.79 & Pareto \\
+LI SMALL & Early-to-late & DegreeOnly & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00168 / 48.76 & Measured, non-Pareto \\
+LI SMALL & Early-to-late & GINE h64 & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00974 / 494.76 & Pareto \\
+LI SMALL & Early-to-late & NoEdge & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00217 / 46.50 & Measured, non-Pareto \\
+LI SMALL & Early-to-late & RecentWindow & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00225 / 27.39 & Pareto \\
+LI SMALL & Early-to-late & SAGE-edge h64 & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00315 / 50.84 & Measured, non-Pareto \\
+LI SMALL & Early-to-late & ShuffledEdge & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00199 / 46.62 & Measured, non-Pareto \\
+LI SMALL & Late-window & DegreeCap & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00479 / 53.44 & Pareto \\
+LI SMALL & Late-window & DegreeOnly & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00218 / 59.71 & Measured, non-Pareto \\
+LI SMALL & Late-window & GINE h64 & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.01060 / 675.32 & Pareto \\
+LI SMALL & Late-window & NoEdge & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00283 / 58.44 & Measured, non-Pareto \\
+LI SMALL & Late-window & RecentWindow & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00268 / 35.34 & Pareto \\
+LI SMALL & Late-window & SAGE-edge h64 & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00568 / 65.92 & Pareto \\
+LI SMALL & Late-window & ShuffledEdge & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00325 / 58.06 & Measured, non-Pareto \\
+\end{longtable}
+\noindent\footnotesize\emph{Scope and reading.} Pareto treatment is computed only within the same variant and protocol. Runtime is runner elapsed time, not a hardware-normalized complexity or energy measure. Blocked rows remain nonnumeric.\par
+\endgroup

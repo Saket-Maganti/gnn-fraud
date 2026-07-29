@@ -1,0 +1,27 @@
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.10}
+\begin{longtable}{@{}p{0.16\textwidth} r p{0.28\textwidth} p{0.25\textwidth} p{0.22\textwidth}@{}}
+\caption{Machine-readable destination of the four exhaustive tables removed from the PDF.}\label{tab:s-raw-artifacts}\\
+\toprule
+\textbf{Evidence family} & \textbf{Rows} & \textbf{Artifact path} & \textbf{SHA-256} & \textbf{Schema prefix} \\
+\midrule
+\endfirsthead
+\caption[]{Machine-readable destination of the four exhaustive tables removed from the PDF. (continued)}\\
+\toprule
+\textbf{Evidence family} & \textbf{Rows} & \textbf{Artifact path} & \textbf{SHA-256} & \textbf{Schema prefix} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{5}{r}{\footnotesize Continued on next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+RB09 SEED GRID & 180 & \path{results/runs_rb09v3/runs.csv} & \texttt{d9f77bfd\allowbreak{}14ccaf15\allowbreak{}7780858e\allowbreak{}35ecfee9\allowbreak{}6af1e2fb\allowbreak{}f60f3559\allowbreak{}ad888d14\allowbreak{}c0ace2e9} & dataset, protocol, split\_name, model, seed, early\_stopping\_metric; ... \\
+V22 PAIRED TESTS & 198 & \path{manuscript_assets/tables/V22_STAT_TESTS_FULL10.csv} & \texttt{513f1fb5\allowbreak{}c2dbae2f\allowbreak{}63255fd3\allowbreak{}84c62fe8\allowbreak{}6394a157\allowbreak{}46c31792\allowbreak{}a92a1f28\allowbreak{}7b8ddadd} & family, dataset, protocol, fixed\_model, comparison\_axis, left; ... \\
+IBM SEED GRID & 840 & \path{results/tkde_rebuild/IBM_IMPORTED_SEED_ROWS.csv} & \texttt{dae5d511\allowbreak{}78b9a746\allowbreak{}946c9fc0\allowbreak{}5bf31e74\allowbreak{}840b6663\allowbreak{}d6903159\allowbreak{}7ef2be45\allowbreak{}d5e766b6} & version, variant, size, regime, protocol, config; ... \\
+IBM CONTEXT EFFECTS & 208 & \path{results/tkde_rebuild/IBM_MATCHED_ABLATION_CONTEXT_EFFECTS.csv} & \texttt{626f0e01\allowbreak{}4a0b8d33\allowbreak{}9fe344bb\allowbreak{}736d513e\allowbreak{}d63a6ec4\allowbreak{}35be6104\allowbreak{}acad1f53\allowbreak{}f7bbe202} & config, size, metric, variant, protocol, n\_seed\_pairs; ... \\
+\end{longtable}
+\noindent\footnotesize\emph{Scope and reading.} Full ordered schemas, complete hashes, and the common regeneration command are recorded in \path{results/tkde_visual_rebuild/RAW_TABLE_ARTIFACT_INDEX.csv} and \path{results/tkde_visual_rebuild/RAW_TABLE_ARTIFACT_INDEX.md}. No row is deleted or converted to a PDF-only value.\par
+\endgroup

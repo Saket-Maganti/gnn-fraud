@@ -1,0 +1,8 @@
+audit_id,artifact_family,result_files_at_risk,prediction_files_at_risk,naive_promotion_rule,correct_status,reason
+FP01,V22 failed/noncomparable imports,38,38,filenames and metric-bearing files exist,EXCLUDED_INTEGRITY,"missing seed, failed return-code, duplicate/conflicting merge metadata"
+FP02,V24 RB41 duplicate stress labels,240,240,three labels appear to be distinct conditions,DEDUPLICATE_TO_120_BASE_CELLS,stress label is never passed to benchmark harness; all performance metrics repeat
+FP03,V24 memory-reduced DGraphFin GAT h32/l1,20,20,GAT outputs could appear to fill the fixed h64/l2 gap,DIAGNOSTIC_ONLY,different width/depth; canonical lock says not comparable
+FP04,V26 legacy P100-named lane,12,12,path token could be read as measured P100 hardware,NORMALIZE_ALIAS_TO_T4/CUDA0,runtime records identify cuda:0 and validation normalizes the alias; path names are not hardware evidence
+FP05,IBM AML Large status/runbook artifacts,0,0,variant directories and plans exist,RESOURCE_BLOCKED,canonical lock contains zero results and predictions
+FP06,Medium GINE blocked plans,0,0,planned 40 outputs could be confused with completed coverage,RESOURCE_BLOCKED,two T4-OOM rows; zero results and predictions
+FP07,RB18 larger-GPU preparation,0,0,commands/notebook/status files exist,BLOCKED_WAITING_FOR_GPU,validation reports no imported result CSV

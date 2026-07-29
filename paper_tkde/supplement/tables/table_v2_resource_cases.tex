@@ -1,0 +1,29 @@
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.10}
+\begin{longtable}{@{}p{0.21\textwidth} p{0.21\textwidth} p{0.11\textwidth} p{0.15\textwidth} p{0.18\textwidth}@{}}
+\caption{Measured resource outcomes and benchmark treatment.}\label{tab:s-resource-cases}\\
+\toprule
+\textbf{Evaluation cell} & \textbf{Declared envelope / observed event} & \textbf{Outputs} & \textbf{Status} & \textbf{Benchmark treatment} \\
+\midrule
+\endfirsthead
+\caption[]{Measured resource outcomes and benchmark treatment. (continued)}\\
+\toprule
+\textbf{Evaluation cell} & \textbf{Declared envelope / observed event} & \textbf{Outputs} & \textbf{Status} & \textbf{Benchmark treatment} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{5}{r}{\footnotesize Continued on next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+IBM AML HI-Large & safe resource guard & 0 results; 0 predictions & \texttt{SAFE\_\allowbreak{}RESOURCE\_\allowbreak{}BLOCKED} & not in predictive ranking \\
+IBM AML LI-Large & safe resource guard & 0 results; 0 predictions & \texttt{SAFE\_\allowbreak{}RESOURCE\_\allowbreak{}BLOCKED} & not in predictive ranking \\
+IBM AML HI-Medium GINE h64 & single Tesla T4 CUDA OOM & 0 of 20 planned results; 0 predictions & \texttt{RESOURCE\_\allowbreak{}BLOCKED\_\allowbreak{}T4\_\allowbreak{}CUDA\_\allowbreak{}OOM} & not in predictive ranking \\
+IBM AML LI-Medium GINE h64 & single Tesla T4 CUDA OOM & 0 of 20 planned results; 0 predictions & \texttt{RESOURCE\_\allowbreak{}BLOCKED\_\allowbreak{}T4\_\allowbreak{}CUDA\_\allowbreak{}OOM} & not in predictive ranking \\
+DGraphFin GAT h64/l2 & Tesla T4 CUDA OOM & 0 of 20 planned results; 0 predictions & \texttt{BLOCKED\_\allowbreak{}T4\_\allowbreak{}OOM} & memory-reduced h32/l1 diagnostic is not a replacement \\
+DGraphFin GraphSAGE max-pool rerun & larger GPU required & 0 results; 0 predictions & \texttt{BLOCKED\_\allowbreak{}WAITING\_\allowbreak{}FOR\_\allowbreak{}GPU} & no imported result CSV \\
+\end{longtable}
+\noindent\footnotesize\emph{Scope and reading.} A blocked cell is unmeasured and excluded from predictive ranks, matched means, and Pareto sets. A reduced diagnostic cannot replace a fixed blocked configuration.\par
+\endgroup

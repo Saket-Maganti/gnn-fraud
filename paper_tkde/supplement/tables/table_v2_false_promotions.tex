@@ -1,0 +1,30 @@
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.10}
+\begin{longtable}{@{}p{0.08\textwidth} p{0.22\textwidth} r r p{0.20\textwidth} p{0.19\textwidth}@{}}
+\caption{False-promotion patterns guarded by the artifact layer.}\label{tab:s-false-promotions-v2}\\
+\toprule
+\textbf{Audit} & \textbf{Family} & \textbf{Result risk} & \textbf{Prediction risk} & \textbf{Correct treatment} & \textbf{Why count-only logic fails} \\
+\midrule
+\endfirsthead
+\caption[]{False-promotion patterns guarded by the artifact layer. (continued)}\\
+\toprule
+\textbf{Audit} & \textbf{Family} & \textbf{Result risk} & \textbf{Prediction risk} & \textbf{Correct treatment} & \textbf{Why count-only logic fails} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{6}{r}{\footnotesize Continued on next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+FP01 & V22 failed/noncomparable imports & 38 & 38 & \texttt{EXCLUDED\_\allowbreak{}INTEGRITY} & missing seed, failed return-code, duplicate/conflicting merge metadata \\
+FP02 & V24 RB41 duplicate stress labels & 240 & 240 & \texttt{DEDUPLICATE\_\allowbreak{}TO\_\allowbreak{}120\_\allowbreak{}BASE\_\allowbreak{}CELLS} & stress label is never passed to benchmark harness; all performance metrics repeat \\
+FP03 & V24 memory-reduced DGraphFin GAT h32/l1 & 20 & 20 & \texttt{DIAGNOSTIC\_\allowbreak{}ONLY} & different width/depth; canonical lock says not comparable \\
+FP04 & V26 legacy P100-named lane & 12 & 12 & \texttt{NORMALIZE\_\allowbreak{}ALIAS\_\allowbreak{}TO\_\allowbreak{}T4/\allowbreak{}CUDA0} & runtime records identify cuda:0 and validation normalizes the alias; path names are not hardware evidence \\
+FP05 & IBM AML Large status/runbook artifacts & 0 & 0 & \texttt{RESOURCE\_\allowbreak{}BLOCKED} & canonical lock contains zero results and predictions \\
+FP06 & Medium GINE blocked plans & 0 & 0 & \texttt{RESOURCE\_\allowbreak{}BLOCKED} & two T4-OOM rows; zero results and predictions \\
+FP07 & RB18 larger-GPU preparation & 0 & 0 & \texttt{BLOCKED\_\allowbreak{}WAITING\_\allowbreak{}FOR\_\allowbreak{}GPU} & validation reports no imported result CSV \\
+\end{longtable}
+\noindent\footnotesize\emph{Scope and reading.} The 310 result and 310 prediction files at risk are not additional evidence. Zero-output plans remain visible because directories and notebooks can otherwise be mistaken for completed runs.\par
+\endgroup

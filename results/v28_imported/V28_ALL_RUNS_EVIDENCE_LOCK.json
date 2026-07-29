@@ -1,0 +1,58 @@
+{
+  "blocked_runs": [
+    {
+      "blocked_output_count": 20,
+      "blocked_protocol_count": 2,
+      "blocked_seed_count": 10,
+      "claimable": false,
+      "config": "gine_light_h64",
+      "evidence_source": "canonical V28 run state; no claimable Medium GINE zip imported",
+      "failure_signature": "torch.OutOfMemoryError: CUDA out of memory; requested allocation about 4.56 GiB on about 14.56 GiB T4 while process memory was already high",
+      "local_failed_zip_or_log_present": false,
+      "local_marker_paths": [],
+      "prediction_file_count": 0,
+      "result_json_count": 0,
+      "status": "RESOURCE_BLOCKED_T4_CUDA_OOM",
+      "variant": "hi-medium",
+      "version": "V28"
+    },
+    {
+      "blocked_output_count": 20,
+      "blocked_protocol_count": 2,
+      "blocked_seed_count": 10,
+      "claimable": false,
+      "config": "gine_light_h64",
+      "evidence_source": "canonical V28 run state; no claimable Medium GINE zip imported",
+      "failure_signature": "torch.OutOfMemoryError: CUDA out of memory; requested allocation about 4.56 GiB on about 14.56 GiB T4 while process memory was already high",
+      "local_failed_zip_or_log_present": false,
+      "local_marker_paths": [],
+      "prediction_file_count": 0,
+      "result_json_count": 0,
+      "status": "RESOURCE_BLOCKED_T4_CUDA_OOM",
+      "variant": "li-medium",
+      "version": "V28"
+    }
+  ],
+  "claimable": true,
+  "counts": {
+    "actual_prediction_files": 520,
+    "actual_result_json": 520,
+    "expected_prediction_files": 520,
+    "expected_result_json": 520
+  },
+  "created_at_utc": "2026-07-07T10:08:28+00:00",
+  "import_manifest_csv": "results/v28_imported/V28_ALL_RUNS_IMPORT_MANIFEST.csv",
+  "policy": {
+    "blocked_runs_not_empirical": true,
+    "execute_required": true,
+    "no_dry_run": true,
+    "no_zip_temp": true,
+    "prediction_exports_required": true,
+    "zero_return_codes_required": true
+  },
+  "prediction_manifest_csv": "results/v28_imported/V28_PREDICTION_EXPORT_MANIFEST.csv",
+  "source_inventory_csv": "results/v28_imported/V28_ALL_RUNS_ZIP_INVENTORY.csv",
+  "status": "PASS_WITH_RESOURCE_BLOCKED_MEDIUM_GINE",
+  "validation_errors": [],
+  "version": "V28"
+}

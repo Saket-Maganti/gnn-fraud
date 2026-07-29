@@ -1,0 +1,17 @@
+\begin{table}[tbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\renewcommand{\arraystretch}{1.12}
+\caption{Construct audit of the V24 temporal-stress labels.}
+\label{tab:s-v24-audit}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.18\textwidth} r r Y >{\raggedright\arraybackslash}p{0.24\textwidth}@{}}
+\toprule
+\textbf{Scientific base cells} & \textbf{Metadata labels/cell} & \textbf{Duplicate rows} & \textbf{Audit finding} & \textbf{Admissible use} \\
+\midrule
+120 dataset/protocol/model/seed cells & 3 & 240 & The label was not passed to the benchmark harness; every performance metric repeats across labels. & One deduplicated representative per base cell as supplementary rerun evidence only. \\
+\bottomrule
+\end{tabularx}
+\vspace{2pt}
+\begin{minipage}{\textwidth}\footnotesize\emph{Scope and reading.} Runtime can differ because the same harness was executed again. No temporal-stress contrast is admissible from this family.\end{minipage}
+\end{table}

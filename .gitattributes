@@ -1,0 +1,10 @@
+* text=auto eol=lf
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ipynb text eol=lf
+*.sh text eol=lf
+*.tex text eol=lf
+# Frozen aggregate CSVs must retain their audited bytes and line endings.
+*.csv -text -eol

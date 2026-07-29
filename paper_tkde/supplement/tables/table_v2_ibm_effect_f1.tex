@@ -1,0 +1,36 @@
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.10}
+\begin{longtable}{@{}p{0.08\textwidth} p{0.18\textwidth} r r p{0.24\textwidth} r r p{0.10\textwidth}@{}}
+\caption{Dependence-aware matched IBM F1 effects relative to SAGE-edge h64.}\label{tab:s-ibm-effect-f1}\\
+\toprule
+\textbf{Size} & \textbf{Candidate} & \textbf{Reference} & \textbf{Candidate} & \textbf{$\Delta$ [95\% CI]} & \textbf{$d_z$} & \textbf{Holm p} & \textbf{Context signs} \\
+\midrule
+\endfirsthead
+\caption[]{Dependence-aware matched IBM F1 effects relative to SAGE-edge h64. (continued)}\\
+\toprule
+\textbf{Size} & \textbf{Candidate} & \textbf{Reference} & \textbf{Candidate} & \textbf{$\Delta$ [95\% CI]} & \textbf{$d_z$} & \textbf{Holm p} & \textbf{Context signs} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{8}{r}{\footnotesize Continued on next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+Medium & DegreeCap & 0.00809 & 0.01396 & +0.00587 [0.00317, 0.00841] & 1.308 & 0.0352 & +4 / -0 / 0:0 \\
+Medium & DegreeOnly & 0.00809 & 0.00834 & +0.00026 [-0.00292, 0.00282] & 0.052 & 1.0000 & +1 / -3 / 0:0 \\
+Medium & NoEdge & 0.00809 & 0.00739 & -0.00070 [-0.00339, 0.00135] & -0.170 & 1.0000 & +1 / -3 / 0:0 \\
+Medium & RecentWindow & 0.00809 & 0.01228 & +0.00419 [0.00242, 0.00583] & 1.416 & 0.0352 & +3 / -1 / 0:0 \\
+Medium & Sender-receiver alias & 0.00809 & 0.00809 & +0.00000 [0.00000, 0.00000] & 0.000 & 1.0000 & +0 / -0 / 0:4 \\
+Medium & ShuffledEdge & 0.00809 & 0.00723 & -0.00086 [-0.00368, 0.00136] & -0.199 & 1.0000 & +1 / -3 / 0:0 \\
+Small & DegreeCap & 0.01058 & 0.01532 & +0.00473 [0.00204, 0.00747] & 1.006 & 0.0781 & +4 / -0 / 0:0 \\
+Small & DegreeOnly & 0.01058 & 0.00693 & -0.00365 [-0.00518, -0.00226] & -1.458 & 0.0137 & +0 / -4 / 0:0 \\
+Small & GINE h64 & 0.01058 & 0.00852 & -0.00206 [-0.00371, -0.00052] & -0.768 & 0.2520 & +0 / -4 / 0:0 \\
+Small & NoEdge & 0.01058 & 0.00729 & -0.00329 [-0.00470, -0.00201] & -1.452 & 0.0137 & +0 / -4 / 0:0 \\
+Small & RecentWindow & 0.01058 & 0.00862 & -0.00197 [-0.00385, -0.00029] & -0.645 & 0.2617 & +1 / -3 / 0:0 \\
+Small & Sender-receiver alias & 0.01058 & 0.01058 & +0.00000 [0.00000, 0.00000] & 0.000 & 1.0000 & +0 / -0 / 0:4 \\
+Small & ShuffledEdge & 0.01058 & 0.00723 & -0.00335 [-0.00492, -0.00195] & -1.327 & 0.0195 & +0 / -4 / 0:0 \\
+\end{longtable}
+\noindent\footnotesize\emph{Scope and reading.} Inference uses ten seed blocks after averaging four fixed HI/LI-by-protocol contexts within seed. The context-sign column summarizes heterogeneity; the complete 208 context rows remain in the artifact. The sender-receiver row is an identity diagnostic.\par
+\endgroup

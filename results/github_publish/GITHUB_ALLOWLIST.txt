@@ -1,0 +1,186 @@
+# Explicit source-to-GitHub allowlist.
+# Blank lines and comments are ignored. Globs are repository-relative.
+
+# Root configuration and legacy reproduction entry points.
+.python-version
+config.py
+train.py
+train_proper.py
+colab_setup.sh
+run_full_upgrade.sh
+run_overnight.sh
+run_insights.sh
+run_upgrades.sh
+pyproject.toml
+requirements.txt
+requirements-dev.txt
+
+# Canonical source packages. Cache files, raw data, checkpoints, and binaries
+# are separately denied by the exclusion list and the public-tree validator.
+fraudshiftbench/*.py
+data/*.py
+data/datasets/*.py
+data/README.md
+models/*.py
+experiments/*.py
+utils/*.py
+
+# Canonical benchmark, GraphSafe extension, audit, and manuscript builders.
+scripts/__init__.py
+scripts/audit_utils.py
+scripts/audit_claim_language.py
+scripts/check_anonymization.py
+scripts/check_claim_gates.py
+scripts/safety_check_no_heavy_defaults.py
+scripts/generate_figure_manifest.py
+scripts/recommend_protocol_robust_model.py
+scripts/run_fraudshift_falsification_suite.py
+scripts/run_fraudshift_stress_tests.py
+scripts/run_graphsafe_tta.py
+scripts/analyze_graphsafe_tta.py
+scripts/analyze_graphsafe_acceptance.py
+scripts/analyze_review_budget_worst_block.py
+scripts/graphsafe_strengthening_common.py
+scripts/tkde_rebuild/*.py
+scripts/tkde_rebuild/*.sh
+scripts/tkde_visual_rebuild/*.py
+scripts/github_publish/*.py
+
+# Dataset/runbook documentation without generated notebooks, credentials, or
+# provider workspaces.
+kaggle/README.md
+kaggle/MASTER_RUNBOOK.md
+kaggle/kaggle_bootstrap.py
+kaggle/generate_notebooks.py
+kaggle/generate_dual_gpu_notebooks.py
+kaggle/datasets/dataset-metadata.json
+kaggle_workspace/manifests/V22_FINAL_GPU_EVIDENCE_LOCK.json
+notebooks/colab_transductive_vs_inductive.ipynb
+
+# Active final manuscript dependency closure.
+paper_tkde/README_BUILD.md
+paper_tkde/main.tex
+paper_tkde/references.bib
+paper_tkde/sections/01_abstract.tex
+paper_tkde/sections/02_introduction.tex
+paper_tkde/sections/03_related_work.tex
+paper_tkde/sections/04_deployment_claim_contracts.tex
+paper_tkde/sections/05_benchmark_instantiation.tex
+paper_tkde/sections/06_experimental_design.tex
+paper_tkde/sections/07_results_protocol_architecture.tex
+paper_tkde/sections/08_results_construction_decisions.tex
+paper_tkde/sections/09_framework_validation_graphsafe.tex
+paper_tkde/sections/10_implications_validity_artifact.tex
+paper_tkde/sections/11_conclusion.tex
+paper_tkde/figures/fig01_deployment_contract.*
+paper_tkde/figures/fig02_protocol_architecture_effects.*
+paper_tkde/figures/fig03_ibm_metric_scale_construction.*
+paper_tkde/figures/fig04_rank_decision_divergence.*
+paper_tkde/figures/fig05_matched_ablation_effects.*
+paper_tkde/figures/fig06_runtime_resource_pareto.*
+paper_tkde/figures/fig07_review_budget_analysis.*
+paper_tkde/figures/fig08_claim_support_validation.*
+paper_tkde/tables/table01_related_work.tex
+paper_tkde/tables/table02_dataset_tasks.tex
+paper_tkde/tables/table03_protocol_visibility.tex
+paper_tkde/tables/table04_rb09_protocol_effects.tex
+paper_tkde/tables/table05_ibm_baselines.tex
+paper_tkde/tables/table06_ibm_construction.tex
+paper_tkde/tables/table07_resource_boundaries.tex
+paper_tkde/tables/table08_graphsafe_case.tex
+paper_tkde/supplement/supplement.tex
+paper_tkde/supplement/sections/*.tex
+paper_tkde/supplement/tables/table_v2_*.tex
+
+# Final PDFs are mapped to paper/pdf/ by the curated sync.
+output/pdf/FraudShiftBench_TKDE_main.pdf
+output/pdf/FraudShiftBench_TKDE_supplement.pdf
+
+# Frozen aggregate evidence and source rows required by the final generators.
+results/runs_rb09v3/ARTIFACT_FAMILY.json
+results/runs_rb09v3/runs.csv
+results/runs_rb17_review_budget_worst_block/rb17_results.csv
+results/tkde_rebuild/*.csv
+results/tkde_rebuild/*.md
+results/tkde_rebuild/figure_data/*.csv
+results/tkde_rebuild/table_data/*.csv
+results/tkde_visual_rebuild/*.csv
+results/tkde_visual_rebuild/*.md
+results/tkde_visual_rebuild/audits/*.md
+results/tkde_visual_rebuild/figure_data/*.csv
+results/tkde_visual_rebuild/table_data/*.csv
+results/tkde_visual_rebuild/validation/anonymization.md
+results/tkde_visual_rebuild/validation/claim_gates/*
+results/tkde_visual_rebuild/validation/safety/*
+results/v24_imported/V24_IMPORTED_EVIDENCE_LOCK.json
+results/v26_imported/V26_IMPORTED_EVIDENCE_LOCK.json
+results/v27_imported/V27_STRONGER_GRAPH_EVIDENCE_LOCK.json
+results/v28_imported/V28_ALL_RUNS_EVIDENCE_LOCK.json
+manuscript_assets/tables/V22_FULL10_MERGE_STATUS.csv
+manuscript_assets/tables/V22_GPU_EVIDENCE_STATUS_TABLE.csv
+manuscript_assets/tables/V22_IMPORTED_OUTPUTS_STATUS.csv
+manuscript_assets/tables/V22_RB28_LOSS_ROBUSTNESS_FULL10.csv
+manuscript_assets/tables/V22_RB29_NEGATIVE_CONTROLS_FULL10.csv
+manuscript_assets/tables/V22_RB30_EXTRA_ARCH_FULL10_OR_BLOCKED.csv
+manuscript_assets/tables/V22_STAT_TESTS_FULL10.csv
+
+# Final readiness and release metadata, without ZIP packages or contact sheets.
+release/tkde_visual_rebuild/CHECKSUMS.sha256
+release/tkde_visual_rebuild/CLEAN_ROOM_BUILD_REPORT.md
+release/tkde_visual_rebuild/tkde_visual_artifact_manifest.csv
+release/tkde_visual_rebuild/tkde_visual_excluded_file_manifest.csv
+release/tkde_visual_rebuild/tkde_visual_reproducibility_readme.md
+
+# Curated publication audit reports required by the governing prompt.
+results/github_publish/GITHUB_SOURCE_INVENTORY.csv
+results/github_publish/GITHUB_SOURCE_INVENTORY.md
+results/github_publish/CANONICAL_SOURCE_MAP.csv
+results/github_publish/CANONICAL_SOURCE_MAP.md
+results/github_publish/GITHUB_ALLOWLIST.txt
+results/github_publish/GITHUB_EXCLUDELIST.txt
+results/github_publish/LARGE_FILE_AUDIT.csv
+results/github_publish/SECRET_AND_PRIVACY_AUDIT.md
+results/github_publish/REMOTE_REPOSITORY_BASELINE.md
+results/github_publish/PR_BODY.md
+results/github_publish/GITHUB_PUSH_REPORT.md
+results/github_publish/CHATGPT_GITHUB_ANALYSIS_REQUEST.md
+results/github_publish/COMMAND_LOG.md
+
+# Files authored directly in the clean checkout after the source sync.
+README.md
+.gitignore
+.gitattributes
+.env.example
+.github/workflows/ci.yml
+CITATION.cff
+LICENSE_REVIEW_REQUIRED.md
+Makefile
+README_BUILD.md
+requirements-publication.txt
+docs/CLEAN_REPOSITORY_VALIDATION.md
+docs/DATA_ACCESS.md
+docs/EVIDENCE_AND_CLAIM_MAP.md
+docs/GITHUB_ANALYSIS_ENTRYPOINT.md
+docs/KNOWN_LIMITATIONS.md
+docs/PROJECT_OVERVIEW.md
+docs/REPOSITORY_MAP.md
+docs/REPRODUCIBILITY.md
+docs/RESOURCE_BOUNDARIES.md
+docs/SOURCE_TO_GITHUB_PATH_MAP.csv
+manifests/README.md
+release_metadata/README.md
+results_summary/README.md
+
+# Curated lightweight tests. Tests requiring excluded raw predictions, release
+# ZIPs, provider workspaces, or full imported run trees are not selected.
+tests/__init__.py
+tests/test_fraudshiftbench_claim_gates.py
+tests/test_fraudshiftbench_evidence_units.py
+tests/test_fraudshiftbench_metrics.py
+tests/test_fraudshiftbench_protocols.py
+tests/test_fraudshiftbench_red_team_integrity.py
+tests/test_tkde_visual_release_audits.py
+
+# Existing origin/main files are preserved unless they are explicitly listed in
+# GITHUB_EXCLUDELIST.txt. In particular, the old figures and legacy Elliptic
+# reproduction surface remain available and are documented as legacy.

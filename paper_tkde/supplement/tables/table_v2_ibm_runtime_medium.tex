@@ -1,0 +1,49 @@
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.10}
+\begin{longtable}{@{}p{0.11\textwidth} p{0.13\textwidth} p{0.19\textwidth} p{0.16\textwidth} r p{0.16\textwidth}@{}}
+\caption{IBM Medium configuration-level AUPRC, runtime, and feasibility.}\label{tab:s-ibm-runtime-medium}\\
+\toprule
+\textbf{Variant} & \textbf{Protocol} & \textbf{Configuration} & \textbf{Status} & \textbf{AUPRC / seconds} & \textbf{Within-cell treatment} \\
+\midrule
+\endfirsthead
+\caption[]{IBM Medium configuration-level AUPRC, runtime, and feasibility. (continued)}\\
+\toprule
+\textbf{Variant} & \textbf{Protocol} & \textbf{Configuration} & \textbf{Status} & \textbf{AUPRC / seconds} & \textbf{Within-cell treatment} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{6}{r}{\footnotesize Continued on next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+HI MEDIUM & Both Planned Protocols & GINE h64 & \texttt{RESOURCE\_\allowbreak{}BLOCKED\_\allowbreak{}T4\_\allowbreak{}CUDA\_\allowbreak{}OOM} & -- & Unmeasured \\
+HI MEDIUM & Early-to-late & DegreeCap & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.01186 / 216.79 & Measured, non-Pareto \\
+HI MEDIUM & Early-to-late & DegreeOnly & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.02524 / 238.96 & Pareto \\
+HI MEDIUM & Early-to-late & NoEdge & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.02447 / 248.13 & Measured, non-Pareto \\
+HI MEDIUM & Early-to-late & RecentWindow & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.01866 / 128.15 & Pareto \\
+HI MEDIUM & Early-to-late & SAGE-edge h64 & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.04242 / 249.73 & Pareto \\
+HI MEDIUM & Early-to-late & ShuffledEdge & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.02388 / 255.57 & Measured, non-Pareto \\
+HI MEDIUM & Late-window & DegreeCap & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.01274 / 261.86 & Measured, non-Pareto \\
+HI MEDIUM & Late-window & DegreeOnly & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.03262 / 290.36 & Pareto \\
+HI MEDIUM & Late-window & NoEdge & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.02989 / 298.87 & Measured, non-Pareto \\
+HI MEDIUM & Late-window & RecentWindow & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.02895 / 153.10 & Pareto \\
+HI MEDIUM & Late-window & SAGE-edge h64 & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.04998 / 301.12 & Pareto \\
+HI MEDIUM & Late-window & ShuffledEdge & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.02970 / 311.00 & Measured, non-Pareto \\
+LI MEDIUM & Both Planned Protocols & GINE h64 & \texttt{RESOURCE\_\allowbreak{}BLOCKED\_\allowbreak{}T4\_\allowbreak{}CUDA\_\allowbreak{}OOM} & -- & Unmeasured \\
+LI MEDIUM & Early-to-late & DegreeCap & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00316 / 211.08 & Measured, non-Pareto \\
+LI MEDIUM & Early-to-late & DegreeOnly & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00568 / 253.30 & Measured, non-Pareto \\
+LI MEDIUM & Early-to-late & NoEdge & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00515 / 243.66 & Measured, non-Pareto \\
+LI MEDIUM & Early-to-late & RecentWindow & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00657 / 129.07 & Pareto \\
+LI MEDIUM & Early-to-late & SAGE-edge h64 & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.01030 / 249.24 & Pareto \\
+LI MEDIUM & Early-to-late & ShuffledEdge & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00551 / 246.03 & Measured, non-Pareto \\
+LI MEDIUM & Late-window & DegreeCap & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00256 / 251.89 & Measured, non-Pareto \\
+LI MEDIUM & Late-window & DegreeOnly & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00778 / 303.13 & Measured, non-Pareto \\
+LI MEDIUM & Late-window & NoEdge & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00600 / 294.95 & Measured, non-Pareto \\
+LI MEDIUM & Late-window & RecentWindow & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00661 / 156.28 & Pareto \\
+LI MEDIUM & Late-window & SAGE-edge h64 & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.01105 / 300.67 & Pareto \\
+LI MEDIUM & Late-window & ShuffledEdge & \texttt{MEASURED\_\allowbreak{}FULL10} & 0.00634 / 294.61 & Measured, non-Pareto \\
+\end{longtable}
+\noindent\footnotesize\emph{Scope and reading.} Pareto treatment is computed only within the same variant and protocol. Runtime is runner elapsed time, not a hardware-normalized complexity or energy measure. Blocked rows remain nonnumeric.\par
+\endgroup

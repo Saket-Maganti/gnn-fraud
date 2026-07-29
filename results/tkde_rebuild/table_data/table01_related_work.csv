@@ -1,0 +1,7 @@
+work,domain,temporal,graph_controls,decision_budget,resource_semantics,prediction_provenance,claim_support
+GADBench,graph anomaly,No,Limited,No,No,Benchmark,No
+TGB / BenchTemp,temporal graphs,Yes,Inductive tasks,No,Efficiency,Benchmark,No
+BAG,dynamic anomaly,Yes,Task/model breadth,No,Scale reported,Benchmark,No
+GAD in the Wild,deployment anomaly,Partial,Scale/missing attributes,No,Scale challenge,Limited,No
+BetterBench / Eval Factsheets,benchmark governance,Generic,Documented,Documented,Documented,Metadata,Descriptive
+FraudShiftBench,temporal graph fraud,Yes,Visibility + construction,Top-K + cost,Typed blocked status,Per-seed manifests,Executable

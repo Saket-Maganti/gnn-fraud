@@ -1,0 +1,22 @@
+\begin{table}[tbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\renewcommand{\arraystretch}{1.12}
+\caption{Strict-to-isolated paired F1 effects.}
+\label{tab:s-protocol-f1}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.13\textwidth} >{\raggedright\arraybackslash}p{0.13\textwidth} r r r >{\raggedright\arraybackslash}p{0.21\textwidth} r r@{}}
+\toprule
+\textbf{Dataset} & \textbf{Model} & \textbf{n} & \textbf{Strict} & \textbf{Isolated} & \textbf{$\Delta$ [95\% CI]} & \textbf{$d_z$} & \textbf{Holm p} \\
+\midrule
+DGraphFin & GCN & 10 & 0.01642 & 0.01700 & +0.00058 [-0.00266, 0.00386] & 0.105 & 1.0000 \\
+DGraphFin & MLP & 10 & 0.02358 & 0.02358 & +0.00000 [0.00000, 0.00000] & 0.000 & 1.0000 \\
+DGraphFin & GraphSAGE & 10 & 0.04764 & 0.03486 & -0.01278 [-0.01821, -0.00754] & -1.391 & 0.0195 \\
+Elliptic & GCN & 10 & 0.49932 & 0.52759 & +0.02827 [0.01060, 0.04238] & 1.024 & 0.0781 \\
+Elliptic & MLP & 10 & 0.47719 & 0.47719 & +0.00000 [0.00000, 0.00000] & 0.000 & 1.0000 \\
+Elliptic & GraphSAGE & 10 & 0.58470 & 0.53461 & -0.05009 [-0.05890, -0.04140] & -3.298 & 0.0117 \\
+\bottomrule
+\end{tabularx}
+\vspace{2pt}
+\begin{minipage}{\textwidth}\footnotesize\emph{Scope and reading.} All comparisons share seeds 1--10 and identical temporal masks. The intervention changes graph visibility; it does not identify a unique mechanism for the observed response.\end{minipage}
+\end{table}

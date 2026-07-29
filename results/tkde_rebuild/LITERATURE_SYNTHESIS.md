@@ -1,0 +1,23 @@
+# Literature Synthesis and Defensible Gap
+
+## Fraud and graph anomaly detection
+
+The fraud literature has largely treated evaluation as the backdrop to a detector contribution. Elliptic established a temporal Bitcoin benchmark, while GraphConsis, CARE-GNN, PC-GNN, BWGNN, directed-multigraph GNNs, GRANDE, and FraudGT each target a particular modeling failure or representation. This work is indispensable for model selection, but a strong result within one graph construction and one split does not show that the conclusion survives a different deployment contract. Two adjacent findings are especially important for the present study: GADBench shows that broad graph-anomaly comparisons can favor tree ensembles, and the Graph Feature Preprocessor shows that graph-derived features plus boosted trees can be both accurate and efficient. FraudShiftBench therefore treats strong non-graph and graph-derived tabular methods as substantive baselines rather than foils.
+
+The benchmark landscape has also moved beyond static anomaly detection. DGraph supplies a large real financial graph; IBM AML-Data supplies synthetic, controlled AML regimes; BAG evaluates dynamic graph anomaly detection at breadth; and GAD in the Wild studies deployment challenges such as scale, rarity, and missing attributes. These works rule out a credible claim that FraudShiftBench is the first dynamic or deployment-oriented anomaly benchmark. The remaining gap is narrower: none of the inspected benchmarks combines fraud-specific temporal units, graph visibility and construction, model-selection cleanliness, investigation capacity, resource-status semantics, prediction provenance, and a typed support test for every scoped conclusion.
+
+## Temporal evaluation and shift
+
+OGB, GOOD, the dynamic-link evaluation study, TGB, TGB 2.0, and BenchTemp demonstrate that splits, negative sampling, inductive assumptions, temporal order, scale, and efficiency can change benchmark conclusions. They establish the premise that an evaluation protocol is part of the estimand. Fraud screening adds constraints these benchmarks do not jointly encode: graph edges may be available on a different schedule than labels, the positive prior is extremely small and time-varying, analysts inspect only a small prefix of a ranked list, and some graph constructions fail within the declared resource envelope. FraudShiftBench specializes the general protocol lesson into a deployment contract for this domain.
+
+## Validity, documentation, and claim scope
+
+Selection bias and leakage research explains why validation cleanliness and prediction-time information must be explicit. Data statements, model cards, datasheets, data cards, BenchmarkCards, Eval Factsheets, and BetterBench provide mature documentation and governance precedents. The contribution here is not another checklist or dataset card. The proposed evidence unit links the deployment contract, model/configuration, seeds, metrics, prediction manifest, resource record, and integrity state. A typed claim is supported only when its required evidence units are complete, paired when needed, and valid for the requested scope. The claim gate is an implementation of that relation, not the central scientific novelty.
+
+## Decision metrics under extreme imbalance
+
+Precision-recall analysis is better aligned with rare positives than ROC analysis alone, yet AUPRC still summarizes ranking rather than an operational decision. Calibration and prior correction can change probabilities and thresholded decisions, while strictly monotone calibration cannot change ranking metrics. Selective classification studies risk at varying coverage; cost-sensitive learning attaches explicit costs; feedback-guided anomaly discovery models a human inspecting a ranked list. FraudShiftBench brings these ideas into temporal graph-fraud evaluation through fixed review budgets, cost-sensitive risk, and a strict separation between rank and decision claims.
+
+## Positioning conclusion
+
+The defensible novelty is combinatorial but technically precise: a fraud-specific deployment contract over independent evaluation axes, coupled to a machine-checkable claim-evidence support relation and instantiated on prediction-backed, ten-seed evidence with visible resource boundaries. The empirical contribution is a conditional map, not a universal verdict: graph access and construction can help, be neutral, or hurt depending on dataset, model, temporal regime, metric, scale, and feasible resource set. GraphSafe-TTA is retained only as a bounded example of how rank and decision conclusions diverge under the framework.
