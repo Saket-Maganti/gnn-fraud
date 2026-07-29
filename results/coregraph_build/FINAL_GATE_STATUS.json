@@ -1,58 +1,95 @@
 {
-  "schema": "coregraph_pilot_semantics_closure_gate_v3",
-  "verdict": "COREGRAPH_PILOT_SEMANTICS_CLOSED_READY_FOR_MANIFEST_CONVERSION_REVIEW",
-  "pilot_semantics_closed_locally": true,
-  "execution_readiness_claimed": false,
+  "schema": "coregraph_third_review_integration_and_conversion_gate_v4",
+  "verdict": "COREGRAPH_V4_MANIFEST_CONVERSION_BLOCKED_METADATA_UNRESOLVED",
+  "integration_repairs_validated": true,
+  "pilot_execution_readiness_claimed": false,
+  "manifest_conversion": {
+    "search_roots": [
+      "$COREGRAPH_REPO",
+      "$HISTORICAL_GNN_FRAUD_REPO"
+    ],
+    "candidate_count": 201,
+    "prediction_validation_report_count": 9,
+    "validated_candidate_count": 70,
+    "structurally_usable_validated_candidate_count": 70,
+    "converted_manifest_count": 0,
+    "matrix_cell_count": 360,
+    "matrix_status_counts": {
+      "BLOCKED_AMBIGUOUS_HISTORICAL_CANDIDATES": 82,
+      "BLOCKED_METADATA_UNRESOLVED": 48,
+      "MISSING_ARTIFACT": 230
+    },
+    "unresolved_for_every_candidate": [
+      "code_hash",
+      "compute_cost",
+      "compute_cost_provenance",
+      "config_hash",
+      "contract_role",
+      "deployment_contract"
+    ]
+  },
+  "no_training_audits": {
+    "training_performed": false,
+    "metric_computation_performed": false,
+    "target_oracle_measurement_performed": false,
+    "split_rows": "PASS_AVAILABLE_ROWS_AUDITED_NO_METRICS",
+    "label_known": "PASS_AVAILABLE_ROWS_AUDITED_NO_METRICS",
+    "frozen_registry_schema": "PASS",
+    "discovered_protocol_aliases": "PASS_ALL_DISCOVERED_ALIASES_FROZEN",
+    "complete_contract_bindings": "BLOCKED_NO_LOADABLE_V4_MANIFESTS",
+    "typed_leakage_reports": "BLOCKED_60_OF_60_BEFORE_ATOMIC_AUDIT",
+    "no_training_runner": "BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+    "no_training_gate_completeness": "BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS"
+  },
   "execution_performed": {
     "official_baseline_installation": false,
     "provider_downloads": false,
+    "dataset_downloads": false,
+    "kaggle_launches": false,
     "real_prediction_manifests_created": false,
-    "real_saved_predictions_connected": false,
+    "corerouter_fit_on_real_predictions": false,
+    "learned_baseline_fit_on_real_predictions": false,
+    "target_metric_computation": false,
+    "target_oracle_measurement": false,
     "saved_output_pilot": false,
-    "full_dataset_training": false,
-    "multi_seed_campaigns": false,
-    "kaggle_runs": false
+    "paper_result_population": false,
+    "pull_request_merge": false,
+    "force_push": false
   },
   "local_gates": {
     "compileall": "PASS",
-    "ruff": "PASS_FULL",
-    "mypy": "PASS_50_SOURCE_FILES",
-    "tests": "PASS_176",
-    "anonymous_package_tests": "PASS_149",
-    "coverage_all_coregraph": "PASS_85_PERCENT",
+    "ruff": "PASS",
+    "mypy": "PASS_54_SOURCE_FILES",
+    "tests": "PASS_195",
     "coverage_contracts": "PASS_96_PERCENT",
     "coverage_routing": "PASS_94_PERCENT",
     "coverage_objectives": "PASS_86_PERCENT",
-    "coverage_pilot": "PASS_87_PERCENT",
-    "coverage_statistics": "PASS_94_PERCENT",
-    "coverage_support_engine": "PASS_88_PERCENT",
-    "coverage_gate_evaluator": "PASS_86_PERCENT",
-    "coverage_contract_splits": "PASS_96_PERCENT",
+    "coverage_pilot_scope_and_labels": "PASS_87_PERCENT",
+    "coverage_manifest_conversion": "PASS_86_PERCENT",
+    "coverage_protocol_registry": "PASS_86_PERCENT",
+    "coverage_cross_role_leakage": "PASS_85_PERCENT",
+    "coverage_dataset_stratified_statistics": "PASS_93_PERCENT",
+    "coverage_gate_evaluator": "PASS_85_PERCENT",
+    "coverage_validate_only_runner_file": "PASS_52_PERCENT_EMPIRICAL_EXECUTION_BRANCH_RETAINED",
     "theory": "PASS_3_PROVED_XOR_COUNTEREXAMPLE",
     "synthetic_method_checks": "PASS_10_SCENARIOS_SINGLE_DETERMINISTIC_SEED",
     "cpu_one_epoch_smoke": "PASS_NO_PROVIDER_DATA",
     "notebooks": "PASS_12",
-    "paper": "PASS_8_PAGE_PLACEHOLDER_NO_WARNINGS_8_CLAIMS_BLOCKED",
-    "anonymous_release": "PASS_242_FILES",
-    "public_tree": "PASS_STAGED_TREE_ZERO_FINDINGS",
-    "analysis_freeze": "PASS_V3_GATE_INCLUDED",
+    "paper": "PASS_8_PAGE_PLACEHOLDER_8_CLAIMS_BLOCKED",
+    "anonymous_release": "PASS_250_FILES_PACKAGE_TESTS",
     "frozen_tkde_boundary": "ZERO_TKDE_SCIENTIFIC_DELTAS_249_FILES"
   },
-  "external_or_empirical_gates": {
-    "draft_pr_ci": "PASS_4_NO_HEAVY_CHECKS_ON_VALIDATED_REPAIR_COMMIT",
-    "validated_repair_commit": "c81bb7ff0397c129eaf7845adf8e4b08fe61d67f",
-    "manifest_conversion": "NOT_STARTED",
-    "dry_run_completeness_audit": "NOT_RUN",
-    "third_independent_review": "REQUIRED",
-    "saved_output_pilot": "NOT_RUN",
-    "execution_readiness": "NOT_CLAIMED"
+  "frozen_specs": {
+    "pilot_gate_v4_sha256": "dcd676f38f0ee75bd9b57bc611989fc3285584da1c05b699a00528f312cb9a88",
+    "protocol_registry_v4_sha256": "64bd03a1cd9994833565f6be1d80e4e196da55810ca7236924cba048a4fd8de6",
+    "prediction_manifest_v4_schema_sha256": "b99d20e2b2fb8f1fbae483a1167e217a95f96d4e7cc7f45e1464195359f369c9"
   },
+  "next_authority": "FOURTH_INDEPENDENT_REVIEW_REQUIRED_BEFORE_ANY_PILOT_EXECUTION",
   "git": {
     "branch": "codex/coregraph-iclr-buildout-2026",
     "draft_pr": 2,
-    "draft_pr_open_and_draft": true,
-    "normal_fast_forward_push_complete": true,
-    "force_push": false,
-    "merge": false
+    "push_policy": "NORMAL_FAST_FORWARD_ONLY",
+    "merge": false,
+    "force_push": false
   }
 }
