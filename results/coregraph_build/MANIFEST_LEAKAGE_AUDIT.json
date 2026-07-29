@@ -1,0 +1,754 @@
+{
+  "metric_computation_performed": false,
+  "reports": [
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 1,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_AMBIGUOUS_HISTORICAL_CANDIDATES"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "strict_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 2,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_AMBIGUOUS_HISTORICAL_CANDIDATES"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "strict_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 3,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_AMBIGUOUS_HISTORICAL_CANDIDATES"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "strict_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 4,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_AMBIGUOUS_HISTORICAL_CANDIDATES"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "strict_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 5,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_AMBIGUOUS_HISTORICAL_CANDIDATES"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "strict_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 6,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_AMBIGUOUS_HISTORICAL_CANDIDATES",
+        "BLOCKED_METADATA_UNRESOLVED"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "strict_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 7,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_AMBIGUOUS_HISTORICAL_CANDIDATES",
+        "BLOCKED_METADATA_UNRESOLVED"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "strict_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 8,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_AMBIGUOUS_HISTORICAL_CANDIDATES",
+        "BLOCKED_METADATA_UNRESOLVED"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "strict_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 9,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_AMBIGUOUS_HISTORICAL_CANDIDATES",
+        "BLOCKED_METADATA_UNRESOLVED"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "strict_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 10,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_AMBIGUOUS_HISTORICAL_CANDIDATES",
+        "BLOCKED_METADATA_UNRESOLVED"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "strict_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 1,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_AMBIGUOUS_HISTORICAL_CANDIDATES"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "isolated_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 2,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_AMBIGUOUS_HISTORICAL_CANDIDATES"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "isolated_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 3,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_METADATA_UNRESOLVED",
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "isolated_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 4,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_METADATA_UNRESOLVED",
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "isolated_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 5,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_METADATA_UNRESOLVED",
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "isolated_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 6,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "isolated_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 7,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "isolated_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 8,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "isolated_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 9,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "isolated_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 10,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "isolated_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 1,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_AMBIGUOUS_HISTORICAL_CANDIDATES",
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "transductive_structure"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 2,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_AMBIGUOUS_HISTORICAL_CANDIDATES",
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "transductive_structure"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 3,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_AMBIGUOUS_HISTORICAL_CANDIDATES",
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "transductive_structure"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 4,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_AMBIGUOUS_HISTORICAL_CANDIDATES",
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "transductive_structure"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 5,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_AMBIGUOUS_HISTORICAL_CANDIDATES",
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "transductive_structure"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 6,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_METADATA_UNRESOLVED",
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "transductive_structure"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 7,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_METADATA_UNRESOLVED",
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "transductive_structure"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 8,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_METADATA_UNRESOLVED",
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "transductive_structure"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 9,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_METADATA_UNRESOLVED",
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "transductive_structure"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "elliptic",
+      "expert_prediction_seed": 10,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_METADATA_UNRESOLVED",
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "transductive_structure"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 1,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_METADATA_UNRESOLVED",
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "strict_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 2,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_METADATA_UNRESOLVED",
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "strict_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 3,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "BLOCKED_METADATA_UNRESOLVED",
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "strict_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 4,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "strict_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 5,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "strict_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 6,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "strict_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 7,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "strict_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 8,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "strict_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 9,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "strict_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 10,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "strict_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 1,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "isolated_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 2,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "isolated_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 3,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "isolated_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 4,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "isolated_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 5,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "isolated_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 6,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "isolated_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 7,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "isolated_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 8,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "isolated_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 9,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "isolated_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 10,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "isolated_inductive"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 1,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "transductive_structure"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 2,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "transductive_structure"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 3,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "transductive_structure"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 4,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "transductive_structure"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 5,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "transductive_structure"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 6,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "transductive_structure"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 7,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "transductive_structure"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 8,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "transductive_structure"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 9,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "transductive_structure"
+    },
+    {
+      "atomic_leakage_checked": false,
+      "dataset": "dgraphfin",
+      "expert_prediction_seed": 10,
+      "fold": "fold0",
+      "passed": false,
+      "reason_codes": [
+        "MISSING_ARTIFACT"
+      ],
+      "status": "NOT_RUN_BLOCKED_INCOMPLETE_OR_UNRESOLVED_MANIFESTS",
+      "target_protocol_id": "transductive_structure"
+    }
+  ],
+  "schema_version": "coregraph_manifest_leakage_audit_v4",
+  "summary": {
+    "blocked_before_leakage_audit": 60,
+    "report_count": 60,
+    "typed_audits_completed": 0
+  },
+  "target_oracle_measurement_performed": false,
+  "training_performed": false
+}

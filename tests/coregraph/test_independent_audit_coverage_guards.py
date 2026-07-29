@@ -418,11 +418,14 @@ def test_manifest_loader_and_pilot_long_form_metrics(
     )
     checksum = hashlib.sha256(predictions.read_bytes()).hexdigest()
     payload = {
+        "schema_version": "coregraph_prediction_manifest_v4",
         "expert_id": "feature",
         "dataset": "fixture",
         "task": "node_classification",
         "prediction_unit": "node",
+        "protocol_id": "strict_inductive",
         "contract_coordinate_hash": contract.coordinate_hash,
+        "contract_id": contract.contract_id,
         "environment_id": contract.environment_id,
         "expert_prediction_seed": 1,
         "fold": "fold0",
@@ -435,7 +438,21 @@ def test_manifest_loader_and_pilot_long_form_metrics(
         "expert_available": True,
         "availability_reason_codes": ["available"],
         "compute_cost": 1.0,
+        "compute_cost_provenance": "fixture_declared",
         "score_type": "PROBABILITY",
+        "permitted_splits": ["train", "validation"],
+        "evaluation_split": "validation",
+        "row_scope_policy": "filter_and_audit",
+        "label_mapping": {"0": "unknown", "1": "fraud", "2": "normal"},
+        "positive_label_id": 1,
+        "provider_split_mapping": {
+            "train": "train",
+            "validation": "validation",
+            "test": "test",
+            "unscored": "unscored"
+        },
+        "original_prediction_path": predictions.name,
+        "original_prediction_checksum": checksum,
     }
     manifest = tmp_path / "prediction_manifest.json"
     manifest.write_text(json.dumps(payload), encoding="utf-8")
@@ -444,7 +461,10 @@ def test_manifest_loader_and_pilot_long_form_metrics(
     assert artifacts[0].score_type is ScoreType.PROBABILITY
 
     missing = tmp_path / "missing.json"
-    missing.write_text("{}", encoding="utf-8")
+    missing.write_text(
+        json.dumps({"schema_version": "coregraph_prediction_manifest_v4"}),
+        encoding="utf-8",
+    )
     with pytest.raises(ValueError, match="missing prediction manifest keys"):
         load_prediction_artifacts((missing,))
     bad_checksum = tmp_path / "bad_checksum.json"
@@ -494,7 +514,9 @@ def test_manifest_loader_and_pilot_long_form_metrics(
         np.asarray([1, 2, 1, 2]),
         candidates,
         dataset="fixture",
-        target_contract="target",
+        target_protocol_id="strict_inductive",
+        target_contract_coordinate_hash="c" * 64,
+        target_contract_id="target:" + "d" * 16,
         expert_prediction_seed=1,
         router_training_seeds={"method": 101},
         fold="fold0",
@@ -506,8 +528,8 @@ def test_manifest_loader_and_pilot_long_form_metrics(
         "recall_at_1pct",
         "recall_at_2pct",
         "budget_curve_area",
-        "contract_regret",
-        "selective_risk",
+        "brier_contract_regret",
+        "selective_zero_one_risk",
         "coverage",
         "aurc",
         "abstention_cost",
@@ -518,7 +540,9 @@ def test_manifest_loader_and_pilot_long_form_metrics(
             np.asarray([1, 2]),
             {"method": candidates["method"]},
             dataset="fixture",
-            target_contract="target",
+            target_protocol_id="strict_inductive",
+            target_contract_coordinate_hash="c" * 64,
+            target_contract_id="target:" + "d" * 16,
             expert_prediction_seed=1,
             router_training_seeds={"method": 101},
             fold="fold0",
