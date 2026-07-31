@@ -1,6 +1,19 @@
 # V4 manifest conversion report
 
-Status: `COREGRAPH_V4_MANIFEST_CONVERSION_BLOCKED_METADATA_UNRESOLVED`
+Status: `SUPERSEDED_BY_ROLE_NEUTRAL_V5_SCENARIO_MODEL`
+
+> Fourth-review supersession notice: this V4 report and
+> `MANIFEST_COMPLETENESS_MATRIX.csv` are retained as audit history only. The
+> 360-row matrix treated source/target roles as separate prediction artifacts,
+> double-counting the canonical 180 scientific CSVs. It also could not express
+> the legitimate reuse of one immutable protocol artifact as a source in one
+> held-out scenario and a target in another. It must not be used for readiness
+> decisions. The governing replacements are
+> `BASE_ARTIFACT_COMPLETENESS_MATRIX.csv` (180 role-neutral cells),
+> `SCENARIO_COMPLETENESS_MATRIX.csv` (60 scenarios), and
+> `SCENARIO_BINDING_INDEX.json` (540 role bindings).
+
+Historical V4 verdict: `COREGRAPH_V4_MANIFEST_CONVERSION_BLOCKED_METADATA_UNRESOLVED`
 
 This was a read-only historical-artifact conversion and no-training audit.
 No router or learned baseline was fitted, no target metric or oracle was

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import copy
 import hashlib
 import json
 import zipfile
@@ -795,6 +796,79 @@ def test_v5_runner_and_gate_end_to_end_without_execution(
     assert gate["training_performed"] is False
     assert gate["metric_computation_performed"] is False
     assert gate["oracle_computation_performed"] is False
+
+    readiness_spec_path = tmp_path / "readiness_spec_v5.json"
+    readiness_spec_path.write_text(
+        json.dumps(readiness_spec),
+        encoding="utf-8",
+    )
+    gate_output = tmp_path / "readiness_gate_v5.json"
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "evaluate_pilot_gate.py",
+            "--pilot-result",
+            str(validation_output),
+            "--schema",
+            str(readiness_spec_path),
+            "--output",
+            str(gate_output),
+        ],
+    )
+    assert gate_cli.main() == 0
+    assert json.loads(gate_output.read_text(encoding="utf-8"))[
+        "pilot_authorized"
+    ] is False
+
+    missing_gate_output = tmp_path / "missing_readiness_gate_v5.json"
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "evaluate_pilot_gate.py",
+            "--pilot-result",
+            str(tmp_path / "missing_validation.json"),
+            "--schema",
+            str(readiness_spec_path),
+            "--output",
+            str(missing_gate_output),
+        ],
+    )
+    assert gate_cli.main() == 2
+    assert json.loads(missing_gate_output.read_text(encoding="utf-8"))[
+        "status"
+    ] == "BLOCKED_MISSING_NO_TRAINING_VALIDATION"
+
+    bad_materialized = copy.deepcopy(materialized)
+    bad_specification = copy.deepcopy(readiness_spec)
+    bad_specification["schema_version"] = "wrong"
+    bad_specification["required_surface"]["base_artifacts"] = 999
+    bad_specification["required_surface"]["evaluation_scenarios"] = 999
+    bad_specification["required_surface"]["source_bindings"] = 999
+    bad_specification["required_surface"]["target_bindings"] = 999
+    bad_materialized["schema_version"] = "wrong"
+    bad_materialized["status"] = "wrong"
+    bad_materialized["training_performed"] = True
+    bad_materialized["fitting_path_reachable"] = True
+    bad_materialized["metric_computation_performed"] = True
+    bad_materialized["oracle_computation_performed"] = True
+    bad_materialized["target_labels_accessed_before_scoring"] = True
+    first = bad_materialized["materializations"][0]
+    second = bad_materialized["materializations"][1]
+    second["scenario_id"] = first["scenario_id"]
+    first["target_labels_accessed_before_scoring"] = True
+    first["target_label_values_exposed"] = True
+    first["training_performed"] = True
+    first["leakage_report"]["passed"] = False
+    first["row_scope_reports"][0]["permitted_splits"] = ["test"]
+    first["row_scope_reports"][0]["target_label_values_exposed"] = True
+    first["row_scope_reports"].append({"role": "invalid"})
+    blocked = gate_cli.validate_v5_manifest_readiness(
+        bad_materialized,
+        bad_specification,
+    )
+    assert blocked["status"] == "BLOCKED_V5_MANIFEST_READINESS"
+    assert not blocked["passed"]
+    assert blocked["errors"]
 
     monkeypatch.setattr(
         "sys.argv",

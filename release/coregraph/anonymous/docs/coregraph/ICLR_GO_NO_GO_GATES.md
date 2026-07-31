@@ -23,9 +23,13 @@
    on both datasets with corrected support on at least one, AUPRC harm limits,
    routing diversity/stability, and no target-label selection. Protocol aliases,
    coordinate hashes, and complete contract IDs remain distinct.
-10. **Pilot authorization:** V4 manifest conversion, a no-training
-    exact-completeness/registry/leakage audit, and fourth independent review
-    must pass before `--execute` is used.
+10. **Pilot authorization:** the V5 readiness layer requires 180 role-neutral
+    base artifacts, 60 held-out-protocol scenarios, 540 scenario-local role
+    bindings, exact split/label-known/registry/leakage audits, and a no-training
+    runner/gate pass. The current canonical RB09v3 references are blocked on six
+    absent checksum-locked source archives. Even after recovery, readiness means
+    only that a fifth independent review may consider authorizing a separate
+    pilot; it does not authorize `--execute`.
 
 Failure of gates 1–2 stops local commit. Failure of gates 3–8 blocks heavy
 execution, headline claims, release, or push as applicable; blockers must be
