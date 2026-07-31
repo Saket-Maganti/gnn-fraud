@@ -58,6 +58,8 @@ coregraph-typecheck:
 		coregraph/experts coregraph/data/leakage.py \
 		coregraph/experiments/pilot.py \
 		coregraph/experiments/manifest_conversion.py \
+		coregraph/experiments/scenario_manifests.py \
+		coregraph/experiments/canonical_recovery.py \
 		coregraph/experiments/protocol_registry.py \
 		coregraph/experiments/contract_splits.py coregraph/evaluation/statistics.py \
 		coregraph/evaluation/metrics.py coregraph/evidence.py coregraph/theory \
@@ -65,6 +67,7 @@ coregraph-typecheck:
 		scripts/coregraph/evaluate_pilot_gate.py \
 		scripts/coregraph/run_saved_output_pilot.py \
 		scripts/coregraph/convert_prediction_manifests_v4.py \
+		scripts/coregraph/recover_canonical_manifests_v5.py \
 		--ignore-missing-imports --show-error-codes
 
 coregraph-test:
@@ -78,6 +81,8 @@ coregraph-coverage:
 	$(PY) -m coverage report --include='coregraph/objectives/*' --fail-under=85
 	$(PY) -m coverage report --include='coregraph/experiments/pilot.py' --fail-under=85
 	$(PY) -m coverage report --include='coregraph/experiments/manifest_conversion.py' --fail-under=85
+	$(PY) -m coverage report --include='coregraph/experiments/scenario_manifests.py' --fail-under=80
+	$(PY) -m coverage report --include='coregraph/experiments/canonical_recovery.py' --fail-under=85
 	$(PY) -m coverage report --include='coregraph/experiments/protocol_registry.py' --fail-under=85
 	$(PY) -m coverage report --include='coregraph/data/leakage.py' --fail-under=85
 	$(PY) -m coverage report --include='coregraph/evaluation/statistics.py' --fail-under=85

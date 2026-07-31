@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Evaluate frozen pilot gates and the V4 no-training completeness surface."""
+"""Evaluate frozen empirical gates or the non-empirical V5 readiness surface."""
 
 from __future__ import annotations
 
@@ -687,6 +687,158 @@ def validate_no_training_completeness(
         "errors": errors,
         "coverage": coverage,
         "identity_binding_count": len(identities),
+    }
+
+
+def validate_v5_manifest_readiness(
+    materialized: Mapping[str, Any],
+    specification: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Gate only V5 manifest/scenario readiness; never evaluate pilot results."""
+
+    errors: list[str] = []
+    if (
+        specification.get("schema_version")
+        != "coregraph_pilot_manifest_readiness_spec_v5"
+    ):
+        errors.append("readiness specification must use the V5 schema")
+    if (
+        materialized.get("schema_version")
+        != "coregraph_saved_output_no_training_validation_v5"
+    ):
+        errors.append("materialization must use the V5 no-training schema")
+    if materialized.get("status") != "VALIDATED_NO_TRAINING_V5":
+        errors.append("materialization status is not VALIDATED_NO_TRAINING_V5")
+    for flag in (
+        "training_performed",
+        "fitting_path_reachable",
+        "metric_computation_performed",
+        "oracle_computation_performed",
+        "target_labels_accessed_before_scoring",
+    ):
+        if materialized.get(flag) is not False:
+            errors.append(f"{flag} must be false")
+    required = specification.get("required_surface", {})
+    if not isinstance(required, Mapping):
+        errors.append("required_surface must be a mapping")
+        required = {}
+    count_pairs = (
+        ("base_artifact_count", "base_artifacts"),
+        ("scenario_count", "evaluation_scenarios"),
+        ("scenario_binding_count", "scenario_bindings"),
+    )
+    for observed_field, required_field in count_pairs:
+        if int(materialized.get(observed_field, -1)) != int(
+            required.get(required_field, -2)
+        ):
+            errors.append(
+                f"{observed_field} does not match required {required_field}"
+            )
+    materializations = list(materialized.get("materializations", ()))
+    if len(materializations) != int(required.get("evaluation_scenarios", -1)):
+        errors.append("materialization count does not match scenario count")
+    scenario_ids: set[str] = set()
+    observed_keys: set[tuple[str, str, int, str]] = set()
+    source_bindings = 0
+    target_bindings = 0
+    for index, value in enumerate(materializations):
+        if not isinstance(value, Mapping):
+            errors.append(f"scenario materialization {index} is not a mapping")
+            continue
+        scenario_id = str(value.get("scenario_id", ""))
+        if not scenario_id or scenario_id in scenario_ids:
+            errors.append(f"scenario materialization {index} has invalid identity")
+        scenario_ids.add(scenario_id)
+        key = (
+            str(value.get("dataset", "")),
+            str(value.get("target_protocol_id", "")),
+            int(value.get("expert_prediction_seed", -1)),
+            str(value.get("fold", "")),
+        )
+        observed_keys.add(key)
+        if value.get("target_labels_accessed_before_scoring") is not False:
+            errors.append(f"scenario {scenario_id} accessed target labels")
+        if value.get("target_label_values_exposed") is not False:
+            errors.append(f"scenario {scenario_id} exposed target labels")
+        if any(
+            value.get(flag) is not False
+            for flag in (
+                "training_performed",
+                "metric_computation_performed",
+                "oracle_computation_performed",
+            )
+        ):
+            errors.append(f"scenario {scenario_id} reached a forbidden path")
+        leakage = value.get("leakage_report", {})
+        if not isinstance(leakage, Mapping) or leakage.get("passed") is not True:
+            errors.append(f"scenario {scenario_id} failed leakage audit")
+        reports = list(value.get("row_scope_reports", ()))
+        source_bindings += sum(
+            1
+            for report in reports
+            if isinstance(report, Mapping) and report.get("role") == "source"
+        )
+        target_bindings += sum(
+            1
+            for report in reports
+            if isinstance(report, Mapping) and report.get("role") == "target"
+        )
+        for report in reports:
+            if not isinstance(report, Mapping):
+                errors.append(f"scenario {scenario_id} has a malformed row audit")
+                continue
+            role = report.get("role")
+            permitted = tuple(report.get("permitted_splits", ()))
+            evaluation_split = report.get("evaluation_split")
+            if role == "source" and (
+                permitted != ("train", "validation")
+                or evaluation_split != "validation"
+            ):
+                errors.append(f"scenario {scenario_id} has invalid source scope")
+            elif role == "target" and (
+                permitted != ("test",) or evaluation_split != "test"
+            ):
+                errors.append(f"scenario {scenario_id} has invalid target scope")
+            elif role not in {"source", "target"}:
+                errors.append(f"scenario {scenario_id} has an invalid role")
+            if report.get("target_label_values_exposed") is not False:
+                errors.append(
+                    f"scenario {scenario_id} row audit exposed target labels"
+                )
+    expected_keys = {
+        (str(dataset), str(protocol), int(seed), str(fold))
+        for dataset in required.get("datasets", ())
+        for protocol in required.get("protocols", ())
+        for seed in required.get("expert_prediction_seeds", ())
+        for fold in required.get("folds", ())
+    }
+    if observed_keys != expected_keys:
+        errors.append("scenario logical completeness surface is not exact")
+    if source_bindings != int(required.get("source_bindings", -1)):
+        errors.append("source binding count does not match readiness specification")
+    if target_bindings != int(required.get("target_bindings", -1)):
+        errors.append("target binding count does not match readiness specification")
+    complete = not errors
+    return {
+        "status": (
+            "V5_MANIFEST_READINESS_VALIDATED"
+            if complete
+            else "BLOCKED_V5_MANIFEST_READINESS"
+        ),
+        "passed": complete,
+        "pilot_authorized": False,
+        "next_authority": "fifth_independent_review",
+        "training_performed": False,
+        "fitting_path_reachable": False,
+        "metric_computation_performed": False,
+        "oracle_computation_performed": False,
+        "target_labels_accessed_before_scoring": False,
+        "base_artifact_count": materialized.get("base_artifact_count", 0),
+        "scenario_count": len(materializations),
+        "scenario_binding_count": source_bindings + target_bindings,
+        "source_binding_count": source_bindings,
+        "target_binding_count": target_bindings,
+        "errors": errors,
     }
 
 
@@ -1529,17 +1681,34 @@ def main() -> int:
     schema = json.loads(Path(args.schema).read_text(encoding="utf-8"))
     result_path = Path(args.pilot_result)
     if not result_path.exists():
-        report = {
-            "status": "BLOCKED_MISSING_PILOT_RESULT",
-            "passed": False,
-            "required_datasets": schema["required_datasets"],
-            "required_expert_prediction_seeds": (
-                schema["required_expert_prediction_seeds"]
-            ),
-        }
+        if (
+            schema.get("schema_version")
+            == "coregraph_pilot_manifest_readiness_spec_v5"
+        ):
+            report = {
+                "status": "BLOCKED_MISSING_NO_TRAINING_VALIDATION",
+                "passed": False,
+                "pilot_authorized": False,
+                "required_surface": schema.get("required_surface", {}),
+            }
+        else:
+            report = {
+                "status": "BLOCKED_MISSING_PILOT_RESULT",
+                "passed": False,
+                "required_datasets": schema["required_datasets"],
+                "required_expert_prediction_seeds": (
+                    schema["required_expert_prediction_seeds"]
+                ),
+            }
     else:
         result = json.loads(result_path.read_text(encoding="utf-8"))
-        report = evaluate_pilot_gate(result, schema)
+        if (
+            schema.get("schema_version")
+            == "coregraph_pilot_manifest_readiness_spec_v5"
+        ):
+            report = validate_v5_manifest_readiness(result, schema)
+        else:
+            report = evaluate_pilot_gate(result, schema)
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(
