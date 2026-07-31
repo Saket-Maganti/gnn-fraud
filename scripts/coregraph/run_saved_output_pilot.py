@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Plan, validate, or execute the seed-bound saved-prediction pilot V4."""
+"""Plan/validate V5 readiness or operate the separately gated legacy V4 pilot."""
 
 from __future__ import annotations
 
@@ -32,6 +32,11 @@ from coregraph.experiments.pilot import (  # noqa: E402
     instance_clairvoyant_oracle_ceiling,
     load_prediction_artifacts,
     validate_artifact_groups,
+)
+from coregraph.experiments.scenario_manifests import (  # noqa: E402
+    load_base_prediction_artifacts,
+    load_evaluation_scenarios,
+    validate_no_training_scenarios,
 )
 from coregraph.data.leakage import (  # noqa: E402
     audit_cross_role_prediction_scopes,
@@ -281,6 +286,80 @@ def main() -> int:
     if args.execute and args.validate_only:
         parser.error("--execute and --validate-only are mutually exclusive")
     config = yaml.safe_load(Path(args.config).read_text(encoding="utf-8"))
+    if config.get("manifest_schema_version") == "v5":
+        if args.execute:
+            raise RuntimeError(
+                "V5 manifests are readiness-only in this review; pilot execution "
+                "requires separate independent authorization"
+            )
+        base_roots = [
+            Path(os.path.expandvars(value)).expanduser().resolve()
+            for value in config.get("base_prediction_manifest_roots", ())
+        ]
+        base_manifests: list[Path] = []
+        for root in base_roots:
+            if root.is_file():
+                base_manifests.append(root)
+            elif root.is_dir():
+                base_manifests.extend(
+                    root.rglob("*base_prediction_manifest_v5.json")
+                )
+        base_manifests = sorted(set(base_manifests))
+        scenario_index_path = Path(
+            os.path.expandvars(config["scenario_binding_index"])
+        ).expanduser().resolve()
+        v5_plan = {
+            "schema": "coregraph_saved_output_pilot_plan_v5",
+            "execute_requested": False,
+            "validate_only_requested": args.validate_only,
+            "base_manifest_roots": [str(value) for value in base_roots],
+            "discovered_base_manifests": [
+                str(path) for path in base_manifests
+            ],
+            "scenario_binding_index": str(scenario_index_path),
+            "status": "PLANNED_READINESS_ONLY",
+            "training_performed": False,
+            "fitting_path_reachable": False,
+            "metric_computation_performed": False,
+            "oracle_computation_performed": False,
+        }
+        output = Path(config["output"])
+        output.parent.mkdir(parents=True, exist_ok=True)
+        if not args.validate_only:
+            output.write_text(
+                json.dumps(v5_plan, indent=2, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+            print(json.dumps(v5_plan, indent=2, sort_keys=True))
+            return 0
+        artifacts_v5 = load_base_prediction_artifacts(base_manifests)
+        scenarios_v5 = load_evaluation_scenarios(scenario_index_path)
+        registry_v5 = load_protocol_registry(args.protocol_registry)
+        validation_v5 = validate_no_training_scenarios(
+            artifacts_v5,
+            scenarios_v5,
+            registry=registry_v5,
+            expected_datasets=tuple(config["required_datasets"]),
+            expected_protocols=tuple(config["required_target_protocols"]),
+            expected_experts=tuple(config["required_experts"]),
+            expected_seeds=tuple(
+                int(seed) for seed in config["required_seeds"]
+            ),
+            expected_folds=tuple(config.get("required_folds", ("fold0",))),
+        )
+        validation_output = Path(
+            config.get(
+                "validation_output",
+                "results/coregraph_pilot/saved_output_validation_v5.json",
+            )
+        )
+        validation_output.parent.mkdir(parents=True, exist_ok=True)
+        validation_output.write_text(
+            json.dumps(validation_v5, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        print(json.dumps(validation_v5, indent=2, sort_keys=True))
+        return 0
     roots = [
         os.path.expandvars(value)
         for value in config.get("prediction_manifest_roots", [])
