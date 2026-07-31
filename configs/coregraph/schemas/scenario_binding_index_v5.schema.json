@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CoReGraphEvaluationScenarioBindingIndexV5",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "scenario_count",
+    "binding_count",
+    "source_binding_count",
+    "target_binding_count",
+    "scenarios"
+  ],
+  "properties": {
+    "schema_version": {"const": "coregraph_scenario_binding_index_v5"},
+    "scenario_count": {"type": "integer", "minimum": 1},
+    "binding_count": {"type": "integer", "minimum": 9},
+    "source_binding_count": {"type": "integer", "minimum": 6},
+    "target_binding_count": {"type": "integer", "minimum": 3},
+    "scenarios": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/scenario"},
+      "minItems": 1
+    }
+  },
+  "$defs": {
+    "binding": {
+      "type": "object",
+      "required": [
+        "scenario_id",
+        "role_binding_id",
+        "base_artifact_hash",
+        "base_protocol_id",
+        "bound_protocol_id",
+        "expert_id",
+        "role",
+        "permitted_splits",
+        "evaluation_split",
+        "require_label_known"
+      ],
+      "properties": {
+        "scenario_id": {"type": "string", "pattern": "^scenario-[0-9a-f]{24}$"},
+        "role_binding_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "base_coordinate_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "base_artifact_hash": {
+          "type": "string",
+          "pattern": "^$|^[0-9a-f]{64}$"
+        },
+        "base_protocol_id": {"type": "string", "minLength": 1},
+        "bound_protocol_id": {"type": "string", "minLength": 1},
+        "expert_id": {"type": "string", "minLength": 1},
+        "role": {"enum": ["source", "target"]},
+        "permitted_splits": {
+          "type": "array",
+          "items": {"enum": ["train", "validation", "test"]},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "evaluation_split": {"enum": ["validation", "test"]},
+        "require_label_known": {"const": true},
+        "status": {"type": "string"},
+        "recovery_status": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "scenario": {
+      "type": "object",
+      "required": [
+        "scenario_id",
+        "dataset",
+        "target_protocol_id",
+        "source_protocol_ids",
+        "expert_prediction_seed",
+        "fold",
+        "access_regime",
+        "target_operational_contract",
+        "no_target_labels_during_fitting",
+        "bindings"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "coregraph_evaluation_scenario_binding_v5"
+        },
+        "scenario_id": {"type": "string", "pattern": "^scenario-[0-9a-f]{24}$"},
+        "dataset": {"type": "string", "minLength": 1},
+        "target_protocol_id": {"type": "string", "minLength": 1},
+        "source_protocol_ids": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "minItems": 2,
+          "maxItems": 2,
+          "uniqueItems": true
+        },
+        "expert_prediction_seed": {"type": "integer", "minimum": 1},
+        "fold": {"type": "string", "minLength": 1},
+        "access_regime": {"type": "string", "minLength": 1},
+        "target_operational_contract": {"type": ["object", "null"]},
+        "target_contract_coordinate_hash": {"type": "string"},
+        "target_contract_id": {"type": "string"},
+        "contract_binding_status": {"type": "string"},
+        "no_target_labels_during_fitting": {"const": true},
+        "status": {"type": "string"},
+        "bindings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/binding"},
+          "minItems": 9,
+          "maxItems": 9
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
