@@ -1,0 +1,95 @@
+{
+  "current_reconciliation": {
+    "canonical_inventory_count": 180,
+    "discovered_evidence_lock_count": 31,
+    "discovered_jsonl_source_count": 6,
+    "discovered_package_import_record_count": 147,
+    "discovered_prediction_index_record_count": 1498,
+    "discovered_result_index_jsonl_record_count": 5372,
+    "discovered_result_sidecar_count": 72,
+    "discovered_validation_report_count": 95,
+    "metadata_blocker_count": 0,
+    "missing_index_reference_count": 180,
+    "source_archive_count": 6,
+    "source_archives_present": 0,
+    "status_counts": {
+      "INDEX_REFERENCED_FILE_MISSING": 180
+    },
+    "true_missing_artifact_count": 0,
+    "unresolved_code_provenance_count": 180,
+    "unresolved_contract_binding_count": 180,
+    "unresolved_routing_cost_count": 180,
+    "usable_artifact_count": 0
+  },
+  "current_verdict": "COREGRAPH_CANONICAL_INDEX_REFERENCES_MISSING_LOCAL_ARCHIVES",
+  "does_not_modify_empirical_pilot_thresholds": true,
+  "frozen_before_pilot_execution": true,
+  "identity_rules": {
+    "base_artifact_hash_separate_from_contract_coordinate_hash": true,
+    "base_artifacts_are_role_neutral": true,
+    "cross_scenario_role_reuse_allowed": true,
+    "same_scenario_dual_role_forbidden": true,
+    "scenario_id_separate_from_role_binding_id": true,
+    "scenario_roles_are_bindings": true
+  },
+  "inference_identity": "dataset_stratified_expert_prediction_seed",
+  "leakage_scope": "within_one_evaluation_scenario",
+  "next_authority": "fifth_independent_review",
+  "pilot_authorized": false,
+  "purpose": "integration_and_no_training_readiness_only",
+  "required_no_training_assertions": {
+    "fitting_path_reachable": false,
+    "metric_computation_performed": false,
+    "oracle_computation_performed": false,
+    "training_performed": false
+  },
+  "required_surface": {
+    "base_artifacts": 180,
+    "datasets": [
+      "elliptic",
+      "dgraphfin"
+    ],
+    "evaluation_scenarios": 60,
+    "expert_prediction_seeds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "experts": [
+      "feature_mlp",
+      "gcn",
+      "graphsage"
+    ],
+    "folds": [
+      "fold0"
+    ],
+    "protocols": [
+      "strict_inductive",
+      "isolated_inductive",
+      "transductive_structure"
+    ],
+    "scenario_bindings": 540,
+    "source_bindings": 360,
+    "target_bindings": 180
+  },
+  "row_scope_rules": {
+    "source_permitted_splits": [
+      "train",
+      "validation"
+    ],
+    "target_labels_before_scoring": false,
+    "target_permitted_splits": [
+      "test"
+    ],
+    "target_requires_label_known": true,
+    "unknown_target_rows_excluded": true
+  },
+  "schema_version": "coregraph_pilot_manifest_readiness_spec_v5"
+}
