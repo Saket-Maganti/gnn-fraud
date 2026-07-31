@@ -1,0 +1,30 @@
+manifest_schema_version: v5
+base_prediction_manifest_roots:
+  - results/coregraph_build/manifests_v5
+scenario_binding_index: results/coregraph_build/SCENARIO_BINDING_INDEX.json
+required_datasets:
+  - elliptic
+  - dgraphfin
+required_target_protocols:
+  - strict_inductive
+  - isolated_inductive
+  - transductive_structure
+required_experts:
+  - feature_mlp
+  - gcn
+  - graphsage
+required_seeds:
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+required_folds:
+  - fold0
+output: results/coregraph_pilot/saved_output_plan_v5.json
+validation_output: results/coregraph_pilot/saved_output_validation_v5.json

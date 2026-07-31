@@ -37,6 +37,7 @@ SPECIFICATION_FILES = (
     "results/coregraph_build/CONTRACT_PROTOCOL_REGISTRY_V4.json",
 )
 EXCLUDE_PARTS = {
+    ".DS_Store",
     "__pycache__",
     ".pytest_cache",
     ".mypy_cache",
