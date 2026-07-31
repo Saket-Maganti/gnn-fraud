@@ -92,6 +92,270 @@ class PredictionLeakageReport:
         }
 
 
+@dataclass(frozen=True)
+class ScenarioPredictionScope:
+    """Selected rows for one base artifact inside one evaluation scenario."""
+
+    scenario_id: str
+    dataset: str
+    base_artifact_hash: str
+    expert_id: str
+    base_protocol_id: str
+    bound_protocol_id: str
+    expert_prediction_seed: int
+    fold: str
+    role: str
+    contract_coordinate_hash: str
+    path: str
+    checksum: str
+    selected_identifiers: tuple[str, ...]
+    selected_splits: tuple[str, ...]
+    selected_label_known: tuple[bool, ...]
+    selected_timestamps: tuple[float | None, ...] = ()
+    target_labels_used_for_fitting: bool = False
+    selection_metadata_fields: tuple[str, ...] = ()
+    registry_consistent: bool = True
+
+    def __post_init__(self) -> None:
+        if self.role not in {"source", "target"}:
+            raise ValueError("scenario prediction scope role must be source or target")
+        if len(self.selected_identifiers) != len(self.selected_splits):
+            raise ValueError("scenario scope identifiers and splits must align")
+        if len(self.selected_label_known) != len(self.selected_identifiers):
+            raise ValueError("scenario scope label-known rows must align")
+        if self.selected_timestamps and len(self.selected_timestamps) != len(
+            self.selected_identifiers
+        ):
+            raise ValueError("scenario scope timestamps must align")
+
+
+@dataclass(frozen=True)
+class ScenarioLeakageReport:
+    scenario_id: str
+    dataset: str
+    target_protocol_id: str
+    source_protocol_ids: tuple[str, ...]
+    expert_prediction_seed: int
+    fold: str
+    findings: tuple[LeakageFinding, ...]
+
+    @property
+    def passed(self) -> bool:
+        return not any(finding.severity == "ATOMIC" for finding in self.findings)
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "scenario_id": self.scenario_id,
+            "dataset": self.dataset,
+            "target_protocol_id": self.target_protocol_id,
+            "source_protocol_ids": list(self.source_protocol_ids),
+            "expert_prediction_seed": self.expert_prediction_seed,
+            "fold": self.fold,
+            "passed": self.passed,
+            "findings": [asdict(finding) for finding in self.findings],
+        }
+
+
+def audit_evaluation_scenario_scopes(
+    scopes: Sequence[ScenarioPredictionScope],
+    *,
+    scenario_id: str,
+    dataset: str,
+    target_protocol_id: str,
+    source_protocol_ids: Sequence[str],
+    expert_prediction_seed: int,
+    fold: str,
+) -> ScenarioLeakageReport:
+    """Audit role bindings only within one held-out-protocol scenario.
+
+    Reusing the same immutable artifact or checksum in a different scenario is
+    intentionally outside this function's scope and is not leakage.
+    """
+
+    findings: list[LeakageFinding] = []
+    source_protocols = tuple(sorted(set(source_protocol_ids)))
+    if target_protocol_id in source_protocols:
+        findings.append(
+            LeakageFinding(
+                "TARGET_PROTOCOL_IN_SOURCE_SET",
+                "ATOMIC",
+                f"target protocol {target_protocol_id!r} also appears as a source",
+            )
+        )
+    if any(scope.scenario_id != scenario_id for scope in scopes):
+        findings.append(
+            LeakageFinding(
+                "CROSS_SCENARIO_SCOPE_MIX",
+                "ATOMIC",
+                "the audit received bindings from more than one scenario",
+            )
+        )
+    for scope in scopes:
+        if (
+            scope.dataset != dataset
+            or scope.expert_prediction_seed != expert_prediction_seed
+            or scope.fold != fold
+        ):
+            findings.append(
+                LeakageFinding(
+                    "SCENARIO_IDENTITY_MISMATCH",
+                    "ATOMIC",
+                    "binding dataset, seed, or fold disagrees with its scenario",
+                )
+            )
+        if scope.base_protocol_id != scope.bound_protocol_id:
+            findings.append(
+                LeakageFinding(
+                    "ARTIFACT_PROTOCOL_REBINDING",
+                    "ATOMIC",
+                    f"base protocol {scope.base_protocol_id!r} was rebound as "
+                    f"{scope.bound_protocol_id!r}",
+                )
+            )
+        if not scope.registry_consistent:
+            findings.append(
+                LeakageFinding(
+                    "PROTOCOL_REGISTRY_CONFLICT",
+                    "ATOMIC",
+                    f"binding for {scope.base_protocol_id!r} conflicts with the registry",
+                )
+            )
+        if len(set(scope.selected_identifiers)) != len(scope.selected_identifiers):
+            findings.append(
+                LeakageFinding(
+                    "DUPLICATED_PREDICTION_ROWS",
+                    "ATOMIC",
+                    f"duplicate selected identifiers in {scope.path}",
+                )
+            )
+        if scope.role == "source":
+            forbidden_splits = sorted(
+                set(scope.selected_splits) - {"train", "validation"}
+            )
+            if forbidden_splits:
+                findings.append(
+                    LeakageFinding(
+                        "TEST_ROWS_ENTER_SOURCE_SCOPE",
+                        "ATOMIC",
+                        f"source binding selected forbidden splits {forbidden_splits}",
+                    )
+                )
+            if not all(scope.selected_label_known):
+                findings.append(
+                    LeakageFinding(
+                        "UNKNOWN_LABEL_ENTERS_SOURCE_FITTING",
+                        "ATOMIC",
+                        "source fitting/selection contains provider-unknown labels",
+                    )
+                )
+            forbidden_metadata = {
+                field.lower() for field in scope.selection_metadata_fields
+            } & {"target_label", "target_labels", "y_true", "label"}
+            if scope.target_labels_used_for_fitting or forbidden_metadata:
+                findings.append(
+                    LeakageFinding(
+                        "TARGET_LABEL_IN_SOURCE_SELECTION",
+                        "ATOMIC",
+                        "target labels are reachable from source fitting or selection",
+                    )
+                )
+        else:
+            if set(scope.selected_splits) - {"test"}:
+                findings.append(
+                    LeakageFinding(
+                        "TRAIN_VALIDATION_ROWS_ENTER_TARGET_SCORING",
+                        "ATOMIC",
+                        "target scoring selected train or validation rows",
+                    )
+                )
+            if not all(scope.selected_label_known):
+                findings.append(
+                    LeakageFinding(
+                        "UNKNOWN_PROVIDER_LABEL_ENTERS_SCORING",
+                        "ATOMIC",
+                        "target scoring selected a provider-unknown label",
+                    )
+                )
+            if scope.bound_protocol_id != target_protocol_id:
+                findings.append(
+                    LeakageFinding(
+                        "WRONG_TARGET_PROTOCOL_BINDING",
+                        "ATOMIC",
+                        f"target binding uses {scope.bound_protocol_id!r}, expected "
+                        f"{target_protocol_id!r}",
+                    )
+                )
+
+    roles_by_artifact: dict[str, set[str]] = {}
+    for scope in scopes:
+        roles_by_artifact.setdefault(scope.base_artifact_hash, set()).add(scope.role)
+    for base_hash, roles in sorted(roles_by_artifact.items()):
+        if roles == {"source", "target"}:
+            findings.append(
+                LeakageFinding(
+                    "SAME_ARTIFACT_BOUND_TO_BOTH_ROLES",
+                    "ATOMIC",
+                    f"base artifact {base_hash} has both roles in one scenario",
+                )
+            )
+
+    sources = [scope for scope in scopes if scope.role == "source"]
+    targets = [scope for scope in scopes if scope.role == "target"]
+    for source in sources:
+        source_ids = set(source.selected_identifiers)
+        source_times = [
+            float(value)
+            for value in source.selected_timestamps
+            if value is not None
+        ]
+        for target in targets:
+            overlap = sorted(source_ids & set(target.selected_identifiers))
+            if overlap:
+                findings.append(
+                    LeakageFinding(
+                        "SOURCE_TARGET_SPLIT_ID_OVERLAP",
+                        "ATOMIC",
+                        f"{len(overlap)} source train/validation IDs overlap target "
+                        f"test IDs; sample={overlap[:5]}",
+                    )
+                )
+            if source.contract_coordinate_hash == target.contract_coordinate_hash:
+                findings.append(
+                    LeakageFinding(
+                        "HELD_OUT_COORDINATE_EQUIVALENCE",
+                        "ATOMIC",
+                        "source and target scientific coordinates are equal",
+                    )
+                )
+            target_times = [
+                float(value)
+                for value in target.selected_timestamps
+                if value is not None
+            ]
+            if source_times and target_times and max(source_times) >= min(target_times):
+                findings.append(
+                    LeakageFinding(
+                        "TIMESTAMP_ORDER_VIOLATION",
+                        "ATOMIC",
+                        "source train/validation time is not strictly before target test",
+                    )
+                )
+
+    deduplicated = {
+        (finding.code, finding.severity, finding.detail): finding
+        for finding in findings
+    }
+    return ScenarioLeakageReport(
+        scenario_id=scenario_id,
+        dataset=dataset,
+        target_protocol_id=target_protocol_id,
+        source_protocol_ids=source_protocols,
+        expert_prediction_seed=expert_prediction_seed,
+        fold=fold,
+        findings=tuple(deduplicated[key] for key in sorted(deduplicated)),
+    )
+
+
 def _scoped_ids(
     scope: PredictionArtifactScope,
     allowed_splits: set[str],
@@ -129,7 +393,13 @@ def audit_cross_role_prediction_scopes(
     *,
     held_out_contract_required: bool = True,
 ) -> tuple[PredictionLeakageReport, ...]:
-    """Audit every target against same-dataset/seed/fold source artifacts."""
+    """Audit a legacy V4 scope set treated as one logical scenario.
+
+    V5 callers must use :func:`audit_evaluation_scenario_scopes`, which binds
+    roles inside an explicit scenario.  File/checksum reuse is deliberately
+    not a global violation: one immutable base artifact may legitimately be a
+    source in one scenario and a target in another.
+    """
 
     reports: list[PredictionLeakageReport] = []
     target_groups: dict[
@@ -149,20 +419,6 @@ def audit_cross_role_prediction_scopes(
                 ),
                 [],
             ).append(scope)
-    contract_metadata: dict[str, set[tuple[str, str, str]]] = {}
-    coordinate_aliases: dict[str, set[str]] = {}
-    for scope in scopes:
-        contract_metadata.setdefault(scope.contract_id, set()).add(
-            (
-                scope.role,
-                scope.contract_coordinate_hash,
-                scope.protocol_id,
-            )
-        )
-        coordinate_aliases.setdefault(
-            scope.contract_coordinate_hash,
-            set(),
-        ).add(scope.protocol_id)
     for target_key, targets in sorted(target_groups.items()):
         (
             dataset,
@@ -221,41 +477,6 @@ def audit_cross_role_prediction_scopes(
                             ),
                         )
                     )
-                if source.path == target.path:
-                    findings.append(
-                        LeakageFinding(
-                            "REUSED_FILE_CONFLICTING_ROLES",
-                            "ATOMIC",
-                            f"file reused as source and target: {source.path}",
-                        )
-                    )
-                incompatible = (
-                    source.role != target.role
-                    or source.contract_id != target.contract_id
-                    or source.protocol_id != target.protocol_id
-                )
-                if source.checksum == target.checksum and incompatible:
-                    findings.append(
-                        LeakageFinding(
-                            "REUSED_CHECKSUM_INCOMPATIBLE_METADATA",
-                            "ATOMIC",
-                            "identical prediction bytes have incompatible "
-                            "role/contract metadata",
-                        )
-                    )
-                if (
-                    source.original_checksum
-                    and source.original_checksum == target.original_checksum
-                    and incompatible
-                ):
-                    findings.append(
-                        LeakageFinding(
-                            "REUSED_ORIGINAL_CHECKSUM_INCOMPATIBLE_METADATA",
-                            "ATOMIC",
-                            "converted artifacts share original bytes under "
-                            "incompatible role/contract metadata",
-                        )
-                    )
                 if (
                     held_out_contract_required
                     and source.contract_coordinate_hash
@@ -305,23 +526,6 @@ def audit_cross_role_prediction_scopes(
                         f"forbidden metadata fields: {sorted(forbidden_metadata)}",
                     )
                 )
-        if len(contract_metadata.get(target_contract_id, ())) != 1:
-            findings.append(
-                LeakageFinding(
-                    "CONTRACT_ROLE_HASH_DISAGREEMENT",
-                    "ATOMIC",
-                    "target contract ID is reused under incompatible role, "
-                    "coordinate or protocol metadata",
-                )
-            )
-        if len(coordinate_aliases.get(target_coordinate_hash, ())) != 1:
-            findings.append(
-                LeakageFinding(
-                    "COORDINATE_ALIAS_COLLISION",
-                    "ATOMIC",
-                    "target coordinate hash maps to incompatible aliases",
-                )
-            )
         deduplicated = {
             (finding.code, finding.severity, finding.detail): finding
             for finding in findings
