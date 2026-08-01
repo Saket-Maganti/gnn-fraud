@@ -52,7 +52,121 @@ def markdown_cell(source: str) -> dict[str, object]:
     }
 
 
+def saved_output_notebook(title: str, *, kaggle: bool) -> dict[str, object]:
+    cells = [
+        markdown_cell(
+            f"# {title}\n\n"
+            "This is the concrete V5 CPU-first wrapper. Planning is enabled by default; "
+            "real execution is disabled and requires the separately supplied authorization "
+            "token. Target labels remain inaccessible until each policy freeze manifest and "
+            "target-score hash exist."
+        ),
+        code_cell(
+            "from pathlib import Path\n"
+            "import hashlib, json, os, shutil, subprocess, sys, yaml\n"
+            "REPO = Path('/kaggle/working/gnn-fraud') if Path('/kaggle').exists() else Path.cwd()\n"
+            "CACHE = Path('/kaggle/input/coregraph-evidence-cache') if Path('/kaggle').exists() "
+            "else Path(os.environ.get('COREGRAPH_EVIDENCE_CACHE', str(REPO.parent / 'gnn-fraud-local-evidence-cache')))\n"
+            "OUTPUT_ROOT = Path('/kaggle/working/coregraph-v5-pilot') if Path('/kaggle').exists() "
+            "else REPO / 'results/coregraph_pilot/v5_authorised_run'\n"
+            "CONFIG = REPO / 'configs/coregraph/pilot/saved_output_v5.yaml'\n"
+            "RUNNER = REPO / 'scripts/coregraph/run_saved_output_pilot_v5.py'\n"
+            "EXECUTE = False\n"
+            "PLAN = True\n"
+            "VALIDATE = False\n"
+            "RUN_SYNTHETIC = False\n"
+            "RESUME = True\n"
+            "AUTHORIZATION_TOKEN = ''\n"
+            "CHUNK_ROWS = 50000\n"
+            "MAX_WORKERS = 1\n"
+            "print({'repo':str(REPO),'cache':str(CACHE),'output':str(OUTPUT_ROOT),'execute':EXECUTE})"
+        ),
+        code_cell(
+            "required = [RUNNER, CONFIG, CACHE / 'indexes/RB09V3_MEMBER_INDEX.csv']\n"
+            "missing = [str(path) for path in required if not path.exists()]\n"
+            "assert not missing, f'Missing V5 prerequisites: {missing}'\n"
+            "branch = subprocess.check_output(['git','-C',str(REPO),'branch','--show-current'],text=True).strip()\n"
+            "commit_sha = subprocess.check_output(['git','-C',str(REPO),'rev-parse','HEAD'],text=True).strip()\n"
+            "assert branch == 'codex/coregraph-iclr-buildout-2026', branch\n"
+            "config = yaml.safe_load(CONFIG.read_text())\n"
+            "spec = REPO / config['preregistration_path']\n"
+            "preregistration_sha256 = hashlib.sha256(spec.read_bytes()).hexdigest()\n"
+            "assert preregistration_sha256 == config['preregistration_sha256']\n"
+            "assert len(config['archive_hashes']) == 6\n"
+            "free_bytes = shutil.disk_usage(OUTPUT_ROOT.parent).free\n"
+            "assert free_bytes >= 5 * 1024**3, 'At least 5 GiB free space is required'\n"
+            "print({'branch':branch,'commit_sha':commit_sha,'preregistration_sha256':preregistration_sha256,'archives':6,'free_bytes':free_bytes})"
+        ),
+        code_cell(
+            "base = [sys.executable,str(RUNNER),'--config',str(CONFIG),'--evidence-cache',str(CACHE),'--output-root',str(OUTPUT_ROOT),'--chunk-rows',str(CHUNK_ROWS),'--max-workers',str(MAX_WORKERS)]\n"
+            "plan_command = [*base,'--plan']\n"
+            "validate_command = [*base,'--validate-only']\n"
+            "synthetic_command = [sys.executable,str(RUNNER),'--config',str(CONFIG),'--output-root',str(OUTPUT_ROOT.parent/'v5_synthetic_notebook_smoke'),'--synthetic-fixture','--execute','--fail-fast']\n"
+            "real_command = [*base,'--execute','--authorization-token','<EXPLICIT_LATER_AUTHORIZATION>']\n"
+            "print({'plan_command':plan_command,'validate_command':validate_command,'synthetic_command':synthetic_command,'real_command_not_run':real_command,'expected_counts':'6/180/60/540/240'})\n"
+            "if PLAN:\n"
+            "    subprocess.run(plan_command,cwd=REPO,check=True)\n"
+            "if VALIDATE:\n"
+            "    subprocess.run(validate_command,cwd=REPO,check=True)\n"
+            "if RUN_SYNTHETIC:\n"
+            "    subprocess.run(synthetic_command,cwd=REPO,check=True)"
+        ),
+        code_cell(
+            "if EXECUTE:\n"
+            "    assert AUTHORIZATION_TOKEN == 'AUTHORIZE_COREGRAPH_V5_PILOT_RUN', 'Missing explicit later authorization'\n"
+            "    command = [*base,'--execute','--authorization-token',AUTHORIZATION_TOKEN]\n"
+            "    if RESUME:\n"
+            "        command.append('--resume')\n"
+            "    subprocess.run(command,cwd=REPO,check=True)\n"
+            "else:\n"
+            "    print('Real saved-output pilot remains disabled; no fit or target metric was run by this cell.')"
+        ),
+        code_cell(
+            "plan = OUTPUT_ROOT / 'PILOT_PLAN.csv'\n"
+            "if plan.exists():\n"
+            "    planned = sum(1 for _ in plan.open()) - 1\n"
+            "    assert planned == 240, planned\n"
+            "    completed = len(list(OUTPUT_ROOT.glob('scenarios/*/methods/*/COMPLETE')))\n"
+            "    print({'planned':planned,'completed':completed,'resume':RESUME})\n"
+            "    if EXECUTE and completed == planned:\n"
+            "        subprocess.run([sys.executable,str(RUNNER),'--output-root',str(OUTPUT_ROOT),'--package'],cwd=REPO,check=True)\n"
+            "    elif EXECUTE:\n"
+            "        raise RuntimeError(f'Packaging blocked: {completed}/{planned} coordinates complete')"
+        ),
+    ]
+    metadata: dict[str, object] = {
+        "kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
+        "language_info": {"name": "python", "version": "3.10"},
+        "coregraph": {
+            "schema": "coregraph_notebook_v2",
+            "wave": "saved_output_pilot",
+            "accelerator_envelope": "T4x2" if kaggle else "local_cpu",
+            "execution_mode": "cpu_first_v5_cli_wrapper",
+            "heavy_execution_default": False,
+            "seeds": list(range(1, 11)),
+            "failure_semantics": "explicit_coordinate_failure_no_silent_skip",
+            "idempotent_resume": True,
+        },
+    }
+    if kaggle:
+        metadata["kaggle"] = {
+            "accelerator": "gpu",
+            "dataSources": [],
+            "dockerImageVersionId": None,
+            "isInternetEnabled": False,
+            "language": "python",
+        }
+    return {
+        "cells": cells,
+        "metadata": metadata,
+        "nbformat": 4,
+        "nbformat_minor": 5,
+    }
+
+
 def notebook(title: str, wave: str, *, kaggle: bool) -> dict[str, object]:
+    if wave == "saved_output_pilot":
+        return saved_output_notebook(title, kaggle=kaggle)
     execution = (
         "Execution is disabled by default. Set EXECUTE=True only after all "
         "prerequisites and upstream provider/licence gates pass."

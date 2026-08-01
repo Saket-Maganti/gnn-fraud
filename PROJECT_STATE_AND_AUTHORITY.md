@@ -1,6 +1,6 @@
 # Project state and authority
 
-Status: `LEVEL4_BUILD_COMPLETE_PRE_RUN_RESULTS_BLOCKED`.
+Status: `V5_EXECUTOR_IMPLEMENTED_REAL_PILOT_UNEXECUTED_RESULTS_BLOCKED`.
 
 ## Active authorities
 
@@ -16,10 +16,10 @@ CoreGraph entered the build as a clean valid linked worktree and was converted, 
 
 No real CoReGraph pilot has been run. No target metric, regret, oracle, latency, memory, or paper result is available. All numerical result claims are `BLOCKED_PENDING_RESULTS`; resource claims are `BLOCKED_RESOURCE_UNMEASURED` where applicable.
 
-Valid pre-run families are deterministic contract/mask/objective fixtures, theory counterexamples, synthetic tiny mechanisms, structural V5 registries, no-training audits, paper method/theory text, and release tooling. Superseded families include the historical 360 role-cell matrix. Exploratory families include latent contract discovery and OGB molecular fallback. Official baseline and provider-data families remain blocked by integration, licence, data, or resource gates stated in their registries.
+Valid pre-run families are deterministic contract/mask/objective fixtures, theory counterexamples, synthetic tiny mechanisms, structural V5 registries, the guarded V5 executor, target-label firewall tests, the complete 240-coordinate synthetic campaign, canonical no-training archive/member and representative assembly audits, paper method/theory text, and release tooling. Superseded families include the historical 360 role-cell matrix. Exploratory families include latent contract discovery and OGB molecular fallback. Official baseline and provider-data families remain blocked by integration, licence, data, or resource gates stated in their registries.
 
 `gnn-fraud-old` is historical-only and read-only. It is not a code, Git, paper, or runtime authority.
 
 ## Next authorised action
 
-Use the saved-output pilot execution prompt after reviewing the frozen plan. Full training, official baseline execution, paper result population, and remote jobs remain prohibited until their separate gates and authorisations pass.
+Review the frozen V5 specification and exact execution runbook. A real run requires a clean branch tip and the explicit token `AUTHORIZE_COREGRAPH_V5_PILOT_RUN`; this closure does not grant that later authorization. Full training, official baseline execution, paper result population, and remote jobs remain prohibited until their separate gates and authorisations pass.

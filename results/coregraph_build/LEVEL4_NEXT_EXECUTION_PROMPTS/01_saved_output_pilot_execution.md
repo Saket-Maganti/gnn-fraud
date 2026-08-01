@@ -1,23 +1,40 @@
 # Saved-output pilot execution
 
-This is the next authorised empirical step, but execute it only
-after the user explicitly invokes this prompt. Revalidate pilot inputs, archive
-and member hashes, V5 row scopes, and the frozen preregistration hash. Create a
-run manifest before evaluating anything. Use only the checksum-verified saved
-prediction members; do not train experts or regenerate predictions.
+The executor is implemented, but the real pilot remains unrun.
+Execute only after a new explicit authorization decision. Read
+`V5_SAVED_OUTPUT_PILOT_EXECUTION_RUNBOOK.md` and set absolute
+`COREGRAPH_REPO_ROOT`, `COREGRAPH_EVIDENCE_CACHE`, and
+`COREGRAPH_OUTPUT_ROOT` values without committing machine-local paths.
 
-Execute the frozen 240-coordinate pilot plan sequentially with resumability and
-hash-equivalent skip logic. Fit any router, calibration, or threshold component
-on source train/validation scopes only. Permit target known-label rows only in
-the offline evaluation stage. Produce completeness, exclusion, leakage,
-resource-unknown, metric, statistical-gate, and claim-linkage records. Never
-compute or expose an oracle outside its explicitly non-deployable diagnostic
-cell. Stop on leakage, pairing, checksum, or scenario-coverage failure.
+Run the exact no-training gates first:
 
-At completion, issue a conservative GO/NO-GO/INCONCLUSIVE decision against the
-already frozen gate; do not redefine thresholds after seeing results. Do not
-start full training, update empirical paper claims, or launch Kaggle work in the
-same phase.
+```bash
+cd "$COREGRAPH_REPO_ROOT"
+.venv/bin/python scripts/coregraph/run_saved_output_pilot_v5.py   --config configs/coregraph/pilot/saved_output_v5.yaml   --evidence-cache "$COREGRAPH_EVIDENCE_CACHE"   --output-root "$COREGRAPH_OUTPUT_ROOT" --plan
+.venv/bin/python scripts/coregraph/run_saved_output_pilot_v5.py   --config configs/coregraph/pilot/saved_output_v5.yaml   --evidence-cache "$COREGRAPH_EVIDENCE_CACHE"   --output-root "$COREGRAPH_OUTPUT_ROOT" --validate-only
+```
+
+Require exactly 6 archives, 180 base artifacts, 60 scenarios, 540 bindings,
+240 coordinates, 180 member hashes, zero training, and zero target-label reads.
+After later authorization, run sequentially and resumably:
+
+```bash
+.venv/bin/python scripts/coregraph/run_saved_output_pilot_v5.py   --config configs/coregraph/pilot/saved_output_v5.yaml   --evidence-cache "$COREGRAPH_EVIDENCE_CACHE"   --output-root "$COREGRAPH_OUTPUT_ROOT"   --execute --resume --chunk-rows 50000 --max-workers 1   --authorization-token AUTHORIZE_COREGRAPH_V5_PILOT_RUN
+```
+
+The runner must refuse a dirty tree or missing token. Do not train experts or
+regenerate predictions. Fit all deployable state on source train/validation
+only; permit target known-label rows solely in the offline evaluator after each
+policy and target-score hash is frozen. Resume only exact hash-valid COMPLETE
+cells and retain explicit failures. After 240/240 valid completions, package:
+
+```bash
+.venv/bin/python scripts/coregraph/run_saved_output_pilot_v5.py   --output-root "$COREGRAPH_OUTPUT_ROOT" --package
+```
+
+Issue only the frozen GO/NO-GO/INCONCLUSIVE decision. Do not change thresholds,
+start full training, populate empirical paper claims, or launch Kaggle work in
+the same phase.
 
 ## Inherited non-negotiable controls
 

@@ -10,7 +10,7 @@
     "target_oracles_computed": 0
   },
   "frozen_tkde": "ZERO_TKDE_SCIENTIFIC_DELTAS_249_FILES",
-  "next_authorised_action": "SAVED_OUTPUT_PILOT_AFTER_EXPLICIT_INVOCATION",
+  "next_authorised_action": "V5_SAVED_OUTPUT_PILOT_ONLY_AFTER_NEW_EXPLICIT_AUTHORIZATION",
   "notebooks": {
     "executed": 0,
     "kaggle": 9,
@@ -19,12 +19,12 @@
   "paper": {
     "blocked_empirical_claims": 4,
     "invented_numeric_results": false,
-    "main_pages": 13,
+    "main_pages": 14,
     "main_sections": 12,
     "status": "PASS_RESULTS_BLOCKED",
     "supplement_pages": 5,
     "supplement_sections": 7,
-    "visual_qa": "PASS_18_OF_18_PAGES"
+    "visual_qa": "PASS_19_OF_19_PAGES"
   },
   "prohibited_actions": {
     "fabricated_numerical_paper_results": 0,
@@ -37,6 +37,7 @@
     "target_oracle_computation": 0
   },
   "ready_for_saved_output_pilot": true,
+  "real_pilot_executed": false,
   "release": {
     "checksum_validation": "PASS",
     "cleanroom": "PASS"
@@ -80,14 +81,24 @@
       }
     },
     "schema": "coregraph_level4_coverage_summary_v1",
-    "tests_passed": 237
+    "tests_passed": 257,
+    "v5_executor_percent": 95,
+    "v5_output_resume_percent": 100
   },
   "theory_gate": "PASS_EXTERNAL_REVIEW_PENDING",
   "v5": {
     "base_artifacts": 180,
     "bindings": 540,
+    "canonical_validate_only": "PASS_6_ARCHIVES_180_MEMBERS_NO_TRAINING",
+    "executor": "IMPLEMENTED_AND_SYNTHETICALLY_VALIDATED",
     "leakage_status": "PASS_NO_TRAINING_BYTE_AND_STRUCTURE",
-    "scenarios": 60
+    "primary_coordinates": 240,
+    "real_target_metrics_computed": 0,
+    "real_target_oracles_computed": 0,
+    "scenarios": 60,
+    "synthetic_complete_coordinates": 240,
+    "synthetic_failures": 0,
+    "target_label_firewall": "PASS"
   },
-  "verdict": "COREGRAPH_LEVEL4_BUILD_COMPLETE_READY_FOR_SAVED_OUTPUT_PILOT"
+  "verdict": "COREGRAPH_V5_EXECUTOR_IMPLEMENTED_REAL_PILOT_UNEXECUTED"
 }

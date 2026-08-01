@@ -1,6 +1,6 @@
 # CoReGraph Level-4 master build report
 
-Verdict: `COREGRAPH_LEVEL4_BUILD_COMPLETE_READY_FOR_SAVED_OUTPUT_PILOT`
+Verdict: `COREGRAPH_V5_EXECUTOR_IMPLEMENTED_REAL_PILOT_UNEXECUTED`
 
 ## Authority and integrity
 
@@ -35,6 +35,17 @@ permanently extracted.
   bindings materialise; byte, schema, coordinate, chronology, known-label,
   ordering, 60-group expert alignment, and 20-group cross-protocol row-scope
   audits pass.
+- V5 executor closure: the authoritative CLI implements plan, validate,
+  deterministic synthetic execution, guarded real execution, resume, sharding,
+  and complete-run packaging. The target-unlabelled interface has no label
+  field, and the offline label vault opens only after a checksum-bound policy
+  freeze. The complete synthetic campaign finished 240/240 coordinates with
+  zero failures; its gate outcome is synthetic-only and has no empirical
+  standing.
+- Canonical no-training validation: 6/6 archives, 180/180 members, 60/60
+  scenarios, 540/540 bindings, and 240/240 coordinates pass. Representative
+  Elliptic and DGraphFin source/target assembly also passes with float32 target
+  scores and no target-label field. No method was fit on canonical evidence.
 - Method: factorised/interaction/attention/uncertainty/latent/hybrid contract
   encoders; expert diagnostics; contract, instance, and hierarchical routing;
   resource masks; robust regret/CVaR/budget/stability/abstention objectives;
@@ -55,7 +66,7 @@ permanently extracted.
 
 ## Validation and paper
 
-- Tests: 237 passed; critical-module coverage minimum
+- Tests: 257 passed; critical-module coverage minimum
   85% and every declared group meets the
   85% gate.
 - Deterministic checks: compile, Ruff, mypy, theory, synthetic fixtures,
@@ -65,9 +76,9 @@ permanently extracted.
 - Runbooks: 9 Kaggle T4x2 plus
   3 local notebooks;
   none executed.
-- Paper: 12 main sections, 7 supplement sections, 13 main pages, 5 supplement
+- Paper: 12 main sections, 7 supplement sections, 14 main pages, 5 supplement
   pages, 8 non-empirical figures, 7 empty result templates, and 11 tables.
-  All 18 pages passed visual QA. Four empirical claim families remain blocked;
+  All 19 pages passed visual QA. Four empirical claim families remain blocked;
   no numerical result was invented.
 - Overlap firewall: `PASS` with zero common eight-grams, zero
   exact long sentences, and zero byte-identical visual assets.
@@ -81,6 +92,6 @@ installation, Kaggle job, empirical paper population, force-push, or PR merge
 occurred. The only training-like operation was the documented one-epoch,
 24-node synthetic CPU smoke (`PASS`), which used no provider data.
 
-The next authorised action is a separately invoked saved-output pilot using
-`LEVEL4_NEXT_EXECUTION_PROMPTS/01_saved_output_pilot_execution.md`. This build
-is not labelled submission-ready.
+The next possible action is a separately authorised saved-output pilot using
+`V5_SAVED_OUTPUT_PILOT_EXECUTION_RUNBOOK.md`; executor closure itself does not
+grant that authorization. This build is not labelled submission-ready.

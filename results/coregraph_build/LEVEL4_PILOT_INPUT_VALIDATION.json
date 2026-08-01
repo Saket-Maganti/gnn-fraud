@@ -5,9 +5,14 @@
   "failures": [],
   "members": 180,
   "pilot_executed": false,
+  "executor_implemented": true,
+  "primary_coordinates": 240,
+  "canonical_validate_only": "PASS",
+  "synthetic_campaign": "PASS_240_OF_240_ZERO_FAILURES",
+  "target_label_firewall": "PASS",
   "scenarios": 60,
   "schema": "coregraph_level4_pilot_input_validation_v1",
-  "status": "READY_FOR_SAVED_OUTPUT_PILOT",
+  "status": "V5_EXECUTOR_READY_REAL_PILOT_REQUIRES_NEW_AUTHORIZATION",
   "target_metrics_computed": 0,
   "target_oracles_computed": 0
 }

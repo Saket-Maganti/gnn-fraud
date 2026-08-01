@@ -1,4 +1,4 @@
-# CoReGraph Level-4 final public-neutral tree
+# CoReGraph V5 executor closure final public-neutral tree
 
 .env.example
 .gitattributes
