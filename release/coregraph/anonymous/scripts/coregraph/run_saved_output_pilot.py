@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Plan/validate V5 readiness or operate the separately gated legacy V4 pilot."""
+"""Legacy V4 pilot runner; V5 uses run_saved_output_pilot_v5.py."""
 
 from __future__ import annotations
 
@@ -287,6 +287,12 @@ def main() -> int:
         parser.error("--execute and --validate-only are mutually exclusive")
     config = yaml.safe_load(Path(args.config).read_text(encoding="utf-8"))
     if config.get("manifest_schema_version") == "v5":
+        print(
+            "DEPRECATED V5 READINESS ENTRY POINT: use "
+            "scripts/coregraph/run_saved_output_pilot_v5.py with "
+            "configs/coregraph/pilot/saved_output_v5.yaml",
+            file=sys.stderr,
+        )
         if args.execute:
             raise RuntimeError(
                 "V5 manifests are readiness-only in this review; pilot execution "

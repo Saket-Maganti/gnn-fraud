@@ -61,6 +61,7 @@ class ArchiveStore:
         source = records or CANONICAL_ARCHIVE_HASHES
         self.records = {name: ArchiveRecord(name, digest) for name, digest in source.items()}
         self._verified: dict[str, tuple[int, int]] = {}
+        self._verified_members: set[tuple[str, str, str]] = set()
 
     def archive_path(self, archive_name: str) -> Path:
         if archive_name not in self.records:
@@ -104,13 +105,37 @@ class ArchiveStore:
         *,
         expected_sha256: str,
     ) -> Iterator[IO[bytes]]:
-        """Verify by streaming, then yield a second extraction-free stream."""
+        """Verify once by streaming, then yield an extraction-free stream."""
 
         if not expected_sha256:
             raise ArchiveIntegrityError("member access requires an expected SHA-256")
-        path = self.verify_archive(archive_name)
+        path = self.verify_member(
+            archive_name,
+            member_name,
+            expected_sha256=expected_sha256,
+        )
+        with zipfile.ZipFile(path) as archive:
+            with archive.open(member_name, "r") as source:
+                yield source
+
+    def verify_member(
+        self,
+        archive_name: str,
+        member_name: str,
+        *,
+        expected_sha256: str,
+        force: bool = False,
+    ) -> Path:
+        """Verify an indexed member without extracting it and cache immutable success."""
+
+        if not expected_sha256:
+            raise ArchiveIntegrityError("member access requires an expected SHA-256")
+        path = self.verify_archive(archive_name, force=force)
         if PurePosixPath(member_name).is_absolute() or ".." in PurePosixPath(member_name).parts:
             raise ArchiveIntegrityError(f"unsafe member path: {member_name}")
+        identity = (archive_name, member_name, expected_sha256)
+        if not force and identity in self._verified_members:
+            return path
         try:
             with zipfile.ZipFile(path) as archive:
                 with archive.open(member_name, "r") as source:
@@ -124,6 +149,5 @@ class ArchiveStore:
                 f"member checksum mismatch for {archive_name}:{member_name}: "
                 f"expected {expected_sha256}, observed {observed}"
             )
-        with zipfile.ZipFile(path) as archive:
-            with archive.open(member_name, "r") as source:
-                yield source
+        self._verified_members.add(identity)
+        return path

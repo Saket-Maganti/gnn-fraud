@@ -398,6 +398,7 @@ class SavedRouterPrediction:
     expert_prediction_seed: int
     router_training_seed: int
     source_fit_hash: str
+    frozen_model_state: Mapping[str, Any] = field(default_factory=dict)
     early_stopping_source_only: bool = True
 
 
@@ -1858,6 +1859,7 @@ def fit_saved_output_corerouter(
     steps: int = 100,
     ablation: PilotAblation = PilotAblation.FULL,
     abstention_cost: float = 0.2,
+    target_chunk_rows: int | None = None,
 ) -> SavedRouterPrediction:
     """Fit on source-train, stop on source-validation, then freeze for target."""
 
@@ -1877,6 +1879,8 @@ def fit_saved_output_corerouter(
         raise ValueError("router steps must be positive")
     if abstention_cost < 0:
         raise ValueError("abstention cost cannot be negative")
+    if target_chunk_rows is not None and target_chunk_rows < 1:
+        raise ValueError("target inference chunk size must be positive")
     train = _assemble_source(source_groups, experts, "train")
     validation = _assemble_source(source_groups, experts, "validation")
     (
@@ -2146,85 +2150,117 @@ def fit_saved_output_corerouter(
         threshold = selected_threshold.threshold
         threshold_fitted_on = selected_threshold.fitted_on
 
-    target_matrix = np.column_stack([target_scores[name] for name in experts])
-    target_mask_array = np.column_stack(
-        [target_availability[name] for name in experts]
-    ).astype(bool)
-    if target_matrix.shape != target_mask_array.shape:
+    target_lengths = {
+        len(np.asarray(target_scores[name])) for name in experts
+    } | {
+        len(np.asarray(target_availability[name])) for name in experts
+    }
+    if len(target_lengths) != 1:
         raise ValueError("target scores and target availability must align")
-    if not use_resource_mask:
-        target_mask_array = np.ones_like(target_mask_array)
+    target_rows = target_lengths.pop()
+    if target_rows < 1:
+        raise ValueError("target inference requires at least one row")
+    chunk_rows = target_rows if target_chunk_rows is None else target_chunk_rows
     target_cost_array = np.asarray(
         [target_expert_costs[name] for name in experts],
         dtype=float,
     )
-    target_shared, target_per_expert = _diagnostics(
-        target_matrix,
-        target_cost_array,
-        enabled=diagnostics_enabled,
-    )
+    score_chunks: list[np.ndarray] = []
+    selected_chunks: list[np.ndarray] = []
+    routing_chunks: list[np.ndarray] = []
+    abstention_probability_chunks: list[np.ndarray] = []
+    compute_chunks: list[np.ndarray] = []
+    forced_chunks: list[np.ndarray] = []
+    changed_routes = 0
+    total_elements = target_rows * len(experts)
     with torch.no_grad():
-        target_output = model(
-            contracts=[target_contract] * len(target_matrix),
-            expert_scores=tensor(target_matrix),
-            score_type=ScoreType.PROBABILITY,
-            shared_diagnostics=tensor(target_shared),
-            per_expert_diagnostics=tensor(target_per_expert),
-            availability_mask=tensor(target_mask_array, boolean=True),
-            expert_costs=tensor(target_cost_array),
-            expert_names=experts,
-        )
-        target_perturbation = np.linspace(
-            -1e-3,
-            1e-3,
-            target_matrix.size,
-        ).reshape(target_matrix.shape)
-        perturbed_matrix = np.clip(
-            target_matrix + target_perturbation,
-            0,
-            1,
-        )
-        perturbed_shared, perturbed_per = _diagnostics(
-            perturbed_matrix,
-            target_cost_array,
-            enabled=diagnostics_enabled,
-        )
-        perturbed = model(
-            contracts=[target_contract] * len(target_matrix),
-            expert_scores=tensor(perturbed_matrix),
-            score_type=ScoreType.PROBABILITY,
-            shared_diagnostics=tensor(perturbed_shared),
-            per_expert_diagnostics=tensor(perturbed_per),
-            availability_mask=tensor(target_mask_array, boolean=True),
-            expert_costs=tensor(target_cost_array),
-            expert_names=experts,
-        )
-    forced_abstention = ~target_mask_array.any(axis=1)
+        for start in range(0, target_rows, chunk_rows):
+            stop = min(start + chunk_rows, target_rows)
+            target_matrix = np.column_stack(
+                [np.asarray(target_scores[name])[start:stop] for name in experts]
+            )
+            target_mask_array = np.column_stack(
+                [np.asarray(target_availability[name])[start:stop] for name in experts]
+            ).astype(bool)
+            if not use_resource_mask:
+                target_mask_array = np.ones_like(target_mask_array)
+            target_shared, target_per_expert = _diagnostics(
+                target_matrix,
+                target_cost_array,
+                enabled=diagnostics_enabled,
+            )
+            target_output = model(
+                contracts=[target_contract] * len(target_matrix),
+                expert_scores=tensor(target_matrix),
+                score_type=ScoreType.PROBABILITY,
+                shared_diagnostics=tensor(target_shared),
+                per_expert_diagnostics=tensor(target_per_expert),
+                availability_mask=tensor(target_mask_array, boolean=True),
+                expert_costs=tensor(target_cost_array),
+                expert_names=experts,
+            )
+            flat_start = start * len(experts)
+            flat_stop = stop * len(experts)
+            if total_elements == 1:
+                target_perturbation = np.zeros_like(target_matrix)
+            else:
+                positions = np.arange(flat_start, flat_stop, dtype=np.float64)
+                target_perturbation = (
+                    -1e-3 + 2e-3 * positions / (total_elements - 1)
+                ).reshape(target_matrix.shape)
+            perturbed_matrix = np.clip(target_matrix + target_perturbation, 0, 1)
+            perturbed_shared, perturbed_per = _diagnostics(
+                perturbed_matrix,
+                target_cost_array,
+                enabled=diagnostics_enabled,
+            )
+            perturbed = model(
+                contracts=[target_contract] * len(target_matrix),
+                expert_scores=tensor(perturbed_matrix),
+                score_type=ScoreType.PROBABILITY,
+                shared_diagnostics=tensor(perturbed_shared),
+                per_expert_diagnostics=tensor(perturbed_per),
+                availability_mask=tensor(target_mask_array, boolean=True),
+                expert_costs=tensor(target_cost_array),
+                expert_names=experts,
+            )
+            selected = target_output.selected_expert.cpu().numpy()
+            changed_routes += int(
+                np.sum(selected != perturbed.selected_expert.cpu().numpy())
+            )
+            score_chunks.append(target_output.blended_score.cpu().numpy())
+            selected_chunks.append(selected)
+            routing_chunks.append(target_output.expert_weights.cpu().numpy())
+            abstention_probability_chunks.append(
+                target_output.abstention_probability.cpu().numpy()
+            )
+            compute_chunks.append(target_output.expected_compute.cpu().numpy())
+            forced_chunks.append(~target_mask_array.any(axis=1))
+    target_score_output = np.concatenate(score_chunks)
+    selected = np.concatenate(selected_chunks)
+    routing_weights = np.concatenate(routing_chunks)
+    abstention_probability = np.concatenate(abstention_probability_chunks)
+    expected_compute = np.concatenate(compute_chunks)
+    forced_abstention = np.concatenate(forced_chunks)
     target_capacity = target_contract.budget.abstention_capacity
     if ablation is PilotAblation.NO_ABSTENTION:
         abstain = forced_abstention
     else:
         abstain = apply_frozen_abstention_decision(
-            target_output.abstention_probability,
+            torch.tensor(abstention_probability, dtype=torch.float32),
             threshold=threshold,
             capacity=target_capacity,
-            forced_abstention=target_output.all_experts_unavailable,
+            forced_abstention=torch.tensor(forced_abstention, dtype=torch.bool),
         )
-    selected = target_output.selected_expert.cpu().numpy()
-    perturbed_selected = perturbed.selected_expert.cpu().numpy()
     return SavedRouterPrediction(
-        scores=target_output.blended_score.cpu().numpy(),
+        scores=target_score_output,
         selected_experts=selected,
-        routing_weights=target_output.expert_weights.cpu().numpy(),
-        abstention_probability=(
-            target_output.abstention_probability.cpu().numpy()
-        ),
+        routing_weights=routing_weights,
+        abstention_probability=abstention_probability,
         abstain=abstain.cpu().numpy() if isinstance(abstain, torch.Tensor) else abstain,
-        expected_compute=target_output.expected_compute.cpu().numpy(),
+        expected_compute=expected_compute,
         forced_abstention=forced_abstention,
-        perturbation_flip_rate=float(
-            np.mean(selected != perturbed_selected)
-        ),
+        perturbation_flip_rate=float(changed_routes / target_rows),
         ablation=ablation,
         source_train_examples=len(train_labels),
         source_validation_examples=len(validation_labels),
@@ -2236,6 +2272,10 @@ def fit_saved_output_corerouter(
         expert_prediction_seed=expert_prediction_seed,
         router_training_seed=router_training_seed,
         source_fit_hash=source_fit_hash,
+        frozen_model_state={
+            name: value.detach().cpu().numpy().tolist()
+            for name, value in sorted(best_state.items())
+        },
     )
 
 

@@ -12,7 +12,12 @@ PYTESTS = \
 	coregraph-coverage coregraph-local-gates coregraph-level4-validate \
 	coregraph-evidence-cache-check coregraph-pilot-plan coregraph-pilot-validate \
 	coregraph-full-plan coregraph-analysis coregraph-paper coregraph-release \
-	coregraph-cleanroom
+	coregraph-cleanroom coregraph-v5-pilot-plan coregraph-v5-pilot-validate \
+	coregraph-v5-pilot-synthetic-smoke coregraph-v5-pilot-readiness \
+	coregraph-v5-pilot-package
+
+COREGRAPH_V5_EVIDENCE_CACHE ?= $(abspath $(CURDIR)/../gnn-fraud-local-evidence-cache)
+COREGRAPH_V5_OUTPUT_ROOT ?= /tmp/coregraph-v5-pilot-readiness
 
 help:
 	@echo "Dataset-free targets: compile test unittest support claims figures tables paper delta public-audit"
@@ -65,6 +70,11 @@ coregraph-typecheck:
 		coregraph/experiments/canonical_recovery.py \
 		coregraph/experiments/protocol_registry.py \
 		coregraph/experiments/contract_splits.py coregraph/evaluation/statistics.py \
+		coregraph/experiments/v5_pilot_types.py \
+		coregraph/experiments/v5_scenario_loader.py \
+		coregraph/experiments/v5_pilot_outputs.py \
+		coregraph/experiments/v5_pilot_executor.py \
+		coregraph/experiments/v5_synthetic.py \
 		coregraph/evaluation/metrics.py coregraph/evaluation/selective.py \
 		coregraph/evaluation/resources.py coregraph/evaluation/counterfactual.py \
 		coregraph/evidence coregraph/diagnostics coregraph/resources \
@@ -72,6 +82,7 @@ coregraph-typecheck:
 		scripts/coregraph/run_statistical_analysis.py \
 		scripts/coregraph/evaluate_pilot_gate.py \
 		scripts/coregraph/run_saved_output_pilot.py \
+		scripts/coregraph/run_saved_output_pilot_v5.py \
 		scripts/coregraph/convert_prediction_manifests_v4.py \
 		scripts/coregraph/recover_canonical_manifests_v5.py \
 		--ignore-missing-imports --show-error-codes
@@ -86,6 +97,8 @@ coregraph-coverage:
 	$(PY) -m coverage report --include='coregraph/routing/*' --fail-under=85
 	$(PY) -m coverage report --include='coregraph/objectives/*' --fail-under=85
 	$(PY) -m coverage report --include='coregraph/experiments/pilot.py' --fail-under=85
+	$(PY) -m coverage report --include='coregraph/experiments/v5_pilot_executor.py' --fail-under=95
+	$(PY) -m coverage report --include='coregraph/experiments/v5_pilot_outputs.py' --fail-under=92
 	$(PY) -m coverage report --include='coregraph/experiments/manifest_conversion.py' --fail-under=85
 	$(PY) -m coverage report --include='coregraph/experiments/scenario_manifests.py' --fail-under=80
 	$(PY) -m coverage report --include='coregraph/experiments/canonical_recovery.py' --fail-under=85
@@ -125,6 +138,32 @@ coregraph-pilot-plan:
 
 coregraph-pilot-validate:
 	$(PY) scripts/coregraph/orchestrate_level4.py pilot-validate
+
+coregraph-v5-pilot-plan:
+	$(PY) scripts/coregraph/run_saved_output_pilot_v5.py \
+		--config configs/coregraph/pilot/saved_output_v5.yaml \
+		--evidence-cache $(COREGRAPH_V5_EVIDENCE_CACHE) \
+		--output-root $(COREGRAPH_V5_OUTPUT_ROOT) --plan
+
+coregraph-v5-pilot-validate:
+	$(PY) scripts/coregraph/run_saved_output_pilot_v5.py \
+		--config configs/coregraph/pilot/saved_output_v5.yaml \
+		--evidence-cache $(COREGRAPH_V5_EVIDENCE_CACHE) \
+		--output-root $(COREGRAPH_V5_OUTPUT_ROOT) --validate-only
+
+coregraph-v5-pilot-synthetic-smoke:
+	$(PY) scripts/coregraph/run_saved_output_pilot_v5.py \
+		--config configs/coregraph/pilot/saved_output_v5.yaml \
+		--output-root $(COREGRAPH_V5_OUTPUT_ROOT)-synthetic \
+		--synthetic-fixture --execute --fail-fast
+
+coregraph-v5-pilot-readiness: coregraph-v5-pilot-plan
+	$(PY) -m pytest -q tests/coregraph/test_v5_pilot_executor.py
+	$(PY) scripts/coregraph/validate_notebooks.py
+
+coregraph-v5-pilot-package:
+	$(PY) scripts/coregraph/run_saved_output_pilot_v5.py \
+		--output-root $(COREGRAPH_V5_OUTPUT_ROOT) --package
 
 coregraph-full-plan:
 	$(PY) scripts/coregraph/orchestrate_level4.py full-plan
