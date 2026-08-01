@@ -148,6 +148,7 @@ def cleanroom() -> tuple[list[str], dict[str, object]]:
             "tests/coregraph/test_level4_benchmarks_theory.py",
             "tests/coregraph/test_level4_generated_artifacts.py",
             "tests/coregraph/test_level4_overlap_audit.py",
+            "tests/coregraph/test_level4_public_tree.py",
             "tests/test_path_resolution.py",
         ]
         steps.append(

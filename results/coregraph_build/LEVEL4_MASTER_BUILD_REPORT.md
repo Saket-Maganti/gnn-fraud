@@ -55,7 +55,7 @@ permanently extracted.
 
 ## Validation and paper
 
-- Tests: 236 passed; critical-module coverage minimum
+- Tests: 237 passed; critical-module coverage minimum
   85% and every declared group meets the
   85% gate.
 - Deterministic checks: compile, Ruff, mypy, theory, synthetic fixtures,
@@ -71,7 +71,7 @@ permanently extracted.
   no numerical result was invented.
 - Overlap firewall: `PASS` with zero common eight-grams, zero
   exact long sentences, and zero byte-identical visual assets.
-- Cleanup: 37,558,378 reproducible workspace bytes removed; no evidence,
+- Cleanup: 39,171,198 reproducible workspace bytes removed; no evidence,
   report, environment, historical folder, or user-owned file was deleted.
 
 ## Explicit execution boundary

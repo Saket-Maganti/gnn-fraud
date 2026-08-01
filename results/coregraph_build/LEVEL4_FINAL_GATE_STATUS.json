@@ -1,5 +1,5 @@
 {
-  "cleanup_workspace_bytes_removed": 37558378,
+  "cleanup_workspace_bytes_removed": 39171198,
   "evidence": {
     "archives_verified": 6,
     "compressed_bytes": 1004185299,
@@ -80,7 +80,7 @@
       }
     },
     "schema": "coregraph_level4_coverage_summary_v1",
-    "tests_passed": 236
+    "tests_passed": 237
   },
   "theory_gate": "PASS_EXTERNAL_REVIEW_PENDING",
   "v5": {
