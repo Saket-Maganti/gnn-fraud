@@ -1,0 +1,64 @@
+{
+  "audited_dimensions": [
+    "problem statement",
+    "contributions",
+    "methods",
+    "theory",
+    "experiments",
+    "figures",
+    "tables",
+    "text",
+    "claims"
+  ],
+  "corpora": {
+    "iclr_text_files": 52,
+    "iclr_words": 9701,
+    "tkde_text_files": 85,
+    "tkde_words": 24189
+  },
+  "distinction_matrix": {
+    "contribution": {
+      "coregraph_iclr": "routing method and theory",
+      "fraudshiftbench_tkde": "benchmark and evidence framework"
+    },
+    "main_evidence": {
+      "coregraph_iclr": "compositional generalisation",
+      "fraudshiftbench_tkde": "protocol-sensitive benchmarking"
+    },
+    "main_visuals": {
+      "coregraph_iclr": "architecture, mechanisms, and new result templates",
+      "fraudshiftbench_tkde": "benchmark and evidence map"
+    },
+    "primary_question": {
+      "coregraph_iclr": "learning under unseen deployment-contract compositions",
+      "fraudshiftbench_tkde": "evaluation and claim validity"
+    },
+    "shared_data": "disclosed; no provider payload duplicated in either source tree",
+    "shared_text": "measured below and required to remain minimal",
+    "theory": {
+      "coregraph_iclr": "regret, resource masks, and selective routing",
+      "fraudshiftbench_tkde": "evidence and support semantics"
+    }
+  },
+  "failures": [],
+  "measurements": {
+    "byte_identical_visual_asset_count": 0,
+    "byte_identical_visual_assets": [],
+    "common_eight_grams": 0,
+    "eight_gram_jaccard": 0.0,
+    "exact_long_sentence_count": 0,
+    "exact_long_sentences": [],
+    "iclr_eight_gram_containment": 0.0,
+    "longest_common_contiguous_words": 7,
+    "longest_common_excerpt": "specify time graph visibility construction model selection"
+  },
+  "schema": "coregraph_cross_paper_overlap_audit_v1",
+  "status": "PASS",
+  "thresholds": {
+    "max_byte_identical_visual_assets": 0,
+    "max_exact_long_sentences": 0,
+    "max_iclr_ngram_containment": 0.025,
+    "max_longest_common_words": 36,
+    "ngram_size": 8
+  }
+}
