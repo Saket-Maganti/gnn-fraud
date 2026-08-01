@@ -1,6 +1,18 @@
 {
   "failures": [],
+  "kaggle_level4_runbooks": 9,
   "notebooks": 12,
-  "schema": "coregraph_notebook_validation_v1",
-  "status": "PASS"
+  "notebooks_executed": 0,
+  "required_categories_present": true,
+  "schema": "coregraph_notebook_validation_v2",
+  "status": "PASS",
+  "syntax_checked": 12,
+  "tiny_fixture": {
+    "coordinates": 10,
+    "lane_counts": {
+      "0": 5,
+      "1": 5
+    },
+    "zip_sha256": "a2321b4025bc45a758d4c102fa7a592ec5451119ad50f14f8d51bba3c484a287"
+  }
 }
