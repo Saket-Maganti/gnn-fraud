@@ -2,10 +2,14 @@
 
 Status: `EXECUTOR_VALIDATED_EMPIRICAL_PILOT_UNEXECUTED`
 
-Repository: `${COREGRAPH_REPO_ROOT}`  
-Branch: `codex/coregraph-iclr-buildout-2026`  
-Evidence cache: `${COREGRAPH_EVIDENCE_CACHE}`  
-Config: `configs/coregraph/pilot/saved_output_v5.yaml`  
+Repository: `${COREGRAPH_REPO_ROOT}`
+
+Branch: `codex/coregraph-iclr-buildout-2026`
+
+Evidence cache: `${COREGRAPH_EVIDENCE_CACHE}`
+
+Config: `configs/coregraph/pilot/saved_output_v5.yaml`
+
 Runner: `scripts/coregraph/run_saved_output_pilot_v5.py`
 
 The saved-output pilot is CPU-first. Do not launch Kaggle or a GPU job for this campaign unless later measured evidence justifies changing the operational venue. Never modify the preregistration or config after viewing target results.
