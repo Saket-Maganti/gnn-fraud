@@ -1,57 +1,46 @@
 \documentclass{article}
 
-% ICLR 2027 formatting had not been released when this skeleton was built.
-% The verified ICLR 2026 template is deliberately not frozen as a future style.
-\IfFileExists{iclr2027_conference.sty}{
-  \usepackage{iclr2027_conference}
-}{
-  \usepackage[margin=1in]{geometry}
-}
+% No official ICLR 2027 style was available from the venue at build time.
+% Use it automatically when supplied; otherwise retain an anonymous reviewable build.
+\IfFileExists{iclr2027_conference.sty}{\usepackage{iclr2027_conference}}{\usepackage[margin=0.82in]{geometry}}
 \usepackage{amsmath,amssymb,amsthm,booktabs,graphicx,hyperref,microtype}
-\usepackage{xcolor}
+\usepackage{xcolor,array,tabularx}
+\graphicspath{{figures/}}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{proposition}{Proposition}
-\newcommand{\pending}{\textcolor{red}{\texttt{RESULT\_PENDING}}}
-\newcommand{\tablepending}{\textcolor{red}{\texttt{TABLE\_PENDING\_RUNS}}}
-\newcommand{\claimblocked}{\textcolor{red}{\texttt{CLAIM\_BLOCKED\_PENDING\_EVIDENCE}}}
+\newtheorem{assumption}{Assumption}
+\newcommand{\ClaimBlocked}[1]{\textcolor{red!75!black}{\texttt{CLAIM\_BLOCKED[#1]}}}
+\newcommand{\ResultPending}[1]{\textcolor{red!75!black}{\texttt{RESULT\_PENDING[#1]}}}
+\newcommand{\PendingCell}{\textcolor{red!75!black}{\texttt{PENDING}}}
+\newcommand{\method}{\textsc{CoReGraph}}
+\newcommand{\contracts}{\mathcal{C}}
+\newcommand{\experts}{\mathcal{E}}
+\newcommand{\feasible}{\mathcal{A}}
+\setlength{\emergencystretch}{2em}
 
-\title{CoReGraph: Resource- and Budget-Aware Graph Expert Routing under
-Compositional Deployment Shift}
+\title{CoReGraph: Learning to Route Graph Experts under Compositional Deployment Contracts}
 \author{Anonymous Authors}
 
 \begin{document}
 \maketitle
-
-\input{sections/01_abstract}
-\input{sections/02_introduction}
-\input{sections/03_related_work}
-\input{sections/04_problem}
-\input{sections/05_method}
-\input{sections/06_theory}
-\input{sections/07_experiments}
-\input{sections/08_results_placeholder}
-\input{sections/09_limitations}
-\input{sections/10_conclusion}
+\input{abstract}
+\input{sections/01_introduction}
+\input{sections/02_related_work}
+\input{sections/03_problem_formulation}
+\input{sections/04_method}
+\input{sections/05_theory}
+\input{sections/06_benchmark}
+\input{sections/07_experimental_protocol}
+\input{sections/08_results}
+\input{sections/09_failure_analysis}
+\input{sections/10_resource_tradeoffs}
+\input{sections/11_limitations_ethics}
+\input{sections/12_conclusion}
 
 \paragraph{Reproducibility statement.}
-The appendix and anonymous artifact will specify the six-axis deployment
-contract, graph-view construction, task adapters, official-baseline pins,
-configuration hashes, saved predictions, telemetry, and the frozen analysis
-plan. Provider data and credentials will not be redistributed.
-
-\paragraph{Ethics statement.}
-Fraud detection is a high-impact decision-support setting. We report ranking,
-review-budget, calibration, abstention, and resource outcomes without treating
-model predictions as adjudications. Dataset licences, privacy boundaries,
-false-positive burdens, and human review capacity are explicit deployment
-coordinates. No personally identifying provider data is included in the
-artifact.
+The anonymous artifact specifies contract schemas, scenario bindings, leakage controls, run manifests, source-only tuning, statistical gates, and deterministic tiny checks. Provider data, prediction payloads, credentials, private paths, and unresolved-licence outputs are excluded. The manuscript is explicitly \texttt{RESULTS\_BLOCKED}.
 
 \bibliographystyle{plain}
 \bibliography{references}
-
-\appendix
-\input{appendix/appendix}
-
 \end{document}

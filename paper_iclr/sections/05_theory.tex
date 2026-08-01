@@ -1,0 +1,40 @@
+\section{Theory}
+
+The results below explain when contract conditioning is necessary and when factorisation can extrapolate. They do not establish empirical performance. Full proofs, counterexamples, and status labels appear in the supplement.
+
+\begin{theorem}[Fixed-mixture impossibility]
+Suppose two experts have risks \((0,\delta_1)\) on one contract and \((\delta_2,0)\) on another, with \(\delta_1,\delta_2>0\), and randomized selection risk is affine in mixture mass. Every contract-independent mixture has worst-contract regret at least \(\delta_1\delta_2/(\delta_1+\delta_2)>0\); a contract-aware selector has zero regret.
+\end{theorem}
+The two regrets are \((1-w)\delta_1\) and \(w\delta_2\); equalizing them gives the minimax value. The conclusion extends to resource-specific feasible sets only if their feasible optima still reverse. It need not hold for nonlinear prediction averaging without additional assumptions.
+
+\begin{proposition}[Regret decomposition]
+Insert intermediate policies that successively replace true contract representation, diagnostics, router, resource set, budget, abstention decision, and population risk with their deployed estimates. The resulting telescoping identity and triangle inequality bound regret by the sum of representation, diagnostic, routing, resource, budget, abstention, and finite-sample terms.
+\end{proposition}
+Some terms are source-estimable or offline counterfactual; representation error may be theoretical. The decomposition is bookkeeping, not an assertion that every component is causally identifiable.
+
+\begin{theorem}[Compositional generalisation]
+Let \(R(a,c)=b(a)+\sum_jf_j(a,c_j)+h(a,c)\), with \(|h|\leq\epsilon_{\mathrm{int}}\). If source-observed axis effects have uniform errors \(\epsilon_j\) and router optimization error is \(\epsilon_{\mathrm{route}}\), then an unseen combination of those observed values has excess risk at most
+\[
+2\sum_j\epsilon_j+2\epsilon_{\mathrm{int}}+\epsilon_{\mathrm{route}}.
+\]
+\end{theorem}
+The proof applies the approximation bound to the learned and optimal actions. The result excludes unseen axis values. Arbitrary interactions can make \(\epsilon_{\mathrm{int}}\) large; an XOR construction has zero marginal effects and nonzero joint risk.
+
+\begin{proposition}[Feasible mask]
+Pre-softmax masking assigns exactly zero mass to unavailable experts and unit mass to a nonempty feasible set. Conjoining correctly measured memory, latency, and invocation predicates preserves those constraints. An empty set is represented explicitly rather than normalized.
+\end{proposition}
+
+\begin{proposition}[Selective-risk transfer]
+For a label-free acceptance event \(A\), bounded loss \([0,L]\), density ratio \(dP_t/dP_s\leq\kappa\) on \(A\), and target coverage at least \(\gamma>0\),
+\[
+R_t^{\mathrm{sel}}\leq \min\!\left\{L,\frac{\kappa P_s(A)R_s^{\mathrm{sel}}}{\gamma}\right\}.
+\]
+\end{proposition}
+This is not distribution-free: unbounded density ratio, target-label-dependent acceptance, or vanishing target coverage invalidates the guarantee.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{06_theory_intuition.pdf}
+  \caption{Theory intuition and its principal failure case. No real risk value is shown.}
+  \label{fig:theory}
+\end{figure}
