@@ -1,0 +1,93 @@
+{
+  "cleanup_workspace_bytes_removed": 37558378,
+  "evidence": {
+    "archives_verified": 6,
+    "compressed_bytes": 1004185299,
+    "members_verified": 180,
+    "permanent_extractions": 0,
+    "ssd_source_used_after_local_verification": false,
+    "target_metrics_computed": 0,
+    "target_oracles_computed": 0
+  },
+  "frozen_tkde": "ZERO_TKDE_SCIENTIFIC_DELTAS_249_FILES",
+  "next_authorised_action": "SAVED_OUTPUT_PILOT_AFTER_EXPLICIT_INVOCATION",
+  "notebooks": {
+    "executed": 0,
+    "kaggle": 9,
+    "total": 12
+  },
+  "paper": {
+    "blocked_empirical_claims": 4,
+    "invented_numeric_results": false,
+    "main_pages": 13,
+    "main_sections": 12,
+    "status": "PASS_RESULTS_BLOCKED",
+    "supplement_pages": 5,
+    "supplement_sections": 7,
+    "visual_qa": "PASS_18_OF_18_PAGES"
+  },
+  "prohibited_actions": {
+    "fabricated_numerical_paper_results": 0,
+    "force_pushes": 0,
+    "full_real_data_training": 0,
+    "kaggle_jobs": 0,
+    "official_baseline_repository_installation": 0,
+    "pull_request_merges": 0,
+    "target_metric_computation": 0,
+    "target_oracle_computation": 0
+  },
+  "ready_for_saved_output_pilot": true,
+  "release": {
+    "checksum_validation": "PASS",
+    "cleanroom": "PASS"
+  },
+  "repository": {
+    "branch": "codex/coregraph-iclr-buildout-2026",
+    "final_sha_authority": "NORMALLY_PUSHED_BRANCH_TIP_AT_HANDOFF",
+    "form": "INDEPENDENT_GIT_CHECKOUT_VALIDATED"
+  },
+  "schema": "coregraph_level4_final_gate_v1",
+  "submission_status": "RESULTS_BLOCKED_NOT_SUBMISSION_READY",
+  "tests": {
+    "all_coregraph_percent": 87,
+    "all_required_level4_groups_at_or_above_85": true,
+    "critical_groups_percent": {
+      "baselines": 93,
+      "benchmarks": 99,
+      "contracts": 95,
+      "diagnostics": 90,
+      "evaluation_selective_resources_counterfactual": 93,
+      "evidence": 88,
+      "objectives": 91,
+      "pilot_core": 87,
+      "pilot_gate_evaluator": 85,
+      "resources": 100,
+      "routing": 93,
+      "statistics": 93,
+      "theory": 94
+    },
+    "critical_minimum_percent": 85,
+    "documented_exceptions": {
+      "legacy_scenario_manifests": {
+        "gate_percent": 80,
+        "observed_percent": 81,
+        "reason": "defensive legacy-conversion and error branches"
+      },
+      "prohibited_empirical_runner_branch": {
+        "gate_percent": 50,
+        "observed_percent": 58,
+        "reason": "only plan/validate surface is authorised in this phase"
+      }
+    },
+    "schema": "coregraph_level4_coverage_summary_v1",
+    "tests_passed": 236
+  },
+  "theory_gate": "PASS_EXTERNAL_REVIEW_PENDING",
+  "v5": {
+    "base_artifacts": 180,
+    "bindings": 540,
+    "leakage_status": "PASS_NO_TRAINING_BYTE_AND_STRUCTURE",
+    "scenarios": 60
+  },
+  "verdict": "COREGRAPH_LEVEL4_BUILD_COMPLETE_READY_FOR_SAVED_OUTPUT_PILOT"
+}

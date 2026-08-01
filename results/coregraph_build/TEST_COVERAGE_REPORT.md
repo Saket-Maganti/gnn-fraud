@@ -2,42 +2,37 @@
 
 Status: `PASS_LOCAL_DETERMINISTIC_GATES`
 
-- Full repository suite: 176 passed.
-- Anonymous release package: 149 CoReGraph tests passed from inside the
-  history-free release tree.
-- All `coregraph/` statement coverage: 85%.
-- Critical-area statement coverage:
-  - contracts: 96%;
-  - routing: 94%;
-  - objectives: 86%;
-  - saved-output pilot: 87%;
-  - statistics: 94%;
-  - SupportEngine: 88%;
-  - pilot gate evaluator: 86%;
-  - contract splits: 96%.
-- Expanded typed-core mypy gate: 50 contract, routing, objective,
-  availability, pilot, statistics, support, and theory modules; zero issues.
-- Full Ruff gate across `coregraph`, CoReGraph scripts, and tests: zero issues.
-- Compileall: pass.
-- One-epoch CPU smoke: 96 synthetic examples, one epoch, finite gradients and
-  sampled GCN predictions; no provider data.
-- Theory numerical/status, 12-notebook validation, ten-scenario synthetic
-  method checks, seven-page placeholder paper build/audit, anonymous release,
-  sanitized public-tree audit, and the frozen TKDE boundary all pass.
+- Full repository suite: 236 tests passed after standalone theory entry-point
+  and final-handoff generation regressions were added.
+- All `coregraph/` statement coverage: 87%.
+- Required Level-4 critical coverage:
+  - contracts: 95%;
+  - routing: 93%;
+  - objectives: 91%;
+  - evidence: 88%;
+  - diagnostics: 90%;
+  - benchmarks: 99%;
+  - baselines: 93%;
+  - resources: 100%;
+  - theory: 94%;
+  - selective/resource/counterfactual evaluation: 93%;
+  - saved-output pilot core: 87%;
+  - statistical analysis: 93%;
+  - pilot gate evaluator: 85%.
+- Expanded mypy gate: 97 source files, zero issues.
+- Ruff and compileall: pass.
 
-High-risk paths have dedicated regression coverage for structured contract
-migration and hashes, access-consistent splits, all availability reason codes,
-expert-aware routing and permutation, all-unavailable attention, strict score
-domains, functional abstention, differentiable feasible-oracle regret,
-environment/seed-bound manifests, honest baselines, source-only pilot fitting,
-paired seed statistics, theorem/status identity, SupportEngine proof/scope
-semantics, DGraphFin unobserved nodes, directed graph composition, and every
-required synthetic qualitative regime. Second-review regressions additionally
-cover exact non-0.5 abstention decisions, zero coverage, contract and instance
-oracles, group-local budgets and capacities, target-capacity non-leakage,
-blocked ranking, honest GraphSafe naming, source-fitted Mowst routing, exact
-two-dataset/ten-seed coverage, corrected ablation contribution, Holm verdict
-effects, and adversarial matched-contract minima.
+The legacy scenario-manifest module remains at 81% under its pre-existing 80%
+gate; missed paths are defensive legacy-conversion/error branches. The
+separately prohibited empirical branch in `run_saved_output_pilot.py` remains
+at 58% under its documented 50% plan/validate-only gate. Neither exception is
+used to lower the 85% gate for the new Level-4 critical packages listed above.
 
-No coverage exclusion, threshold reduction, or synthetic fallback was added to
-make the gates pass.
+High-risk regression coverage includes path portability, archive/member
+integrity, streaming without extraction, scenario-local role semantics,
+row-scope/label/chronology leakage, unseen/noisy/missing contract axes,
+diagnostics, three routing levels, all resource-mask branches, robust
+objectives, abstention/selective risk, counterfactuals, all 15 synthetic
+mechanisms, baseline truthfulness, statistical pairing, theorem
+counterexamples, notebook syntax, paper claim blocking, overlap, release
+hygiene, and the frozen inherited boundary.
