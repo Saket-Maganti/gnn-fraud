@@ -1,0 +1,26 @@
+\section{Problem formulation}
+
+\input{tables/contract_axes}
+
+Let a deployment contract be
+\[
+c=(c^{\mathrm{time}},c^{\mathrm{vis}},c^{\mathrm{build}},c^{\mathrm{select}},c^{\mathrm{budget}},c^{\mathrm{resource}}).
+\]
+An axis may contain a category or continuous value together with observation state and confidence. Missing values receive an explicit mask; unseen categories map to an unknown token; out-of-range continuous values are identified relative to source-only normalization. An unseen \emph{combination} contains axis values observed separately in source contracts but not their joint tuple. An unseen \emph{value} was absent from all source contracts and is a distinct, harder regime.
+
+Let \(\experts=\{1,\ldots,E\}\) be heterogeneous experts. Contract \(c\) induces an admissible graph view \(G_c\), prediction unit, label-access policy, review policy, and feasible set \(\feasible(c)\subseteq\experts\). Expert \(e\) emits score \(s_e(x;G_c)\), label-free diagnostic vector \(d_e(x,c)\), and a resource record. A router emits
+\[
+\pi_\theta(e\mid x,c,d)\geq 0,\qquad
+\sum_{e\in\feasible(c)}\pi_\theta(e\mid x,c,d)=1,
+\]
+with zero mass outside \(\feasible(c)\). If the feasible set is empty, the policy emits an explicit abstention or a declared non-expert fallback rather than a spurious distribution.
+
+For bounded loss \(\ell\), contract risk is
+\[
+R_c(\pi)=\mathbb E_{(X,Y)\sim P_c}\!\left[\ell\!\left(\sum_e\pi_\theta(e\mid X,c,d)s_e(X;G_c),Y\right)\right].
+\]
+The whole-contract feasible oracle is \(R_c^\star=\min_{e\in\feasible(c)}R_c(e)\). Contract regret is \(\operatorname{Reg}_c(\pi)=R_c(\pi)-R_c^\star\). We report mean, maximum, and empirical CVaR regret across contracts. The oracle selects one expert only after its risk is aggregated over the contract; a per-instance clairvoyant oracle is an offline ceiling with a different estimand.
+
+Let \(a_\theta(x,c)\in\{0,1\}\) indicate acceptance. Coverage is \(P_c(a_\theta=1)\), and selective risk is \(\mathbb E_c[\ell\mid a_\theta=1]\). It is undefined at zero coverage. Review budget \(B_c\) may specify a fraction, fixed \(K\), cost matrix, or latency allowance. Resource constraints are applied before selection, while review budgets govern ranked action or abstention.
+
+We evaluate seen contracts, unseen combinations, unseen values, partially observed and noisy contracts, dynamic resources, all-expert failure, and all-expert unavailability. Domain generalisation, unlabeled target adaptation, and few-label adaptation are separate access regimes. Target labels are unavailable for training, router selection, calibration, and threshold choice in the headline regime.

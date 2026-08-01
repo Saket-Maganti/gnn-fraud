@@ -1,0 +1,7 @@
+\section{Frozen statistical plan}
+
+The primary paired unit is dataset, held-out target contract, and expert-prediction seed. Analyses are separate per fraud dataset. Exact Wilcoxon and paired permutation tests, raw paired differences, robust standardized effects, and seed-block bootstrap 95\% intervals are reported. Holm correction applies within each frozen claim family. A dataset-seed hierarchical bootstrap is secondary.
+
+Missing cells are not imputed. Integrity-invalid cells are excluded with reason; resource-blocked cells restrict the common comparison set. The frozen primary comparisons are uniform averaging, best fixed expert, source logistic/MLP gates, strongest feasible graph-MoE, and strongest feasible graph-OOD. Oracle diagnostics do not enter deployable comparison families.
+
+A pilot GO requires complete integrity and leakage gates, directional improvement over uniform averaging, lower worst-contract regret on both fraud datasets, no practically concerning primary reversal, exact mask behavior, useful nonzero abstention coverage, seed stability, and no target-label/oracle input. The preregistration hash is stored in the build report before real results.
