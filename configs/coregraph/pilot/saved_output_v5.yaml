@@ -1,0 +1,111 @@
+schema_version: coregraph_saved_output_pilot_config_v5
+pilot_specification_version: coregraph_saved_output_pilot_v5.0
+preregistration_path: results/coregraph_build/V5_SAVED_OUTPUT_PILOT_SPECIFICATION.md
+preregistration_sha256: 9ace6ac65dfb7d9244c7ee74e651a66e91809d6c3479881f43b6d30bb815dc96
+base_artifact_registry: results/coregraph_build/V5_BASE_ARTIFACTS.csv
+scenario_registry: results/coregraph_build/V5_SCENARIOS.csv
+binding_registry: results/coregraph_build/V5_BINDINGS.csv
+member_index: indexes/RB09V3_MEMBER_INDEX.csv
+archive_hashes:
+  dgraphfin_10seed_inductive_isolated.zip: 6ce0d2e37893a7a162d6d575347f6606eb63f90b7940cc3a259dc309cf88b8c8
+  dgraphfin_10seed_strict_inductive.zip: e0055d3482107d16c7d52574b0a32adc1e7ae9236b67dbdf12f57327c0e6bce5
+  dgraphfin_10seed_transductive.zip: 6d0167aae53b681bb7ffc037b84c723869ba718f30feb955c333890bfe8783d5
+  elliptic_10seed_inductive_isolated.zip: 20f25a1f93604ea5eb8537c8808f9b69dae2fc82eccbccfd36c50c443aee94e8
+  elliptic_10seed_strict_inductive.zip: 24752f5ffdc082dc79ca5084701fccd04d2ac9588b4b15712598bdfe8daa1e4a
+  elliptic_10seed_transductive.zip: 99d2f7ad1ad95fd7c30c193da9003c091b0c3fdce028dccd2bd0019f35869c08
+required_datasets: [elliptic, dgraphfin]
+required_protocols: [strict_inductive, isolated_inductive, transductive_structure]
+required_experts: [feature_mlp, gcn, graphsage]
+required_provider_seeds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+primary_methods: [coregraph, uniform_average, best_fixed_expert, source_logistic_gate]
+access_policy:
+  source_train_labels: allowed
+  source_validation_labels: allowed
+  target_scores_before_freeze: allowed_without_labels
+  target_labels_before_freeze: forbidden
+  target_labels_after_freeze: offline_evaluator_only
+split_normalization:
+  train: train
+  val: validation
+  validation: validation
+  test: test
+  unscored: unscored
+contract_encoder:
+  kind: factorised
+  embedding_dim: 8
+  output_dim: 32
+  pairwise_interactions: true
+  axis_dropout: 0.05
+  contract_noise_std: 0.0
+diagnostics:
+  shared: [score_mean, score_std, score_range]
+  per_expert: [confidence, disagreement, normalized_relative_cost]
+optimization:
+  optimizer: adam
+  learning_rate: 0.003
+  coregraph_steps: 100
+  early_stopping: source_validation_only
+  objective_weights:
+    average: 1.0
+    ranking: 0.1
+    robust_regret: 1.0
+    budget: 0.1
+    stability: 0.1
+    compute: 0.1
+    calibration: 0.1
+    abstention: 0.2
+  cvar_alpha: 0.8
+  logistic_max_iter: 1000
+validation_selection:
+  best_fixed_criterion: mean_environment_balanced_validation_brier
+  tie_break: frozen_expert_order
+  logistic_c: [0.1, 1.0, 10.0]
+abstention:
+  capacity: 0.10
+  cost: 0.20
+  threshold_fit: source_validation_only
+  all_unavailable: forced_abstention
+review_fraction: 0.01
+expert_relative_costs:
+  feature_mlp: 1.0
+  gcn: 3.0
+  graphsage: 4.0
+resource_profiles:
+  all_experts_available:
+    unavailable_experts: []
+    measurement_status: preregistered_relative_proxy_not_measured
+streaming:
+  chunk_rows: 50000
+  source_rows_per_split_per_environment: 4096
+  max_workers: 1
+  target_score_dtype: float32
+  archive_extraction: forbidden
+output_schemas:
+  run_manifest: coregraph_v5_pilot_run_manifest_v1
+  scenario_manifest: coregraph_v5_pilot_scenario_manifest_v1
+  policy_freeze: coregraph_v5_policy_freeze_manifest_v1
+  method_result: coregraph_v5_pilot_method_result_v1
+  failure: coregraph_v5_pilot_failure_v1
+  aggregate: coregraph_v5_pilot_aggregate_v1
+  gate: coregraph_v5_pilot_gate_v1
+gate:
+  paired_unit: dataset_target_protocol_provider_seed
+  comparisons: [uniform_average, best_fixed_expert, source_logistic_gate]
+  minimum_contract_regret_improvement: 0.001
+  average_auprc_harm_floor: -0.002
+  missing_coordinate_outcome: INCONCLUSIVE
+resume:
+  atomic_writes: true
+  complete_requires_all_hashes: true
+  stale_output_action: rerun_affected_coordinate
+  duplicate_complete_action: fail_closed
+determinism:
+  strict: true
+  algorithm_mode: torch_deterministic_where_supported
+  data_order: stable_composite_row_key_hash
+  bootstrap_seed: 20260801
+  numeric_regression_tolerance: 1.0e-7
+authorization:
+  real_execute_requires_clean_tree: true
+  real_execute_token: AUTHORIZE_COREGRAPH_V5_PILOT_RUN
+  force_push: forbidden
