@@ -114,6 +114,9 @@ DYNAMIC_HANDOFF_FILES = {
     "results/coregraph_build/LEVEL4_RUN_AFTER_BUILD_CHECKLIST.md",
     "results/coregraph_build/LEVEL4_FINAL_TREE.txt",
     "results/coregraph_build/LEVEL4_FINAL_COMMAND_LOG.md",
+    "results/coregraph_build/V5_EXECUTOR_FINAL_COMMAND_LOG.md",
+    "results/coregraph_build/V5_EXECUTOR_FINAL_GATE_STATUS.json",
+    "results/coregraph_build/V5_EXECUTOR_FINAL_TREE.txt",
 }
 
 

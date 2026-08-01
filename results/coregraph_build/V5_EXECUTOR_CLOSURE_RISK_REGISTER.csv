@@ -1,0 +1,11 @@
+risk_id,severity,risk,mitigation,status
+V5R-001,CRITICAL,Target labels become reachable during fit or target scoring,"Separate unlabelled and label-vault types; hash/freeze policy before evaluator opens labels; adversarial tests",MITIGATED
+V5R-002,CRITICAL,V5 role-neutral artifacts are coerced into legacy V4 role semantics,"First-class scenario-local bindings with same-scenario dual-role rejection",MITIGATED
+V5R-003,CRITICAL,Canonical archive loading exceeds memory,"Direct ZIP streams, configurable chunks, three-expert split-group alignment only, conservative workers",MITIGATED
+V5R-004,HIGH,Interrupted work is mistaken for complete work,"Atomic checkpoints and COMPLETE markers gated by all scientific hashes",MITIGATED
+V5R-005,HIGH,Stale outputs mix with a changed code/config/evidence identity,"Scenario fingerprints and coordinate identity manifests; fail-closed reuse",MITIGATED
+V5R-006,HIGH,Real pilot launches during closure,"Explicit later-authorization token requirement and no real execute in any default target",MITIGATED
+V5R-007,HIGH,Paper prose gets ahead of evidence,"Keep empirical fields blocked; audit claims and citation TODOs",MITIGATED
+V5R-008,CRITICAL,Frozen FraudShiftBench/TKDE science changes,"Compare all protected hashes and require ZERO_TKDE_SCIENTIFIC_DELTAS",MITIGATED
+V5R-009,HIGH,Canonical evidence structure differs from assumptions,"Run plan/validate/no-training streaming checks and fail closed on every mismatch",MITIGATED
+V5R-010,MEDIUM,Named independent audit cannot be read,"Record the missing input; use reproduced diagnosis plus committed readiness evidence; do not invent absent findings",MITIGATED

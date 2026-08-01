@@ -64,7 +64,7 @@ def test_final_handoff_and_nine_prompts_are_generated_without_execution() -> Non
     payload = json.loads(completed.stdout)
     assert payload["prompts"] == 9
     assert payload["verdict"] == (
-        "COREGRAPH_LEVEL4_BUILD_COMPLETE_READY_FOR_SAVED_OUTPUT_PILOT"
+        "COREGRAPH_V5_EXECUTOR_IMPLEMENTED_REAL_PILOT_UNEXECUTED"
     )
     prompts = sorted((BUILD / "LEVEL4_NEXT_EXECUTION_PROMPTS").glob("*.md"))
     assert len(prompts) == 9
@@ -76,4 +76,6 @@ def test_final_handoff_and_nine_prompts_are_generated_without_execution() -> Non
         assert "Never force-push or merge PR #2" in compact
     gate = json.loads((BUILD / "LEVEL4_FINAL_GATE_STATUS.json").read_text())
     assert gate["ready_for_saved_output_pilot"] is True
+    assert gate["real_pilot_executed"] is False
+    assert gate["v5"]["executor"] == "IMPLEMENTED_AND_SYNTHETICALLY_VALIDATED"
     assert gate["prohibited_actions"]["target_metric_computation"] == 0

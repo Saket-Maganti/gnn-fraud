@@ -1,0 +1,29 @@
+{
+  "baseline_archive_hashes": {
+    "release/tkde_manuscript_package.zip": "234b164d0553fd4d19b1e850c19e4b0924bfeee1a0342201f326d24d2faa2ba0",
+    "release/tkde_source_tables.zip": "528780b5666dd1b97f0a12be39e20957af4a08f25de8d7b334179727be4d919c"
+  },
+  "counts": {
+    "allocated_objects": 72,
+    "baseline_archives_verified": 0,
+    "blocked_semantics_csvs_checked": 41,
+    "cited_references": 50,
+    "claim_status_counts": {
+      "DIAGNOSTIC_ONLY": 3,
+      "REFUTED_IN_SCOPE": 2,
+      "RESOURCE_BLOCKED": 2,
+      "SUPPORTED": 12,
+      "SUPPORTED_THEORETICALLY": 2,
+      "SUPPORTED_WITH_RESOURCE_BOUNDARY": 1
+    },
+    "frozen_hash_rows": 36,
+    "provenance_figures": 8,
+    "provenance_tables": 51,
+    "typed_claims": 22,
+    "verified_references": 50
+  },
+  "error_count": 0,
+  "findings": [],
+  "verdict": "ZERO_SCIENTIFIC_DELTAS",
+  "warning_count": 0
+}
