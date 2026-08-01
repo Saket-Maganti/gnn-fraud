@@ -1,0 +1,556 @@
+{
+  "cross_expert_alignment_authority": "ARCHIVE_MEMBER_VALIDATION_60_GROUPS",
+  "cross_protocol_dataset_seed_groups": 20,
+  "failures": [],
+  "groups": [
+    {
+      "dataset": "dgraphfin",
+      "protocols": [
+        "isolated_inductive",
+        "strict_inductive",
+        "transductive_structure"
+      ],
+      "seed": 1,
+      "source_train_validation_vs_target_test_disjoint": true,
+      "splits": {
+        "test": {
+          "aligned_across_protocols": true,
+          "row_count": 170207,
+          "semantic_sha256": "19de81deff412415d7db1cd0195cdd1ebf271d107301de16957bb2781bca09ec"
+        },
+        "train": {
+          "aligned_across_protocols": true,
+          "row_count": 947462,
+          "semantic_sha256": "c09aab076db584d016d3462ac0abf80d12e649791e8e12c3e1f10fc370fc1321"
+        },
+        "validation": {
+          "aligned_across_protocols": true,
+          "row_count": 107932,
+          "semantic_sha256": "5e4a88767476b6427dc0680e4ab6cd1b563b1c58f6debcce38d9005af10376da"
+        }
+      }
+    },
+    {
+      "dataset": "dgraphfin",
+      "protocols": [
+        "isolated_inductive",
+        "strict_inductive",
+        "transductive_structure"
+      ],
+      "seed": 2,
+      "source_train_validation_vs_target_test_disjoint": true,
+      "splits": {
+        "test": {
+          "aligned_across_protocols": true,
+          "row_count": 170207,
+          "semantic_sha256": "cb15f4c826a04488c341172f780653692ca224e594e4e76bc30728c484230beb"
+        },
+        "train": {
+          "aligned_across_protocols": true,
+          "row_count": 947462,
+          "semantic_sha256": "bc686c6a4b45d0489ecb2515e849df45e2e2513b72baef471a90f29ac3397f10"
+        },
+        "validation": {
+          "aligned_across_protocols": true,
+          "row_count": 107932,
+          "semantic_sha256": "54af7091358a98fbceefe33aad94dd6870753e3f341eadb3a96542858753f77a"
+        }
+      }
+    },
+    {
+      "dataset": "dgraphfin",
+      "protocols": [
+        "isolated_inductive",
+        "strict_inductive",
+        "transductive_structure"
+      ],
+      "seed": 3,
+      "source_train_validation_vs_target_test_disjoint": true,
+      "splits": {
+        "test": {
+          "aligned_across_protocols": true,
+          "row_count": 170207,
+          "semantic_sha256": "a7f5ebfc92b2dc09effc047a3aa9c0f96ad6576af0b23f67384807ac74506776"
+        },
+        "train": {
+          "aligned_across_protocols": true,
+          "row_count": 947462,
+          "semantic_sha256": "fdfb856725e25d3f307c06295855c5cf19c9bf8193e7314341f1f2f7d808c0bd"
+        },
+        "validation": {
+          "aligned_across_protocols": true,
+          "row_count": 107932,
+          "semantic_sha256": "85825ce00e47f4125f321ce54b1b8e304f483fb34d3ad7e04fa1c1a43a456b1f"
+        }
+      }
+    },
+    {
+      "dataset": "dgraphfin",
+      "protocols": [
+        "isolated_inductive",
+        "strict_inductive",
+        "transductive_structure"
+      ],
+      "seed": 4,
+      "source_train_validation_vs_target_test_disjoint": true,
+      "splits": {
+        "test": {
+          "aligned_across_protocols": true,
+          "row_count": 170207,
+          "semantic_sha256": "af5f9f9f7353c5bf42a0dd6a5085ae59576728c61d9dd81a71ece7dd3449202b"
+        },
+        "train": {
+          "aligned_across_protocols": true,
+          "row_count": 947462,
+          "semantic_sha256": "dc6d167ce06281331ba6eae27a5e0f755cb75c0841e0009e176c0c00f56c8399"
+        },
+        "validation": {
+          "aligned_across_protocols": true,
+          "row_count": 107932,
+          "semantic_sha256": "20e9113c947da5c5378f7ed429130f05d47ac86f62f42ae94943d1e52244cebf"
+        }
+      }
+    },
+    {
+      "dataset": "dgraphfin",
+      "protocols": [
+        "isolated_inductive",
+        "strict_inductive",
+        "transductive_structure"
+      ],
+      "seed": 5,
+      "source_train_validation_vs_target_test_disjoint": true,
+      "splits": {
+        "test": {
+          "aligned_across_protocols": true,
+          "row_count": 170207,
+          "semantic_sha256": "47f5e1411cee03c74fb31b58ed9cecfc89e211720b8084c1f5d7938a78ae9a1c"
+        },
+        "train": {
+          "aligned_across_protocols": true,
+          "row_count": 947462,
+          "semantic_sha256": "a762816b133788ba2373471c8e2654b8e5ffbfef8b61cee982fc0a1d9a4cc488"
+        },
+        "validation": {
+          "aligned_across_protocols": true,
+          "row_count": 107932,
+          "semantic_sha256": "d14b9d4d4af9c0a7c8cdd471b868207144f8e19ce8d66f598a5ef8bd5dc20acf"
+        }
+      }
+    },
+    {
+      "dataset": "dgraphfin",
+      "protocols": [
+        "isolated_inductive",
+        "strict_inductive",
+        "transductive_structure"
+      ],
+      "seed": 6,
+      "source_train_validation_vs_target_test_disjoint": true,
+      "splits": {
+        "test": {
+          "aligned_across_protocols": true,
+          "row_count": 170207,
+          "semantic_sha256": "dc9f1896447017da6bc0769c5fec4d94de3df047d213f1c13ee37eff6dbd8688"
+        },
+        "train": {
+          "aligned_across_protocols": true,
+          "row_count": 947462,
+          "semantic_sha256": "42fc770cf05bd0042c7f9b061c0417116a3a343c13c6783d6a29c17e96d15175"
+        },
+        "validation": {
+          "aligned_across_protocols": true,
+          "row_count": 107932,
+          "semantic_sha256": "2d61665886d89af1a9d607aa266b594019e3e0f5ca00bf783621de8f72f3edcb"
+        }
+      }
+    },
+    {
+      "dataset": "dgraphfin",
+      "protocols": [
+        "isolated_inductive",
+        "strict_inductive",
+        "transductive_structure"
+      ],
+      "seed": 7,
+      "source_train_validation_vs_target_test_disjoint": true,
+      "splits": {
+        "test": {
+          "aligned_across_protocols": true,
+          "row_count": 170207,
+          "semantic_sha256": "e82a158b4533b700186f126c65e8c961caed04b47d156ad044431270f0aeb66f"
+        },
+        "train": {
+          "aligned_across_protocols": true,
+          "row_count": 947462,
+          "semantic_sha256": "79226c9d21135b2e6a193918798373da14c4a57a141c4ef73f54c84d826e1dbf"
+        },
+        "validation": {
+          "aligned_across_protocols": true,
+          "row_count": 107932,
+          "semantic_sha256": "a19cf03419c5e2ec8c64b11db8302fa9c5860417749da501bfa2a41727620fdc"
+        }
+      }
+    },
+    {
+      "dataset": "dgraphfin",
+      "protocols": [
+        "isolated_inductive",
+        "strict_inductive",
+        "transductive_structure"
+      ],
+      "seed": 8,
+      "source_train_validation_vs_target_test_disjoint": true,
+      "splits": {
+        "test": {
+          "aligned_across_protocols": true,
+          "row_count": 170207,
+          "semantic_sha256": "d9eae8099f59cef5331e03536045ae0491aaa759f019ad4ad2ba8ead5d53b410"
+        },
+        "train": {
+          "aligned_across_protocols": true,
+          "row_count": 947462,
+          "semantic_sha256": "f6dc35f53ded09c55a15ad9362b6170f5a6b5f46ad8173fce44d2d45aa85bce7"
+        },
+        "validation": {
+          "aligned_across_protocols": true,
+          "row_count": 107932,
+          "semantic_sha256": "e1440c0e79d24cf8df4070e01fb3df4bd34e4540831f6d11039b2052d2e94b81"
+        }
+      }
+    },
+    {
+      "dataset": "dgraphfin",
+      "protocols": [
+        "isolated_inductive",
+        "strict_inductive",
+        "transductive_structure"
+      ],
+      "seed": 9,
+      "source_train_validation_vs_target_test_disjoint": true,
+      "splits": {
+        "test": {
+          "aligned_across_protocols": true,
+          "row_count": 170207,
+          "semantic_sha256": "cc960e28c411ed0dd9ce72c2c5e52629ed02182aecaedbbeed4e2c51c20f2d10"
+        },
+        "train": {
+          "aligned_across_protocols": true,
+          "row_count": 947462,
+          "semantic_sha256": "93af76a7b4a170370489dc6b38395e497cd92c98df5ece5dc616efcaa00238be"
+        },
+        "validation": {
+          "aligned_across_protocols": true,
+          "row_count": 107932,
+          "semantic_sha256": "673aa5225937196a9010767f77eab48d48999cd7efc7d6c7f71b67b0f4178900"
+        }
+      }
+    },
+    {
+      "dataset": "dgraphfin",
+      "protocols": [
+        "isolated_inductive",
+        "strict_inductive",
+        "transductive_structure"
+      ],
+      "seed": 10,
+      "source_train_validation_vs_target_test_disjoint": true,
+      "splits": {
+        "test": {
+          "aligned_across_protocols": true,
+          "row_count": 170207,
+          "semantic_sha256": "d21132c39cd37169eeb4fce8327612e382535dcfaaca9af3553dc99c52cb8797"
+        },
+        "train": {
+          "aligned_across_protocols": true,
+          "row_count": 947462,
+          "semantic_sha256": "c026e79f5dc11e3851da3ba2870dc3ca5b6df4b970013cdbe3c4771fb61f38a2"
+        },
+        "validation": {
+          "aligned_across_protocols": true,
+          "row_count": 107932,
+          "semantic_sha256": "dc97d8d8cdebcc5f7fa177c2bae52d6d86563f854014fb4096005bffcab87d2e"
+        }
+      }
+    },
+    {
+      "dataset": "elliptic",
+      "protocols": [
+        "isolated_inductive",
+        "strict_inductive",
+        "transductive_structure"
+      ],
+      "seed": 1,
+      "source_train_validation_vs_target_test_disjoint": true,
+      "splits": {
+        "test": {
+          "aligned_across_protocols": true,
+          "row_count": 16670,
+          "semantic_sha256": "24fb542494373eabbaaf852ee51f4e8fae500ed0e720aff152d94678a3e3ab2f"
+        },
+        "train": {
+          "aligned_across_protocols": true,
+          "row_count": 26905,
+          "semantic_sha256": "d958679057c9530ef6aa294cda8eb70d5251f19881f6691d2376ed4534b4336a"
+        },
+        "validation": {
+          "aligned_across_protocols": true,
+          "row_count": 2989,
+          "semantic_sha256": "331b53482305118aa7680c620053dc663b296b1bf38340a4b6f8f5d10ca9175a"
+        }
+      }
+    },
+    {
+      "dataset": "elliptic",
+      "protocols": [
+        "isolated_inductive",
+        "strict_inductive",
+        "transductive_structure"
+      ],
+      "seed": 2,
+      "source_train_validation_vs_target_test_disjoint": true,
+      "splits": {
+        "test": {
+          "aligned_across_protocols": true,
+          "row_count": 16670,
+          "semantic_sha256": "86312a039570beb5005f809643f023740c40eaced02e30a1e2aae24cbfe4f5e0"
+        },
+        "train": {
+          "aligned_across_protocols": true,
+          "row_count": 26905,
+          "semantic_sha256": "086be34384b20a72d0f8977e53b1c0342882b1e2488ff78eeec1bcb5f38d2288"
+        },
+        "validation": {
+          "aligned_across_protocols": true,
+          "row_count": 2989,
+          "semantic_sha256": "5ff8cda8c61de5f35c81259c5fca1075e5db28b0004ccaefa7057901791dd442"
+        }
+      }
+    },
+    {
+      "dataset": "elliptic",
+      "protocols": [
+        "isolated_inductive",
+        "strict_inductive",
+        "transductive_structure"
+      ],
+      "seed": 3,
+      "source_train_validation_vs_target_test_disjoint": true,
+      "splits": {
+        "test": {
+          "aligned_across_protocols": true,
+          "row_count": 16670,
+          "semantic_sha256": "34c081292fc865402d44c3230e09abf4ec5eae4837e89e35e0f52b34e4f1282b"
+        },
+        "train": {
+          "aligned_across_protocols": true,
+          "row_count": 26905,
+          "semantic_sha256": "f3e1dc29f94fdebed099ddaad5ba197db100bebceb3e675c166b0eb50dddbeb0"
+        },
+        "validation": {
+          "aligned_across_protocols": true,
+          "row_count": 2989,
+          "semantic_sha256": "e926cacf163144554365e39323b09e7fed03f0b70248e5888784745dc508a9ff"
+        }
+      }
+    },
+    {
+      "dataset": "elliptic",
+      "protocols": [
+        "isolated_inductive",
+        "strict_inductive",
+        "transductive_structure"
+      ],
+      "seed": 4,
+      "source_train_validation_vs_target_test_disjoint": true,
+      "splits": {
+        "test": {
+          "aligned_across_protocols": true,
+          "row_count": 16670,
+          "semantic_sha256": "1381b073bd61d94298eaa0ba8f4b7f4b14700f0fa9b7626ffdc75256231c510e"
+        },
+        "train": {
+          "aligned_across_protocols": true,
+          "row_count": 26905,
+          "semantic_sha256": "2371e46188901a78c76817f5102ae30b089ed9224dc6634346e4f3c61d66723c"
+        },
+        "validation": {
+          "aligned_across_protocols": true,
+          "row_count": 2989,
+          "semantic_sha256": "39bd61bfad4d64702e3b6618074d0fd74d8f807efa8570306d585a2047181170"
+        }
+      }
+    },
+    {
+      "dataset": "elliptic",
+      "protocols": [
+        "isolated_inductive",
+        "strict_inductive",
+        "transductive_structure"
+      ],
+      "seed": 5,
+      "source_train_validation_vs_target_test_disjoint": true,
+      "splits": {
+        "test": {
+          "aligned_across_protocols": true,
+          "row_count": 16670,
+          "semantic_sha256": "f31e862c9d9640044189ed9a0fc44c02166e2087f81cd021c0ad41f6b4c2c63f"
+        },
+        "train": {
+          "aligned_across_protocols": true,
+          "row_count": 26905,
+          "semantic_sha256": "d607b8dbc459527cdafe63198facb6eb441d043edb82ce3f0721f56e114e4718"
+        },
+        "validation": {
+          "aligned_across_protocols": true,
+          "row_count": 2989,
+          "semantic_sha256": "0022936d9a8e013df2eb76a13d327aff74afe008ce1fcdf6419b6233298daaaf"
+        }
+      }
+    },
+    {
+      "dataset": "elliptic",
+      "protocols": [
+        "isolated_inductive",
+        "strict_inductive",
+        "transductive_structure"
+      ],
+      "seed": 6,
+      "source_train_validation_vs_target_test_disjoint": true,
+      "splits": {
+        "test": {
+          "aligned_across_protocols": true,
+          "row_count": 16670,
+          "semantic_sha256": "51b52f5386051e840cda3eb9190a06602250582e3f490ba944704d18eb368c5c"
+        },
+        "train": {
+          "aligned_across_protocols": true,
+          "row_count": 26905,
+          "semantic_sha256": "061730b120c5bd855e76c6da7391bb14772bcd2e91d1c85bd1e4d4c7056cd9cb"
+        },
+        "validation": {
+          "aligned_across_protocols": true,
+          "row_count": 2989,
+          "semantic_sha256": "ddbb4769b6e403de9fe1cb8584dbd3cf5ab66a5ed5c9adaa0def2b4098583333"
+        }
+      }
+    },
+    {
+      "dataset": "elliptic",
+      "protocols": [
+        "isolated_inductive",
+        "strict_inductive",
+        "transductive_structure"
+      ],
+      "seed": 7,
+      "source_train_validation_vs_target_test_disjoint": true,
+      "splits": {
+        "test": {
+          "aligned_across_protocols": true,
+          "row_count": 16670,
+          "semantic_sha256": "eb6fe08e501c0dbb80c9780ca8b116b08a57a2faeb9e290b1e8146fab896150f"
+        },
+        "train": {
+          "aligned_across_protocols": true,
+          "row_count": 26905,
+          "semantic_sha256": "07b92b4ecaf4bee5ef64896f7121f71df45efd6a42f427a53f94ae7b44247429"
+        },
+        "validation": {
+          "aligned_across_protocols": true,
+          "row_count": 2989,
+          "semantic_sha256": "b81f05b16bacfb822dfafa9f0c28f3aa310aad62d672f5ea5a88dc1938e187f3"
+        }
+      }
+    },
+    {
+      "dataset": "elliptic",
+      "protocols": [
+        "isolated_inductive",
+        "strict_inductive",
+        "transductive_structure"
+      ],
+      "seed": 8,
+      "source_train_validation_vs_target_test_disjoint": true,
+      "splits": {
+        "test": {
+          "aligned_across_protocols": true,
+          "row_count": 16670,
+          "semantic_sha256": "e57eb460ae8b13e7622b414818b1d8f1f724a268025d6e8f2c04af0e1a703534"
+        },
+        "train": {
+          "aligned_across_protocols": true,
+          "row_count": 26905,
+          "semantic_sha256": "b4395d153327fced9cb763a11821e33c02fe8647e8657bbe43e6b3b7b88aa551"
+        },
+        "validation": {
+          "aligned_across_protocols": true,
+          "row_count": 2989,
+          "semantic_sha256": "24e05f9c762756ea714b7260edba706fc805da678239d673b730778180a6cd0d"
+        }
+      }
+    },
+    {
+      "dataset": "elliptic",
+      "protocols": [
+        "isolated_inductive",
+        "strict_inductive",
+        "transductive_structure"
+      ],
+      "seed": 9,
+      "source_train_validation_vs_target_test_disjoint": true,
+      "splits": {
+        "test": {
+          "aligned_across_protocols": true,
+          "row_count": 16670,
+          "semantic_sha256": "0b0246153faa800c7032465bc43b0a9c9f657f0567fbc8bc21afce76e240fd72"
+        },
+        "train": {
+          "aligned_across_protocols": true,
+          "row_count": 26905,
+          "semantic_sha256": "3af25d335fe017b3a71b71c3f59739d6c8b40d69bbbeffb9f6daa6396df3467b"
+        },
+        "validation": {
+          "aligned_across_protocols": true,
+          "row_count": 2989,
+          "semantic_sha256": "5cea169e0ec5ed8ac572cac32da745a644d99b7478472e9f2ed3b995b1d1f1dc"
+        }
+      }
+    },
+    {
+      "dataset": "elliptic",
+      "protocols": [
+        "isolated_inductive",
+        "strict_inductive",
+        "transductive_structure"
+      ],
+      "seed": 10,
+      "source_train_validation_vs_target_test_disjoint": true,
+      "splits": {
+        "test": {
+          "aligned_across_protocols": true,
+          "row_count": 16670,
+          "semantic_sha256": "e8b9d6cd0f6811111a74122e6a69c6711d2c6abdfdb78096938491fa26c3ccfa"
+        },
+        "train": {
+          "aligned_across_protocols": true,
+          "row_count": 26905,
+          "semantic_sha256": "1aac762818562223a17357375d9d103b30561bb91ec076da0f02f7479a9083f3"
+        },
+        "validation": {
+          "aligned_across_protocols": true,
+          "row_count": 2989,
+          "semantic_sha256": "bc62e8b4b15b49e7530adf86f0911de74cdc1ad5742f523a43b038a786443e0e"
+        }
+      }
+    }
+  ],
+  "permanent_extractions": 0,
+  "provider_partition_alignment_groups": 20,
+  "representative_members_streamed": 60,
+  "schema": "coregraph_v5_row_scope_audit_v1",
+  "source_train_validation_vs_target_test_disjoint_groups": 20,
+  "status": "PASS",
+  "target_labels_exposed": false,
+  "target_metrics_computed": 0,
+  "target_oracles_computed": 0
+}
