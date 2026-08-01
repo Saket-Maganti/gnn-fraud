@@ -42,6 +42,8 @@ class ObjectiveWeights:
     compute: float = 0.0
     calibration: float = 0.0
     abstention: float = 0.0
+    uncertainty: float = 0.0
+    sparsity: float = 0.0
 
     def __post_init__(self) -> None:
         if any(value < 0 for value in self.__dict__.values()):
@@ -99,6 +101,8 @@ class CompositeObjective:
             Mapping[int, float | None] | None
         ) = None,
         abstention_cost_value: float = 0.0,
+        uncertainty_penalty: torch.Tensor | None = None,
+        router_sparsity_penalty: torch.Tensor | None = None,
     ) -> tuple[torch.Tensor, Mapping[str, torch.Tensor]]:
         if router_scores.ndim != 1 or targets.shape != router_scores.shape:
             raise ValueError("router scores and targets must be aligned vectors")
@@ -228,6 +232,8 @@ class CompositeObjective:
             ),
             "robust_regret": empirical_cvar(regrets, self.cvar_alpha),
             "abstention": effective_router_losses.mean(),
+            "uncertainty": uncertainty_penalty if uncertainty_penalty is not None else zero,
+            "sparsity": router_sparsity_penalty if router_sparsity_penalty is not None else zero,
             "contract_router_risk": contract_router_risk,
             "contract_expert_risks": contract_expert_risks,
             "contract_availability": contract_availability.float(),
@@ -285,5 +291,7 @@ class CompositeObjective:
             + self.weights.compute * terms["compute"]
             + self.weights.calibration * terms["calibration"]
             + self.weights.abstention * terms["abstention"]
+            + self.weights.uncertainty * terms["uncertainty"]
+            + self.weights.sparsity * terms["sparsity"]
         )
         return total, terms
