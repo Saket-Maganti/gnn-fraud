@@ -1,0 +1,34 @@
+{
+  "all_coregraph_percent": 87,
+  "all_required_level4_groups_at_or_above_85": true,
+  "critical_groups_percent": {
+    "baselines": 93,
+    "benchmarks": 99,
+    "contracts": 95,
+    "diagnostics": 90,
+    "evaluation_selective_resources_counterfactual": 93,
+    "evidence": 88,
+    "objectives": 91,
+    "pilot_core": 87,
+    "pilot_gate_evaluator": 85,
+    "resources": 100,
+    "routing": 93,
+    "statistics": 93,
+    "theory": 94
+  },
+  "critical_minimum_percent": 85,
+  "documented_exceptions": {
+    "legacy_scenario_manifests": {
+      "gate_percent": 80,
+      "observed_percent": 81,
+      "reason": "defensive legacy-conversion and error branches"
+    },
+    "prohibited_empirical_runner_branch": {
+      "gate_percent": 50,
+      "observed_percent": 58,
+      "reason": "only plan/validate surface is authorised in this phase"
+    }
+  },
+  "schema": "coregraph_level4_coverage_summary_v1",
+  "tests_passed": 236
+}
