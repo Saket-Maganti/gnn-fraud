@@ -1,0 +1,8 @@
+# Copy to config/local_paths.toml for machine-local overrides. The copied file
+# is ignored by Git. Relative values are resolved from the repository root.
+
+[paths]
+curated_root = "../gnn-fraud-github-curated"
+evidence_cache = "../gnn-fraud-local-evidence-cache"
+data_root = "data"
+output_root = "results"

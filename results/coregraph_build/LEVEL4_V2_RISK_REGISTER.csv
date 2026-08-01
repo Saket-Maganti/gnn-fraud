@@ -1,0 +1,7 @@
+risk_id,subsystem,severity,description,mitigation,status,residual_risk
+L4R-001,repository,high,"Absolute linked-worktree pointer is path-fragile","Inventory and checksum before supported independent conversion",CLOSED,"Independent Git checkout validated; rollback pointer retained outside Git"
+L4R-002,evidence,critical,"Canonical archives may be unavailable or fail exact hashes","Use filename-independent SHA-256 verification and fail closed",CLOSED,"Six archives and 180 members verified; pilot not executed"
+L4R-003,science,critical,"Target-label or scenario-role leakage","Scenario-local binding model and executable audits",MITIGATED_PRE_RUN,"Structural and byte-backed no-training audits pass; execution audit remains mandatory"
+L4R-004,paper,high,"Results-free manuscript could imply unsupported success","Typed blocked-result macros and claim-language audit",MITIGATED_RESULTS_BLOCKED,"Human scholarly review remains required"
+L4R-005,release,high,"Private path or author identity could leak","Public-tree, path, identity, PDF-text, and clean-room audits",MITIGATED_AUTOMATED_GATES_PASS,"Independent human release review remains required"
+L4R-006,scope,high,"Level-4 specification spans repository, theory, experiments, paper, and release","Gap-driven implementation with deterministic gates",CLOSED_BUILD_PHASE,"Real experiments remain a separate authorised phase"

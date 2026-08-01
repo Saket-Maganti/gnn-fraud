@@ -9,6 +9,7 @@ gnn_env/
 .netrc
 kaggle.json
 credentials.json
+config/local_paths.toml
 
 # Python/editor/OS caches
 __pycache__/
@@ -108,7 +109,9 @@ paper_tkde/**/*.toc
 paper_tkde/main.pdf
 paper_tkde/supplement/supplement.pdf
 
-# CoReGraph paper build intermediates; sources and deliberate placeholders are tracked.
+# CoReGraph paper build intermediates; final PDFs, sources, and deliberate
+# placeholders are tracked.
+paper_iclr/build/
 paper_iclr/**/*.aux
 paper_iclr/**/*.bbl
 paper_iclr/**/*.blg
@@ -117,4 +120,9 @@ paper_iclr/**/*.fls
 paper_iclr/**/*.log
 paper_iclr/**/*.out
 paper_iclr/**/*.synctex.gz
-paper_iclr/main.pdf
+
+# Deterministic, payload-free source snapshots are release artifacts. The
+# canonical RB09v3 evidence archives remain excluded by the global *.zip rule.
+!release/level4_source_snapshot/
+!release/level4_source_snapshot/coregraph_source_snapshot.zip
+!release/level4_source_snapshot/curated_source_snapshot.zip
