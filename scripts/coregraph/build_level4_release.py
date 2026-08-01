@@ -97,6 +97,7 @@ CORE_PREFIXES = (
 )
 CORE_EXACT = {
     "scripts/audit_cross_paper_overlap.py",
+    "scripts/github_publish/validate_public_tree.py",
     "tests/test_path_resolution.py",
 }
 SCANNER_FILES = {

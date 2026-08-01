@@ -12,8 +12,9 @@ import hashlib
 import json
 import os
 import re
+import zipfile
 from dataclasses import asdict, dataclass
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 
 MIB = 1024 * 1024
@@ -62,6 +63,19 @@ BINARY_SUFFIXES = {
     ".tgz",
     ".xz",
     ".zip",
+}
+
+ALLOWED_SOURCE_ARCHIVES = {
+    "release/level4_source_snapshot/coregraph_source_snapshot.zip",
+    "release/level4_source_snapshot/curated_source_snapshot.zip",
+}
+
+SOURCE_ARCHIVE_FORBIDDEN_PARTS = FORBIDDEN_PARTS | {
+    ".git",
+    ".venv",
+    "checkpoints",
+    "predictions",
+    "raw",
 }
 
 TEXT_PATTERNS = {
@@ -138,6 +152,45 @@ def raw_prediction_path(rel: str) -> bool:
     return not any(marker in lower for marker in safe_markers)
 
 
+def source_archive_error(root: Path, path: Path, rel: str) -> str | None:
+    """Validate the two deterministic, payload-free Level-4 source snapshots."""
+
+    if rel not in ALLOWED_SOURCE_ARCHIVES:
+        return "not an allowlisted source snapshot"
+    checksums_path = root / "release/level4_source_snapshot/CHECKSUMS.sha256"
+    if not checksums_path.is_file():
+        return "source snapshot checksum manifest is missing"
+    expected: dict[str, str] = {}
+    for line in checksums_path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        digest, filename = line.split(None, 1)
+        expected[filename.strip()] = digest
+    if path.name not in expected:
+        return "source snapshot checksum is absent"
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(MIB), b""):
+            digest.update(chunk)
+    if digest.hexdigest() != expected[path.name]:
+        return "source snapshot checksum mismatch"
+    if not zipfile.is_zipfile(path):
+        return "source snapshot is not a valid ZIP"
+    with zipfile.ZipFile(path) as archive:
+        for info in archive.infolist():
+            member = PurePosixPath(info.filename)
+            if member.is_absolute() or ".." in member.parts:
+                return f"unsafe source snapshot member: {info.filename}"
+            if any(part in SOURCE_ARCHIVE_FORBIDDEN_PARTS for part in member.parts):
+                return f"forbidden source snapshot member: {info.filename}"
+            if member.suffix.lower() in {".zip", ".tar", ".gz", ".tgz"}:
+                return f"nested archive in source snapshot: {info.filename}"
+        bad_member = archive.testzip()
+        if bad_member is not None:
+            return f"source snapshot CRC failure: {bad_member}"
+    return None
+
+
 def scan(root: Path) -> list[Finding]:
     findings: list[Finding] = []
     for current, dirnames, filenames in os.walk(root, followlinks=False):
@@ -180,7 +233,30 @@ def scan(root: Path) -> list[Finding]:
             if raw_prediction_path(rel):
                 findings.append(Finding("error", "raw_prediction_path", rel, None, "", "Prediction-like payload path."))
             if path.suffix.lower() in {".zip", ".tar", ".gz", ".tgz"}:
-                findings.append(Finding("error", "duplicate_archive", rel, None, "", "Archives are excluded from Git."))
+                if rel in ALLOWED_SOURCE_ARCHIVES:
+                    archive_error = source_archive_error(root, path, rel)
+                    if archive_error is not None:
+                        findings.append(
+                            Finding(
+                                "error",
+                                "invalid_source_snapshot",
+                                rel,
+                                None,
+                                "",
+                                archive_error,
+                            )
+                        )
+                else:
+                    findings.append(
+                        Finding(
+                            "error",
+                            "duplicate_archive",
+                            rel,
+                            None,
+                            "",
+                            "Archives are excluded from Git.",
+                        )
+                    )
             if size > MAX_TEXT_SCAN or not is_probably_text(path):
                 continue
             try:

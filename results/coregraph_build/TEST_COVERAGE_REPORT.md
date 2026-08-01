@@ -2,8 +2,9 @@
 
 Status: `PASS_LOCAL_DETERMINISTIC_GATES`
 
-- Full repository suite: 236 tests passed after standalone theory entry-point
-  and final-handoff generation regressions were added.
+- Full repository suite: 237 tests passed after standalone theory entry-point,
+  final-handoff generation, and source-snapshot public-audit regressions were
+  added.
 - All `coregraph/` statement coverage: 87%.
 - Required Level-4 critical coverage:
   - contracts: 95%;

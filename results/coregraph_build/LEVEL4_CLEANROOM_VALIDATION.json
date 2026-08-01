@@ -52,11 +52,12 @@
           "tests/coregraph/test_level4_benchmarks_theory.py",
           "tests/coregraph/test_level4_generated_artifacts.py",
           "tests/coregraph/test_level4_overlap_audit.py",
+          "tests/coregraph/test_level4_public_tree.py",
           "tests/test_path_resolution.py"
         ],
         "returncode": 0,
         "stderr_tail": "",
-        "stdout_tail": "....................                                                     [100%]\n"
+        "stdout_tail": ".....................                                                    [100%]\n"
       },
       {
         "command": [
@@ -65,7 +66,7 @@
         ],
         "returncode": 0,
         "stderr_tail": "",
-        "stdout_tail": "{\"failures\": [], \"outputs\": {\"main\": {\"blocked_tokens_present\": false, \"bytes\": 416915, \"identity_or_private_path\": false, \"overfull_boxes\": 0, \"pages\": 13, \"path\": \"paper_iclr/main.pdf\", \"type3_fonts\": 0, \"undefined_references_or_citations\": 0}, \"supplement\": {\"blocked_tokens_present\": false, \"bytes\": 313308, \"identity_or_private_path\": false, \"overfull_boxes\": 0, \"pages\": 5, \"path\": \"paper_iclr/supplement.pdf\", \"type3_fonts\": 0, \"undefined_references_or_citations\": 0}}, \"status\": \"PASS_RESULTS_BLOCKED\"}\n"
+        "stdout_tail": "{\"failures\": [], \"outputs\": {\"main\": {\"blocked_tokens_present\": false, \"bytes\": 416901, \"identity_or_private_path\": false, \"overfull_boxes\": 0, \"pages\": 13, \"path\": \"paper_iclr/main.pdf\", \"sha256\": \"6c349a46c2af27161a7611d528c0aba8046dd50826bf44a3da4d8599fa604b4c\", \"type3_fonts\": 0, \"undefined_references_or_citations\": 0}, \"supplement\": {\"blocked_tokens_present\": false, \"bytes\": 313298, \"identity_or_private_path\": false, \"overfull_boxes\": 0, \"pages\": 5, \"path\": \"paper_iclr/supplement.pdf\", \"sha256\": \"983feaba493e0cc07c2f95dfc91b1990f507632051a2f6987c5ac68321cc8118\", \"type3_fonts\": 0, \"undefined_references_or_citations\": 0}}, \"status\": \"PASS_RESULTS_BLOCKED\"}\n"
       }
     ],
     "target_metrics_computed": 0,

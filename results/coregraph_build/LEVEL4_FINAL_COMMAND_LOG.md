@@ -11,7 +11,7 @@ All paths below are repository-relative or environment-variable based.
 | Pilot input validation | `orchestrate_level4.py pilot-validate` | READY; no execution |
 | Full planning | `orchestrate_level4.py full-plan` | PASS; 1,680 plan rows, no jobs |
 | Compile/lint/type | `compileall`, `ruff check`, `mypy` | PASS; 97 typed source files |
-| Tests | `pytest -q` through coverage | PASS; 236 tests |
+| Tests | `pytest -q` through coverage | PASS; 237 tests |
 | Coverage | `make coregraph-coverage` | PASS; minimum 85% |
 | Theory | numeric/status/standalone executable checks | PASS |
 | Tiny synthetic suite | `run_synthetic_method_checks.py` | PASS; no real data |

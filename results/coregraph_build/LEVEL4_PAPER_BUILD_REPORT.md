@@ -6,8 +6,8 @@ The official ICLR 2027 style was not available from the venue at build time; the
 
 | PDF | Pages | Bytes | Overfull | Undefined refs/cites | Type 3 | Identity/path |
 |---|---:|---:|---:|---:|---:|---|
-| main | 13 | 416915 | 0 | 0 | 0 | False |
-| supplement | 5 | 313308 | 0 | 0 | 0 | False |
+| main | 13 | 416901 | 0 | 0 | 0 | False |
+| supplement | 5 | 313298 | 0 | 0 | 0 | False |
 
 Failures: `[]`.
 

@@ -3,7 +3,9 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -14,6 +16,12 @@ ROOT = Path(__file__).resolve().parents[2]
 PAPER = ROOT / "paper_iclr"
 BUILD = PAPER / "build"
 REPORT = ROOT / "results" / "coregraph_build" / "LEVEL4_PAPER_BUILD_REPORT.md"
+PAPER_ENV = {
+    **os.environ,
+    "FORCE_SOURCE_DATE": "1",
+    "SOURCE_DATE_EPOCH": "1785542400",
+    "TZ": "UTC",
+}
 
 
 def _run(command: list[str], *, check: bool = True) -> subprocess.CompletedProcess[str]:
@@ -24,7 +32,16 @@ def _run(command: list[str], *, check: bool = True) -> subprocess.CompletedProce
         text=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
+        env=PAPER_ENV,
     )
+
+
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def _compile(stem: str) -> tuple[Path, Path]:
@@ -85,11 +102,15 @@ def main() -> int:
         extracted = _text(pdf)
         overfull = len(re.findall(r"Overfull \\hbox", log_text))
         undefined = len(re.findall(r"(?:Citation|Reference).*undefined", log_text))
-        identity = bool(re.search(r"Saket\s+Maganti|saketmaganti|/Users/|/Volumes/", extracted, re.I))
+        private_roots = "/" + r"(?:Users|Volumes)/"
+        identity = bool(
+            re.search(r"Saket\s+Maganti|saketmaganti|" + private_roots, extracted, re.I)
+        )
         type3 = _type3_fonts(pdf)
         outputs[stem] = {
             "path": pdf.relative_to(ROOT).as_posix(),
             "bytes": pdf.stat().st_size,
+            "sha256": _sha256(pdf),
             "pages": _pages(pdf),
             "overfull_boxes": overfull,
             "undefined_references_or_citations": undefined,

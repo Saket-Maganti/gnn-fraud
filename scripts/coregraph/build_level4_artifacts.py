@@ -30,6 +30,7 @@ SOURCE_INDEX = BUILD / "CANONICAL_RB09V3_ARTIFACT_INDEX.csv"
 PROTOCOLS = ("strict_inductive", "isolated_inductive", "transductive_structure")
 EXPERTS = ("feature_mlp", "gcn", "graphsage")
 DATASETS = ("elliptic", "dgraphfin")
+BUILD_PARENT_SHA = "b09ce165cd72683ac1903d5fde8c026ff78efe30"
 
 
 def _write_text(path: Path, text: str) -> None:
@@ -161,14 +162,13 @@ def _load_verified_member_index() -> dict[tuple[str, str, str, int], dict[str, s
 
 
 def build_authority(*, evidence_verified: bool) -> None:
-    head = _git("rev-parse", "HEAD")
     branch = _git("branch", "--show-current")
     payload = {
         "schema": "coregraph_project_paths_and_authorities_v1",
         "coregraph": {
             "path": "${COREGRAPH_REPO_ROOT}",
             "branch": branch,
-            "build_parent_sha": head,
+            "build_parent_sha": BUILD_PARENT_SHA,
             "authority": "branch_tip_after_normal_fast_forward_push",
             "repository_form_at_preflight": "VALID_LINKED_WORKTREE_PORTABILITY_REPAIR_PENDING",
             "repository_form_current": (
@@ -845,6 +845,74 @@ def build_preregistration_hash() -> str:
 
 
 def build_cleanup_inventory() -> None:
+    cleanup_report = BUILD / "LOCAL_CLEANUP_REPORT.md"
+    cleanup_complete = cleanup_report.is_file() and (
+        "PASS_CONSERVATIVE_RECOVERABLE_CLEANUP_COMPLETE"
+        in cleanup_report.read_text(encoding="utf-8")
+    )
+    if cleanup_complete:
+        completed_rows = []
+        for relative in (
+            ".pytest_cache",
+            ".mypy_cache",
+            ".ruff_cache",
+            ".coverage",
+            "**/__pycache__",
+            "**/*.pyc",
+            "**/.DS_Store",
+            "tmp",
+            "paper_iclr/build",
+            "paper_iclr LaTeX intermediates",
+        ):
+            completed_rows.append(
+                {
+                    "path": relative,
+                    "size_bytes": "PRE_CLEANUP_INCLUDED_IN_AGGREGATE",
+                    "tracked": "false",
+                    "reproducibility": "REPRODUCIBLE",
+                    "authority": "NON_AUTHORITATIVE",
+                    "referenced_by_code": "false",
+                    "referenced_by_reports": "false",
+                    "safe_to_delete": "true",
+                    "backup_location": "MACOS_TRASH_RECOVERABLE",
+                    "decision": "REMOVED_TO_TRASH_AFTER_VALIDATION",
+                }
+            )
+        completed_rows.insert(
+            0,
+            {
+                "path": ".venv",
+                "size_bytes": 167004821,
+                "tracked": "false",
+                "reproducibility": "REPRODUCIBLE",
+                "authority": "NON_AUTHORITATIVE",
+                "referenced_by_code": "false",
+                "referenced_by_reports": "false",
+                "safe_to_delete": "true",
+                "backup_location": "NOT_REQUIRED",
+                "decision": "RETAIN_VALIDATED_OFFLINE_RUNTIME_THROUGH_CI",
+            },
+        )
+        completed_rows.append(
+            {
+                "path": "../gnn-fraud-old",
+                "size_bytes": "NOT_SCANNED_READ_ONLY_ARCHIVE",
+                "tracked": "outside_active_repo",
+                "reproducibility": "UNKNOWN_MIXED",
+                "authority": "HISTORICAL_ONLY",
+                "referenced_by_code": "false",
+                "referenced_by_reports": "historical_provenance_only",
+                "safe_to_delete": "false",
+                "backup_location": "USER_MANAGED_BACKUP_REQUIRES_VERIFICATION",
+                "decision": "RETAIN_PENDING_USER_ARCHIVE_DECISION",
+            }
+        )
+        _write_csv(
+            BUILD / "LOCAL_CLEANUP_INVENTORY.csv",
+            completed_rows,
+            tuple(completed_rows[0]),
+        )
+        return
     candidates = (
         ".venv", ".pytest_cache", ".mypy_cache", ".ruff_cache", ".coverage",
         "coregraph/__pycache__", "fraudshiftbench/__pycache__", "models/__pycache__",
