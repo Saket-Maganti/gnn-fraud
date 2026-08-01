@@ -37,6 +37,23 @@ REQUIRED_TOKENS = (
     "COMPLETION_REPORT",
     "Failed coordinates may not be silently skipped",
 )
+V5_PILOT_TOKENS = (
+    "run_saved_output_pilot_v5.py",
+    "EXECUTE = False",
+    "--plan",
+    "--validate-only",
+    "--synthetic-fixture",
+    "--authorization-token",
+    "AUTHORIZE_COREGRAPH_V5_PILOT_RUN",
+    "--resume",
+    "--package",
+    "PILOT_PLAN.csv",
+    "preregistration_sha256",
+    "archive_hashes",
+    "expected_counts",
+    "240",
+    "shutil.disk_usage",
+)
 
 
 def tiny_fixture() -> dict[str, object]:
@@ -93,7 +110,12 @@ def main() -> int:
                     ast.parse(source)
                 except SyntaxError as exc:
                     failures.append(f"{path}:cell{index}:{exc}")
-        for token in REQUIRED_TOKENS:
+        tokens = (
+            V5_PILOT_TOKENS
+            if metadata.get("wave") == "saved_output_pilot"
+            else REQUIRED_TOKENS
+        )
+        for token in tokens:
             if token not in combined_source:
                 failures.append(f"{path}:missing_requirement:{token}")
     if len(paths) != 12:

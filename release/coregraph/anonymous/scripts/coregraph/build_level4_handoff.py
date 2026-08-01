@@ -14,7 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 BUILD = ROOT / "results" / "coregraph_build"
 PROMPTS = BUILD / "LEVEL4_NEXT_EXECUTION_PROMPTS"
-VERDICT = "COREGRAPH_LEVEL4_BUILD_COMPLETE_READY_FOR_SAVED_OUTPUT_PILOT"
+VERDICT = "COREGRAPH_V5_EXECUTOR_IMPLEMENTED_REAL_PILOT_UNEXECUTED"
 TREE_EXCLUDED_PARTS = {
     ".git",
     ".venv",
@@ -118,24 +118,53 @@ def prompt_specs() -> dict[str, tuple[str, str]]:
     return {
         "01_saved_output_pilot_execution.md": (
             "Saved-output pilot execution",
-            """This is the next authorised empirical step, but execute it only
-after the user explicitly invokes this prompt. Revalidate pilot inputs, archive
-and member hashes, V5 row scopes, and the frozen preregistration hash. Create a
-run manifest before evaluating anything. Use only the checksum-verified saved
-prediction members; do not train experts or regenerate predictions.
+            """The executor is implemented, but the real pilot remains unrun.
+Execute only after a new explicit authorization decision. Read
+`V5_SAVED_OUTPUT_PILOT_EXECUTION_RUNBOOK.md` and set absolute
+`COREGRAPH_REPO_ROOT`, `COREGRAPH_EVIDENCE_CACHE`, and
+`COREGRAPH_OUTPUT_ROOT` values without committing machine-local paths.
 
-Execute the frozen 240-coordinate pilot plan sequentially with resumability and
-hash-equivalent skip logic. Fit any router, calibration, or threshold component
-on source train/validation scopes only. Permit target known-label rows only in
-the offline evaluation stage. Produce completeness, exclusion, leakage,
-resource-unknown, metric, statistical-gate, and claim-linkage records. Never
-compute or expose an oracle outside its explicitly non-deployable diagnostic
-cell. Stop on leakage, pairing, checksum, or scenario-coverage failure.
+Run the exact no-training gates first:
 
-At completion, issue a conservative GO/NO-GO/INCONCLUSIVE decision against the
-already frozen gate; do not redefine thresholds after seeing results. Do not
-start full training, update empirical paper claims, or launch Kaggle work in the
-same phase.""",
+```bash
+cd "$COREGRAPH_REPO_ROOT"
+.venv/bin/python scripts/coregraph/run_saved_output_pilot_v5.py \
+  --config configs/coregraph/pilot/saved_output_v5.yaml \
+  --evidence-cache "$COREGRAPH_EVIDENCE_CACHE" \
+  --output-root "$COREGRAPH_OUTPUT_ROOT" --plan
+.venv/bin/python scripts/coregraph/run_saved_output_pilot_v5.py \
+  --config configs/coregraph/pilot/saved_output_v5.yaml \
+  --evidence-cache "$COREGRAPH_EVIDENCE_CACHE" \
+  --output-root "$COREGRAPH_OUTPUT_ROOT" --validate-only
+```
+
+Require exactly 6 archives, 180 base artifacts, 60 scenarios, 540 bindings,
+240 coordinates, 180 member hashes, zero training, and zero target-label reads.
+After later authorization, run sequentially and resumably:
+
+```bash
+.venv/bin/python scripts/coregraph/run_saved_output_pilot_v5.py \
+  --config configs/coregraph/pilot/saved_output_v5.yaml \
+  --evidence-cache "$COREGRAPH_EVIDENCE_CACHE" \
+  --output-root "$COREGRAPH_OUTPUT_ROOT" \
+  --execute --resume --chunk-rows 50000 --max-workers 1 \
+  --authorization-token AUTHORIZE_COREGRAPH_V5_PILOT_RUN
+```
+
+The runner must refuse a dirty tree or missing token. Do not train experts or
+regenerate predictions. Fit all deployable state on source train/validation
+only; permit target known-label rows solely in the offline evaluator after each
+policy and target-score hash is frozen. Resume only exact hash-valid COMPLETE
+cells and retain explicit failures. After 240/240 valid completions, package:
+
+```bash
+.venv/bin/python scripts/coregraph/run_saved_output_pilot_v5.py \
+  --output-root "$COREGRAPH_OUTPUT_ROOT" --package
+```
+
+Issue only the frozen GO/NO-GO/INCONCLUSIVE decision. Do not change thresholds,
+start full training, populate empirical paper claims, or launch Kaggle work in
+the same phase.""",
         ),
         "02_fraud_full_gpu_execution.md": (
             "Fraud full GPU execution",
@@ -332,6 +361,17 @@ permanently extracted.
   bindings materialise; byte, schema, coordinate, chronology, known-label,
   ordering, 60-group expert alignment, and 20-group cross-protocol row-scope
   audits pass.
+- V5 executor closure: the authoritative CLI implements plan, validate,
+  deterministic synthetic execution, guarded real execution, resume, sharding,
+  and complete-run packaging. The target-unlabelled interface has no label
+  field, and the offline label vault opens only after a checksum-bound policy
+  freeze. The complete synthetic campaign finished 240/240 coordinates with
+  zero failures; its gate outcome is synthetic-only and has no empirical
+  standing.
+- Canonical no-training validation: 6/6 archives, 180/180 members, 60/60
+  scenarios, 540/540 bindings, and 240/240 coordinates pass. Representative
+  Elliptic and DGraphFin source/target assembly also passes with float32 target
+  scores and no target-label field. No method was fit on canonical evidence.
 - Method: factorised/interaction/attention/uncertainty/latent/hybrid contract
   encoders; expert diagnostics; contract, instance, and hierarchical routing;
   resource masks; robust regret/CVaR/budget/stability/abstention objectives;
@@ -362,9 +402,9 @@ permanently extracted.
 - Runbooks: {notebooks['kaggle_level4_runbooks']} Kaggle T4x2 plus
   {notebooks['notebooks'] - notebooks['kaggle_level4_runbooks']} local notebooks;
   none executed.
-- Paper: 12 main sections, 7 supplement sections, 13 main pages, 5 supplement
+- Paper: 12 main sections, 7 supplement sections, 14 main pages, 5 supplement
   pages, 8 non-empirical figures, 7 empty result templates, and 11 tables.
-  All 18 pages passed visual QA. Four empirical claim families remain blocked;
+  All 19 pages passed visual QA. Four empirical claim families remain blocked;
   no numerical result was invented.
 - Overlap firewall: `{overlap['status']}` with zero common eight-grams, zero
   exact long sentences, and zero byte-identical visual assets.
@@ -378,9 +418,9 @@ installation, Kaggle job, empirical paper population, force-push, or PR merge
 occurred. The only training-like operation was the documented one-epoch,
 24-node synthetic CPU smoke (`{smoke['status']}`), which used no provider data.
 
-The next authorised action is a separately invoked saved-output pilot using
-`LEVEL4_NEXT_EXECUTION_PROMPTS/01_saved_output_pilot_execution.md`. This build
-is not labelled submission-ready.
+The next possible action is a separately authorised saved-output pilot using
+`V5_SAVED_OUTPUT_PILOT_EXECUTION_RUNBOOK.md`; executor closure itself does not
+grant that authorization. This build is not labelled submission-ready.
 """
     write_text(BUILD / "LEVEL4_MASTER_BUILD_REPORT.md", master)
 
@@ -388,7 +428,11 @@ is not labelled submission-ready.
         "schema": "coregraph_level4_final_gate_v1",
         "verdict": VERDICT,
         "ready_for_saved_output_pilot": pilot.get("status")
-        == "READY_FOR_SAVED_OUTPUT_PILOT",
+        in {
+            "READY_FOR_SAVED_OUTPUT_PILOT",
+            "V5_EXECUTOR_READY_REAL_PILOT_REQUIRES_NEW_AUTHORIZATION",
+        },
+        "real_pilot_executed": False,
         "repository": {
             "branch": "codex/coregraph-iclr-buildout-2026",
             "form": "INDEPENDENT_GIT_CHECKOUT_VALIDATED",
@@ -408,6 +452,14 @@ is not labelled submission-ready.
             "scenarios": leakage.get("scenario_count"),
             "bindings": leakage.get("binding_count"),
             "leakage_status": leakage.get("overall_status"),
+            "primary_coordinates": 240,
+            "executor": "IMPLEMENTED_AND_SYNTHETICALLY_VALIDATED",
+            "canonical_validate_only": "PASS_6_ARCHIVES_180_MEMBERS_NO_TRAINING",
+            "synthetic_complete_coordinates": 240,
+            "synthetic_failures": 0,
+            "target_label_firewall": "PASS",
+            "real_target_metrics_computed": 0,
+            "real_target_oracles_computed": 0,
         },
         "tests": coverage,
         "theory_gate": "PASS_EXTERNAL_REVIEW_PENDING",
@@ -418,13 +470,13 @@ is not labelled submission-ready.
         },
         "paper": {
             "status": paper.get("status"),
-            "main_pages": 13,
+            "main_pages": 14,
             "supplement_pages": 5,
             "main_sections": paper.get("main_sections"),
             "supplement_sections": paper.get("supplement_sections"),
             "blocked_empirical_claims": paper.get("blocked_empirical_claims"),
             "invented_numeric_results": paper.get("invented_numeric_results"),
-            "visual_qa": "PASS_18_OF_18_PAGES",
+            "visual_qa": "PASS_19_OF_19_PAGES",
         },
         "release": {
             "checksum_validation": cleanroom.get("checksum_validation"),
@@ -443,7 +495,7 @@ is not labelled submission-ready.
             "pull_request_merges": 0,
         },
         "submission_status": "RESULTS_BLOCKED_NOT_SUBMISSION_READY",
-        "next_authorised_action": "SAVED_OUTPUT_PILOT_AFTER_EXPLICIT_INVOCATION",
+        "next_authorised_action": "V5_SAVED_OUTPUT_PILOT_ONLY_AFTER_NEW_EXPLICIT_AUTHORIZATION",
     }
     write_text(
         BUILD / "LEVEL4_FINAL_GATE_STATUS.json",
@@ -508,10 +560,19 @@ official baseline install, Kaggle launch, force-push, or PR merge occurred.
 
     candidates = tree_candidates()
     candidates.append("results/coregraph_build/LEVEL4_FINAL_TREE.txt")
+    candidates.append("results/coregraph_build/V5_EXECUTOR_FINAL_TREE.txt")
     tree = "# CoReGraph Level-4 final public-neutral tree\n\n" + "\n".join(
         sorted(set(candidates))
     )
     write_text(BUILD / "LEVEL4_FINAL_TREE.txt", tree)
+    write_text(
+        BUILD / "V5_EXECUTOR_FINAL_TREE.txt",
+        tree.replace(
+            "# CoReGraph Level-4 final public-neutral tree",
+            "# CoReGraph V5 executor closure final public-neutral tree",
+            1,
+        ),
+    )
 
     print(
         json.dumps(

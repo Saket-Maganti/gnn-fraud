@@ -20,6 +20,13 @@ class MemberRecord:
     size_bytes: int | None = None
     row_count: int | None = None
     label_known_count: int | None = None
+    schema_version: str = ""
+    semantic_identity_sha256: str = ""
+    duplicate_identifier_count: int | None = None
+    coordinate_verified: bool | None = None
+    row_order_verified: bool | None = None
+    chronology_verified: bool | None = None
+    provider_alignment_verified: bool | None = None
 
     @property
     def coordinate(self) -> tuple[str, str, str, int]:
@@ -89,6 +96,16 @@ class MemberIndex:
                 return None
             return int(value)
 
+        def optional_bool(value: str | None) -> bool | None:
+            if value is None or value == "":
+                return None
+            normalized = value.strip().lower()
+            if normalized in {"true", "1", "yes"}:
+                return True
+            if normalized in {"false", "0", "no"}:
+                return False
+            raise ValueError(f"invalid boolean in member index: {value!r}")
+
         return cls(
             MemberRecord(
                 dataset=row["dataset"],
@@ -101,6 +118,19 @@ class MemberIndex:
                 size_bytes=optional_int(row.get("size_bytes")),
                 row_count=optional_int(row.get("row_count")),
                 label_known_count=optional_int(row.get("label_known_count")),
+                schema_version=str(row.get("schema_version", "")),
+                semantic_identity_sha256=str(
+                    row.get("semantic_identity_sha256", "")
+                ),
+                duplicate_identifier_count=optional_int(
+                    row.get("duplicate_identifier_count")
+                ),
+                coordinate_verified=optional_bool(row.get("coordinate_verified")),
+                row_order_verified=optional_bool(row.get("row_order_verified")),
+                chronology_verified=optional_bool(row.get("chronology_verified")),
+                provider_alignment_verified=optional_bool(
+                    row.get("provider_alignment_verified")
+                ),
             )
             for row in rows
         )

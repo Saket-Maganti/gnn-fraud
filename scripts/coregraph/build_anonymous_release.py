@@ -45,7 +45,12 @@ SPECIFICATION_FILES = (
     "results/coregraph_build/PILOT_V4_SPECIFICATION.md",
     "results/coregraph_build/CONTRACT_PROTOCOL_REGISTRY.schema.json",
     "results/coregraph_build/CONTRACT_PROTOCOL_REGISTRY_V4.json",
+    "results/coregraph_build/V5_SAVED_OUTPUT_PILOT_SPECIFICATION.md",
+    "results/coregraph_build/V5_BASE_ARTIFACTS.csv",
+    "results/coregraph_build/V5_SCENARIOS.csv",
+    "results/coregraph_build/V5_BINDINGS.csv",
 )
+V5_PORTABLE_CONFIG = "configs/coregraph/pilot/saved_output_v5.yaml"
 EXCLUDE_PARTS = {
     ".DS_Store",
     "__pycache__",
@@ -53,6 +58,7 @@ EXCLUDE_PARTS = {
     ".mypy_cache",
     ".ruff_cache",
     "anonymous",
+    "build",
 }
 EXCLUDE_SUFFIXES = {
     ".pyc",
@@ -114,6 +120,15 @@ def main() -> int:
     for relative in SPECIFICATION_FILES:
         source = ROOT / relative
         shutil.copy2(source, specification_dir / source.name)
+    portable_config = DESTINATION / V5_PORTABLE_CONFIG
+    portable_config_text = portable_config.read_text(encoding="utf-8")
+    for relative in SPECIFICATION_FILES:
+        if not Path(relative).name.startswith("V5_"):
+            continue
+        portable_config_text = portable_config_text.replace(
+            relative, f"specifications/{Path(relative).name}"
+        )
+    portable_config.write_text(portable_config_text, encoding="utf-8")
     files = {}
     for path in sorted(DESTINATION.rglob("*")):
         if path.is_file():
