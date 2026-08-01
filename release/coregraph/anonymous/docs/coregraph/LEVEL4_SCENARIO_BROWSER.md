@@ -1,0 +1,66 @@
+# Level-4 scenario browser
+
+This registry is a no-training view. Target labels remain evaluation-only after freeze.
+
+| Scenario | Dataset | Held-out target | Source protocols | Seed | Bindings | Status |
+|---|---|---|---|---:|---:|---|
+| `scenario-0234a7202fed52f7dba3db45` | elliptic | `strict_inductive` | `isolated_inductive;transductive_structure` | 1 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-cc539dcaf41c71bdfc9dc73b` | elliptic | `strict_inductive` | `isolated_inductive;transductive_structure` | 2 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-350758023f31831bb84d7d1e` | elliptic | `strict_inductive` | `isolated_inductive;transductive_structure` | 3 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-c949682b1a540d55687d540f` | elliptic | `strict_inductive` | `isolated_inductive;transductive_structure` | 4 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-9d6ecf1320d8b0797fa63772` | elliptic | `strict_inductive` | `isolated_inductive;transductive_structure` | 5 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-c51365541cd41cf288508464` | elliptic | `strict_inductive` | `isolated_inductive;transductive_structure` | 6 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-b3d034413de438245eea70c5` | elliptic | `strict_inductive` | `isolated_inductive;transductive_structure` | 7 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-ad31926c0a7dfcf08b4bbef8` | elliptic | `strict_inductive` | `isolated_inductive;transductive_structure` | 8 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-947e815f03f380574a0890d7` | elliptic | `strict_inductive` | `isolated_inductive;transductive_structure` | 9 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-fa5f47c1f82b36e961e0d1e8` | elliptic | `strict_inductive` | `isolated_inductive;transductive_structure` | 10 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-8f6bc8423e2023f191ec6ac1` | elliptic | `isolated_inductive` | `strict_inductive;transductive_structure` | 1 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-2f1df10d50617845ee4bb99a` | elliptic | `isolated_inductive` | `strict_inductive;transductive_structure` | 2 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-b32e5f2cf6e2910548439f73` | elliptic | `isolated_inductive` | `strict_inductive;transductive_structure` | 3 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-91f50c17209399f059f87cc5` | elliptic | `isolated_inductive` | `strict_inductive;transductive_structure` | 4 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-73c6998f885889a0b3eca882` | elliptic | `isolated_inductive` | `strict_inductive;transductive_structure` | 5 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-6dd3b81a5ba9b1c350f300de` | elliptic | `isolated_inductive` | `strict_inductive;transductive_structure` | 6 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-fcd87f3e1c8e65202b68873f` | elliptic | `isolated_inductive` | `strict_inductive;transductive_structure` | 7 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-f93196aa27b9118526a61fde` | elliptic | `isolated_inductive` | `strict_inductive;transductive_structure` | 8 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-85771e98399777bdd4477bf7` | elliptic | `isolated_inductive` | `strict_inductive;transductive_structure` | 9 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-68a922896cdb36bd43c2b1d2` | elliptic | `isolated_inductive` | `strict_inductive;transductive_structure` | 10 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-7a8758aa7b8ec5ed7d763f35` | elliptic | `transductive_structure` | `strict_inductive;isolated_inductive` | 1 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-ec2ca7eefc813fb7479979f0` | elliptic | `transductive_structure` | `strict_inductive;isolated_inductive` | 2 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-d0a2b4ed50cb0ae6f6858cd0` | elliptic | `transductive_structure` | `strict_inductive;isolated_inductive` | 3 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-f27915f8624bce77a4d563d9` | elliptic | `transductive_structure` | `strict_inductive;isolated_inductive` | 4 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-ff14471b38147f1696f18a93` | elliptic | `transductive_structure` | `strict_inductive;isolated_inductive` | 5 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-c81d8e36ba9c70aded889d6f` | elliptic | `transductive_structure` | `strict_inductive;isolated_inductive` | 6 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-02886163cea65183854312f2` | elliptic | `transductive_structure` | `strict_inductive;isolated_inductive` | 7 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-e3f3bc0aefe98e912b42f3a7` | elliptic | `transductive_structure` | `strict_inductive;isolated_inductive` | 8 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-5f7e6bde8fe2dfb89a620c0b` | elliptic | `transductive_structure` | `strict_inductive;isolated_inductive` | 9 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-83721c54507e574a04c867e9` | elliptic | `transductive_structure` | `strict_inductive;isolated_inductive` | 10 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-be8ab824e4375a55c2a0ef11` | dgraphfin | `strict_inductive` | `isolated_inductive;transductive_structure` | 1 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-cfe841f4f840791b099bae6a` | dgraphfin | `strict_inductive` | `isolated_inductive;transductive_structure` | 2 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-3e0cd249e6192ae3d624f854` | dgraphfin | `strict_inductive` | `isolated_inductive;transductive_structure` | 3 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-742792b2111479f851651a36` | dgraphfin | `strict_inductive` | `isolated_inductive;transductive_structure` | 4 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-e78de6d7dc26017270475525` | dgraphfin | `strict_inductive` | `isolated_inductive;transductive_structure` | 5 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-f011749392c93d114b8d646c` | dgraphfin | `strict_inductive` | `isolated_inductive;transductive_structure` | 6 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-230a91dc8dd2c7847902479a` | dgraphfin | `strict_inductive` | `isolated_inductive;transductive_structure` | 7 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-28636a4410c14a8824cb732e` | dgraphfin | `strict_inductive` | `isolated_inductive;transductive_structure` | 8 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-413ef5e8d1c097ac8518a7a6` | dgraphfin | `strict_inductive` | `isolated_inductive;transductive_structure` | 9 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-291b1252fb5c7e5c8c89c7ea` | dgraphfin | `strict_inductive` | `isolated_inductive;transductive_structure` | 10 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-9f522bb45cbf89fd03c376e4` | dgraphfin | `isolated_inductive` | `strict_inductive;transductive_structure` | 1 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-a56238bb529f67cb54b9ccf7` | dgraphfin | `isolated_inductive` | `strict_inductive;transductive_structure` | 2 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-bafa09f6b77ad149064f587d` | dgraphfin | `isolated_inductive` | `strict_inductive;transductive_structure` | 3 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-c2c1550352f378eb6ba116f6` | dgraphfin | `isolated_inductive` | `strict_inductive;transductive_structure` | 4 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-e218558573abc38d3cee1e5d` | dgraphfin | `isolated_inductive` | `strict_inductive;transductive_structure` | 5 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-01d05aefdf940537e87653c7` | dgraphfin | `isolated_inductive` | `strict_inductive;transductive_structure` | 6 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-313700ad5645732153552c3d` | dgraphfin | `isolated_inductive` | `strict_inductive;transductive_structure` | 7 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-5b16e64a2669283bf8ea4fb0` | dgraphfin | `isolated_inductive` | `strict_inductive;transductive_structure` | 8 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-d0411a93375b5592b44845cb` | dgraphfin | `isolated_inductive` | `strict_inductive;transductive_structure` | 9 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-5926e8915afdcff7d1698b95` | dgraphfin | `isolated_inductive` | `strict_inductive;transductive_structure` | 10 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-c411f91cd5d33432dbdffe08` | dgraphfin | `transductive_structure` | `strict_inductive;isolated_inductive` | 1 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-526bf7762c228cd8f21890b5` | dgraphfin | `transductive_structure` | `strict_inductive;isolated_inductive` | 2 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-ea8ac5ee01ec8d862a5d3989` | dgraphfin | `transductive_structure` | `strict_inductive;isolated_inductive` | 3 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-7e71b7b409f9fb7c3cf00b0f` | dgraphfin | `transductive_structure` | `strict_inductive;isolated_inductive` | 4 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-e94f4e48832db1ed59a880c0` | dgraphfin | `transductive_structure` | `strict_inductive;isolated_inductive` | 5 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-9c30859729ca22e68d526610` | dgraphfin | `transductive_structure` | `strict_inductive;isolated_inductive` | 6 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-38b5ce57451af6518fdd1caa` | dgraphfin | `transductive_structure` | `strict_inductive;isolated_inductive` | 7 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-f2fa3342e1ef128211eb9fda` | dgraphfin | `transductive_structure` | `strict_inductive;isolated_inductive` | 8 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-945b3cea050951dd15301de3` | dgraphfin | `transductive_structure` | `strict_inductive;isolated_inductive` | 9 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |
+| `scenario-889c9a8fdfcacb4406ea2546` | dgraphfin | `transductive_structure` | `strict_inductive;isolated_inductive` | 10 | 6 source + 3 target | `MATERIALISABLE_FROM_VERIFIED_LOCAL_CACHE` |

@@ -1,0 +1,21 @@
+\section{Experimental protocol}
+
+\input{tables/baselines}
+
+\paragraph{Experts and baselines.}
+The first fraud pilot uses feature MLP, GCN, and GraphSAGE saved predictions for ten expert-training seeds. Simple baselines are best fixed expert selected on source validation, uniform and validation-weighted averages, confidence/entropy/margin selection, source-trained logistic and MLP gates, a resource heuristic, cheapest feasible, and random feasible expert. Whole-contract and instance oracles are offline diagnostics. Strong categories cover Mowst-style graph mixtures, GraphMETRO, GroupDRO, VREx, CIGA, EERM, temporal models, protocol-valid adaptation, and resource-aware routing. Official repositories remain separately pinned and uninstalled; unavailable licence or task-incompatible cells are reported, never approximated under official names.
+
+\paragraph{Tuning and seeds.}
+All deployable hyperparameters, normalization, diagnostics, checkpoints, and abstention thresholds use source train/validation only. The target protocol is absent from fitting. Seeds 1--10 index immutable expert predictions; router randomness is recorded but not counted as an independent dataset replication. Same-numbered seeds across datasets are never paired.
+
+\paragraph{Outcomes.}
+Primary outcomes are contract regret, maximum and CVaR regret, AUPRC, recall at fixed review budgets, selective risk, coverage, routing stability, expert invocation count, warmed inference and router latency, peak memory, cost, and abstention rate. Regret always names its loss. Resource-blocked outputs remain explicit missing cells.
+
+\paragraph{Statistical analysis.}
+The paired unit is dataset, held-out target contract, and expert-prediction seed. Exact Wilcoxon and paired permutation tests, raw and robust standardized effects, and seed-block bootstrap intervals are computed separately per dataset. Holm correction applies within frozen claim families. A hierarchical dataset-seed bootstrap is secondary and cannot override a contradiction on one fraud dataset. Missing cells are not imputed.
+
+\paragraph{Ablations and stress tests.}
+Encoder ablations compare protocol one-hot, flat MLP, factorisation, bounded interactions, axis attention, uncertainty, discovery, and hybrid variants. Routing ablations compare contract, instance, and hierarchical modes. Diagnostic, regret/CVaR, budget, stability, uncertainty, sparsity, abstention, and mask terms are switched independently. Noisy categorical/continuous axes, delayed resource status, incorrect protocol labels, corrupted diagnostics, and out-of-support contracts are pre-registered.
+
+\paragraph{Resource measurement and claim gates.}
+Parameter count, FLOPs/proxy, expert and router latency, memory, throughput, invocation, review use, batch, warmup, hardware, and software are measured under eight resource profiles. The pilot cannot pass unless integrity/leakage gates are complete, worst-contract regret improves directionally on both fraud datasets, no catastrophic primary reversal occurs, masks are exact, abstention has useful nonzero coverage, effects are not one-seed artifacts, and no oracle feature enters deployment. Exact numerical thresholds may not be chosen from target results.

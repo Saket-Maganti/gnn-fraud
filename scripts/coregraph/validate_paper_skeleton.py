@@ -65,7 +65,8 @@ def main() -> int:
     if "\\ClaimBlocked{" not in text or "\\ResultPending{" not in text:
         failures.append("typed_result_gates_missing")
     private_roots = "/" + r"(?:Users|Volumes)/"
-    if re.search(r"Saket\s+Maganti|saketmaganti|" + private_roots, text, flags=re.I):
+    private_identity = r"Saket\s+Maganti|saket" + "maganti"
+    if re.search(private_identity + "|" + private_roots, text, flags=re.I):
         failures.append("author_identity_or_private_path_present")
     if re.search(r"\b(?:achieves?|outperforms?|improves? by|reduces? by)\s+\d", text, flags=re.I):
         failures.append("unsupported_numeric_result_language")

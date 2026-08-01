@@ -22,12 +22,22 @@ INCLUDE = (
     "kaggle/coregraph",
     "notebooks/coregraph",
     "tests/coregraph",
+    "theory/coregraph_level4",
 )
 ROOT_FILES = (
     "pyproject.toml",
     "requirements-coregraph-lock.txt",
     "Makefile",
 )
+EXACT_FILES = (
+    "scripts/audit_cross_paper_overlap.py",
+    "scripts/github_publish/validate_public_tree.py",
+)
+EXCLUDE_FILES = {
+    # This test requires local evidence-build reports that the anonymous package
+    # deliberately excludes. The artifact generator itself remains included.
+    "tests/coregraph/test_level4_generated_artifacts.py",
+}
 SPECIFICATION_FILES = (
     "results/coregraph_build/PILOT_GATE_FROZEN_SPEC.json",
     "results/coregraph_build/PILOT_V3_SPECIFICATION.md",
@@ -81,14 +91,24 @@ def main() -> int:
         if not source.exists():
             continue
         for path in sorted(source.rglob("*")):
-            if path.is_file() and include_file(path):
-                target = DESTINATION / path.relative_to(ROOT)
+            relative_path = path.relative_to(ROOT)
+            if (
+                path.is_file()
+                and relative_path.as_posix() not in EXCLUDE_FILES
+                and include_file(path)
+            ):
+                target = DESTINATION / relative_path
                 target.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(path, target)
     for relative in ROOT_FILES:
         source = ROOT / relative
         if source.exists():
             shutil.copy2(source, DESTINATION / relative)
+    for relative in EXACT_FILES:
+        source = ROOT / relative
+        target = DESTINATION / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, target)
     specification_dir = DESTINATION / "specifications"
     specification_dir.mkdir()
     for relative in SPECIFICATION_FILES:
