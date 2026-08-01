@@ -40,8 +40,8 @@
   "real_target_oracles_computed": 0,
   "kaggle_jobs_launched": 0,
   "pull_request_merged": false,
-  "push_status": "PENDING",
-  "exact_tip_ci_status": "PENDING",
+  "push_status": "PASS_NORMAL_PUSH",
+  "exact_tip_ci_status": "PASS",
   "submission_status": "RESULTS_BLOCKED_NOT_SUBMISSION_READY",
   "next_action_requires_new_authorization": true
 }
