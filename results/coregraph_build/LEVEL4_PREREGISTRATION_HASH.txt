@@ -1,0 +1,3 @@
+sha256 1536ba2a645baf965b09ca428caa689b3436ee25432872ce4b5cabf4c684dd3f
+status FROZEN_BEFORE_REAL_LEVEL4_RESULTS
+inputs docs/coregraph/LEVEL4_STATISTICAL_ANALYSIS_PLAN.md;configs/coregraph/level4/STATISTICAL_GATE_SPEC.json;configs/coregraph/level4/CLAIM_GATE_SPEC.json;docs/coregraph/LEVEL4_CLAIM_LEDGER.csv

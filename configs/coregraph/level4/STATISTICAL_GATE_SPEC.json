@@ -1,0 +1,53 @@
+{
+  "schema": "coregraph_level4_statistical_gate_v1",
+  "frozen_before_real_results": true,
+  "experimental_unit": ["dataset", "held_out_target_contract", "expert_prediction_seed"],
+  "cross_dataset_seed_pooling": false,
+  "primary_metrics": [
+    "contract_regret",
+    "worst_contract_regret",
+    "cvar_regret",
+    "auprc",
+    "recall_at_fixed_review_budget",
+    "selective_risk",
+    "coverage",
+    "routing_stability",
+    "expert_invocation_count",
+    "inference_latency_ms",
+    "peak_memory_mb",
+    "cost",
+    "abstention_rate"
+  ],
+  "primary_comparisons": [
+    "coregraph_vs_uniform_average",
+    "coregraph_vs_best_fixed_expert",
+    "coregraph_vs_source_logistic_gate",
+    "coregraph_vs_source_mlp_gate",
+    "coregraph_vs_strongest_feasible_graph_moe",
+    "coregraph_vs_strongest_feasible_graph_ood"
+  ],
+  "pairing": "exact within dataset,target_contract,seed; never across datasets",
+  "per_dataset_primary": true,
+  "hierarchical_summary": "SECONDARY_ONLY_DATASET_SEED_BOOTSTRAP",
+  "tests": ["exact_wilcoxon", "paired_permutation", "seed_block_bootstrap"],
+  "confidence_interval": "seed_block_bootstrap_95_percent",
+  "effect_size": "paired_standardized_median_and_raw_difference",
+  "multiplicity": "holm_within_frozen_claim_family",
+  "missing_cell_policy": "NO_IMPUTATION_REPORT_MISSING_REASON",
+  "resource_blocked_policy": "EXCLUDE_FROM_PAIRED_EFFECT_REPORT_AS_RESOURCE_BLOCKED",
+  "directionality": "two_sided_inference_with_preregistered_desirable_direction",
+  "minimum_feasible_comparison_set": "all ten seeds for each available fraud dataset and target contract",
+  "pilot_decision_rules": {
+    "integrity": "all artifacts and scenario bindings validate",
+    "leakage": "zero target-label, row-scope, chronology, role, and seed-pairing violations",
+    "uniform_average": "nontrivial directional improvement without numeric threshold preselected from results",
+    "worst_contract": "lower worst-contract regret on both fraud datasets or GO is denied",
+    "catastrophic_degradation": "no preregistered primary metric direction reversal of practical concern on either dataset",
+    "resource_masks": "exact zero unavailable mass and explicit all-unavailable abstention",
+    "abstention": "finite selective risk at nonzero useful coverage",
+    "seed_stability": "direction not driven by one seed",
+    "oracle_features": "no deployable input may require target labels"
+  },
+  "numeric_effect_thresholds": "DEFERRED_PENDING_SOURCE_ONLY_JUSTIFICATION_NOT_TARGET_RESULTS",
+  "target_labels_unlock": "AFTER_ROUTER_AND_THRESHOLDS_ARE_FROZEN_FOR_OFFLINE_EVALUATION_ONLY"
+}

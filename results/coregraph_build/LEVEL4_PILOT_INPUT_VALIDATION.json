@@ -1,0 +1,13 @@
+{
+  "archives": 6,
+  "base_artifacts": 180,
+  "bindings": 540,
+  "failures": [],
+  "members": 180,
+  "pilot_executed": false,
+  "scenarios": 60,
+  "schema": "coregraph_level4_pilot_input_validation_v1",
+  "status": "READY_FOR_SAVED_OUTPUT_PILOT",
+  "target_metrics_computed": 0,
+  "target_oracles_computed": 0
+}
