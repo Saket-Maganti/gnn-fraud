@@ -66,7 +66,7 @@
         ],
         "returncode": 0,
         "stderr_tail": "",
-        "stdout_tail": "{\"failures\": [], \"outputs\": {\"main\": {\"blocked_tokens_present\": false, \"bytes\": 422875, \"identity_or_private_path\": false, \"overfull_boxes\": 0, \"pages\": 14, \"path\": \"paper_iclr/main.pdf\", \"sha256\": \"f2012089d33c8327d113202f3cd0d1ddd2173cd4d83cbc9397c8df7959fc66a4\", \"type3_fonts\": 0, \"undefined_references_or_citations\": 0}, \"supplement\": {\"blocked_tokens_present\": false, \"bytes\": 313295, \"identity_or_private_path\": false, \"overfull_boxes\": 0, \"pages\": 5, \"path\": \"paper_iclr/supplement.pdf\", \"sha256\": \"af1e5023838d73c6e7c361cc85c4931be234d5a5ceda331393f6c59bad95c8a5\", \"type3_fonts\": 0, \"undefined_references_or_citations\": 0}}, \"status\": \"PASS_RESULTS_BLOCKED\"}\n"
+        "stdout_tail": "{\"failures\": [], \"outputs\": {\"main\": {\"blocked_tokens_present\": false, \"bytes\": 422875, \"identity_or_private_path\": false, \"overfull_boxes\": 0, \"pages\": 14, \"path\": \"paper_iclr/main.pdf\", \"sha256\": \"ee8584e6d8b95441d6119b0fd3b55f225850aa2589fa0723bd0e3e38564f6e65\", \"type3_fonts\": 0, \"undefined_references_or_citations\": 0}, \"supplement\": {\"blocked_tokens_present\": false, \"bytes\": 313295, \"identity_or_private_path\": false, \"overfull_boxes\": 0, \"pages\": 5, \"path\": \"paper_iclr/supplement.pdf\", \"sha256\": \"b774f20df686aec64c64d24b030b7eb712077169a9ab1d29a76d78b446e30fe0\", \"type3_fonts\": 0, \"undefined_references_or_citations\": 0}}, \"status\": \"PASS_RESULTS_BLOCKED\"}\n"
       }
     ],
     "target_metrics_computed": 0,

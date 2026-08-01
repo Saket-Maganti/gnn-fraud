@@ -16,7 +16,7 @@ PYTESTS = \
 	coregraph-v5-pilot-synthetic-smoke coregraph-v5-pilot-readiness \
 	coregraph-v5-pilot-package
 
-COREGRAPH_V5_EVIDENCE_CACHE ?= /Users/saketmaganti/Projects/gnn-fraud/gnn-fraud-local-evidence-cache
+COREGRAPH_V5_EVIDENCE_CACHE ?= $(abspath $(CURDIR)/../gnn-fraud-local-evidence-cache)
 COREGRAPH_V5_OUTPUT_ROOT ?= /tmp/coregraph-v5-pilot-readiness
 
 help:
