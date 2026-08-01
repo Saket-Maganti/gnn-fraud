@@ -1,4 +1,4 @@
-"""Typed evidence, claims, and conservative support evaluation."""
+"""Typed evidence, claims, and conservative support evaluation primitives."""
 
 from __future__ import annotations
 
