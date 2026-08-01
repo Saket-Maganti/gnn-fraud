@@ -1,6 +1,6 @@
 # V5 executor final command log
 
-Status: `VALIDATION_AND_CLEANROOM_COMPLETE_PUBLISH_PENDING`
+Status: `COMPLETE_REAL_PILOT_UNEXECUTED`
 
 The detailed chronological record is
 `V5_EXECUTOR_CLOSURE_COMMAND_LOG.md`. Terminal gate summary:
@@ -27,7 +27,12 @@ The detailed chronological record is
 | Frozen TKDE boundary | PASS: 249 protected files unchanged |
 | Anonymous release checksums/public-tree audit | PASS |
 | Fresh offline clean-room validation | PASS: 21 tests, paper rebuild, zero private-path hits |
+| Normal branch push | PASS |
+| Exact-tip GitHub CI | PASS: two audit jobs and two typed-core jobs |
+| Pull request state | OPEN, DRAFT, UNMERGED |
 | Real saved-output pilot | NOT RUN |
 
-The release/cleanroom and exact pushed-tip CI results are appended only after
-those commands complete.
+The final provenance-only update changes only dynamic handoff files that are
+excluded from the anonymous and Level-4 release payloads. Its exact pushed tip
+was revalidated by GitHub CI. Executing the real saved-output pilot remains a
+separate action that requires new authorization.
