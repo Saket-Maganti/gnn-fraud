@@ -1,0 +1,16 @@
+{
+  "cleanroom_status": "PASS",
+  "evidence_archives_verified": 6,
+  "evidence_members_verified": 180,
+  "failures": [],
+  "frozen_tkde": "ZERO_TKDE_SCIENTIFIC_DELTAS (249 files)",
+  "heavy_real_data_runs": 0,
+  "kaggle_jobs_launched": 0,
+  "kaggle_runbooks_validated": 9,
+  "official_baseline_repositories_installed": 0,
+  "overlap_audit": "PASS",
+  "schema": "coregraph_level4_release_validation_v1",
+  "status": "PASS",
+  "target_metrics_computed": 0,
+  "target_oracles_computed": 0
+}

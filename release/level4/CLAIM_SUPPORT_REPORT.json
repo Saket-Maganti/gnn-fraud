@@ -1,0 +1,80 @@
+{
+  "claim_count": 8,
+  "claims": [
+    {
+      "claim_id": "L4-T1",
+      "claim_type": "theory",
+      "current_status": "PROVED_INTERNAL_REVIEW_PENDING",
+      "paper_location": "section.5",
+      "permitted_wording": "Under the stated affine-risk assumptions a fixed mixture has positive minimax regret",
+      "required_evidence": "fixed-mixture proof and executable check"
+    },
+    {
+      "claim_id": "L4-T2",
+      "claim_type": "theory",
+      "current_status": "PROVED_INTERNAL_REVIEW_PENDING",
+      "paper_location": "section.5",
+      "permitted_wording": "Under bounded additive-axis assumptions the unseen-combination excess risk is bounded",
+      "required_evidence": "compositional proof and XOR counterexample"
+    },
+    {
+      "claim_id": "L4-T3",
+      "claim_type": "theory",
+      "current_status": "PROVED_AND_REVIEWED",
+      "paper_location": "section.5",
+      "permitted_wording": "Unavailable experts receive zero mass and an empty set is explicit",
+      "required_evidence": "resource-mask algebra and tests"
+    },
+    {
+      "claim_id": "L4-T4",
+      "claim_type": "theory",
+      "current_status": "PROVED_INTERNAL_REVIEW_PENDING",
+      "paper_location": "section.5",
+      "permitted_wording": "Under density-ratio and coverage assumptions target selective risk is bounded",
+      "required_evidence": "selective transfer proof"
+    },
+    {
+      "claim_id": "L4-E1",
+      "claim_type": "empirical",
+      "current_status": "BLOCKED_PENDING_RESULTS",
+      "paper_location": "section.8",
+      "permitted_wording": "No comparative wording permitted",
+      "required_evidence": "fraud unseen-combination cells and paired inference"
+    },
+    {
+      "claim_id": "L4-E2",
+      "claim_type": "empirical",
+      "current_status": "BLOCKED_PENDING_RESULTS",
+      "paper_location": "section.8",
+      "permitted_wording": "No comparative wording permitted",
+      "required_evidence": "diagnostic and routing ablations"
+    },
+    {
+      "claim_id": "L4-E3",
+      "claim_type": "empirical",
+      "current_status": "BLOCKED_RESOURCE_UNMEASURED",
+      "paper_location": "section.10",
+      "permitted_wording": "No latency memory or utility wording permitted",
+      "required_evidence": "resource measurements and counterfactuals"
+    },
+    {
+      "claim_id": "L4-E4",
+      "claim_type": "empirical",
+      "current_status": "BLOCKED_OFFICIAL_BASELINE_INTEGRATION",
+      "paper_location": "supplement",
+      "permitted_wording": "Official status may be described but no performance comparison",
+      "required_evidence": "official graph-MoE and graph-OOD parity"
+    }
+  ],
+  "empirical_claims_populated": 0,
+  "numerical_results_fabricated": 0,
+  "schema": "coregraph_level4_claim_support_report_v1",
+  "status": "PASS_CLAIMS_TYPED_AND_EMPIRICAL_BLOCKED",
+  "status_counts": {
+    "BLOCKED_OFFICIAL_BASELINE_INTEGRATION": 1,
+    "BLOCKED_PENDING_RESULTS": 2,
+    "BLOCKED_RESOURCE_UNMEASURED": 1,
+    "PROVED_AND_REVIEWED": 1,
+    "PROVED_INTERNAL_REVIEW_PENDING": 3
+  }
+}
