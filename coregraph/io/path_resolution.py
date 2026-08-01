@@ -5,12 +5,7 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Mapping
-
-try:  # Python 3.11+
-    import tomllib
-except ModuleNotFoundError:  # pragma: no cover - Python 3.10 compatibility
-    import tomli as tomllib  # type: ignore[no-redef]
+from typing import Any, Mapping
 
 
 ENVIRONMENT_KEYS = {
@@ -24,6 +19,24 @@ ENVIRONMENT_KEYS = {
 
 class PathResolutionError(RuntimeError):
     """Raised when a configured authority is missing or structurally invalid."""
+
+
+def _toml_module() -> Any:
+    """Resolve the TOML reader lazily so config-free imports stay dependency-light."""
+
+    try:  # Python 3.11+
+        import tomllib
+
+        return tomllib
+    except ModuleNotFoundError:  # pragma: no cover - Python 3.10 compatibility
+        try:
+            import tomli
+
+            return tomli
+        except ModuleNotFoundError as exc:
+            raise PathResolutionError(
+                "reading local_paths.toml on Python 3.10 requires the tomli package"
+            ) from exc
 
 
 @dataclass(frozen=True)
@@ -82,6 +95,7 @@ def discover_repo_root(start: Path | None = None) -> Path:
 def _read_local_config(path: Path) -> dict[str, str]:
     if not path.exists():
         return {}
+    tomllib = _toml_module()
     try:
         with path.open("rb") as handle:
             payload = tomllib.load(handle)

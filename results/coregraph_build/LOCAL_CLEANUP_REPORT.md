@@ -2,10 +2,10 @@
 
 Status: `PASS_CONSERVATIVE_RECOVERABLE_CLEANUP_COMPLETE`.
 
-Workspace bytes removed: **39171198** across **414** reproducible files.
+Workspace bytes removed: **41378091** across **424** reproducible files.
 Targets were moved to macOS Trash and remain recoverable. The count is the
 exact sum of logical file sizes across the main cleanup and the successive
-CI-fix paper/Ruff scratch cleanups. It excludes the earlier temporary
+CI-fix validation scratch cleanups. It excludes the earlier temporary
 independent-clone workspace, which was also moved to Trash.
 
 Removed targets were limited to `.pytest_cache`, `.mypy_cache`, `.ruff_cache`,

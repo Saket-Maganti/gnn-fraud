@@ -71,7 +71,7 @@ permanently extracted.
   no numerical result was invented.
 - Overlap firewall: `PASS` with zero common eight-grams, zero
   exact long sentences, and zero byte-identical visual assets.
-- Cleanup: 39,171,198 reproducible workspace bytes removed; no evidence,
+- Cleanup: 41,378,091 reproducible workspace bytes removed; no evidence,
   report, environment, historical folder, or user-owned file was deleted.
 
 ## Explicit execution boundary
