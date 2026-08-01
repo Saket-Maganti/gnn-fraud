@@ -1,0 +1,28 @@
+\documentclass{article}
+\IfFileExists{iclr2027_conference.sty}{\usepackage{iclr2027_conference}}{\usepackage[margin=0.82in]{geometry}}
+\usepackage{amsmath,amssymb,amsthm,booktabs,graphicx,hyperref,microtype,xcolor,array,tabularx}
+\graphicspath{{figures/}}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newcommand{\PendingCell}{\textcolor{red!75!black}{\texttt{PENDING}}}
+\newcommand{\ResultPending}[1]{\textcolor{red!75!black}{\texttt{RESULT\_PENDING[#1]}}}
+% Use a vector Computer Modern glyph for first-level list markers.  The
+% default text bullet can become a Type 3 bitmap under the fallback article
+% build, which is unsuitable for an archival manuscript.
+\renewcommand{\labelitemi}{\ensuremath{-}}
+\setlength{\emergencystretch}{2em}
+\title{Supplement: CoReGraph under Compositional Deployment Contracts}
+\author{Anonymous Authors}
+\begin{document}
+\maketitle
+\noindent\textbf{Status: RESULTS\_BLOCKED.} This supplement contains proofs, implementation and benchmark details, the frozen statistical plan, empty result templates, reproducibility information, and a checklist. It contains no real Level-4 metric.
+\input{supplement/proofs}
+\input{supplement/implementation_details}
+\input{supplement/benchmark_details}
+\input{supplement/statistical_plan}
+\input{supplement/additional_results}
+\input{supplement/reproducibility}
+\input{supplement/checklist}
+\bibliographystyle{plain}
+\bibliography{references}
+\end{document}

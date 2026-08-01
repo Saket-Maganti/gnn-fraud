@@ -103,8 +103,9 @@ def main() -> int:
         overfull = len(re.findall(r"Overfull \\hbox", log_text))
         undefined = len(re.findall(r"(?:Citation|Reference).*undefined", log_text))
         private_roots = "/" + r"(?:Users|Volumes)/"
+        private_identity = r"Saket\s+Maganti|saket" + "maganti"
         identity = bool(
-            re.search(r"Saket\s+Maganti|saketmaganti|" + private_roots, extracted, re.I)
+            re.search(private_identity + "|" + private_roots, extracted, re.I)
         )
         type3 = _type3_fonts(pdf)
         outputs[stem] = {

@@ -1,0 +1,9 @@
+\section{Reproducibility and release}
+
+\input{tables/reproducibility_checklist}
+
+Every future run emits code SHA, canonical configuration and hash, data/archive/member hashes, environment, prediction hash, resource measurement, validation, completeness, exclusion reason, and claim linkage. Coordinates are resumable only after hash equivalence. The full matrix is frozen as plan rows with unknown runtime and memory rather than fabricated estimates.
+
+Source snapshots exclude Git metadata, environments, caches, data, predictions, checkpoints, private paths, logs, and LaTeX intermediates. The clean-room test extracts a snapshot, installs or selects a fresh environment, runs tiny gates, builds both PDFs, scans for private path/identity, validates release checksums, and verifies the frozen inherited boundary. Data or outputs with unresolved licences are not published.
+
+The evidence cache is outside Git. All six canonical archives, 180 prediction-member identities and hashes, schemas, coordinates, chronology, label-known semantics, 60 cross-expert alignment groups, and 20 cross-protocol dataset-seed row scopes pass through streaming audits without permanent extraction or SSD access. This closes pilot-input integrity, not empirical evaluation: no pilot metric or oracle has been computed.
