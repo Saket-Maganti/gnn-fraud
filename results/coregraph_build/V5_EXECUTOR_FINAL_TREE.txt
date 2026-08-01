@@ -1271,7 +1271,6 @@ results/tkde_visual_rebuild/TKDE_PUBLICATION_DESIGN_SYSTEM.md
 results/tkde_visual_rebuild/VISUAL_OBJECT_INVENTORY.csv
 results/tkde_visual_rebuild/VISUAL_OBJECT_INVENTORY.md
 results/tkde_visual_rebuild/audits/PDF_LAYOUT_AUDIT.md
-results/tkde_visual_rebuild/audits/SCIENTIFIC_DELTA_GATE.json
 results/tkde_visual_rebuild/audits/SCIENTIFIC_DELTA_GATE.md
 results/tkde_visual_rebuild/audits/TABLE_READABILITY_AUDIT.md
 results/tkde_visual_rebuild/figure_data/fig01_deployment_contract.csv
