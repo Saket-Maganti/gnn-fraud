@@ -1,0 +1,18 @@
+{
+  "schema": "coregraph_v5_pilot_gate_spec_v2",
+  "metric_schema_version": "coregraph_v5_metric_schema_v2",
+  "paired_unit": "dataset_target_protocol_provider_seed",
+  "primary_metric": "contract_regret_vs_feasible_row_oracle",
+  "primary_oracle": "row_wise_feasible_hindsight_oracle_including_abstention",
+  "diagnostic_fixed_comparator": "best_fixed_nonabstaining_expert_brier",
+  "global_ranking_metric": "global_target_auprc",
+  "comparisons": [
+    "uniform_average",
+    "best_fixed_expert",
+    "source_logistic_gate"
+  ],
+  "minimum_contract_regret_improvement": 0.001,
+  "average_global_target_auprc_harm_floor": -0.002,
+  "missing_or_mixed_coordinate_outcome": "INCONCLUSIVE",
+  "regret_numeric_tolerance": -1e-12
+}

@@ -24,15 +24,16 @@ honestly named
 The latter is not a full GraphSafe comparator: it remains a descriptive
 compatibility component and is excluded from strong-baseline win requirements
 and headline Holm families. Pending or unlicensed official code is excluded
-rather than approximated under its name. The contract-level feasible oracle
-defines headline Brier regret; the instance-clairvoyant oracle is diagnostic
-only.
+rather than approximated under its name. For V5, a row-wise feasible hindsight
+oracle over expert predictions plus the frozen-cost abstention action defines
+the matched-action primary regret; the best fixed feasible non-abstaining
+expert is diagnostic only.
 Ablations remove factorised contracts, regret, budget, resource masks,
 stability, abstention, or diagnostics.
 
 \paragraph{Outcomes and inference.}
-Primary outcomes are AUPRC, Recall@0.5\%, Recall@1\%, Recall@2\%,
-budget-curve area, mean, maximum, and CVaR Brier contract regret, selective
+Primary outcomes include global target AUPRC, frozen-fraction recall,
+budget-curve area, mean, maximum, and CVaR matched-action Brier regret, selective
 zero--one risk, abstention cost, and compute. Binary-cross-entropy surrogate
 regret is training terminology and does not enter the headline Brier family.
 Unavailable and resource-blocked predictions do not enter

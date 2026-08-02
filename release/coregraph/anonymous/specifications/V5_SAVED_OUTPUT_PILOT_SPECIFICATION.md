@@ -1,50 +1,63 @@
-# V5 saved-output pilot specification
+# V5 saved-output pilot specification v5.1
 
-Status: `FROZEN_BEFORE_ANY_V5_PILOT_RESULT`
+Status: `FROZEN_BEFORE_ANY_REAL_V5_PILOT_RESULT`
 
-This is the explicit preregistration amendment required because the prior V5 file was a readiness-only manifest and did not define an executable policy, review budget, bounded source assembly, output protocol, or authorization mechanism. No real V5 method was fit, no real target score was produced, and no target metric or oracle was inspected before this amendment.
+This v5.1 preregistration supersedes v5.0 before real pilot execution. The primary regret comparator was corrected before real pilot execution because the previous method and comparator used unequal feasible action spaces. No real V5 method was fit, no real target score, label, metric, or oracle was inspected, and no empirical paper result was populated before this correction.
 
 ## Immutable primary surface
 
 - Datasets, in order: `elliptic`, `dgraphfin`.
 - Target protocols, in order: `strict_inductive`, `isolated_inductive`, `transductive_structure`.
-- Provider prediction seeds: integers 1 through 10, stratified by dataset.
+- Provider prediction seeds: integers 1 through 10.
 - Experts, in order: `feature_mlp`, `gcn`, `graphsage`.
 - Methods, in order: `coregraph`, `uniform_average`, `best_fixed_expert`, `source_logistic_gate`.
 - Primary cells: 60 dataset × held-out-protocol × provider-seed scenarios.
 - Primary coordinates: exactly 240 scenario-method pairs.
-- Review fraction: 0.01.
+- Frozen review fraction: 0.01.
 
-## Artifact and role semantics
+## Artifact, role, and label-access semantics
 
-The 180 immutable prediction members are role-neutral. A scenario assigns six source bindings (two protocols × three experts) and three target bindings (one held-out protocol × three experts). Reuse across scenarios is valid; dual source/target use inside one scenario is invalid. Identity includes dataset, provider seed, protocol, normalized split, and node ID. Provider `val` and `validation` both normalize explicitly to `validation`; unknown split tokens fail closed.
-
-Source assembly admits label-known `train` and `validation` rows only. Target-unlabelled assembly admits label-known `test` score rows but has no label attribute or label-returning API. Provider-unknown rows are excluded. Target labels are opened by a single-use offline evaluator only after the policy, preprocessing, threshold, row-key, and target-score hashes are written to `POLICY_FREEZE_MANIFEST.json`.
+The 180 immutable prediction members are role-neutral. Each scenario assigns six source bindings and three target bindings. Reuse across scenarios is valid; dual source/target use inside one scenario is invalid. Source assembly admits label-known `train` and `validation` rows only. Target-unlabelled assembly admits `test` scores but exposes no labels. A single-use offline evaluator may open target labels only after policy, preprocessing, threshold, target-row, target-score, base-config, effective-config, code, dependency, schema, and preregistration identities are frozen and hashed.
 
 ## Bounded deterministic source assembly
 
-Each source protocol is a separate environment. From each source split/environment, retain the 4,096 rows with the smallest SHA-256 rank of the composite row identity. This is a deterministic, order-independent, bounded sample fixed before real execution. Source train rows fit learned state; source validation rows select hyperparameters, early stopping, the best fixed expert, and abstention thresholds. Target labels never participate.
+Each source protocol is a separate environment. From each source split/environment, retain the 4,096 rows with the smallest SHA-256 rank of the composite row identity. Source train rows fit learned state. Source validation rows select hyperparameters, early stopping, the best fixed expert, and abstention thresholds. Target labels never participate.
 
-## Methods
+## Frozen methods and operational parameters
 
-`coregraph` uses the committed factorised contract encoder and resource-aware CoReRouter with score mean, score standard deviation, score range, confidence, expert disagreement, and normalized relative-cost diagnostics. It uses the committed balanced composite objective weights: average 1.0, ranking 0.1, robust regret 1.0, budget 0.1, stability 0.1, compute 0.1, calibration 0.1, and abstention 0.2; CVaR alpha 0.8; Adam learning rate 0.003; at most 100 steps; deterministic source-validation early stopping; axis dropout 0.05; contract noise 0.0; source-only abstention thresholding; resource masks; and all-unavailable forced abstention.
+`coregraph` uses the committed factorised contract encoder and resource-aware CoReRouter. `uniform_average` weights available experts equally. `best_fixed_expert` uses source-validation environment-balanced Brier risk. `source_logistic_gate` is trained and selected only on source data. All methods respect resource masks and force abstention when no expert is available.
 
-`uniform_average` assigns equal weight to each available expert, zero weight to unavailable experts, and forced abstention when none are available.
+Relative expert costs remain preregistered proxies: feature MLP 1.0, GCN 3.0, and GraphSAGE 4.0. Abstention capacity is 0.10 and abstention cost is 0.20. The canonical first pilot uses one worker, float32 target scores, strict deterministic algorithms, verified ZIP-member streaming without permanent extraction, stable SHA-256 source sampling, and bounded label-blind target inference.
 
-`best_fixed_expert` minimizes mean environment-balanced Brier risk on source validation. Ties use the frozen expert order. Resource infeasibility is respected.
+## Corrected primary regret and oracle scope
 
-`source_logistic_gate` predicts the source per-row lowest-error feasible expert from the three expert probabilities and their row-wise standard deviation. Standardization is fit on source train only. Logistic `C` is selected from `[0.1, 1.0, 10.0]` on mean source-validation Brier risk, ties choosing the smaller `C`; maximum iterations 1,000; deterministic random state derived separately from the provider seed. Target protocol identity is not a feature.
+For target row \(i\), feasible expert \(e\), label \(y_i\), expert score \(p_{i,e}\), and frozen abstention cost \(c_{\mathrm{abs}}\):
 
-Relative expert costs are preregistered proxies, not measured runtime: feature MLP 1.0, GCN 3.0, GraphSAGE 4.0. The canonical primary resource profile makes all three experts available. Abstention capacity is 0.10 and abstention cost is 0.20. These proxy values must not be reported as measured resources.
+```text
+expert_loss(i,e) = (y_i - p_i,e)^2
+feasible_row_oracle_loss(i) = min(c_abs, min over feasible e of expert_loss(i,e))
+method_loss(i) = c_abs if the method abstains, otherwise (y_i - p_i)^2
+contract_regret_vs_feasible_row_oracle = mean(method_loss - feasible_row_oracle_loss)
+```
 
-## Offline evaluation and gate
+The primary oracle is the row-wise feasible hindsight oracle including abstention. It uses the same feasible expert-or-abstain action space as the deployed method. Unavailable experts never enter it; an all-experts-unavailable row uses abstention. Primary regret must be nonnegative under exact arithmetic. Values below `-1e-12` fail closed; values within tolerance are normalized to zero.
 
-Offline evaluation computes AUPRC, recall at the frozen 1% review fraction, selective risk, coverage, Brier risk, contract regret relative to the best whole-contract feasible expert, and relative-compute summaries. The best feasible expert and any instance oracle are non-deployable offline diagnostics and cannot influence fitting, hyperparameters, thresholds, early stopping, or method selection.
+The secondary diagnostic is the best fixed feasible non-abstaining expert over the whole contract. It is reported only as `best_fixed_nonabstaining_expert_brier` and `excess_cost_vs_best_fixed_nonabstaining_expert`; it is not the primary regret comparator or gate statistic.
 
-Methods pair only within exact dataset × held-out target protocol × provider seed cells. Missing, failed, stale, duplicated, resource-infeasible, mixed-preregistration, or malformed cells remain nonnumeric and force `INCONCLUSIVE`. The gate compares CoReGraph with each of the other three methods. The frozen minimum worst-cell contract-regret improvement is 0.001 and the allowed mean AUPRC harm floor is -0.002. A complete family that passes all three comparisons returns `GO`; a complete family that fails any frozen effect condition returns `NO_GO`.
+## Metric schema and gate
 
-## Determinism, output, and authorization
+The frozen metric schema is `coregraph_v5_metric_schema_v2`. It reports `global_target_auprc` over all target rows, `recall_at_frozen_review_fraction` with the exact fraction recorded, `selective_risk`, `coverage`, `contract_brier_risk`, `feasible_row_oracle_loss_with_abstention`, `contract_regret_vs_feasible_row_oracle`, the separate best-fixed diagnostics, relative compute, and boolean `resource_feasible`. No selective AUPRC is introduced.
 
-Provider prediction seed, router/model seed, data-order seed, bootstrap seed, and notebook shard are distinct manifest fields. Strict deterministic mode is required. Outputs use float32 scores, compressed NPZ, atomic JSON/checkpoint writes, SHA-256 manifests, and identity-gated resume. A complete coordinate is reusable only when code, config, preregistration, evidence, scenario, dependency-lock, method, output-schema, and file hashes match.
+Methods pair only within exact dataset × target protocol × provider seed cells. Missing, failed, stale, duplicated, mixed-schema, mixed-preregistration, mixed-effective-config, or malformed cells force `INCONCLUSIVE`. The gate compares CoReGraph with each baseline using the corrected primary regret and global target AUPRC. The frozen minimum worst-cell regret improvement is 0.001 and the allowed mean global-AUPRC harm floor is -0.002.
 
-Real execution requires a clean Git tree plus the exact token `AUTHORIZE_COREGRAPH_V5_PILOT_RUN`. Plan, validation, dry-run, and synthetic execution never satisfy or bypass that guard. The real pilot is not executed during executor closure.
+## Effective execution identity and resume
+
+Every coordinate binds a canonical `coregraph_v5_effective_execution_config_v1` hash covering the base config, preregistration, configured and effective chunk rows, one-worker policy, real/synthetic mode, dtype, deterministic algorithms, output and metric schemas, method registry, archive streaming, source sampling, target inference, dependency lock, and code SHA. A change to any bound field invalidates coordinate identity, checkpoint reuse, policy freeze, evaluation, completion, package eligibility, and gate aggregation.
+
+## Exact package closure
+
+Packaging compares the exact coordinate keys in `PILOT_PLAN.csv`, `RUN_MANIFEST.json`, method directories, checkpoints, evaluations, and `COMPLETE` identities. Counts alone are insufficient. Missing, extra, duplicated, stale, mixed, failed, or partial coordinates fail. Every coordinate's identities and file checksums are validated. The package is validated before ZIP creation, checked by ZIP CRC, extracted to a temporary directory, checksum-verified, and validated again before the temporary extraction is deleted.
+
+## Authorization
+
+Authoritative real execution has no dirty-tree bypass and requires a clean tree, compatible safe output root, sufficient disk, one worker, exact remote/local provenance checks by the operator, and token `AUTHORIZE_COREGRAPH_V5_PILOT_RUN`. Plan, validate-only, packaging, and synthetic execution cannot satisfy or bypass this guard. The real pilot remains unexecuted during this repair.

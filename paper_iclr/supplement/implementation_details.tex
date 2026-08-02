@@ -6,7 +6,7 @@ The hierarchical router uses a two-layer contract head and two-layer instance-co
 
 Diagnostics are modular declarations. Source calibration fits only source validation; feature drift fits source-train moments; graph statistics use only the admissible visible graph. Missing values carry masks and confidence rather than silent zeros. The optional latent discovery head cannot be constructed unless an experimental flag is set.
 
-Objective terms are normalized as source group means. The feasible oracle is computed after expert losses are aggregated per contract. CVaR averages the worst empirical contract tail. Review surrogates are computed within constrained source groups. Resource records distinguish measured, estimated, and unknown quantities. Run manifests are created before execution and existing coordinates are skipped only after hash validation.
+Objective terms are source group means. After policy freeze, V5 target regret uses a row-wise feasible expert-or-abstain oracle; the best fixed non-abstaining expert is diagnostic. CVaR uses the corrected regret tail. Review surrogates remain source-group local. Manifests bind effective execution; resume and packaging require exact identities and checksums.
 
 \begin{figure}[t]
   \centering

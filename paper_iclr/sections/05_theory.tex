@@ -2,13 +2,13 @@
 
 The results below explain when contract conditioning is necessary and when factorisation can extrapolate. They do not establish empirical performance. Full proofs, counterexamples, and status labels appear in the supplement.
 
-\begin{theorem}[Fixed-mixture impossibility]
-Suppose two experts have risks \((0,\delta_1)\) on one contract and \((\delta_2,0)\) on another, with \(\delta_1,\delta_2>0\), and randomized selection risk is affine in mixture mass. Every contract-independent mixture has worst-contract regret at least \(\delta_1\delta_2/(\delta_1+\delta_2)>0\); a contract-aware selector has zero regret.
+\begin{theorem}[Fixed-mixture excess-risk impossibility]
+Suppose two experts have risks \((0,\delta_1)\) on one contract and \((\delta_2,0)\) on another, with \(\delta_1,\delta_2>0\), and randomized selection risk is affine in mixture mass. Every contract-independent mixture has worst-contract excess risk relative to the best contract-specific expert of at least \(\delta_1\delta_2/(\delta_1+\delta_2)>0\); a contract-aware selector has zero excess risk.
 \end{theorem}
 The two regrets are \((1-w)\delta_1\) and \(w\delta_2\); equalizing them gives the minimax value. The conclusion extends to resource-specific feasible sets only if their feasible optima still reverse. It need not hold for nonlinear prediction averaging without additional assumptions.
 
-\begin{proposition}[Regret decomposition]
-Insert intermediate policies that successively replace true contract representation, diagnostics, router, resource set, budget, abstention decision, and population risk with their deployed estimates. The resulting telescoping identity and triangle inequality bound regret by the sum of representation, diagnostic, routing, resource, budget, abstention, and finite-sample terms.
+\begin{proposition}[Matched-action regret decomposition]
+Insert intermediate policies that successively replace true contract representation, diagnostics, router, resource set, budget, abstention decision, and population risk with their deployed estimates while retaining the same feasible expert-or-abstain action set. The resulting telescoping identity and triangle inequality bound regret by the sum of representation, diagnostic, routing, resource, budget, abstention, and finite-sample terms.
 \end{proposition}
 Some terms are source-estimable or offline counterfactual; representation error may be theoretical. The decomposition is bookkeeping, not an assertion that every component is causally identifiable.
 

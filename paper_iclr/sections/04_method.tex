@@ -62,7 +62,7 @@ For source contract groups, the configurable objective is
 \lambda_1\mathcal L_{\mathrm{sparsity}}+\lambda_c\mathcal L_{\mathrm{compute}}.
 \end{aligned}
 \]
-Task, regret, and CVaR terms use source labels; deployment never does. Contract regret compares to one feasible expert after whole-contract risk aggregation. Budget surrogates are group-local and do not claim exact optimization of discontinuous Recall@\(K\). Coefficients and source-validation thresholds are frozen before any target result is unlocked.
+Task and CVaR surrogates use source labels; deployment never does. They are distinct from the frozen V5 target metric, whose row-wise feasible hindsight oracle includes the same abstention action available to the method. Budget surrogates are group-local and do not claim exact optimization of discontinuous Recall@\(K\). Coefficients and source-validation thresholds are frozen before any target result is unlocked.
 
 The abstention head predicts rejection from contract and label-free diagnostics. Source validation selects a threshold subject to a coverage/abstention capacity, then target inference applies the frozen decision. Forced all-unavailable abstention overrides it. Threshold perturbations are included in stability analysis.
 

@@ -91,6 +91,7 @@ CORE_PREFIXES = (
     "results/coregraph_build/",
     "runbooks/coregraph/",
     "scripts/coregraph/",
+    "specifications/",
     "tests/coregraph/",
     "theory/coregraph_level4/",
     "utils/",
@@ -117,6 +118,9 @@ DYNAMIC_HANDOFF_FILES = {
     "results/coregraph_build/V5_EXECUTOR_FINAL_COMMAND_LOG.md",
     "results/coregraph_build/V5_EXECUTOR_FINAL_GATE_STATUS.json",
     "results/coregraph_build/V5_EXECUTOR_FINAL_TREE.txt",
+    "results/coregraph_build/V5_FINAL_REPAIR_COMMAND_LOG.md",
+    "results/coregraph_build/V5_FINAL_REPAIR_GATE_STATUS.json",
+    "results/coregraph_build/V5_FINAL_REPAIR_FINAL_TREE.txt",
 }
 
 
