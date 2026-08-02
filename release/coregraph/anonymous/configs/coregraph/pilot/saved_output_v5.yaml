@@ -1,7 +1,7 @@
-schema_version: coregraph_saved_output_pilot_config_v5.1
-pilot_specification_version: coregraph_saved_output_pilot_v5.1
-preregistration_path: specifications/V5_SAVED_OUTPUT_PILOT_SPECIFICATION.md
-preregistration_sha256: 931cd9f39cec9f0d28a68f6a8c13ad3628ccc155797e0c8276b9e3f75c63b487
+schema_version: coregraph_saved_output_pilot_config_v5.2
+pilot_specification_version: coregraph_saved_output_pilot_v5.2
+preregistration_path: specifications/V5_2_PREREGISTRATION_AMENDMENT.md
+preregistration_sha256: 6d7ff43a5490cc7f20730817800d511a38b47817123cd73fb9abc14fe35710b9
 base_artifact_registry: specifications/V5_BASE_ARTIFACTS.csv
 scenario_registry: specifications/V5_SCENARIOS.csv
 binding_registry: specifications/V5_BINDINGS.csv
@@ -78,17 +78,25 @@ streaming:
   chunk_rows: 50000
   source_rows_per_split_per_environment: 4096
   max_workers: 1
-  target_score_dtype: float32
+  target_score_dtype: float64
   archive_extraction: forbidden
+numerics:
+  implementation_version: coregraph_v5_2_float64_simplex_v1
+  scientific_compute_dtype: float64
+  stored_score_dtype: float64
+  stored_weight_dtype: float64
+  weight_negative_tolerance: 1.0e-12
+  simplex_tolerance: 1.0e-12
+  hull_projection_tolerance: 1.0e-12
 metric_schema_version: coregraph_v5_metric_schema_v2
 output_schemas:
-  run_manifest: coregraph_v5_pilot_run_manifest_v2
-  scenario_manifest: coregraph_v5_pilot_scenario_manifest_v2
-  policy_freeze: coregraph_v5_policy_freeze_manifest_v2
-  method_result: coregraph_v5_pilot_method_result_v2
-  failure: coregraph_v5_pilot_failure_v2
-  aggregate: coregraph_v5_pilot_aggregate_v2
-  gate: coregraph_v5_pilot_gate_v2
+  run_manifest: coregraph_v5_2_pilot_run_manifest_v3
+  scenario_manifest: coregraph_v5_2_pilot_scenario_manifest_v3
+  policy_freeze: coregraph_v5_2_policy_freeze_manifest_v3
+  method_result: coregraph_v5_2_pilot_method_result_v3
+  failure: coregraph_v5_2_pilot_failure_v3
+  aggregate: coregraph_v5_2_pilot_aggregate_v3
+  gate: coregraph_v5_2_pilot_gate_v3
 gate:
   paired_unit: dataset_target_protocol_provider_seed
   primary_metric: contract_regret_vs_feasible_row_oracle

@@ -46,6 +46,7 @@ SPECIFICATION_FILES = (
     "results/coregraph_build/CONTRACT_PROTOCOL_REGISTRY.schema.json",
     "results/coregraph_build/CONTRACT_PROTOCOL_REGISTRY_V4.json",
     "specifications/V5_SAVED_OUTPUT_PILOT_SPECIFICATION.md",
+    "results/coregraph_build/V5_2_PREREGISTRATION_AMENDMENT.md",
     "results/coregraph_build/V5_BASE_ARTIFACTS.csv",
     "results/coregraph_build/V5_SCENARIOS.csv",
     "results/coregraph_build/V5_BINDINGS.csv",

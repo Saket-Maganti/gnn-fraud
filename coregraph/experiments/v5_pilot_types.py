@@ -229,7 +229,8 @@ class TargetUnlabeledBundle:
             "provider_seed": self.provider_seed,
             "row_count": len(self.row_keys),
             "row_key_sha256": stable_sha256(self.row_keys),
-            "score_sha256": stable_sha256(self.scores.astype(np.float32).tolist()),
+            "score_sha256": stable_sha256(self.scores.astype(np.float64).tolist()),
+            "score_dtype": str(self.scores.dtype),
             "target_labels_present": False,
         }
 

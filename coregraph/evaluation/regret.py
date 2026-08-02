@@ -24,8 +24,8 @@ def feasible_row_oracle_brier_with_abstention(
 ) -> np.ndarray:
     """Return the matched-action row oracle over feasible experts and abstention."""
 
-    y = np.asarray(labels, dtype=float).reshape(-1)
-    scores = np.asarray(expert_scores, dtype=float)
+    y = np.asarray(labels, dtype=np.float64).reshape(-1)
+    scores = np.asarray(expert_scores, dtype=np.float64)
     feasible = np.asarray(availability, dtype=bool)
     if scores.ndim != 2 or scores.shape != feasible.shape:
         raise ValueError("expert scores and availability must be aligned matrices")
@@ -54,10 +54,10 @@ def v5_matched_action_brier_metrics(
 ) -> dict[str, float | None]:
     """Compute V5 primary regret and the separate best-fixed diagnostic."""
 
-    y = np.asarray(labels, dtype=float).reshape(-1)
-    scores = np.asarray(method_scores, dtype=float).reshape(-1)
+    y = np.asarray(labels, dtype=np.float64).reshape(-1)
+    scores = np.asarray(method_scores, dtype=np.float64).reshape(-1)
     abstains = np.asarray(method_abstains, dtype=bool).reshape(-1)
-    experts = np.asarray(expert_scores, dtype=float)
+    experts = np.asarray(expert_scores, dtype=np.float64)
     feasible = np.asarray(availability, dtype=bool)
     if len(y) == 0:
         raise ValueError("cannot evaluate an empty target")
@@ -79,7 +79,8 @@ def v5_matched_action_brier_metrics(
             "contract regret below the frozen numeric tolerance: "
             f"minimum_row_regret={minimum}, tolerance={tolerance}"
         )
-    primary_regret = max(0.0, float(np.mean(row_regret)))
+    canonical_row_regret = np.maximum(row_regret, 0.0)
+    primary_regret = float(np.mean(canonical_row_regret, dtype=np.float64))
     fixed_feasible = feasible.all(axis=0)
     if fixed_feasible.any():
         fixed_risks = np.mean((experts - y[:, None]) ** 2, axis=0)
@@ -94,6 +95,9 @@ def v5_matched_action_brier_metrics(
         "contract_regret_vs_feasible_row_oracle": primary_regret,
         "best_fixed_nonabstaining_expert_brier": best_fixed,
         "excess_cost_vs_best_fixed_nonabstaining_expert": excess_fixed,
+        "minimum_raw_row_regret": minimum,
+        "rows_with_raw_regret_below_zero": int(np.sum(row_regret < 0.0)),
+        "rows_with_raw_regret_below_tolerance": int(np.sum(row_regret < tolerance)),
     }
 
 

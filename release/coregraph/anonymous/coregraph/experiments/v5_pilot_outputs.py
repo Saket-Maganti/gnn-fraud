@@ -20,11 +20,25 @@ from coregraph.experiments.v5_pilot_types import (
     PilotCoordinate,
     PilotStage,
 )
+from coregraph.experiments.v5_numerics import (
+    HULL_PROJECTION_TOLERANCE,
+    NUMERICAL_IMPLEMENTATION_VERSION,
+    SCIENTIFIC_COMPUTE_DTYPE,
+    SIMPLEX_TOLERANCE,
+    WEIGHT_NEGATIVE_TOLERANCE,
+)
 from coregraph.utils.io import atomic_write_json, sha256_path
 
 
-OUTPUT_SCHEMA_VERSION = "coregraph_v5_pilot_outputs_v2"
-EFFECTIVE_EXECUTION_CONFIG_SCHEMA = "coregraph_v5_effective_execution_config_v1"
+OUTPUT_SCHEMA_VERSION = "coregraph_v5_output_schema_v3"
+EFFECTIVE_EXECUTION_CONFIG_SCHEMA = "coregraph_v5_2_effective_execution_config_v1"
+RUN_MANIFEST_SCHEMA = "coregraph_v5_2_pilot_run_manifest_v3"
+SCENARIO_MANIFEST_SCHEMA = "coregraph_v5_2_pilot_scenario_manifest_v3"
+POLICY_FREEZE_SCHEMA = "coregraph_v5_2_policy_freeze_manifest_v3"
+METHOD_RESULT_SCHEMA = "coregraph_v5_2_pilot_method_result_v3"
+FAILURE_SCHEMA = "coregraph_v5_2_pilot_failure_v3"
+AGGREGATE_SCHEMA = "coregraph_v5_2_pilot_aggregate_v3"
+GATE_SCHEMA = "coregraph_v5_2_pilot_gate_v3"
 
 
 def canonical_hash(payload: Any) -> str:
@@ -50,7 +64,13 @@ def build_effective_execution_config(
     code_sha: str,
     output_schema_version: str = OUTPUT_SCHEMA_VERSION,
     metric_schema_version: str = METRIC_SCHEMA_VERSION,
-    numeric_dtype: str = "float32",
+    numeric_dtype: str = SCIENTIFIC_COMPUTE_DTYPE,
+    stored_score_dtype: str = SCIENTIFIC_COMPUTE_DTYPE,
+    stored_weight_dtype: str = SCIENTIFIC_COMPUTE_DTYPE,
+    numerical_implementation_version: str = NUMERICAL_IMPLEMENTATION_VERSION,
+    weight_negative_tolerance: float = WEIGHT_NEGATIVE_TOLERANCE,
+    simplex_tolerance: float = SIMPLEX_TOLERANCE,
+    hull_projection_tolerance: float = HULL_PROJECTION_TOLERANCE,
     deterministic_algorithms: bool = True,
     archive_streaming_mode: str = "verified_zip_member_stream_no_extraction",
     source_sampling_policy: str = "stable_sha256_rank_per_source_split_environment",
@@ -76,6 +96,12 @@ def build_effective_execution_config(
         "execution_mode": execution_mode,
         "synthetic_fixture": synthetic_fixture,
         "numeric_dtype": numeric_dtype,
+        "stored_score_dtype": stored_score_dtype,
+        "stored_weight_dtype": stored_weight_dtype,
+        "numerical_implementation_version": numerical_implementation_version,
+        "weight_negative_tolerance": weight_negative_tolerance,
+        "simplex_tolerance": simplex_tolerance,
+        "hull_projection_tolerance": hull_projection_tolerance,
         "deterministic_algorithms": deterministic_algorithms,
         "output_schema_version": output_schema_version,
         "metric_schema_version": metric_schema_version,
@@ -291,7 +317,7 @@ def write_failure(
     atomic_write_json(
         failure_path,
         {
-            "schema": "coregraph_v5_pilot_failure_v2",
+            "schema": FAILURE_SCHEMA,
             "coordinate_key": coordinate.key,
             "method": coordinate.method,
             "stage": stage.value,

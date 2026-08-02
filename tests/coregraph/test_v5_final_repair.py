@@ -23,13 +23,20 @@ from coregraph.experiments.v5_package_validator import (
     write_package_validation_artifacts,
 )
 from coregraph.experiments.v5_pilot_outputs import (
+    METHOD_RESULT_SCHEMA,
     OUTPUT_SCHEMA_VERSION,
+    POLICY_FREEZE_SCHEMA,
+    RUN_MANIFEST_SCHEMA,
     atomic_write_csv,
     atomic_write_npz,
     build_effective_execution_config,
     coordinate_identity_hash,
     mark_complete,
     reusable_complete,
+)
+from coregraph.experiments.v5_numerics import (
+    NUMERICAL_IMPLEMENTATION_VERSION,
+    SCIENTIFIC_COMPUTE_DTYPE,
 )
 from coregraph.experiments.v5_pilot_types import (
     METHOD_REGISTRY_VERSION,
@@ -236,7 +243,7 @@ def _build_valid_package(root: Path) -> tuple[Path, PilotCoordinate, dict[str, o
         target_protocol="strict_inductive",
         provider_seed=1,
         method="coregraph",
-        pilot_specification_version="coregraph_saved_output_pilot_v5.1",
+        pilot_specification_version="coregraph_saved_output_pilot_v5.2",
         scenario_id="scenario-1",
         scenario_fingerprint="e" * 64,
         effective_execution_config_sha256=effective_hash,
@@ -259,7 +266,7 @@ def _build_valid_package(root: Path) -> tuple[Path, PilotCoordinate, dict[str, o
         for item in (_artifact(index) for index in range(9))
     }
     run_manifest: dict[str, object] = {
-        "schema": "coregraph_v5_pilot_run_manifest_v2",
+        "schema": RUN_MANIFEST_SCHEMA,
         "repository_sha": CODE_SHA,
         "base_config_sha256": BASE_CONFIG_SHA,
         "effective_execution_config": effective,
@@ -269,6 +276,7 @@ def _build_valid_package(root: Path) -> tuple[Path, PilotCoordinate, dict[str, o
         "output_schema_version": OUTPUT_SCHEMA_VERSION,
         "metric_schema_version": METRIC_SCHEMA_VERSION,
         "method_registry_version": METHOD_REGISTRY_VERSION,
+        "numerical_implementation_version": NUMERICAL_IMPLEMENTATION_VERSION,
         "coordinate_keys": [coordinate.key],
         "coordinate_count": 1,
         "archive_hashes": archive_hashes,
@@ -276,11 +284,16 @@ def _build_valid_package(root: Path) -> tuple[Path, PilotCoordinate, dict[str, o
     atomic_write_json(output / "RUN_MANIFEST.json", run_manifest)
     method_root = output / "scenarios/scenario-1/methods/coregraph"
     atomic_write_json(method_root / "fit_report.json", {"schema": "fixture"})
-    atomic_write_npz(method_root / "target_scores.npz", scores=np.asarray([0.2]))
+    atomic_write_npz(
+        method_root / "target_scores.npz",
+        scores=np.asarray([0.2], dtype=np.float64),
+        routing_weights=np.asarray([[1.0, 0.0, 0.0]], dtype=np.float64),
+        expected_compute=np.asarray([1.0], dtype=np.float64),
+    )
     atomic_write_json(method_root / "route_summary.json", {"coverage": 1.0})
     artifacts = [_artifact(index) for index in range(9)]
     freeze = {
-        "schema": "coregraph_v5_policy_freeze_manifest_v2",
+        "schema": POLICY_FREEZE_SCHEMA,
         "code_sha": CODE_SHA,
         "base_config_sha256": BASE_CONFIG_SHA,
         "effective_execution_config_sha256": effective_hash,
@@ -289,6 +302,7 @@ def _build_valid_package(root: Path) -> tuple[Path, PilotCoordinate, dict[str, o
         "output_schema_version": OUTPUT_SCHEMA_VERSION,
         "metric_schema_version": METRIC_SCHEMA_VERSION,
         "method_registry_version": METHOD_REGISTRY_VERSION,
+        "numerical_implementation_version": NUMERICAL_IMPLEMENTATION_VERSION,
         "source_artifacts": artifacts[:6],
         "target_artifacts": artifacts[6:],
     }
@@ -302,7 +316,7 @@ def _build_valid_package(root: Path) -> tuple[Path, PilotCoordinate, dict[str, o
         effective_execution_config_sha256=effective_hash,
     )
     evaluation = {
-        "schema": "coregraph_v5_pilot_method_result_v2",
+        "schema": METHOD_RESULT_SCHEMA,
         "coordinate": asdict(coordinate),
         "coordinate_key": coordinate.key,
         "identity_hash": identity_hash,
@@ -314,10 +328,14 @@ def _build_valid_package(root: Path) -> tuple[Path, PilotCoordinate, dict[str, o
         "output_schema_version": OUTPUT_SCHEMA_VERSION,
         "metric_schema_version": METRIC_SCHEMA_VERSION,
         "method_registry_version": METHOD_REGISTRY_VERSION,
+        "numerical_implementation_version": NUMERICAL_IMPLEMENTATION_VERSION,
         "metrics": {
             "metric_schema_version": METRIC_SCHEMA_VERSION,
             "global_target_auprc": 0.5,
             "contract_regret_vs_feasible_row_oracle": 0.0,
+            "scientific_compute_dtype": SCIENTIFIC_COMPUTE_DTYPE,
+            "rows_with_raw_regret_below_tolerance": 0,
+            "rows_with_unavailable_nonzero_weight": 0,
         },
         "policy_freeze_sha256": sha256_path(
             method_root / "POLICY_FREEZE_MANIFEST.json"
@@ -374,6 +392,28 @@ def test_exact_package_validator_and_post_extraction_package(tmp_path: Path) -> 
     assert package_report["zip_crc_validation"] == "PASS"
     assert (tmp_path / "run.zip").is_file()
     assert validate_package_root(output)[0]["status"] == "PASS"
+
+
+@pytest.mark.parametrize(
+    "field,expected_failure",
+    [
+        ("scores", "stored_score_dtype_invalid"),
+        ("routing_weights", "stored_weight_dtype_invalid"),
+        ("expected_compute", "stored_compute_dtype_invalid"),
+    ],
+)
+def test_package_rejects_each_float32_scientific_array(
+    tmp_path: Path, field: str, expected_failure: str
+) -> None:
+    output, _, _ = _build_valid_package(tmp_path)
+    path = output / "scenarios/scenario-1/methods/coregraph/target_scores.npz"
+    with np.load(path, allow_pickle=False) as stored:
+        arrays = {name: stored[name].copy() for name in stored.files}
+    arrays[field] = arrays[field].astype(np.float32)
+    atomic_write_npz(path, **arrays)
+    with pytest.raises(PackageValidationError) as raised:
+        validate_package_root(output)
+    assert expected_failure in str(raised.value)
 
 
 def test_package_artifact_writer_rejects_empty_manifest(tmp_path: Path) -> None:
