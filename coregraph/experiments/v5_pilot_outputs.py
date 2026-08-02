@@ -13,11 +13,18 @@ from typing import Any, Mapping, Sequence
 
 import numpy as np
 
-from coregraph.experiments.v5_pilot_types import PilotCheckpoint, PilotCoordinate, PilotStage
+from coregraph.experiments.v5_pilot_types import (
+    METHOD_REGISTRY_VERSION,
+    METRIC_SCHEMA_VERSION,
+    PilotCheckpoint,
+    PilotCoordinate,
+    PilotStage,
+)
 from coregraph.utils.io import atomic_write_json, sha256_path
 
 
-OUTPUT_SCHEMA_VERSION = "coregraph_v5_pilot_outputs_v1"
+OUTPUT_SCHEMA_VERSION = "coregraph_v5_pilot_outputs_v2"
+EFFECTIVE_EXECUTION_CONFIG_SCHEMA = "coregraph_v5_effective_execution_config_v1"
 
 
 def canonical_hash(payload: Any) -> str:
@@ -28,6 +35,59 @@ def canonical_hash(payload: Any) -> str:
         separators=(",", ":"),
     ).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
+
+
+def build_effective_execution_config(
+    *,
+    base_config_sha256: str,
+    preregistration_sha256: str,
+    configured_chunk_rows: int,
+    effective_chunk_rows: int,
+    max_workers: int,
+    execution_mode: str,
+    synthetic_fixture: bool,
+    dependency_lock_sha256: str,
+    code_sha: str,
+    output_schema_version: str = OUTPUT_SCHEMA_VERSION,
+    metric_schema_version: str = METRIC_SCHEMA_VERSION,
+    numeric_dtype: str = "float32",
+    deterministic_algorithms: bool = True,
+    archive_streaming_mode: str = "verified_zip_member_stream_no_extraction",
+    source_sampling_policy: str = "stable_sha256_rank_per_source_split_environment",
+    target_inference_policy: str = "label_blind_bounded_chunked_inference",
+) -> dict[str, Any]:
+    """Return the complete canonical execution configuration and its hash."""
+
+    if configured_chunk_rows < 1 or effective_chunk_rows < 1:
+        raise ValueError("configured and effective chunk rows must be positive")
+    if max_workers < 1:
+        raise ValueError("max_workers must be positive")
+    if execution_mode not in {"real", "synthetic"}:
+        raise ValueError("execution_mode must be real or synthetic")
+    if synthetic_fixture != (execution_mode == "synthetic"):
+        raise ValueError("synthetic_fixture and execution_mode disagree")
+    payload: dict[str, Any] = {
+        "schema": EFFECTIVE_EXECUTION_CONFIG_SCHEMA,
+        "base_config_sha256": base_config_sha256,
+        "preregistration_sha256": preregistration_sha256,
+        "configured_chunk_rows": configured_chunk_rows,
+        "effective_chunk_rows": effective_chunk_rows,
+        "max_workers": max_workers,
+        "execution_mode": execution_mode,
+        "synthetic_fixture": synthetic_fixture,
+        "numeric_dtype": numeric_dtype,
+        "deterministic_algorithms": deterministic_algorithms,
+        "output_schema_version": output_schema_version,
+        "metric_schema_version": metric_schema_version,
+        "method_registry_version": METHOD_REGISTRY_VERSION,
+        "archive_streaming_mode": archive_streaming_mode,
+        "source_sampling_policy": source_sampling_policy,
+        "target_inference_policy": target_inference_policy,
+        "dependency_lock_sha256": dependency_lock_sha256,
+        "code_sha": code_sha,
+    }
+    payload["effective_execution_config_sha256"] = canonical_hash(payload)
+    return payload
 
 
 def atomic_write_text(path: Path, value: str) -> None:
@@ -75,6 +135,8 @@ def coordinate_identity_hash(
     config_sha256: str,
     preregistration_sha256: str,
     dependency_lock_sha256: str,
+    effective_execution_config_sha256: str,
+    metric_schema_version: str = METRIC_SCHEMA_VERSION,
 ) -> str:
     return canonical_hash(
         {
@@ -83,7 +145,10 @@ def coordinate_identity_hash(
             "config_sha256": config_sha256,
             "preregistration_sha256": preregistration_sha256,
             "dependency_lock_sha256": dependency_lock_sha256,
+            "effective_execution_config_sha256": effective_execution_config_sha256,
             "output_schema_version": OUTPUT_SCHEMA_VERSION,
+            "metric_schema_version": metric_schema_version,
+            "method_registry_version": METHOD_REGISTRY_VERSION,
         }
     )
 
@@ -115,6 +180,10 @@ def load_checkpoint(method_root: Path) -> PilotCheckpoint | None:
             identity_hash=str(payload["identity_hash"]),
             stage=PilotStage(payload["stage"]),
             output_schema_version=str(payload["output_schema_version"]),
+            metric_schema_version=str(payload["metric_schema_version"]),
+            effective_execution_config_sha256=str(
+                payload["effective_execution_config_sha256"]
+            ),
             checksums={str(key): str(value) for key, value in payload["checksums"].items()},
             retry_count=int(payload.get("retry_count", 0)),
         )
@@ -124,6 +193,8 @@ def load_checkpoint(method_root: Path) -> PilotCheckpoint | None:
             identity_hash="invalid",
             stage=PilotStage.FAILED,
             output_schema_version="invalid",
+            metric_schema_version="invalid",
+            effective_execution_config_sha256="invalid",
             checksums={},
             retry_count=0,
         )
@@ -145,6 +216,13 @@ def reusable_complete(
         reasons.append("identity_hash_mismatch")
     if checkpoint.output_schema_version != OUTPUT_SCHEMA_VERSION:
         reasons.append("output_schema_mismatch")
+    if checkpoint.metric_schema_version != METRIC_SCHEMA_VERSION:
+        reasons.append("metric_schema_mismatch")
+    if (
+        checkpoint.effective_execution_config_sha256
+        != coordinate.effective_execution_config_sha256
+    ):
+        reasons.append("effective_execution_config_mismatch")
     if checkpoint.stage is not PilotStage.COMPLETE:
         reasons.append(f"stage_{checkpoint.stage.value.lower()}")
     if not (method_root / "COMPLETE").is_file():
@@ -170,6 +248,11 @@ def mark_complete(
     marker_payload = {
         "coordinate_key": coordinate.key,
         "identity_hash": identity_hash,
+        "effective_execution_config_sha256": (
+            coordinate.effective_execution_config_sha256
+        ),
+        "output_schema_version": OUTPUT_SCHEMA_VERSION,
+        "metric_schema_version": METRIC_SCHEMA_VERSION,
         "checksums": checksums,
     }
     atomic_write_text(method_root / "COMPLETE", canonical_hash(marker_payload) + "\n")
@@ -179,6 +262,10 @@ def mark_complete(
         identity_hash=identity_hash,
         stage=PilotStage.COMPLETE,
         output_schema_version=OUTPUT_SCHEMA_VERSION,
+        metric_schema_version=METRIC_SCHEMA_VERSION,
+        effective_execution_config_sha256=(
+            coordinate.effective_execution_config_sha256
+        ),
         checksums=checksums,
         retry_count=retry_count,
     )
@@ -204,7 +291,7 @@ def write_failure(
     atomic_write_json(
         failure_path,
         {
-            "schema": "coregraph_v5_pilot_failure_v1",
+            "schema": "coregraph_v5_pilot_failure_v2",
             "coordinate_key": coordinate.key,
             "method": coordinate.method,
             "stage": stage.value,
@@ -224,6 +311,10 @@ def write_failure(
             identity_hash=identity_hash,
             stage=PilotStage.FAILED,
             output_schema_version=OUTPUT_SCHEMA_VERSION,
+            metric_schema_version=METRIC_SCHEMA_VERSION,
+            effective_execution_config_sha256=(
+                coordinate.effective_execution_config_sha256
+            ),
             checksums={"failure": sha256_path(failure_path)},
             retry_count=retry_count,
         ),

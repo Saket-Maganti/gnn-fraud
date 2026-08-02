@@ -37,6 +37,7 @@ from coregraph.contracts.axes import (
 )
 from coregraph.contracts.contract import DeploymentContract
 from coregraph.evidence.archive_store import ArchiveIntegrityError, ArchiveStore
+from coregraph.evaluation.regret import v5_matched_action_brier_metrics
 from coregraph.experiments.pilot import (
     PilotAblation,
     SavedSourceGroup,
@@ -56,6 +57,8 @@ from coregraph.experiments.v5_pilot_outputs import (
 )
 from coregraph.experiments.v5_pilot_types import (
     EXPERT_ORDER,
+    METHOD_REGISTRY_VERSION,
+    METRIC_SCHEMA_VERSION,
     FrozenPilotPolicy,
     PilotCheckpoint,
     PilotCoordinate,
@@ -355,16 +358,24 @@ class TargetLabelVault:
         freeze_manifest_path: Path,
         target_scores_path: Path,
         expected_row_keys: tuple[str, ...],
+        expected_effective_execution_config_sha256: str,
     ) -> TargetEvaluationBundle:
         if self._opened:
             raise RuntimeError("TargetLabelVault is single-use")
         payload = json.loads(freeze_manifest_path.read_text(encoding="utf-8"))
-        if payload.get("schema") != "coregraph_v5_policy_freeze_manifest_v1":
+        if payload.get("schema") != "coregraph_v5_policy_freeze_manifest_v2":
             raise RuntimeError("offline evaluation requires a V5 policy freeze manifest")
         if payload.get("target_labels_loaded") is not False:
             raise RuntimeError("policy freeze does not attest target-label blinding")
         if payload.get("target_score_sha256") != sha256_path(target_scores_path):
             raise RuntimeError("target score changed after policy freeze")
+        if (
+            payload.get("effective_execution_config_sha256")
+            != expected_effective_execution_config_sha256
+        ):
+            raise RuntimeError("policy freeze effective execution identity mismatch")
+        if payload.get("metric_schema_version") != METRIC_SCHEMA_VERSION:
+            raise RuntimeError("policy freeze metric schema is superseded")
         artifacts = _artifacts_for_protocol(
             self._scenario,
             self._scenario.definition.target_protocol,
@@ -763,41 +774,41 @@ def _evaluate(
     evaluation: TargetEvaluationBundle,
     scenario: V5ScenarioMaterialization,
     config: V5PilotConfig,
-) -> Mapping[str, float]:
+) -> Mapping[str, Any]:
     if evaluation.row_keys != target.row_keys:
         raise RuntimeError("offline evaluation rows do not match target-unlabelled rows")
     labels = (evaluation.labels == 1).astype(np.int8)
     accepted = ~inference.abstain
+    global_target_auprc = float(average_precision_score(labels, inference.scores))
     if not accepted.any():
-        auprc = float("nan")
         selective_risk = float("nan")
     else:
-        auprc = float(average_precision_score(labels, inference.scores))
         predicted = inference.scores[accepted] >= 0.5
         selective_risk = float(np.mean(predicted != labels[accepted]))
     review_k = max(1, int(math.ceil(len(labels) * scenario.definition.review_fraction)))
     order = np.argsort(-inference.scores, kind="stable")[:review_k]
     positives = int(labels.sum())
     recall = float(labels[order].sum() / positives) if positives else float("nan")
-    expert_risks = np.mean((target.scores - labels[:, None]) ** 2, axis=0)
-    feasible = target.availability.all(axis=0)
-    oracle_risk = float(np.min(np.where(feasible, expert_risks, np.inf)))
     abstention_cost = float(config.payload["abstention"]["cost"])
-    method_loss = np.where(
-        inference.abstain,
-        abstention_cost,
-        (inference.scores - labels) ** 2,
+    regret_metrics = v5_matched_action_brier_metrics(
+        labels=labels,
+        method_scores=inference.scores,
+        method_abstains=inference.abstain,
+        expert_scores=target.scores,
+        availability=target.availability,
+        abstention_cost=abstention_cost,
+        tolerance=float(config.payload["gate"]["regret_numeric_tolerance"]),
     )
     return {
-        "auprc": auprc,
+        "metric_schema_version": METRIC_SCHEMA_VERSION,
+        "global_target_auprc": global_target_auprc,
         "recall_at_frozen_review_fraction": recall,
+        "frozen_review_fraction": float(scenario.definition.review_fraction),
         "selective_risk": selective_risk,
         "coverage": float(np.mean(accepted)),
-        "contract_brier_risk": float(np.mean(method_loss)),
-        "contract_regret": float(np.mean(method_loss) - oracle_risk),
-        "feasible_best_expert_oracle_brier": oracle_risk,
+        **regret_metrics,
         "mean_relative_compute": float(np.mean(inference.expected_compute)),
-        "resource_feasible": float(np.all(target.availability.any(axis=1))),
+        "resource_feasible": bool(np.all(target.availability.any(axis=1))),
     }
 
 
@@ -812,8 +823,11 @@ def execute_coordinate(
     output_root: Path,
     code_sha: str,
     dependency_lock_sha256: str,
+    effective_execution_config_sha256: str,
     resume: bool,
 ) -> Mapping[str, Any]:
+    if coordinate.effective_execution_config_sha256 != effective_execution_config_sha256:
+        raise ValueError("coordinate and effective execution identities disagree")
     method_root = output_root / "scenarios" / coordinate.scenario_id / "methods" / coordinate.method
     method_root.mkdir(parents=True, exist_ok=True)
     identity_hash = coordinate_identity_hash(
@@ -822,6 +836,7 @@ def execute_coordinate(
         config_sha256=config.config_sha256,
         preregistration_sha256=config.preregistration_sha256,
         dependency_lock_sha256=dependency_lock_sha256,
+        effective_execution_config_sha256=effective_execution_config_sha256,
     )
     existing = reusable_complete(
         method_root, coordinate=coordinate, identity_hash=identity_hash
@@ -833,6 +848,8 @@ def execute_coordinate(
         identity_hash=identity_hash,
         stage=PilotStage.SOURCE_ASSEMBLED,
         output_schema_version=OUTPUT_SCHEMA_VERSION,
+        metric_schema_version=METRIC_SCHEMA_VERSION,
+        effective_execution_config_sha256=effective_execution_config_sha256,
         retry_count=(0 if existing[0] else 1 if (method_root / "checkpoint.json").exists() else 0),
     )
     write_checkpoint(method_root, checkpoint)
@@ -845,10 +862,12 @@ def execute_coordinate(
         write_checkpoint(
             method_root,
             PilotCheckpoint(
-                coordinate.key,
-                identity_hash,
-                current_stage,
-                OUTPUT_SCHEMA_VERSION,
+                coordinate_key=coordinate.key,
+                identity_hash=identity_hash,
+                stage=current_stage,
+                output_schema_version=OUTPUT_SCHEMA_VERSION,
+                metric_schema_version=METRIC_SCHEMA_VERSION,
+                effective_execution_config_sha256=effective_execution_config_sha256,
                 retry_count=checkpoint.retry_count,
             ),
         )
@@ -885,10 +904,15 @@ def execute_coordinate(
             for item in scenario.target_bindings
         ]
         freeze_payload = {
-            "schema": "coregraph_v5_policy_freeze_manifest_v1",
+            "schema": "coregraph_v5_policy_freeze_manifest_v2",
             "code_sha": code_sha,
-            "config_sha256": config.config_sha256,
+            "base_config_sha256": config.config_sha256,
             "preregistration_sha256": config.preregistration_sha256,
+            "effective_execution_config_sha256": effective_execution_config_sha256,
+            "output_schema_version": OUTPUT_SCHEMA_VERSION,
+            "metric_schema_version": METRIC_SCHEMA_VERSION,
+            "method_registry_version": METHOD_REGISTRY_VERSION,
+            "dependency_lock_sha256": dependency_lock_sha256,
             "scenario_fingerprint": scenario.scenario_fingerprint,
             "source_artifacts": source_artifacts,
             "target_artifacts": target_artifacts,
@@ -913,10 +937,12 @@ def execute_coordinate(
         write_checkpoint(
             method_root,
             PilotCheckpoint(
-                coordinate.key,
-                identity_hash,
-                current_stage,
-                OUTPUT_SCHEMA_VERSION,
+                coordinate_key=coordinate.key,
+                identity_hash=identity_hash,
+                stage=current_stage,
+                output_schema_version=OUTPUT_SCHEMA_VERSION,
+                metric_schema_version=METRIC_SCHEMA_VERSION,
+                effective_execution_config_sha256=effective_execution_config_sha256,
                 checksums={
                     "target_scores.npz": sha256_path(scores_path),
                     "POLICY_FREEZE_MANIFEST.json": sha256_path(freeze_path),
@@ -928,21 +954,37 @@ def execute_coordinate(
             freeze_manifest_path=freeze_path,
             target_scores_path=scores_path,
             expected_row_keys=target.row_keys,
+            expected_effective_execution_config_sha256=(
+                effective_execution_config_sha256
+            ),
         )
         metrics = _evaluate(inference, target, evaluation_bundle, scenario, config)
         current_stage = PilotStage.EVALUATED
         evaluation_path = method_root / "evaluation.json"
         evaluation_payload = {
-            "schema": "coregraph_v5_pilot_method_result_v1",
+            "schema": "coregraph_v5_pilot_method_result_v2",
             "coordinate": asdict(coordinate),
             "coordinate_key": coordinate.key,
+            "identity_hash": identity_hash,
+            "code_sha": code_sha,
+            "base_config_sha256": config.config_sha256,
+            "effective_execution_config_sha256": effective_execution_config_sha256,
+            "preregistration_sha256": config.preregistration_sha256,
+            "dependency_lock_sha256": dependency_lock_sha256,
+            "output_schema_version": OUTPUT_SCHEMA_VERSION,
+            "metric_schema_version": METRIC_SCHEMA_VERSION,
+            "method_registry_version": METHOD_REGISTRY_VERSION,
             "execution_status": "COMPLETE",
             "metrics": metrics,
             "route_summary": inference.route_summary,
             "policy_freeze_sha256": sha256_path(freeze_path),
             "target_score_sha256": sha256_path(scores_path),
+            "route_summary_sha256": sha256_path(route_path),
             "target_labels_loaded_only_by_offline_evaluator": True,
-            "target_oracle_is_offline_diagnostic_only": True,
+            "primary_oracle_scope": (
+                "row_wise_feasible_hindsight_oracle_including_abstention"
+            ),
+            "best_fixed_comparator_is_secondary_diagnostic": True,
         }
         atomic_write_json(evaluation_path, evaluation_payload)
         mark_complete(
@@ -958,6 +1000,13 @@ def execute_coordinate(
             ),
             retry_count=checkpoint.retry_count,
         )
+        failure_root = method_root.parents[1] / "failures"
+        for stale_failure in (
+            failure_root / f"{coordinate.method}.json",
+            failure_root / f"{coordinate.method}.traceback.txt",
+        ):
+            if stale_failure.is_file():
+                stale_failure.unlink()
         return evaluation_payload
     except BaseException as exc:
         write_failure(
@@ -981,10 +1030,24 @@ def compute_gate(
     expected = {item.key for item in coordinates}
     observed = {str(item.get("coordinate_key", "")) for item in results}
     reasons: list[str] = []
+    effective_hashes = {
+        item.effective_execution_config_sha256 for item in coordinates
+    }
+    effective_hash = next(iter(effective_hashes)) if len(effective_hashes) == 1 else "invalid"
+    if len(effective_hashes) != 1:
+        reasons.append("planned_effective_execution_config_mixed")
     if len(results) != len(expected) or observed != expected:
         reasons.append("required_coordinate_set_incomplete_or_duplicated")
     by_cell: dict[tuple[str, str, int], dict[str, Mapping[str, Any]]] = {}
     for item in results:
+        if item.get("schema") != "coregraph_v5_pilot_method_result_v2":
+            reasons.append("old_or_unknown_method_result_schema")
+        if item.get("metric_schema_version") != METRIC_SCHEMA_VERSION:
+            reasons.append("old_or_mixed_metric_schema")
+        if item.get("effective_execution_config_sha256") != effective_hash:
+            reasons.append("mixed_effective_execution_config")
+        if item.get("preregistration_sha256") != config.preregistration_sha256:
+            reasons.append("mixed_preregistration")
         coordinate = item.get("coordinate", {})
         cell = (
             str(coordinate.get("dataset")),
@@ -995,15 +1058,37 @@ def compute_gate(
         if method in by_cell.setdefault(cell, {}):
             reasons.append("duplicated_method_within_paired_cell")
         by_cell[cell][method] = item
+        metrics = item.get("metrics", {})
+        if "contract_regret" in metrics or "auprc" in metrics:
+            reasons.append("superseded_metric_field_present")
+        try:
+            regret = float(metrics["contract_regret_vs_feasible_row_oracle"])
+            float(metrics["global_target_auprc"])
+        except (KeyError, TypeError, ValueError):
+            reasons.append("corrected_primary_metrics_missing_or_invalid")
+        else:
+            if regret < float(config.payload["gate"]["regret_numeric_tolerance"]):
+                reasons.append("negative_regret_below_tolerance")
     if any(set(methods) != set(config.methods) for methods in by_cell.values()):
         reasons.append("paired_cell_method_family_malformed")
     if reasons:
         record = PilotGateRecord(
-            "INCONCLUSIVE", tuple(sorted(set(reasons))), len(results), config.preregistration_sha256
+            "INCONCLUSIVE",
+            tuple(sorted(set(reasons))),
+            len(results),
+            config.preregistration_sha256,
+            effective_hash,
+            METRIC_SCHEMA_VERSION,
         )
-        return {"schema": "coregraph_v5_pilot_gate_v1", **asdict(record)}
+        return {
+            "schema": "coregraph_v5_pilot_gate_v2",
+            "primary_metric": "contract_regret_vs_feasible_row_oracle",
+            **asdict(record),
+        }
     minimum_regret = float(config.payload["gate"]["minimum_contract_regret_improvement"])
-    harm_floor = float(config.payload["gate"]["average_auprc_harm_floor"])
+    harm_floor = float(
+        config.payload["gate"]["average_global_target_auprc_harm_floor"]
+    )
     comparisons: dict[str, Any] = {}
     no_go = False
     for baseline in config.methods[1:]:
@@ -1012,12 +1097,22 @@ def compute_gate(
         for methods in by_cell.values():
             core = methods["coregraph"]["metrics"]
             other = methods[baseline]["metrics"]
-            regret_improvements.append(float(other["contract_regret"]) - float(core["contract_regret"]))
-            auprc_deltas.append(float(core["auprc"]) - float(other["auprc"]))
+            regret_improvements.append(
+                float(other["contract_regret_vs_feasible_row_oracle"])
+                - float(core["contract_regret_vs_feasible_row_oracle"])
+            )
+            auprc_deltas.append(
+                float(core["global_target_auprc"])
+                - float(other["global_target_auprc"])
+            )
         comparisons[baseline] = {
-            "mean_contract_regret_improvement": float(np.mean(regret_improvements)),
-            "worst_contract_regret_improvement": float(np.min(regret_improvements)),
-            "mean_auprc_delta": float(np.mean(auprc_deltas)),
+            "mean_contract_regret_vs_feasible_row_oracle_improvement": float(
+                np.mean(regret_improvements)
+            ),
+            "worst_contract_regret_vs_feasible_row_oracle_improvement": float(
+                np.min(regret_improvements)
+            ),
+            "mean_global_target_auprc_delta": float(np.mean(auprc_deltas)),
         }
         if np.min(regret_improvements) < minimum_regret or np.mean(auprc_deltas) < harm_floor:
             no_go = True
@@ -1027,5 +1122,12 @@ def compute_gate(
         ("frozen_paired_gate_passed" if outcome == "GO" else "frozen_effect_gate_failed",),
         len(results),
         config.preregistration_sha256,
+        effective_hash,
+        METRIC_SCHEMA_VERSION,
     )
-    return {"schema": "coregraph_v5_pilot_gate_v1", **asdict(record), "comparisons": comparisons}
+    return {
+        "schema": "coregraph_v5_pilot_gate_v2",
+        "primary_metric": "contract_regret_vs_feasible_row_oracle",
+        **asdict(record),
+        "comparisons": comparisons,
+    }
