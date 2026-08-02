@@ -1,6 +1,6 @@
 # V5 final-repair command log
 
-Status: `LOCAL_VALIDATION_COMPLETE_PENDING_PUBLISH_AND_EXACT_TIP_CI`
+Status: `PUBLISHED_IMPLEMENTATION_CI_PASS_PENDING_FINAL_PROVENANCE_TIP`
 
 ## Preflight
 
@@ -50,4 +50,13 @@ Status: `LOCAL_VALIDATION_COMPLETE_PENDING_PUBLISH_AND_EXACT_TIP_CI`
 - Paper result insertions: zero.
 - Force-pushes and PR merges: zero.
 
-Normal commits, push, PR-body update, and exact-tip CI are the remaining closure steps.
+## Publish and hosted validation
+
+- Created three focused commits: `13655ae` (regret/preregistration/effective identity), `05c7b25` (exact packaging/runner guards), and `7b50a37` (paper/runbooks/release evidence).
+- Before push, `git fetch origin --prune`, status, local SHA, and remote SHA checks passed; the remote remained at the authorized starting tip.
+- `git push origin codex/coregraph-iclr-buildout-2026`: normal fast-forward; no force-push.
+- Updated draft PR #2 with corrected semantics, v5.1 hash, effective identity, exact packaging, dirty policy, 240/240 synthetic evidence, local gates, and explicit non-execution.
+- Exact implementation tip `7b50a37ddd27f3e5ec83cd426411d4760efd84cd`: both push and pull-request audit jobs PASS; both push and pull-request typed-core jobs PASS, including compile/lint/type, full tests, theory, notebooks, paper, release, and frozen assets.
+- PR #2 remained open, draft, mergeable, and unmerged.
+
+The final provenance-only gate/tree commit is excluded from release snapshot self-hashes and will receive its own exact-tip CI before closure.
