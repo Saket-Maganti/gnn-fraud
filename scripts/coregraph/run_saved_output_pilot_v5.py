@@ -30,7 +30,10 @@ from coregraph.experiments.v5_pilot_executor import (  # noqa: E402
     execute_coordinate,
 )
 from coregraph.experiments.v5_pilot_outputs import (  # noqa: E402
+    AGGREGATE_SCHEMA,
     OUTPUT_SCHEMA_VERSION,
+    RUN_MANIFEST_SCHEMA,
+    SCENARIO_MANIFEST_SCHEMA,
     atomic_write_csv,
     atomic_write_text,
     build_effective_execution_config,
@@ -46,6 +49,10 @@ from coregraph.experiments.v5_pilot_types import (  # noqa: E402
     PRIMARY_METHODS,
     PilotCoordinate,
     V5ScenarioMaterialization,
+)
+from coregraph.experiments.v5_numerics import (  # noqa: E402
+    NUMERICAL_IMPLEMENTATION_VERSION,
+    SCIENTIFIC_COMPUTE_DTYPE,
 )
 from coregraph.experiments.v5_scenario_loader import (  # noqa: E402
     V5PilotConfig,
@@ -179,7 +186,7 @@ def _write_plan(
     atomic_write_text(output_root / "PILOT_PLAN.sha256", f"{plan_hash}  PILOT_PLAN.csv\n")
     archive_hashes = dict(config.payload["archive_hashes"])
     manifest = {
-        "schema": "coregraph_v5_pilot_run_manifest_v2",
+        "schema": RUN_MANIFEST_SCHEMA,
         "repository_sha": code_sha,
         "dirty_tree": dirty,
         "dirty_state_diagnostics": dirty_diagnostics,
@@ -193,6 +200,8 @@ def _write_plan(
         "output_schema_version": OUTPUT_SCHEMA_VERSION,
         "metric_schema_version": METRIC_SCHEMA_VERSION,
         "method_registry_version": METHOD_REGISTRY_VERSION,
+        "numerical_implementation_version": NUMERICAL_IMPLEMENTATION_VERSION,
+        "scientific_compute_dtype": SCIENTIFIC_COMPUTE_DTYPE,
         "evidence_cache_manifest_sha256": (
             stable_file_sha256(evidence_cache / "manifests" / "EVIDENCE_CACHE_MANIFEST.csv")
             if (evidence_cache / "manifests" / "EVIDENCE_CACHE_MANIFEST.csv").is_file()
@@ -248,15 +257,15 @@ def _resource_estimate(
         for item in artifacts
         if item.protocol in config.payload["required_protocols"]
     ) // len(config.payload["required_protocols"])
-    score_bytes = target_rows * len(PRIMARY_METHODS) * 4
-    route_bytes = target_rows * len(PRIMARY_METHODS) * len(config.experts) * 4
+    score_bytes = target_rows * len(PRIMARY_METHODS) * 8
+    route_bytes = target_rows * len(PRIMARY_METHODS) * len(config.experts) * 8
     chunk_rows = int(config.payload["streaming"]["chunk_rows"])
     estimated_chunk_working_set = chunk_rows * len(config.experts) * (
         4 + 1 + 4 + 4 + 4
     )
     free = shutil.disk_usage(output_root.parent if output_root.parent.exists() else ROOT).free
     return {
-        "schema": "coregraph_v5_operational_estimate_v1",
+        "schema": "coregraph_v5_2_operational_estimate_v2",
         "estimate_not_measurement": True,
         "source_rows_per_split_per_environment": int(
             config.payload["streaming"]["source_rows_per_split_per_environment"]
@@ -328,7 +337,7 @@ def _validate_real_output_root(
 def _write_output_checksums(output_root: Path) -> None:
     manifest = json.loads((output_root / "RUN_MANIFEST.json").read_text(encoding="utf-8"))
     lines = [
-        "# schema=coregraph_v5_output_checksums_v2",
+        "# schema=coregraph_v5_2_output_checksums_v3",
         "# effective_execution_config_sha256="
         + str(manifest["effective_execution_config_sha256"]),
         "# output_schema_version=" + str(manifest["output_schema_version"]),
@@ -469,6 +478,19 @@ def main() -> int:
         synthetic_fixture=arguments.synthetic_fixture,
         dependency_lock_sha256=dependency_lock_sha256,
         code_sha=code_sha,
+        numeric_dtype=str(config.payload["numerics"]["scientific_compute_dtype"]),
+        stored_score_dtype=str(config.payload["numerics"]["stored_score_dtype"]),
+        stored_weight_dtype=str(config.payload["numerics"]["stored_weight_dtype"]),
+        numerical_implementation_version=str(
+            config.payload["numerics"]["implementation_version"]
+        ),
+        weight_negative_tolerance=float(
+            config.payload["numerics"]["weight_negative_tolerance"]
+        ),
+        simplex_tolerance=float(config.payload["numerics"]["simplex_tolerance"]),
+        hull_projection_tolerance=float(
+            config.payload["numerics"]["hull_projection_tolerance"]
+        ),
     )
     effective_execution_config_sha256 = str(
         effective_execution_config["effective_execution_config_sha256"]
@@ -564,7 +586,7 @@ def main() -> int:
         atomic_write_json(
             scenario_root / "scenario_manifest.json",
             {
-                "schema": "coregraph_v5_pilot_scenario_manifest_v2",
+                "schema": SCENARIO_MANIFEST_SCHEMA,
                 "definition": asdict(scenario.definition),
                 "scenario_fingerprint": scenario.scenario_fingerprint,
                 "code_sha": code_sha,
@@ -577,6 +599,8 @@ def main() -> int:
                 "output_schema_version": OUTPUT_SCHEMA_VERSION,
                 "metric_schema_version": METRIC_SCHEMA_VERSION,
                 "method_registry_version": METHOD_REGISTRY_VERSION,
+                "numerical_implementation_version": NUMERICAL_IMPLEMENTATION_VERSION,
+                "scientific_compute_dtype": SCIENTIFIC_COMPUTE_DTYPE,
                 "source_binding_count": len(scenario.source_bindings),
                 "target_binding_count": len(scenario.target_bindings),
                 "target_unlabelled": target.to_serializable(),
@@ -628,7 +652,7 @@ def main() -> int:
         for path in sorted(output_root.glob("scenarios/*/methods/*/evaluation.json"))
     ]
     aggregate = {
-        "schema": "coregraph_v5_pilot_aggregate_v2",
+        "schema": AGGREGATE_SCHEMA,
         "code_sha": code_sha,
         "base_config_sha256": config.config_sha256,
         "effective_execution_config_sha256": effective_execution_config_sha256,
@@ -637,6 +661,8 @@ def main() -> int:
         "output_schema_version": OUTPUT_SCHEMA_VERSION,
         "metric_schema_version": METRIC_SCHEMA_VERSION,
         "method_registry_version": METHOD_REGISTRY_VERSION,
+        "numerical_implementation_version": NUMERICAL_IMPLEMENTATION_VERSION,
+        "scientific_compute_dtype": SCIENTIFIC_COMPUTE_DTYPE,
         "result_count": len(all_results),
         "failure_count": failures,
         "results": all_results,

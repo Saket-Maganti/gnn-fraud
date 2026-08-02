@@ -23,7 +23,9 @@ from coregraph.experiments.v5_pilot_executor import (
     execute_coordinate,
 )
 from coregraph.experiments.v5_pilot_outputs import (
+    METHOD_RESULT_SCHEMA,
     OUTPUT_SCHEMA_VERSION,
+    POLICY_FREEZE_SCHEMA,
     atomic_write_csv,
     atomic_write_npz,
     atomic_write_text,
@@ -227,7 +229,7 @@ def test_label_vault_rejects_unblinded_changed_and_misaligned_inputs(
     score_path.write_bytes(b"scores")
     freeze = tmp_path / "POLICY_FREEZE_MANIFEST.json"
     base = {
-        "schema": "coregraph_v5_policy_freeze_manifest_v2",
+        "schema": POLICY_FREEZE_SCHEMA,
         "target_labels_loaded": False,
         "target_score_sha256": sha256_path(score_path),
         "effective_execution_config_sha256": EFFECTIVE_HASH,
@@ -572,7 +574,7 @@ def _gate_rows(
         core = coordinate.method == "coregraph"
         rows.append(
             {
-                "schema": "coregraph_v5_pilot_method_result_v2",
+                "schema": METHOD_RESULT_SCHEMA,
                 "coordinate_key": coordinate.key,
                 "effective_execution_config_sha256": EFFECTIVE_HASH,
                 "preregistration_sha256": config.preregistration_sha256,
@@ -589,6 +591,8 @@ def _gate_rows(
                         core_regret if core else baseline_regret
                     ),
                     "global_target_auprc": 0.9 if core else 0.8,
+                    "rows_with_raw_regret_below_tolerance": 0,
+                    "rows_with_unavailable_nonzero_weight": 0,
                 },
             }
         )
@@ -707,4 +711,4 @@ def test_archive_change_and_member_change_fail_closed(v5_fixture) -> None:
 
 
 def test_output_schema_version_is_frozen() -> None:
-    assert OUTPUT_SCHEMA_VERSION == "coregraph_v5_pilot_outputs_v2"
+    assert OUTPUT_SCHEMA_VERSION == "coregraph_v5_output_schema_v3"

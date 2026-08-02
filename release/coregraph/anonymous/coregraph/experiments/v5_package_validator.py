@@ -8,11 +8,21 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Mapping
 
+import numpy as np
+
 from coregraph.experiments.v5_pilot_outputs import (
+    GATE_SCHEMA,
+    METHOD_RESULT_SCHEMA,
     OUTPUT_SCHEMA_VERSION,
+    POLICY_FREEZE_SCHEMA,
+    RUN_MANIFEST_SCHEMA,
     atomic_write_csv,
     canonical_hash,
     coordinate_identity_hash,
+)
+from coregraph.experiments.v5_numerics import (
+    NUMERICAL_IMPLEMENTATION_VERSION,
+    SCIENTIFIC_COMPUTE_DTYPE,
 )
 from coregraph.experiments.v5_pilot_types import (
     METHOD_REGISTRY_VERSION,
@@ -131,7 +141,7 @@ def validate_package_root(root: Path) -> tuple[dict[str, Any], list[dict[str, An
         failures.append("run_manifest_coordinate_set_mismatch")
     if int(manifest.get("coordinate_count", -1)) != len(rows):
         failures.append("run_manifest_coordinate_count_mismatch")
-    if manifest.get("schema") != "coregraph_v5_pilot_run_manifest_v2":
+    if manifest.get("schema") != RUN_MANIFEST_SCHEMA:
         failures.append("run_manifest_schema_invalid")
     global_identity = {
         "code_sha": str(manifest.get("repository_sha", "")),
@@ -144,6 +154,9 @@ def validate_package_root(root: Path) -> tuple[dict[str, Any], list[dict[str, An
         "output_schema_version": str(manifest.get("output_schema_version", "")),
         "metric_schema_version": str(manifest.get("metric_schema_version", "")),
         "method_registry_version": str(manifest.get("method_registry_version", "")),
+        "numerical_implementation_version": str(
+            manifest.get("numerical_implementation_version", "")
+        ),
     }
     if global_identity["output_schema_version"] != OUTPUT_SCHEMA_VERSION:
         failures.append("run_manifest_output_schema_invalid")
@@ -151,6 +164,11 @@ def validate_package_root(root: Path) -> tuple[dict[str, Any], list[dict[str, An
         failures.append("run_manifest_metric_schema_invalid")
     if global_identity["method_registry_version"] != METHOD_REGISTRY_VERSION:
         failures.append("run_manifest_method_registry_invalid")
+    if (
+        global_identity["numerical_implementation_version"]
+        != NUMERICAL_IMPLEMENTATION_VERSION
+    ):
+        failures.append("run_manifest_numerical_implementation_invalid")
     effective_config = manifest.get("effective_execution_config", {})
     if not isinstance(effective_config, Mapping):
         failures.append("effective_execution_config_missing")
@@ -240,7 +258,7 @@ def validate_package_root(root: Path) -> tuple[dict[str, Any], list[dict[str, An
         for field, expected_value in global_identity.items():
             if evaluation.get(field) != expected_value:
                 failures.append(f"evaluation_{field}_mismatch:{coordinate_key}")
-        if evaluation.get("schema") != "coregraph_v5_pilot_method_result_v2":
+        if evaluation.get("schema") != METHOD_RESULT_SCHEMA:
             failures.append(f"evaluation_schema_invalid:{coordinate_key}")
         metrics = evaluation.get("metrics", {})
         if not isinstance(metrics, Mapping) or metrics.get(
@@ -251,6 +269,13 @@ def validate_package_root(root: Path) -> tuple[dict[str, Any], list[dict[str, An
             "contract_regret" in metrics or "auprc" in metrics
         ):
             failures.append(f"superseded_metric_present:{coordinate_key}")
+        if isinstance(metrics, Mapping):
+            if metrics.get("scientific_compute_dtype") != SCIENTIFIC_COMPUTE_DTYPE:
+                failures.append(f"scientific_dtype_invalid:{coordinate_key}")
+            if int(metrics.get("rows_with_unavailable_nonzero_weight", -1)) != 0:
+                failures.append(f"unavailable_nonzero_weight:{coordinate_key}")
+            if int(metrics.get("rows_with_raw_regret_below_tolerance", -1)) != 0:
+                failures.append(f"regret_below_tolerance:{coordinate_key}")
         if checkpoint.get("stage") != "COMPLETE":
             failures.append(f"checkpoint_not_terminal:{coordinate_key}")
         if checkpoint.get("output_schema_version") != OUTPUT_SCHEMA_VERSION:
@@ -315,8 +340,22 @@ def validate_package_root(root: Path) -> tuple[dict[str, Any], list[dict[str, An
         ):
             if freeze.get(field) != global_identity[field]:
                 failures.append(f"freeze_{field}_mismatch:{coordinate_key}")
-        if freeze.get("schema") != "coregraph_v5_policy_freeze_manifest_v2":
+        if freeze.get("schema") != POLICY_FREEZE_SCHEMA:
             failures.append(f"freeze_schema_invalid:{coordinate_key}")
+        if freeze.get("numerical_implementation_version") != NUMERICAL_IMPLEMENTATION_VERSION:
+            failures.append(f"freeze_numerical_implementation_mismatch:{coordinate_key}")
+        score_path = method_root / "target_scores.npz"
+        if score_path.is_file():
+            try:
+                with np.load(score_path, allow_pickle=False) as arrays:
+                    if arrays["scores"].dtype != np.dtype(np.float64):
+                        failures.append(f"stored_score_dtype_invalid:{coordinate_key}")
+                    if arrays["routing_weights"].dtype != np.dtype(np.float64):
+                        failures.append(f"stored_weight_dtype_invalid:{coordinate_key}")
+                    if arrays["expected_compute"].dtype != np.dtype(np.float64):
+                        failures.append(f"stored_compute_dtype_invalid:{coordinate_key}")
+            except (KeyError, OSError, ValueError):
+                failures.append(f"stored_numerical_payload_invalid:{coordinate_key}")
         source_artifacts = freeze.get("source_artifacts", ())
         target_artifacts = freeze.get("target_artifacts", ())
         artifacts = [*source_artifacts, *target_artifacts] if isinstance(
@@ -390,6 +429,8 @@ def validate_package_root(root: Path) -> tuple[dict[str, Any], list[dict[str, An
     gate_path = root / "gates" / "PILOT_GATE_RESULT.json"
     if gate_path.is_file():
         gate = _json(gate_path, failures)
+        if gate.get("schema") != GATE_SCHEMA:
+            failures.append("gate_schema_mismatch")
         if gate.get("effective_execution_config_sha256") != global_identity[
             "effective_execution_config_sha256"
         ]:
@@ -398,7 +439,7 @@ def validate_package_root(root: Path) -> tuple[dict[str, Any], list[dict[str, An
             failures.append("gate_metric_schema_mismatch")
     _verify_output_checksums(root, failures)
     report = {
-        "schema": "coregraph_v5_package_validation_report_v1",
+        "schema": "coregraph_v5_2_package_validation_report_v2",
         "status": "PASS" if not failures else "FAIL",
         "expected_coordinate_count": len(expected_set),
         "observed_coordinate_count": len(set(observed_keys)),
@@ -409,6 +450,7 @@ def validate_package_root(root: Path) -> tuple[dict[str, Any], list[dict[str, An
         ],
         "output_schema_version": OUTPUT_SCHEMA_VERSION,
         "metric_schema_version": METRIC_SCHEMA_VERSION,
+        "numerical_implementation_version": NUMERICAL_IMPLEMENTATION_VERSION,
         "failures": sorted(set(failures)),
     }
     if failures:

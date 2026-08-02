@@ -53,6 +53,7 @@ CONFIG_FIELDS = frozenset(
         "expert_relative_costs",
         "resource_profiles",
         "streaming",
+        "numerics",
         "metric_schema_version",
         "output_schemas",
         "gate",
@@ -115,7 +116,7 @@ def load_v5_config(path: Path) -> V5PilotConfig:
         raise ValueError(
             f"V5 config field mismatch: unknown={sorted(unknown)}, missing={sorted(missing)}"
         )
-    if payload["schema_version"] != "coregraph_saved_output_pilot_config_v5.1":
+    if payload["schema_version"] != "coregraph_saved_output_pilot_config_v5.2":
         raise ValueError("V5 config schema version is invalid")
     if payload["metric_schema_version"] != METRIC_SCHEMA_VERSION:
         raise ValueError("V5 metric schema version is invalid or superseded")

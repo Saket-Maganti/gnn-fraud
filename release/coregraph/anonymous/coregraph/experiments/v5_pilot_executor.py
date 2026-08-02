@@ -45,7 +45,10 @@ from coregraph.experiments.pilot import (
     fit_saved_output_corerouter,
 )
 from coregraph.experiments.v5_pilot_outputs import (
+    GATE_SCHEMA,
+    METHOD_RESULT_SCHEMA,
     OUTPUT_SCHEMA_VERSION,
+    POLICY_FREEZE_SCHEMA,
     atomic_write_npz,
     canonical_hash,
     coordinate_identity_hash,
@@ -54,6 +57,12 @@ from coregraph.experiments.v5_pilot_outputs import (
     sha256_path,
     write_checkpoint,
     write_failure,
+)
+from coregraph.experiments.v5_numerics import (
+    NUMERICAL_IMPLEMENTATION_VERSION,
+    SCIENTIFIC_COMPUTE_DTYPE,
+    normalize_feasible_weights_float64,
+    routed_scores_in_feasible_hull_float64,
 )
 from coregraph.experiments.v5_pilot_types import (
     EXPERT_ORDER,
@@ -92,6 +101,7 @@ class MethodInference:
     selected_experts: np.ndarray
     expected_compute: np.ndarray
     route_summary: Mapping[str, Any]
+    numerical_diagnostics: Mapping[str, Any]
 
 
 def _utc_now() -> str:
@@ -228,7 +238,7 @@ def _iter_aligned(
             raise ArchiveIntegrityError("experts disagree on legally accessed provider labels")
         yield (
             first.row_key,
-            np.asarray([row.score for row in rows], dtype=np.float32),
+            np.asarray([row.score for row in rows], dtype=np.float64),
             first.split,
             first.label,
         )
@@ -286,7 +296,7 @@ def assemble_source_environments(
         if not heaps["train"] or not heaps["validation"]:
             raise ValueError(f"source environment {protocol} lacks train or validation rows")
         row_keys = tuple(item[1] for item in selected)
-        scores = np.asarray([item[2] for item in selected], dtype=np.float32)
+        scores = np.asarray([item[2] for item in selected], dtype=np.float64)
         labels = np.asarray([item[3] for item in selected], dtype=np.int16)
         splits = np.asarray(
             ["train" if item[1] in train_keys else "validation" for item in selected],
@@ -328,7 +338,7 @@ def assemble_target_unlabeled(
             raise RuntimeError("target-unlabelled reader crossed the label firewall")
         keys.append(key)
         score_rows.append(scores)
-    matrix = np.asarray(score_rows, dtype=np.float32)
+    matrix = np.asarray(score_rows, dtype=np.float64)
     return TargetUnlabeledBundle(
         dataset=scenario.definition.dataset,
         protocol=scenario.definition.target_protocol,
@@ -363,7 +373,7 @@ class TargetLabelVault:
         if self._opened:
             raise RuntimeError("TargetLabelVault is single-use")
         payload = json.loads(freeze_manifest_path.read_text(encoding="utf-8"))
-        if payload.get("schema") != "coregraph_v5_policy_freeze_manifest_v2":
+        if payload.get("schema") != POLICY_FREEZE_SCHEMA:
             raise RuntimeError("offline evaluation requires a V5 policy freeze manifest")
         if payload.get("target_labels_loaded") is not False:
             raise RuntimeError("policy freeze does not attest target-label blinding")
@@ -461,7 +471,7 @@ def _method_inference(
         raise RuntimeError("target label firewall failed before fitting")
     costs = np.asarray(
         [float(config.payload["expert_relative_costs"][name]) for name in EXPERT_ORDER],
-        dtype=np.float32,
+        dtype=np.float64,
     )
     available = target.availability.astype(bool)
     executable = available.any(axis=1)
@@ -489,7 +499,7 @@ def _method_inference(
         score_chunks = []
         selected_chunks = []
         for chunk in slices:
-            chunk_weights = available[chunk].astype(np.float32)
+            chunk_weights = available[chunk].astype(np.float64)
             denominator = chunk_weights.sum(axis=1, keepdims=True)
             chunk_weights = np.divide(
                 chunk_weights,
@@ -516,13 +526,13 @@ def _method_inference(
                 if not feasible.all():
                     group_risks.append(float("inf"))
                 else:
-                    labels = (group.labels[keep] == 1).astype(np.float32)
+                    labels = (group.labels[keep] == 1).astype(np.float64)
                     group_risks.append(float(np.mean((group.scores[keep, expert_index] - labels) ** 2)))
             risks.append(float(np.mean(group_risks)))
         if not np.isfinite(risks).any():
             raise RuntimeError("no expert is feasible across source validation environments")
         chosen = int(np.argmin(np.asarray(risks)))
-        weights = np.zeros_like(target.scores, dtype=np.float32)
+        weights = np.zeros_like(target.scores, dtype=np.float64)
         score_chunks = []
         selected_chunks = []
         for chunk in slices:
@@ -612,7 +622,7 @@ def _method_inference(
                 denominator,
                 out=np.zeros_like(probabilities),
                 where=denominator > 0,
-            ).astype(np.float32)
+            )
             weight_chunks.append(chunk_weights)
             score_chunks.append((chunk_weights * chunk_scores).sum(axis=1))
             selected_chunks.append(
@@ -675,8 +685,8 @@ def _method_inference(
             abstention_cost=float(config.payload["abstention"]["cost"]),
             target_chunk_rows=chunk_rows,
         )
-        weights = prediction.routing_weights.astype(np.float32)
-        scores = prediction.scores.astype(np.float32)
+        weights = prediction.routing_weights.astype(np.float64)
+        scores = prediction.scores.astype(np.float64)
         selected = prediction.selected_experts.astype(np.int16)
         executable = ~prediction.forced_abstention
         state = {
@@ -697,32 +707,39 @@ def _method_inference(
                 "source_validation_rows": prediction.source_validation_examples,
             }
         )
-        policy = FrozenPilotPolicy(
-            method=method,
-            scenario_fingerprint=scenario.scenario_fingerprint,
-            provider_seed=scenario.definition.provider_seed,
-            fit_seed=fit_seed,
-            state=state,
-            preprocessing_state=preprocessing,
-            threshold_state=threshold_state,
-            fit_report=fit_report,
-        )
-        route_summary = _route_summary(
-            weights, selected, prediction.abstain, prediction.expected_compute, fit_report
-        )
-        return MethodInference(
-            policy=policy,
-            scores=scores,
-            routing_weights=weights,
-            abstain=np.asarray(prediction.abstain, dtype=bool),
-            selected_experts=selected,
-            expected_compute=prediction.expected_compute.astype(np.float32),
-            route_summary=route_summary,
-        )
+        abstain = np.asarray(prediction.abstain, dtype=bool)
     else:
         raise ValueError(f"unknown primary method {method!r}")
-    abstain = ~executable
-    expected_compute = (weights * costs[None, :]).sum(axis=1).astype(np.float32)
+    if method != "coregraph":
+        abstain = ~executable
+    numerical = config.payload["numerics"]
+    weights, forced_abstain, simplex_diagnostics = normalize_feasible_weights_float64(
+        weights,
+        available,
+        negative_tolerance=float(numerical["weight_negative_tolerance"]),
+        simplex_tolerance=float(numerical["simplex_tolerance"]),
+    )
+    abstain = np.asarray(abstain, dtype=bool) | forced_abstain
+    selected = np.where(
+        forced_abstain,
+        -1,
+        np.argmax(weights, axis=1),
+    ).astype(np.int16)
+    scores, hull_diagnostics = routed_scores_in_feasible_hull_float64(
+        weights,
+        target.scores,
+        available,
+        projection_tolerance=float(numerical["hull_projection_tolerance"]),
+    )
+    expected_compute = np.sum(weights * costs[None, :], axis=1, dtype=np.float64)
+    numerical_diagnostics = {
+        "numerical_implementation_version": NUMERICAL_IMPLEMENTATION_VERSION,
+        "scientific_compute_dtype": SCIENTIFIC_COMPUTE_DTYPE,
+        "stored_score_dtype": str(scores.dtype),
+        "stored_weight_dtype": str(weights.dtype),
+        **simplex_diagnostics.to_dict(),
+        **hull_diagnostics.to_dict(),
+    }
     policy = FrozenPilotPolicy(
         method=method,
         scenario_fingerprint=scenario.scenario_fingerprint,
@@ -735,12 +752,20 @@ def _method_inference(
     )
     return MethodInference(
         policy=policy,
-        scores=np.asarray(scores, dtype=np.float32),
-        routing_weights=np.asarray(weights, dtype=np.float32),
+        scores=np.asarray(scores, dtype=np.float64),
+        routing_weights=np.asarray(weights, dtype=np.float64),
         abstain=np.asarray(abstain, dtype=bool),
         selected_experts=np.asarray(selected, dtype=np.int16),
         expected_compute=expected_compute,
-        route_summary=_route_summary(weights, selected, abstain, expected_compute, fit_report),
+        route_summary=_route_summary(
+            weights,
+            selected,
+            abstain,
+            expected_compute,
+            fit_report,
+            numerical_diagnostics,
+        ),
+        numerical_diagnostics=numerical_diagnostics,
     )
 
 
@@ -750,6 +775,7 @@ def _route_summary(
     abstain: np.ndarray,
     expected_compute: np.ndarray,
     fit_report: Mapping[str, Any],
+    numerical_diagnostics: Mapping[str, Any],
 ) -> Mapping[str, Any]:
     counts = {
         expert: int(np.sum(selected == index)) for index, expert in enumerate(EXPERT_ORDER)
@@ -765,6 +791,7 @@ def _route_summary(
         "coverage": float(np.mean(~abstain)),
         "mean_relative_compute": float(np.mean(expected_compute)),
         "perturbation_flip_rate": fit_report.get("perturbation_flip_rate"),
+        "numerical_diagnostics": dict(numerical_diagnostics),
     }
 
 
@@ -809,6 +836,7 @@ def _evaluate(
         **regret_metrics,
         "mean_relative_compute": float(np.mean(inference.expected_compute)),
         "resource_feasible": bool(np.all(target.availability.any(axis=1))),
+        **dict(inference.numerical_diagnostics),
     }
 
 
@@ -875,7 +903,7 @@ def execute_coordinate(
         atomic_write_json(
             fit_path,
             {
-                "schema": "coregraph_v5_fit_report_v1",
+                "schema": "coregraph_v5_2_fit_report_v2",
                 "method": coordinate.method,
                 "policy_state_hash": inference.policy.policy_state_hash,
                 **dict(inference.policy.fit_report),
@@ -886,11 +914,11 @@ def execute_coordinate(
         atomic_write_npz(
             scores_path,
             row_keys=np.asarray(target.row_keys),
-            scores=inference.scores.astype(np.float32),
-            routing_weights=inference.routing_weights.astype(np.float32),
+            scores=inference.scores.astype(np.float64),
+            routing_weights=inference.routing_weights.astype(np.float64),
             abstain=inference.abstain.astype(np.bool_),
             selected_experts=inference.selected_experts.astype(np.int16),
-            expected_compute=inference.expected_compute.astype(np.float32),
+            expected_compute=inference.expected_compute.astype(np.float64),
         )
         route_path = method_root / "route_summary.json"
         atomic_write_json(route_path, dict(inference.route_summary))
@@ -904,7 +932,7 @@ def execute_coordinate(
             for item in scenario.target_bindings
         ]
         freeze_payload = {
-            "schema": "coregraph_v5_policy_freeze_manifest_v2",
+            "schema": POLICY_FREEZE_SCHEMA,
             "code_sha": code_sha,
             "base_config_sha256": config.config_sha256,
             "preregistration_sha256": config.preregistration_sha256,
@@ -912,6 +940,11 @@ def execute_coordinate(
             "output_schema_version": OUTPUT_SCHEMA_VERSION,
             "metric_schema_version": METRIC_SCHEMA_VERSION,
             "method_registry_version": METHOD_REGISTRY_VERSION,
+            "numerical_implementation_version": NUMERICAL_IMPLEMENTATION_VERSION,
+            "scientific_compute_dtype": SCIENTIFIC_COMPUTE_DTYPE,
+            "stored_score_dtype": str(inference.scores.dtype),
+            "stored_weight_dtype": str(inference.routing_weights.dtype),
+            "numerical_diagnostics": dict(inference.numerical_diagnostics),
             "dependency_lock_sha256": dependency_lock_sha256,
             "scenario_fingerprint": scenario.scenario_fingerprint,
             "source_artifacts": source_artifacts,
@@ -962,7 +995,7 @@ def execute_coordinate(
         current_stage = PilotStage.EVALUATED
         evaluation_path = method_root / "evaluation.json"
         evaluation_payload = {
-            "schema": "coregraph_v5_pilot_method_result_v2",
+            "schema": METHOD_RESULT_SCHEMA,
             "coordinate": asdict(coordinate),
             "coordinate_key": coordinate.key,
             "identity_hash": identity_hash,
@@ -974,6 +1007,8 @@ def execute_coordinate(
             "output_schema_version": OUTPUT_SCHEMA_VERSION,
             "metric_schema_version": METRIC_SCHEMA_VERSION,
             "method_registry_version": METHOD_REGISTRY_VERSION,
+            "numerical_implementation_version": NUMERICAL_IMPLEMENTATION_VERSION,
+            "scientific_compute_dtype": SCIENTIFIC_COMPUTE_DTYPE,
             "execution_status": "COMPLETE",
             "metrics": metrics,
             "route_summary": inference.route_summary,
@@ -1040,7 +1075,7 @@ def compute_gate(
         reasons.append("required_coordinate_set_incomplete_or_duplicated")
     by_cell: dict[tuple[str, str, int], dict[str, Mapping[str, Any]]] = {}
     for item in results:
-        if item.get("schema") != "coregraph_v5_pilot_method_result_v2":
+        if item.get("schema") != METHOD_RESULT_SCHEMA:
             reasons.append("old_or_unknown_method_result_schema")
         if item.get("metric_schema_version") != METRIC_SCHEMA_VERSION:
             reasons.append("old_or_mixed_metric_schema")
@@ -1048,6 +1083,14 @@ def compute_gate(
             reasons.append("mixed_effective_execution_config")
         if item.get("preregistration_sha256") != config.preregistration_sha256:
             reasons.append("mixed_preregistration")
+        metrics = item.get("metrics", {})
+        if not isinstance(metrics, Mapping):
+            reasons.append("invalid_metric_payload")
+        else:
+            if int(metrics.get("rows_with_raw_regret_below_tolerance", -1)) != 0:
+                reasons.append("regret_below_frozen_tolerance")
+            if int(metrics.get("rows_with_unavailable_nonzero_weight", -1)) != 0:
+                reasons.append("unavailable_nonzero_weight")
         coordinate = item.get("coordinate", {})
         cell = (
             str(coordinate.get("dataset")),
@@ -1081,7 +1124,7 @@ def compute_gate(
             METRIC_SCHEMA_VERSION,
         )
         return {
-            "schema": "coregraph_v5_pilot_gate_v2",
+            "schema": GATE_SCHEMA,
             "primary_metric": "contract_regret_vs_feasible_row_oracle",
             **asdict(record),
         }
@@ -1126,7 +1169,7 @@ def compute_gate(
         METRIC_SCHEMA_VERSION,
     )
     return {
-        "schema": "coregraph_v5_pilot_gate_v2",
+        "schema": GATE_SCHEMA,
         "primary_metric": "contract_regret_vs_feasible_row_oracle",
         **asdict(record),
         "comparisons": comparisons,

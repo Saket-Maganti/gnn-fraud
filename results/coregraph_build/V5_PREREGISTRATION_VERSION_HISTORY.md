@@ -6,3 +6,6 @@
 | `coregraph_saved_output_pilot_v5.1` | `931cd9f39cec9f0d28a68f6a8c13ad3628ccc155797e0c8276b9e3f75c63b487` | Frozen before real results | Matched row-wise feasible expert-or-abstain oracle, metric schema v2, effective execution identity, and exact package closure. |
 
 Synthetic outputs tied to v5.0 or output/metric schema v1 are stale and ineligible for resume, gate evaluation, or packaging.
+# V5.2 numerical amendment
+
+V5.2 supersedes V5.1 only for numerical realization and executable identity. Its preregistration amendment is `results/coregraph_build/V5_2_PREREGISTRATION_AMENDMENT.md` with SHA-256 `6d7ff43a5490cc7f20730817800d511a38b47817123cd73fb9abc14fe35710b9`. Scientific methods, data, seeds, oracle, abstention cost, metrics, and gate thresholds are unchanged, and no V5.1 coordinate is reusable.

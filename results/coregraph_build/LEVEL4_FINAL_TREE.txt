@@ -125,6 +125,7 @@ coregraph/experiments/resume.py
 coregraph/experiments/runner.py
 coregraph/experiments/scenario_manifests.py
 coregraph/experiments/telemetry.py
+coregraph/experiments/v5_numerics.py
 coregraph/experiments/v5_package_validator.py
 coregraph/experiments/v5_pilot_executor.py
 coregraph/experiments/v5_pilot_outputs.py
@@ -671,6 +672,7 @@ release/coregraph/anonymous/coregraph/experiments/resume.py
 release/coregraph/anonymous/coregraph/experiments/runner.py
 release/coregraph/anonymous/coregraph/experiments/scenario_manifests.py
 release/coregraph/anonymous/coregraph/experiments/telemetry.py
+release/coregraph/anonymous/coregraph/experiments/v5_numerics.py
 release/coregraph/anonymous/coregraph/experiments/v5_package_validator.py
 release/coregraph/anonymous/coregraph/experiments/v5_pilot_executor.py
 release/coregraph/anonymous/coregraph/experiments/v5_pilot_outputs.py
@@ -942,6 +944,7 @@ release/coregraph/anonymous/specifications/PILOT_GATE_FROZEN_SPEC_V4.json
 release/coregraph/anonymous/specifications/PILOT_GATE_FROZEN_SPEC_V5.json
 release/coregraph/anonymous/specifications/PILOT_V3_SPECIFICATION.md
 release/coregraph/anonymous/specifications/PILOT_V4_SPECIFICATION.md
+release/coregraph/anonymous/specifications/V5_2_PREREGISTRATION_AMENDMENT.md
 release/coregraph/anonymous/specifications/V5_BASE_ARTIFACTS.csv
 release/coregraph/anonymous/specifications/V5_BINDINGS.csv
 release/coregraph/anonymous/specifications/V5_SAVED_OUTPUT_PILOT_SPECIFICATION.md
@@ -979,6 +982,7 @@ release/coregraph/anonymous/tests/coregraph/test_second_review_pilot_semantics.p
 release/coregraph/anonymous/tests/coregraph/test_statistics_metrics.py
 release/coregraph/anonymous/tests/coregraph/test_synthetic_sampling.py
 release/coregraph/anonymous/tests/coregraph/test_third_review_v4_integration.py
+release/coregraph/anonymous/tests/coregraph/test_v5_2_numerics.py
 release/coregraph/anonymous/tests/coregraph/test_v5_final_repair.py
 release/coregraph/anonymous/tests/coregraph/test_v5_pilot_executor.py
 release/coregraph/anonymous/theory/coregraph_level4/assumptions.md
@@ -1145,6 +1149,19 @@ results/coregraph_build/THIRD_REVIEW_FINDINGS.csv
 results/coregraph_build/THIRD_REVIEW_HANDOFF.md
 results/coregraph_build/THIRD_REVIEW_REPAIR_PLAN.md
 results/coregraph_build/THIRD_REVIEW_REPAIR_REPORT.md
+results/coregraph_build/V5_2_AUTONOMOUS_REPAIR_LEDGER.csv
+results/coregraph_build/V5_2_COVERAGE_REPORT.md
+results/coregraph_build/V5_2_FINAL_REPAIR_GATE_STATUS.json
+results/coregraph_build/V5_2_IMPLEMENTATION_REPORT.md
+results/coregraph_build/V5_2_NUMERICAL_REPAIR_PREFLIGHT.md
+results/coregraph_build/V5_2_NUMERICAL_REPAIR_SPEC.md
+results/coregraph_build/V5_2_NUMERICAL_ROOT_CAUSE.md
+results/coregraph_build/V5_2_PREREGISTRATION_AMENDMENT.md
+results/coregraph_build/V5_2_PREREGISTRATION_HASH.txt
+results/coregraph_build/V5_2_REAL_PILOT_EXACT_COMMANDS.md
+results/coregraph_build/V5_2_SYNTHETIC_VALIDATION.md
+results/coregraph_build/V5_2_TEST_REPORT.md
+results/coregraph_build/V5_2_V5_1_FAILURE_REPRODUCTION.md
 results/coregraph_build/V5_BASE_ARTIFACTS.csv
 results/coregraph_build/V5_BINDINGS.csv
 results/coregraph_build/V5_EFFECTIVE_EXECUTION_CONFIG_SPEC.md
@@ -1161,7 +1178,9 @@ results/coregraph_build/V5_EXECUTOR_PAPER_POLISH_REPORT.md
 results/coregraph_build/V5_EXECUTOR_TEST_COVERAGE_REPORT.md
 results/coregraph_build/V5_FINAL_REPAIR_COMMAND_LOG.md
 results/coregraph_build/V5_FINAL_REPAIR_COVERAGE_REPORT.md
+results/coregraph_build/V5_FINAL_REPAIR_FINAL_TREE.txt
 results/coregraph_build/V5_FINAL_REPAIR_FINDINGS.csv
+results/coregraph_build/V5_FINAL_REPAIR_GATE_STATUS.json
 results/coregraph_build/V5_FINAL_REPAIR_IMPLEMENTATION_REPORT.md
 results/coregraph_build/V5_FINAL_REPAIR_PAPER_ALIGNMENT.md
 results/coregraph_build/V5_FINAL_REPAIR_PLAN.md
@@ -1470,6 +1489,7 @@ tests/coregraph/test_second_review_pilot_semantics.py
 tests/coregraph/test_statistics_metrics.py
 tests/coregraph/test_synthetic_sampling.py
 tests/coregraph/test_third_review_v4_integration.py
+tests/coregraph/test_v5_2_numerics.py
 tests/coregraph/test_v5_final_repair.py
 tests/coregraph/test_v5_pilot_executor.py
 tests/test_fraudshiftbench_claim_gates.py
