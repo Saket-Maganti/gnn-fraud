@@ -12,6 +12,7 @@ import platform
 import shutil
 import subprocess
 import sys
+import tempfile
 import zipfile
 from dataclasses import asdict, replace
 from pathlib import Path
@@ -29,11 +30,19 @@ from coregraph.experiments.v5_pilot_executor import (  # noqa: E402
     execute_coordinate,
 )
 from coregraph.experiments.v5_pilot_outputs import (  # noqa: E402
+    OUTPUT_SCHEMA_VERSION,
     atomic_write_csv,
     atomic_write_text,
+    build_effective_execution_config,
     canonical_hash,
 )
+from coregraph.experiments.v5_package_validator import (  # noqa: E402
+    validate_package_root,
+    write_package_validation_artifacts,
+)
 from coregraph.experiments.v5_pilot_types import (  # noqa: E402
+    METHOD_REGISTRY_VERSION,
+    METRIC_SCHEMA_VERSION,
     PRIMARY_METHODS,
     PilotCoordinate,
     V5ScenarioMaterialization,
@@ -60,18 +69,70 @@ def _git(*arguments: str) -> str:
     ).strip()
 
 
-def _git_state() -> tuple[str, bool, str]:
+def _git_state() -> tuple[str, bool, Mapping[str, Any]]:
     sha = _git("rev-parse", "HEAD")
-    status = _git("status", "--porcelain=v1", "--untracked-files=all")
-    dirty = bool(status)
-    diff_payload = subprocess.check_output(
-        ["git", "-C", str(ROOT), "diff", "--binary", "HEAD"],
+    unstaged = subprocess.check_output(
+        ["git", "-C", str(ROOT), "diff", "--binary"],
     )
-    untracked = "\n".join(
-        sorted(line[3:] for line in status.splitlines() if line.startswith("?? "))
-    ).encode("utf-8")
-    dirty_hash = hashlib.sha256(diff_payload + b"\n" + untracked).hexdigest()
-    return sha, dirty, dirty_hash
+    staged = subprocess.check_output(
+        ["git", "-C", str(ROOT), "diff", "--cached", "--binary"],
+    )
+    submodules = subprocess.check_output(
+        ["git", "-C", str(ROOT), "submodule", "status", "--recursive"],
+    )
+    untracked_raw = subprocess.check_output(
+        [
+            "git",
+            "-C",
+            str(ROOT),
+            "ls-files",
+            "--others",
+            "--exclude-standard",
+            "-z",
+        ]
+    )
+    untracked_paths = sorted(
+        value.decode("utf-8", errors="surrogateescape")
+        for value in untracked_raw.split(b"\0")
+        if value
+    )
+    untracked_contents = bytearray()
+    untracked_records: list[dict[str, Any]] = []
+    for relative in untracked_paths:
+        path = ROOT / relative
+        if path.is_symlink():
+            content = os.readlink(path).encode("utf-8", errors="surrogateescape")
+        elif path.is_file():
+            content = path.read_bytes()
+        else:
+            content = b""
+        encoded_path = relative.encode("utf-8", errors="surrogateescape")
+        untracked_contents.extend(len(encoded_path).to_bytes(8, "big"))
+        untracked_contents.extend(encoded_path)
+        untracked_contents.extend(len(content).to_bytes(8, "big"))
+        untracked_contents.extend(content)
+        untracked_records.append(
+            {
+                "path": relative,
+                "bytes": len(content),
+                "sha256": hashlib.sha256(content).hexdigest(),
+            }
+        )
+    combined = b"\0".join((unstaged, staged, bytes(untracked_contents), submodules))
+    diagnostics = {
+        "tracked_unstaged_diff_bytes": len(unstaged),
+        "tracked_unstaged_diff_sha256": hashlib.sha256(unstaged).hexdigest(),
+        "staged_diff_bytes": len(staged),
+        "staged_diff_sha256": hashlib.sha256(staged).hexdigest(),
+        "untracked_paths": untracked_records,
+        "untracked_content_bytes": sum(item["bytes"] for item in untracked_records),
+        "untracked_contents_sha256": hashlib.sha256(bytes(untracked_contents)).hexdigest(),
+        "submodule_state_bytes": len(submodules),
+        "submodule_state_sha256": hashlib.sha256(submodules).hexdigest(),
+        "dirty_state_sha256": hashlib.sha256(combined).hexdigest(),
+    }
+    dirty = bool(unstaged or staged or untracked_paths or submodules.strip())
+    return sha, dirty, diagnostics
 
 
 def _dependency_lock_hash() -> str:
@@ -89,6 +150,9 @@ def _plan_rows(coordinates: Sequence[PilotCoordinate]) -> list[dict[str, Any]]:
             "pilot_specification_version": item.pilot_specification_version,
             "scenario_id": item.scenario_id,
             "scenario_fingerprint": item.scenario_fingerprint,
+            "effective_execution_config_sha256": (
+                item.effective_execution_config_sha256
+            ),
             "status": "PLANNED",
         }
         for item in coordinates
@@ -103,11 +167,10 @@ def _write_plan(
     config: V5PilotConfig,
     evidence_cache: Path,
     dirty: bool,
-    dirty_hash: str,
+    dirty_diagnostics: Mapping[str, Any],
     command: Sequence[str],
     execution_authorized: bool,
-    configured_chunk_rows: int,
-    effective_chunk_rows: int,
+    effective_execution_config: Mapping[str, Any],
 ) -> Mapping[str, Any]:
     output_root.mkdir(parents=True, exist_ok=True)
     plan_path = output_root / "PILOT_PLAN.csv"
@@ -116,13 +179,20 @@ def _write_plan(
     atomic_write_text(output_root / "PILOT_PLAN.sha256", f"{plan_hash}  PILOT_PLAN.csv\n")
     archive_hashes = dict(config.payload["archive_hashes"])
     manifest = {
-        "schema": "coregraph_v5_pilot_run_manifest_v1",
+        "schema": "coregraph_v5_pilot_run_manifest_v2",
         "repository_sha": code_sha,
         "dirty_tree": dirty,
-        "dirty_diff_sha256": dirty_hash if dirty else None,
-        "config_sha256": config.config_sha256,
+        "dirty_state_diagnostics": dirty_diagnostics,
+        "base_config_sha256": config.config_sha256,
         "preregistration_sha256": config.preregistration_sha256,
+        "effective_execution_config": dict(effective_execution_config),
+        "effective_execution_config_sha256": effective_execution_config[
+            "effective_execution_config_sha256"
+        ],
         "dependency_lock_sha256": _dependency_lock_hash(),
+        "output_schema_version": OUTPUT_SCHEMA_VERSION,
+        "metric_schema_version": METRIC_SCHEMA_VERSION,
+        "method_registry_version": METHOD_REGISTRY_VERSION,
         "evidence_cache_manifest_sha256": (
             stable_file_sha256(evidence_cache / "manifests" / "EVIDENCE_CACHE_MANIFEST.csv")
             if (evidence_cache / "manifests" / "EVIDENCE_CACHE_MANIFEST.csv").is_file()
@@ -138,11 +208,18 @@ def _write_plan(
         "environment": {
             "python": platform.python_version(),
             "platform": platform.platform(),
-            "max_workers": 1,
+            "max_workers": effective_execution_config["max_workers"],
             "execution_device": "cpu_first",
-            "configured_chunk_rows": configured_chunk_rows,
-            "effective_chunk_rows": effective_chunk_rows,
-            "chunk_override_active": configured_chunk_rows != effective_chunk_rows,
+            "configured_chunk_rows": effective_execution_config[
+                "configured_chunk_rows"
+            ],
+            "effective_chunk_rows": effective_execution_config[
+                "effective_chunk_rows"
+            ],
+            "chunk_override_active": (
+                effective_execution_config["configured_chunk_rows"]
+                != effective_execution_config["effective_chunk_rows"]
+            ),
         },
         "command": list(command),
         "output_root": str(output_root),
@@ -198,26 +275,123 @@ def _resource_estimate(
     }
 
 
-def _package(output_root: Path) -> Path:
-    plan = output_root / "PILOT_PLAN.csv"
-    if not plan.is_file():
-        raise RuntimeError("cannot package an output root without PILOT_PLAN.csv")
-    planned = sum(1 for _ in plan.open(encoding="utf-8")) - 1
-    complete = list(output_root.glob("scenarios/*/methods/*/COMPLETE"))
-    if len(complete) != planned:
-        raise RuntimeError(f"cannot package incomplete run: {len(complete)}/{planned} coordinates")
-    checksums = []
-    for path in sorted(output_root.rglob("*")):
-        if path.is_file() and path.name != "OUTPUT_CHECKSUMS.sha256":
-            checksums.append(f"{sha256_path(path)}  {path.relative_to(output_root)}")
-    atomic_write_text(output_root / "OUTPUT_CHECKSUMS.sha256", "\n".join(checksums) + "\n")
-    destination = output_root.parent / f"{output_root.name}.zip"
+def _validate_real_output_root(
+    output_root: Path,
+    *,
+    resume: bool,
+    effective_execution_config: Mapping[str, Any],
+    estimate: Mapping[str, Any],
+) -> None:
+    if output_root.exists() and not output_root.is_dir():
+        raise RuntimeError("real V5 output root exists and is not a directory")
+    try:
+        relative = output_root.relative_to(ROOT)
+    except ValueError:
+        relative = None
+    if relative is not None:
+        ignored = subprocess.run(
+            ["git", "-C", str(ROOT), "check-ignore", "-q", "--", str(relative)],
+            check=False,
+        ).returncode == 0
+        if not ignored:
+            raise RuntimeError("real V5 output root inside Git must be ignored")
+    existing = list(output_root.iterdir()) if output_root.is_dir() else []
+    if existing:
+        if not resume:
+            raise RuntimeError("real V5 execution refuses a non-empty output root without --resume")
+        manifest_path = output_root / "RUN_MANIFEST.json"
+        if not manifest_path.is_file():
+            raise RuntimeError("resume root is non-empty but has no RUN_MANIFEST.json")
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        if manifest.get("effective_execution_config_sha256") != effective_execution_config.get(
+            "effective_execution_config_sha256"
+        ):
+            raise RuntimeError("resume root has an incompatible effective execution config")
+        previous = manifest.get("effective_execution_config", {})
+        if not isinstance(previous, Mapping) or previous.get("execution_mode") != "real":
+            raise RuntimeError("synthetic or malformed outputs cannot enter a real output root")
+    required = max(
+        2 * 1024**3,
+        3
+        * (
+            int(estimate["estimated_raw_target_score_bytes"])
+            + int(estimate["estimated_raw_route_weight_bytes"])
+        ),
+    )
+    available = int(estimate["available_output_filesystem_bytes"])
+    if available < required:
+        raise RuntimeError(
+            f"insufficient output disk: available={available}, required={required}"
+        )
+
+
+def _write_output_checksums(output_root: Path) -> None:
+    manifest = json.loads((output_root / "RUN_MANIFEST.json").read_text(encoding="utf-8"))
+    lines = [
+        "# schema=coregraph_v5_output_checksums_v2",
+        "# effective_execution_config_sha256="
+        + str(manifest["effective_execution_config_sha256"]),
+        "# output_schema_version=" + str(manifest["output_schema_version"]),
+        "# metric_schema_version=" + str(manifest["metric_schema_version"]),
+    ]
+    lines.extend(
+        f"{sha256_path(path)}  {path.relative_to(output_root)}"
+        for path in sorted(output_root.rglob("*"))
+        if path.is_file() and path.name != "OUTPUT_CHECKSUMS.sha256"
+    )
+    atomic_write_text(output_root / "OUTPUT_CHECKSUMS.sha256", "\n".join(lines) + "\n")
+
+
+def _write_zip(output_root: Path, destination: Path) -> None:
     temporary = destination.with_suffix(".zip.tmp")
     with zipfile.ZipFile(temporary, "w", zipfile.ZIP_DEFLATED) as archive:
         for path in sorted(output_root.rglob("*")):
             if path.is_file():
                 archive.write(path, path.relative_to(output_root.parent))
     os.replace(temporary, destination)
+
+
+def _validate_extracted_zip(destination: Path, output_root_name: str) -> Mapping[str, Any]:
+    with zipfile.ZipFile(destination) as archive:
+        corrupt = archive.testzip()
+        if corrupt is not None:
+            raise RuntimeError(f"ZIP CRC validation failed for {corrupt}")
+        with tempfile.TemporaryDirectory(prefix="coregraph-v5-package-") as temporary:
+            extraction = Path(temporary)
+            archive.extractall(extraction)
+            report, _ = validate_package_root(extraction / output_root_name)
+    return report
+
+
+def _package(output_root: Path) -> Path:
+    for generated in (
+        output_root / "PACKAGE_VALIDATION_REPORT.json",
+        output_root / "PACKAGE_COORDINATE_MANIFEST.csv",
+        output_root / "OUTPUT_CHECKSUMS.sha256",
+    ):
+        if generated.is_file():
+            generated.unlink()
+    pre_report, coordinate_manifest = validate_package_root(output_root)
+    report = {
+        **pre_report,
+        "pre_zip_validation": "PASS",
+        "post_extraction_validation": "PENDING",
+        "zip_crc_validation": "PENDING",
+    }
+    write_package_validation_artifacts(output_root, report, coordinate_manifest)
+    _write_output_checksums(output_root)
+    destination = output_root.parent / f"{output_root.name}.zip"
+    _write_zip(output_root, destination)
+    _validate_extracted_zip(destination, output_root.name)
+    report = {
+        **report,
+        "post_extraction_validation": "PASS",
+        "zip_crc_validation": "PASS",
+    }
+    write_package_validation_artifacts(output_root, report, coordinate_manifest)
+    _write_output_checksums(output_root)
+    _write_zip(output_root, destination)
+    _validate_extracted_zip(destination, output_root.name)
     return destination
 
 
@@ -234,16 +408,12 @@ def parse_args() -> argparse.Namespace:
     mode.add_argument("--package", action="store_true")
     parser.add_argument("--synthetic-fixture", action="store_true")
     parser.add_argument("--resume", action="store_true")
-    parser.add_argument("--scenario-id")
-    parser.add_argument("--method", choices=PRIMARY_METHODS)
     parser.add_argument("--chunk-rows", type=int)
     parser.add_argument("--max-workers", type=int, default=1)
     parser.add_argument("--output-root", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--evidence-cache", type=Path, default=DEFAULT_CACHE)
     parser.add_argument("--fail-fast", action="store_true")
-    parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--authorization-token")
-    parser.add_argument("--allow-dirty", action="store_true", help=argparse.SUPPRESS)
     arguments = parser.parse_args()
     if not any((arguments.plan, arguments.validate_only, arguments.execute, arguments.package)):
         parser.error("choose --plan, --validate-only, --execute, or --package")
@@ -267,7 +437,13 @@ def main() -> int:
         raise RuntimeError(
             "strict deterministic V5 execution currently permits --max-workers 1 only"
         )
-    config = load_v5_config((ROOT / arguments.config).resolve() if not Path(arguments.config).is_absolute() else Path(arguments.config))
+    config = load_v5_config(
+        (ROOT / arguments.config).resolve()
+        if not Path(arguments.config).is_absolute()
+        else Path(arguments.config)
+    )
+    code_sha, dirty, dirty_diagnostics = _git_state()
+    dependency_lock_sha256 = _dependency_lock_hash()
     evidence_cache = arguments.evidence_cache.expanduser().resolve()
     if arguments.synthetic_fixture:
         synthetic_config, evidence_cache = build_synthetic_fixture(
@@ -283,7 +459,20 @@ def main() -> int:
             "chunk_rows": effective_chunk_rows,
         }
         config = replace(config, payload=payload)
-    code_sha, dirty, dirty_hash = _git_state()
+    effective_execution_config = build_effective_execution_config(
+        base_config_sha256=config.config_sha256,
+        preregistration_sha256=config.preregistration_sha256,
+        configured_chunk_rows=configured_chunk_rows,
+        effective_chunk_rows=effective_chunk_rows,
+        max_workers=arguments.max_workers,
+        execution_mode="synthetic" if arguments.synthetic_fixture else "real",
+        synthetic_fixture=arguments.synthetic_fixture,
+        dependency_lock_sha256=dependency_lock_sha256,
+        code_sha=code_sha,
+    )
+    effective_execution_config_sha256 = str(
+        effective_execution_config["effective_execution_config_sha256"]
+    )
     authorized = bool(
         arguments.execute
         and not arguments.synthetic_fixture
@@ -294,14 +483,26 @@ def main() -> int:
             raise RuntimeError(
                 "real V5 execution requires the explicit later authorization token"
             )
-        if dirty and not arguments.allow_dirty:
+        if dirty:
             raise RuntimeError("real V5 execution refuses a dirty Git tree")
     artifacts, scenarios = load_v5_surface(
         config, code_sha=code_sha, evidence_cache=evidence_cache
     )
-    coordinates = build_pilot_coordinates(scenarios, config)
+    coordinates = build_pilot_coordinates(
+        scenarios,
+        config,
+        effective_execution_config_sha256=effective_execution_config_sha256,
+    )
     if not arguments.synthetic_fixture and len(coordinates) != 240:
         raise RuntimeError(f"canonical V5 plan must contain exactly 240 coordinates, got {len(coordinates)}")
+    estimate = _resource_estimate(artifacts, config, output_root)
+    if arguments.execute and not arguments.synthetic_fixture:
+        _validate_real_output_root(
+            output_root,
+            resume=arguments.resume,
+            effective_execution_config=effective_execution_config,
+            estimate=estimate,
+        )
     run_manifest = _write_plan(
         output_root,
         coordinates,
@@ -309,15 +510,13 @@ def main() -> int:
         config=config,
         evidence_cache=evidence_cache,
         dirty=dirty,
-        dirty_hash=dirty_hash,
+        dirty_diagnostics=dirty_diagnostics,
         command=sys.argv,
         execution_authorized=authorized,
-        configured_chunk_rows=configured_chunk_rows,
-        effective_chunk_rows=effective_chunk_rows,
+        effective_execution_config=effective_execution_config,
     )
-    estimate = _resource_estimate(artifacts, config, output_root)
     atomic_write_json(output_root / "OPERATIONAL_ESTIMATE.json", estimate)
-    if arguments.plan or arguments.dry_run:
+    if arguments.plan:
         payload = {
             "status": "PLANNED_NO_TRAINING",
             "archives": 6,
@@ -353,29 +552,31 @@ def main() -> int:
     if arguments.validate_only:
         print(json.dumps(validation, indent=2, sort_keys=True))
         return 0
-    selected_scenarios = list(scenarios)
-    if arguments.scenario_id:
-        selected_scenarios = [
-            item for item in selected_scenarios if item.definition.scenario_id == arguments.scenario_id
-        ]
-        if not selected_scenarios:
-            raise ValueError(f"unknown scenario ID {arguments.scenario_id!r}")
-    selected_methods = (arguments.method,) if arguments.method else PRIMARY_METHODS
     by_scenario = _scenario_by_id(scenarios)
     coordinate_lookup = {(item.scenario_id, item.method): item for item in coordinates}
     store = ArchiveStore(evidence_cache, dict(config.payload["archive_hashes"]))
     results: list[Mapping[str, Any]] = []
     failures = 0
-    for scenario in selected_scenarios:
+    for scenario in scenarios:
         scenario_root = output_root / "scenarios" / scenario.definition.scenario_id
         source = assemble_source_environments(store, scenario, config)
         target = assemble_target_unlabeled(store, scenario, config)
         atomic_write_json(
             scenario_root / "scenario_manifest.json",
             {
-                "schema": "coregraph_v5_pilot_scenario_manifest_v1",
+                "schema": "coregraph_v5_pilot_scenario_manifest_v2",
                 "definition": asdict(scenario.definition),
                 "scenario_fingerprint": scenario.scenario_fingerprint,
+                "code_sha": code_sha,
+                "base_config_sha256": config.config_sha256,
+                "effective_execution_config_sha256": (
+                    effective_execution_config_sha256
+                ),
+                "preregistration_sha256": config.preregistration_sha256,
+                "dependency_lock_sha256": dependency_lock_sha256,
+                "output_schema_version": OUTPUT_SCHEMA_VERSION,
+                "metric_schema_version": METRIC_SCHEMA_VERSION,
+                "method_registry_version": METHOD_REGISTRY_VERSION,
                 "source_binding_count": len(scenario.source_bindings),
                 "target_binding_count": len(scenario.target_bindings),
                 "target_unlabelled": target.to_serializable(),
@@ -398,7 +599,7 @@ def main() -> int:
                 "target_labels_loaded": False,
             },
         )
-        for method in selected_methods:
+        for method in PRIMARY_METHODS:
             coordinate = coordinate_lookup[(scenario.definition.scenario_id, method)]
             try:
                 results.append(
@@ -411,7 +612,10 @@ def main() -> int:
                         config=config,
                         output_root=output_root,
                         code_sha=code_sha,
-                        dependency_lock_sha256=_dependency_lock_hash(),
+                        dependency_lock_sha256=dependency_lock_sha256,
+                        effective_execution_config_sha256=(
+                            effective_execution_config_sha256
+                        ),
                         resume=arguments.resume,
                     )
                 )
@@ -424,7 +628,15 @@ def main() -> int:
         for path in sorted(output_root.glob("scenarios/*/methods/*/evaluation.json"))
     ]
     aggregate = {
-        "schema": "coregraph_v5_pilot_aggregate_v1",
+        "schema": "coregraph_v5_pilot_aggregate_v2",
+        "code_sha": code_sha,
+        "base_config_sha256": config.config_sha256,
+        "effective_execution_config_sha256": effective_execution_config_sha256,
+        "preregistration_sha256": config.preregistration_sha256,
+        "dependency_lock_sha256": dependency_lock_sha256,
+        "output_schema_version": OUTPUT_SCHEMA_VERSION,
+        "metric_schema_version": METRIC_SCHEMA_VERSION,
+        "method_registry_version": METHOD_REGISTRY_VERSION,
         "result_count": len(all_results),
         "failure_count": failures,
         "results": all_results,
@@ -437,8 +649,6 @@ def main() -> int:
         "status": (
             "SYNTHETIC_EXECUTION_COMPLETE"
             if arguments.synthetic_fixture and not failures and len(all_results) == len(coordinates)
-            else "EXECUTION_SHARD_COMPLETE"
-            if not failures and (arguments.scenario_id or arguments.method)
             else "EXECUTION_COMPLETE"
             if not failures
             else "EXECUTION_COMPLETED_WITH_FAILURES"
@@ -448,15 +658,14 @@ def main() -> int:
         "failures": failures,
         "gate_outcome": gate["outcome"],
         "real_pilot": not arguments.synthetic_fixture,
+        "effective_execution_config_sha256": effective_execution_config_sha256,
+        "output_schema_version": OUTPUT_SCHEMA_VERSION,
+        "metric_schema_version": METRIC_SCHEMA_VERSION,
     }
     print(json.dumps(payload, indent=2, sort_keys=True))
-    selected_keys = {
-        coordinate_lookup[(scenario.definition.scenario_id, method)].key
-        for scenario in selected_scenarios
-        for method in selected_methods
-    }
     completed_keys = {str(item.get("coordinate_key", "")) for item in all_results}
-    return 0 if not failures and selected_keys.issubset(completed_keys) else 1
+    required_keys = {item.key for item in coordinates}
+    return 0 if not failures and completed_keys == required_keys else 1
 
 
 if __name__ == "__main__":

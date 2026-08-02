@@ -73,6 +73,7 @@ coregraph-typecheck:
 		coregraph/experiments/v5_pilot_types.py \
 		coregraph/experiments/v5_scenario_loader.py \
 		coregraph/experiments/v5_pilot_outputs.py \
+		coregraph/experiments/v5_package_validator.py \
 		coregraph/experiments/v5_pilot_executor.py \
 		coregraph/experiments/v5_synthetic.py \
 		coregraph/evaluation/metrics.py coregraph/evaluation/selective.py \
@@ -92,13 +93,16 @@ coregraph-test:
 
 coregraph-coverage:
 	$(PY) -m coverage erase
-	$(PY) -m coverage run --source=coregraph,scripts/coregraph -m pytest -q
+	$(PY) -m coverage run --timid --source=coregraph,scripts/coregraph -m pytest -q
 	$(PY) -m coverage report --include='coregraph/contracts/*' --fail-under=85
 	$(PY) -m coverage report --include='coregraph/routing/*' --fail-under=85
 	$(PY) -m coverage report --include='coregraph/objectives/*' --fail-under=85
 	$(PY) -m coverage report --include='coregraph/experiments/pilot.py' --fail-under=85
 	$(PY) -m coverage report --include='coregraph/experiments/v5_pilot_executor.py' --fail-under=95
-	$(PY) -m coverage report --include='coregraph/experiments/v5_pilot_outputs.py' --fail-under=92
+	$(PY) -m coverage report --include='coregraph/experiments/v5_pilot_outputs.py' --fail-under=95
+	$(PY) -m coverage report --include='coregraph/experiments/v5_scenario_loader.py' --fail-under=90
+	$(PY) -m coverage report --include='coregraph/experiments/v5_package_validator.py' --fail-under=95
+	$(PY) -m coverage report --include='coregraph/evaluation/regret.py' --fail-under=95
 	$(PY) -m coverage report --include='coregraph/experiments/manifest_conversion.py' --fail-under=85
 	$(PY) -m coverage report --include='coregraph/experiments/scenario_manifests.py' --fail-under=80
 	$(PY) -m coverage report --include='coregraph/experiments/canonical_recovery.py' --fail-under=85
