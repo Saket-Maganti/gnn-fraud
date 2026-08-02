@@ -1,0 +1,9 @@
+claim_id,paper_location,claim_type,required_evidence,current_status,permitted_wording
+L4-T1,section.5,theory,fixed-mixture proof and executable check,PROVED_INTERNAL_REVIEW_PENDING,Under the stated affine-risk assumptions a fixed mixture has positive minimax regret
+L4-T2,section.5,theory,compositional proof and XOR counterexample,PROVED_INTERNAL_REVIEW_PENDING,Under bounded additive-axis assumptions the unseen-combination excess risk is bounded
+L4-T3,section.5,theory,resource-mask algebra and tests,PROVED_AND_REVIEWED,Unavailable experts receive zero mass and an empty set is explicit
+L4-T4,section.5,theory,selective transfer proof,PROVED_INTERNAL_REVIEW_PENDING,Under density-ratio and coverage assumptions target selective risk is bounded
+L4-E1,section.8,empirical,fraud unseen-combination cells and paired inference,BLOCKED_PENDING_RESULTS,No comparative wording permitted
+L4-E2,section.8,empirical,diagnostic and routing ablations,BLOCKED_PENDING_RESULTS,No comparative wording permitted
+L4-E3,section.10,empirical,resource measurements and counterfactuals,BLOCKED_RESOURCE_UNMEASURED,No latency memory or utility wording permitted
+L4-E4,supplement,empirical,official graph-MoE and graph-OOD parity,BLOCKED_OFFICIAL_BASELINE_INTEGRATION,Official status may be described but no performance comparison

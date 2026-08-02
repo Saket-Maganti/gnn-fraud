@@ -1,0 +1,80 @@
+\section{CoReGraph}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=.94\textwidth]{03_coregraph_architecture.pdf}
+  \caption{\method{} forms a contract prior, adds a bounded instance correction, imposes feasibility before normalization, and either routes or abstains. The diagram contains no empirical result.}
+  \label{fig:architecture}
+\end{figure*}
+
+\subsection{Factorised uncertain contract representation}
+
+For axis \(j\), the encoder combines a categorical embedding, a source-normalized continuous projection, an observation-state embedding, and confidence \(q_j\). Missing axes use a deterministic missing token; unknown and unseen categories share an unknown token while retaining their state. The axis vectors \(h_j\) are composed as
+\[
+h_c=\operatorname{MLP}\!\left([h_1;\ldots;h_6;\{\operatorname{clip}(h_j^\top h_k)\}_{j<k}]\right).
+\]
+Bounded pairwise interactions are optional. An attention-over-axes variant, a flat contract MLP, a protocol one-hot memorization baseline, and a no-contract baseline share the output interface. Continuous means and scales are fitted on source contracts only. Encoder configuration, vocabulary, statistics, and interaction switches are serialized in each run manifest.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{02_contract_factorisation.pdf}
+  \caption{Factorised contract representation. Each axis preserves value, missing/unseen state, and confidence before bounded composition.}
+  \label{fig:factorisation}
+\end{figure}
+
+\subsection{Expert-aware diagnostics}
+
+Each expert token may contain its probability, confidence, entropy, margin, logit norm, pairwise disagreement, ensemble variance, a source-fitted calibration proxy, feature and representation drift, visible degree statistics, graph density, isolated-node fraction, neighborhood truncation, edge-perturbation sensitivity, expected latency and memory, availability, and diagnostic confidence. Every diagnostic declares inputs, target-label requirements, source fitting, missing semantics, and cost. Label-dependent target error or prevalence is offline-only and rejected as a router input.
+
+Diagnostics complement contract metadata. The contract may state isolated access while score disagreement reveals that a particular graph expert is unstable; conversely, noisy metadata can be downweighted when label-free signals remain coherent. Target covariates are used only when the selection/access coordinate permits them.
+
+\subsection{Contract, instance, and hierarchical routing}
+
+The contract router produces logits \(z^c_e=g_c(h_c,d_c)\), one distribution per contract. The instance router produces \(z^x_e=g_x(x,d_e)\). The main hierarchical router uses
+\[
+z_e=z^c_e+\delta_e(x,c),\qquad
+\delta_e=\rho\tanh(g_x(x,d_e)),
+\]
+where \(\rho\) bounds correction magnitude. A threshold can sparsify corrections. Contract-only and instance-only modes are exact ablations. Stability penalizes within-contract variation and response to admissible metadata, score, and availability perturbations. Invocation accounting records every positive-mass expert or the executed sparse selection policy.
+
+\subsection{Resource-feasible masking and fallback}
+
+Availability, task compatibility, memory, latency, and invocation constraints are conjoined into mask \(m_e\) before softmax:
+\[
+\tilde z_e=\begin{cases}z_e,&m_e=1,\\-\infty,&m_e=0.\end{cases}
+\qquad
+\pi_e=\operatorname{softmax}(\tilde z)_e.
+\]
+Unavailable probability is exactly zero and feasible probability sums to one. If every \(m_e=0\), the implementation emits zero expert mass, selected-expert sentinel \(-1\), and forced abstention. A declared cheapest-feasible or feature-safe fallback may be used only when it is itself feasible. The mask and reason codes are persisted.
+
+\subsection{Robust objective and abstention}
+
+For source contract groups, the configurable objective is
+\[
+\begin{aligned}
+\mathcal L={}&\mathcal L_{\mathrm{task}}+
+\lambda_r\mathcal L_{\mathrm{regret}}+
+\lambda_w\mathcal L_{\mathrm{CVaR}}+
+\lambda_b\mathcal L_{\mathrm{budget}}+
+\lambda_s\mathcal L_{\mathrm{stability}}\\
+&+\lambda_a\mathcal L_{\mathrm{abstain}}+
+\lambda_u\mathcal L_{\mathrm{uncertainty}}+
+\lambda_1\mathcal L_{\mathrm{sparsity}}+\lambda_c\mathcal L_{\mathrm{compute}}.
+\end{aligned}
+\]
+Task and CVaR surrogates use source labels; deployment never does. They are distinct from the frozen V5 target metric, whose row-wise feasible hindsight oracle includes the same abstention action available to the method. Budget surrogates are group-local and do not claim exact optimization of discontinuous Recall@\(K\). Coefficients and source-validation thresholds are frozen before any target result is unlocked.
+
+The abstention head predicts rejection from contract and label-free diagnostics. Source validation selects a threshold subject to a coverage/abstention capacity, then target inference applies the frozen decision. Forced all-unavailable abstention overrides it. Threshold perturbations are included in stability analysis.
+
+\subsection{Training and inference algorithms}
+
+\noindent\fbox{\begin{minipage}{.94\linewidth}\small
+\textbf{Training.} (1) Construct leakage-audited source graph views. (2) Fit continuous normalization, category vocabulary, source calibration proxies, and baselines on source train/validation only. (3) Compute expert scores and label-free diagnostics. (4) Compose feasible masks. (5) optimize the enabled objective terms over source contract groups. (6) Select abstention and model checkpoints on balanced source validation. (7) Freeze hashes, configuration, and thresholds before target scoring.
+
+\textbf{Inference.} (1) Validate contract and resource status. (2) Encode supplied metadata and optional experimental inferred factors. (3) score admissible experts and diagnostics. (4) compute contract prior and bounded instance correction. (5) apply the mask before normalization. (6) force abstention if empty; otherwise route and apply the frozen threshold. (7) emit scores, weights, mask, selected expert, abstention, cost, and explanation record.
+\end{minipage}}
+
+The optional latent contract-discovery encoder consumes graph statistics, feature moments, disagreement, drift, confidence distributions, and resource signals. It emits latent factors, uncertainty, and out-of-support score. It is disabled by default and compared with supplied, inferred, hybrid, and no-contract variants.
+
+\paragraph{Complexity.}
+With \(E\) experts, \(d\) router width, and \(A=6\) axes, contract composition costs \(O(A^2d)\) with pairwise interactions and \(O(A^2d)\) for one-head axis attention. Routing costs \(O(Ed)\) per instance, excluding expert inference. Mask composition is \(O(E)\). Resource reporting separates this overhead from expert latency.

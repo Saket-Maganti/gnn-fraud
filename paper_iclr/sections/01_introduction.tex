@@ -1,0 +1,27 @@
+\section{Introduction}
+
+Graph learning is often evaluated as if deployment were a fixed dataset split. In practice, the admissible computation changes with the operating contract. A fraud detector may move from a graph whose future structure is visible to one where target edges are isolated; a platform may replace a static snapshot with a rolling event stream; a regulator or operations team may tighten the review queue; or a graph expert may cease to fit within latency or memory limits. These interventions change not only the distribution of inputs, but also what information and actions are valid.
+
+This distinction matters because graph structure can help or hurt. Message passing can recover relational signal when the deployment graph matches training access, yet can amplify stale, truncated, heterophilous, or unavailable structure. Feature, graph, and temporal experts can therefore reverse order across contracts. A fixed expert is unable to respond, while a global mixture gives the same mass to each expert despite a changed graph view or feasible set. Existing graph OOD benchmarks make environments explicit \cite{gui2022good}; graph mixtures specialize computation \cite{wang2023gmoe,zeng2024mowst}; and aligned shift experts address composite graph corruptions \cite{wu2024graphmetro}. The missing object is a typed \emph{deployment contract} that joins distribution, information access, selection policy, budget, and resource feasibility.
+
+We study generalisation to an unseen combination of known contract factors. The source environments may separately reveal early-to-late time, isolated graph access, or a tight review budget, while the target combines them. This is stricter than choosing among named protocols and different from unsupervised adaptation: the headline setting forbids target labels and does not assume that target covariates may be used for fitting. It is also operationally constrained. Routing to an unavailable expert is invalid even if that expert would have been accurate, and abstaining on every instance is not useful merely because selective risk becomes undefined.
+
+We introduce \method{}, a family of routers for heterogeneous pretrained experts. It represents each contract axis separately, handles missing and uncertain metadata, combines label-free expert diagnostics, and forms a stable contract-level prior with a bounded instance-level correction. Availability, memory, latency, and invocation constraints are applied before normalization. A source-frozen abstention policy handles uncertainty and an empty feasible set. Training combines source-only predictive and robust-risk surrogates with budget, stability, uncertainty, sparsity, and abstention terms. V5 target evaluation uses a separately frozen matched-action row oracle that includes abstention.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{01_problem_overview.pdf}
+  \caption{Compositional deployment-contract generalisation. The target combines operating conditions not jointly observed in the labelled source contracts. Target labels are unavailable during fitting and deployment.}
+  \label{fig:problem}
+\end{figure}
+
+Our contributions are:
+\begin{enumerate}
+  \item a formal learning problem for compositional deployment contracts spanning time, graph visibility, graph construction, selection access, review budget, and resources;
+  \item a modular hierarchical router with uncertainty-aware factorisation, expert diagnostics, exact feasibility masks, robust regret training, and controlled abstention;
+  \item scoped theory: a fixed-mixture impossibility result, a regret decomposition, an additive-axis composition result with interaction failures, a mask guarantee, and a selective-risk transfer result;
+  \item a three-layer evaluation joining FraudShiftBench inputs, fifteen controlled mechanisms, and a recognized non-fraud graph-OOD family, including noisy contracts and resource interventions; and
+  \item a pre-registered, checksum-first, scenario-local reproducibility system that blocks every numerical claim until its evidence and statistical predicate pass.
+\end{enumerate}
+
+FraudShiftBench is inherited evaluation infrastructure, not the method contribution of this paper. Its scientific files remain frozen, and its prior result tables do not support \method{}. The present paper is intentionally results-blocked: completing method and protocol prose before execution prevents target outcomes from silently shaping the story.

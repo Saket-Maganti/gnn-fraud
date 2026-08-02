@@ -1,0 +1,43 @@
+\section{Problem formulation}
+
+A deployment contract is
+$c=(c^{\mathrm{time}},c^{\mathrm{vis}},c^{\mathrm{build}},
+c^{\mathrm{select}},c^{\mathrm{budget}},c^{\mathrm{resource}})$.
+Each coordinate is typed. It determines an admissible graph view
+$G_c$, a prediction unit, target-access regime, feasible expert set
+$\mathcal A(c)$, and operational metric. Source contracts
+$\mathcal C_s$ are labelled for training. A target contract
+$c_t\notin\mathcal C_s$ may combine axis values observed separately in
+$\mathcal C_s$.
+
+Let expert $e$ emit a score $s_e(x;G_c)$ and incur a declared offline risk
+$R_c(e)$. A router emits weights
+$w_\theta(x,c,d)\in\Delta^{|\mathcal A(c)|}$ from the contract and label-free
+diagnostics $d$. Infeasible experts are masked before normalisation. The routed
+score is
+\[
+  s_\theta(x,c)=\sum_{e\in\mathcal A(c)}w_{\theta,e}(x,c,d)s_e(x;G_c).
+\]
+For V5 target evaluation, the primary offline oracle chooses the lower Brier
+loss among each row's feasible expert predictions and the same frozen-cost
+abstention action available to the method. The primary
+\texttt{contract\_regret\_vs\_feasible\_row\_oracle} averages method loss minus
+that matched-action row-oracle loss. A best fixed feasible non-abstaining expert
+over the whole contract is retained only as a separately named diagnostic. No
+oracle is queried at deployment.
+The older contract-level feasible oracle and instance-clairvoyant oracle remain
+source-training or theory terminology only; neither defines the V5 primary
+target metric.
+
+We distinguish domain generalisation with no target access,
+unlabelled target adaptation, and few-label target adaptation. Thresholds,
+target priors, and diagnostics inherit this access type. Node, edge, and
+transaction outcomes are never pooled as independent rows in one leaderboard.
+Target contract metadata and an operational target capacity may be known at
+inference; target labels are not available for fitting, threshold selection,
+or routing.
+
+The optimisation surrogate is binary cross-entropy and is reported, when
+needed, as BCE-surrogate contract regret. Selective risk is the zero--one
+error on accepted predictions. These quantities have different losses and are
+not compared numerically under a shared generic regret label.

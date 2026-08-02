@@ -1,0 +1,36 @@
+\section{Related work}
+
+\paragraph{Graph OOD generalisation.}
+GOOD provides explicit covariate and concept-shift environments for node and
+graph prediction \cite{gui2022good}. CIGA learns causally invariant subgraphs
+\cite{chen2022ciga}; EERM explores graph edits to extrapolate across node
+environments \cite{wu2022eerm}; and GraphMETRO uses aligned experts and a gate
+to model composed graph shifts \cite{wu2024graphmetro}. CoReGraph differs in
+treating observability, construction, selection, review budget, and resource
+availability as typed deployment coordinates, and in evaluating held-out
+combinations with a feasible-expert oracle.
+
+\paragraph{Graph mixtures and routing.}
+GMoE routes nodes among message-passing experts \cite{wang2023gmoe}. Mowst
+combines a weak feature expert with a strong graph expert through confidence
+\cite{zeng2024mowst}. Concurrent STEM-GNN uses tokenised experts and stability
+regularisation under graph corruptions \cite{guo2026stem}. CoReGraph instead
+routes among heterogeneous pretrained expert families and conditions on a
+factorised deployment contract. This distinction must be tested empirically
+against the strongest compatible implementations; novelty is not inferred from
+architecture prose alone.
+
+\paragraph{Temporal graphs and adaptation.}
+TGN represents dynamic graphs as timed event streams with memory
+\cite{rossi2020tgn}. The event-stream baseline in this work uses official TGN
+code where task semantics permit; a snapshot approximation is diagnostic only.
+Unlabelled target adaptation is reported separately from domain
+generalisation and few-label adaptation.
+
+\paragraph{Robust, selective, and resource-aware learning.}
+Group DRO targets worst-group risk \cite{sagawa2020groupdro}; VREx penalises
+environment-risk variance \cite{krueger2021vrex}. Selective prediction permits
+abstention when risk is high \cite{geifman2017selective}. CoReGraph combines
+these ideas at the contract level with explicit feasible-expert masks and
+review-budget outcomes. Oracle experts are offline evaluation ceilings, not
+deployment procedures.

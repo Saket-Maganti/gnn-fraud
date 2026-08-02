@@ -1,5 +1,18 @@
 # FraudShiftBench
 
+## CoReGraph V5 executor status
+
+The V5 saved-output executor is implemented and validated on branch
+`codex/coregraph-iclr-buildout-2026`. It materialises the frozen 180 base
+artifacts, 60 scenarios, 540 scenario-local bindings, and 240 primary method
+coordinates; streams checksum-addressed ZIP members without extraction;
+separates target-unlabelled inference from offline label evaluation; freezes
+policies before target scoring; and resumes only checksum-valid complete cells.
+The deterministic synthetic campaign completes all 240 coordinates. The real
+pilot has not run, no real target metric or oracle has been computed, and the
+ICLR paper remains results-blocked. See
+[`results/coregraph_build/V5_SAVED_OUTPUT_PILOT_EXECUTION_RUNBOOK.md`](results/coregraph_build/V5_SAVED_OUTPUT_PILOT_EXECUTION_RUNBOOK.md).
+
 FraudShiftBench is a research benchmark and evidence framework for evaluating
 graph-based fraud models under changing deployment contracts. Its central
 question is not simply which architecture wins, but whether the answer changes
@@ -139,4 +152,3 @@ Review-anonymous citation metadata is provided in
 redistribution terms are not yet resolved. Until that review is completed,
 [`LICENSE_REVIEW_REQUIRED.md`](LICENSE_REVIEW_REQUIRED.md) grants no permission
 to copy, modify, or redistribute the repository.
-

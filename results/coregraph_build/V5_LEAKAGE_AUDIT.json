@@ -1,0 +1,22 @@
+{
+  "base_artifact_count": 180,
+  "base_artifacts_role_neutral": true,
+  "binding_count": 540,
+  "chronology_status": "PASS",
+  "dataset_identity_status": "PASS",
+  "label_known_status": "PASS",
+  "metric_computation_performed": false,
+  "oracle_computation_performed": false,
+  "overall_status": "PASS_NO_TRAINING_BYTE_AND_STRUCTURE",
+  "provider_alignment_status": "PASS_60_GROUPS",
+  "row_scope_status": "PASS_20_DATASET_SEED_GROUPS",
+  "same_scenario_dual_role": false,
+  "scenario_count": 60,
+  "schema": "coregraph_v5_level4_leakage_audit_v1",
+  "source_binding_count": 360,
+  "source_train_validation_vs_target_test_disjoint_groups": 20,
+  "structural_status": "PASS",
+  "target_binding_count": 180,
+  "target_labels_inaccessible_during_fitting": true,
+  "target_protocol_absent_from_source_bindings": true
+}

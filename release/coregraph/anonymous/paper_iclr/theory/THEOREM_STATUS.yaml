@@ -1,0 +1,25 @@
+schema: coregraph_theorem_status_v1
+results:
+  fixed_mixture_lower_bound:
+    status: PROVED
+    statement: theory/theorem_fixed_mixture.tex
+    implementation: coregraph/theory/fixed_mixture.py
+    numerical_check: fixed_mixture
+    scope: randomised expert selection with linear mixture risk
+  compositional_axis_bound:
+    status: PROVED
+    statement: theory/theorem_compositional.tex
+    implementation: coregraph/theory/compositional_bound.py
+    numerical_check: compositional_bound
+    formula: 2*sum(axis_errors)+2*interaction_residual+router_approximation_error
+    scope: observed axis values with bounded estimation interaction and routing terms
+  feasible_oracle_monotonicity:
+    status: PROVED
+    statement: appendix/appendix.tex
+    implementation: coregraph/theory/resource_mask.py
+    numerical_check: resource_mask
+    scope: feasible-set restriction of one-expert-per-contract offline risk; excludes instance-clairvoyant selection
+prohibited_promotions:
+  - learned_router_universal_improvement
+  - prediction_space_mixture_lower_bound_without_assumptions
+  - empirical_fraud_performance_from_theory

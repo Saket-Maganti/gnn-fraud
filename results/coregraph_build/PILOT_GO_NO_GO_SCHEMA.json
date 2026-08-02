@@ -1,0 +1,6 @@
+{
+  "schema_version": "coregraph_pilot_gate_v2_superseded",
+  "status": "SUPERSEDED_BY_SECOND_REVIEW",
+  "replaced_by": "results/coregraph_build/PILOT_GATE_FROZEN_SPEC.json",
+  "must_not_be_used_for_pilot_evaluation": true
+}

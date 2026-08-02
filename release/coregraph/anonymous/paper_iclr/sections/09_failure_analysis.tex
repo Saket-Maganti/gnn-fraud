@@ -1,0 +1,11 @@
+\section{Failure analysis}
+
+\input{tables/failure_cases}
+
+Failure labels are frozen before results: wrong expert selected; all experts poor; overconfident diagnostics; routing instability; correlated shift; latent-contract ambiguity; budget collapse; resource-mask collapse; abstention collapse; source overfitting; baseline unfairness; and metric disagreement. Every evaluated row may carry multiple labels with evidence links.
+
+Primary wrong-action cost is measured after policy freeze against the row-wise feasible hindsight oracle that includes abstention. The best fixed non-abstaining expert is a separate contract diagnostic. Universal expert failure remains distinct. An empty feasible set is a resource event and must abstain; assigning mass anyway is a mask failure. Zero coverage, near-universal acceptance under high uncertainty, or threshold sensitivity are abstention failures rather than favorable selective-risk outcomes.
+
+Counterfactual tests hold expert scores fixed while changing one resource, budget, visibility-metadata, cost, or uncertainty input. Unavailable mass must become zero. Tighter budgets may favor cheaper policies, and higher uncertainty may increase abstention when configured, but no directional performance conclusion is hard-coded where theory does not guarantee it. Metric disagreement is reported rather than resolved post hoc by selecting the most favorable outcome.
+
+\ResultPending{R5-FAILURES} Incidence, examples, and consequences remain blocked until validated predictions and failure manifests exist.

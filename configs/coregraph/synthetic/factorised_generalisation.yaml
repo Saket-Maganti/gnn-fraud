@@ -1,0 +1,9 @@
+regime: factorised_generalisation
+seed: 105
+num_nodes: 512
+time_steps: 4
+class_prior: 0.1
+feature_signal: 1.0
+graph_signal: 1.0
+homophily: 0.8
+review_budget: 0.01

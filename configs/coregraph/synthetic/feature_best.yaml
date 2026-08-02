@@ -1,0 +1,9 @@
+regime: feature_best
+seed: 102
+num_nodes: 512
+time_steps: 4
+class_prior: 0.1
+feature_signal: 3.0
+graph_signal: 0.1
+homophily: 0.5
+review_budget: 0.01

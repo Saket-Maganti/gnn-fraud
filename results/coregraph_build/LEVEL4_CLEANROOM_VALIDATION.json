@@ -1,0 +1,78 @@
+{
+  "checksum_validation": "PASS",
+  "cleanroom": {
+    "dependencies_installed_offline": true,
+    "fresh_environment_created": true,
+    "heavy_training_runs": 0,
+    "identity_or_private_path_hits": [],
+    "offline_dependency_source": "PREVALIDATED_LOCAL_RUNTIME_NO_NETWORK",
+    "provider_payloads_extracted": 0,
+    "status": "PASS",
+    "steps": [
+      {
+        "command": [
+          "python",
+          "-m",
+          "pip",
+          "install",
+          "--no-index",
+          "--no-deps",
+          "numpy",
+          "scipy",
+          "pandas",
+          "torch",
+          "matplotlib"
+        ],
+        "returncode": 0,
+        "stderr_tail": "",
+        "stdout_tail": "Requirement already satisfied: numpy in ${LOCAL_RUNTIME_PATH} (1.26.4)\nRequirement already satisfied: scipy in ${LOCAL_RUNTIME_PATH} (1.15.3)\nRequirement already satisfied: pandas in ${LOCAL_RUNTIME_PATH} (2.3.3)\nRequirement already satisfied: torch in ${LOCAL_RUNTIME_PATH} (2.2.2)\nRequirement already satisfied: matplotlib in ${LOCAL_RUNTIME_PATH} (3.10.8)\n"
+      },
+      {
+        "command": [
+          "python",
+          "-m",
+          "compileall",
+          "-q",
+          "coregraph",
+          "scripts/coregraph"
+        ],
+        "returncode": 0,
+        "stderr_tail": "",
+        "stdout_tail": ""
+      },
+      {
+        "command": [
+          "python",
+          "-m",
+          "pytest",
+          "-q",
+          "-p",
+          "no:cacheprovider",
+          "tests/coregraph/test_level4_contracts_routing.py",
+          "tests/coregraph/test_level4_benchmarks_theory.py",
+          "tests/coregraph/test_level4_generated_artifacts.py",
+          "tests/coregraph/test_level4_overlap_audit.py",
+          "tests/coregraph/test_level4_public_tree.py",
+          "tests/test_path_resolution.py"
+        ],
+        "returncode": 0,
+        "stderr_tail": "",
+        "stdout_tail": ".....................                                                    [100%]\n"
+      },
+      {
+        "command": [
+          "python",
+          "scripts/coregraph/build_level4_paper.py"
+        ],
+        "returncode": 0,
+        "stderr_tail": "",
+        "stdout_tail": "{\"failures\": [], \"outputs\": {\"main\": {\"blocked_tokens_present\": false, \"bytes\": 428500, \"identity_or_private_path\": false, \"overfull_boxes\": 0, \"pages\": 14, \"path\": \"paper_iclr/main.pdf\", \"sha256\": \"3990f9e2aa6854a034d3658748734d890170c778934337b1c18905d9d3137c85\", \"type3_fonts\": 0, \"undefined_references_or_citations\": 0}, \"supplement\": {\"blocked_tokens_present\": false, \"bytes\": 315151, \"identity_or_private_path\": false, \"overfull_boxes\": 0, \"pages\": 5, \"path\": \"paper_iclr/supplement.pdf\", \"sha256\": \"0b12c12f204d97abdb9f53ed5e9863f957e908af9ccf39111af7a0dbbedbfdec\", \"type3_fonts\": 0, \"undefined_references_or_citations\": 0}}, \"status\": \"PASS_RESULTS_BLOCKED\"}\n"
+      }
+    ],
+    "target_metrics_computed": 0,
+    "target_oracles_computed": 0
+  },
+  "failures": [],
+  "schema": "coregraph_level4_release_gate_v1",
+  "status": "PASS"
+}

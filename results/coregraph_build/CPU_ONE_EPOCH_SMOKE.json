@@ -1,0 +1,11 @@
+{
+  "epochs": 1,
+  "examples": 96,
+  "gradient_l1": 5.767580032348633,
+  "loss": 0.4255664348602295,
+  "provider_data_used": false,
+  "sampled_gcn_examples": 24,
+  "sampled_gcn_predictions_finite": true,
+  "schema": "coregraph_cpu_smoke_v1",
+  "status": "PASS"
+}

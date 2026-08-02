@@ -1,0 +1,20 @@
+{
+  "checks": {
+    "all_experts_unavailable": true,
+    "budget_changes_preferred_expert": true,
+    "calibration_mismatch": true,
+    "crossing_expertise": true,
+    "feature_expert_wins": true,
+    "graph_expert_wins": true,
+    "interaction_breaks_factorisation": true,
+    "noisy_contract_metadata": true,
+    "resource_mask_removes_best": true,
+    "unseen_combination": true
+  },
+  "deterministic_seed": 20260729,
+  "examples_per_scenario": 128,
+  "multi_seed_experiment": false,
+  "real_dataset_used": false,
+  "schema": "coregraph_synthetic_method_checks_v2",
+  "status": "PASS"
+}

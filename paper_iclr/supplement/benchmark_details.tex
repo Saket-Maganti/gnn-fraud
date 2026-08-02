@@ -1,0 +1,9 @@
+\section{Benchmark and scenario details}
+
+The saved-output V5 grid is \(2\) datasets \(\times 3\) protocols \(\times 3\) experts \(\times 10\) seeds, yielding 180 role-neutral coordinates. Each dataset, target protocol, and seed defines one held-out scenario, yielding 60 scenarios. Each scenario binds two source protocols times three experts and one target protocol times three experts: six source and three target bindings, or 540 total.
+
+Source bindings permit train and validation rows; target bindings permit known-label test rows for evaluation only. Target protocol is absent from sources, target labels are unavailable during fitting, and one base coordinate cannot have both roles within a scenario. Byte-backed checks additionally require disjoint row scopes, valid chronology, exact dataset and seed identity, provider-label/score alignment, and exclusion of unknown labels.
+
+The six archive names and expected hashes live in the evidence manifest. No filename-only substitution is accepted. The archive reader verifies the complete ZIP and member hashes by streaming, validates schema, filters split and label-known rows, and never exposes permanent extraction.
+
+Controlled mechanisms have tiny deterministic fixtures and future pilot/full modes. Expected router directions are qualitative sanity checks only where the mechanism construction entails them. GOOD is primary for non-fraud graph OOD; official installation, licence, task bridge, and parity remain separate gates.

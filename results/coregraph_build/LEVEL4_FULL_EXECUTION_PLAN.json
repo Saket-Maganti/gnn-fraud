@@ -1,0 +1,22 @@
+{
+  "code_sha": "b09ce165cd72683ac1903d5fde8c026ff78efe30",
+  "coordinate_count": 1680,
+  "device_counts": {
+    "CPU_COUNTERFACTUAL_THEN_T4_PROFILE": 480,
+    "CPU_SAVED_OUTPUT_PILOT": 540,
+    "CPU_TINY_THEN_GPU_FULL": 600,
+    "KAGGLE_T4X2": 60
+  },
+  "gpu_jobs_launched": 0,
+  "matrix_sha256": "642bd53122d2bbddce327b1e5f4e572279f51043372711231f9e6478018042c4",
+  "priority_counts": {
+    "DIAGNOSTIC": 60,
+    "FULL_MUST_RUN": 990,
+    "PILOT_MUST_RUN": 240,
+    "STRETCH_LEVEL4": 30,
+    "STRONG_RECOMMENDED": 360
+  },
+  "runtime_values_observed": 0,
+  "schema": "coregraph_level4_full_execution_plan_v1",
+  "status": "PLAN_ONLY_NO_EXECUTION"
+}

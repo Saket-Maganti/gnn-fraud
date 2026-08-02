@@ -1,0 +1,52 @@
+\section{Experimental design}
+
+\paragraph{Surfaces.}
+Fraud tasks comprise Elliptic and DGraphFin node prediction, Elliptic++ as a
+correlated temporal corroboration, and IBM AML Small/Medium transaction-edge
+prediction. T-Finance is included only if source, licence, and genuine
+timestamps pass audit. General graph OOD uses three task-compatible GOOD node
+settings. Controlled synthetic regimes vary feature and graph signal,
+homophily, direction, drift, missing inputs, resource masks, and review budget.
+
+\paragraph{Splits and access.}
+Primary evaluation holds out unseen combinations of observed axis values.
+Leave-one-axis-value, resource, budget, construction, visibility, temporal, and
+random-environment splits are secondary controls. Domain generalisation,
+unlabelled TTA, and few-label access are separate families.
+
+\paragraph{Baselines and ablations.}
+Baselines include individual experts, feasible averaging, source-validation
+selection and convex mixing, the current graph-feature gate, atomic and
+no-contract routers, the source-trained
+\texttt{MOWST\_\allowbreak{}INSPIRED\_\allowbreak{}REIMPLEMENTATION}, and the
+honestly named
+\texttt{graphsafe\_\allowbreak{}confidence\_\allowbreak{}abstention\_\allowbreak{}component}.
+The latter is not a full GraphSafe comparator: it remains a descriptive
+compatibility component and is excluded from strong-baseline win requirements
+and headline Holm families. Pending or unlicensed official code is excluded
+rather than approximated under its name. For V5, a row-wise feasible hindsight
+oracle over expert predictions plus the frozen-cost abstention action defines
+the matched-action primary regret; the best fixed feasible non-abstaining
+expert is diagnostic only.
+Ablations remove factorised contracts, regret, budget, resource masks,
+stability, abstention, or diagnostics.
+
+\paragraph{Outcomes and inference.}
+Primary outcomes include global target AUPRC, frozen-fraction recall,
+budget-curve area, mean, maximum, and CVaR matched-action Brier regret, selective
+zero--one risk, abstention cost, and compute. Binary-cross-entropy surrogate
+regret is training terminology and does not enter the headline Brier family.
+Unavailable and resource-blocked predictions do not enter
+ranking metrics; fallback and abstention are distinct execution states.
+Inference pairs exact task--target-protocol-and-contract--fold contexts within
+dataset and expert-prediction seed. Same-numbered seeds across datasets are not
+paired. Exact tests and intervals are reported separately per dataset; a
+hierarchical dataset--seed bootstrap is secondary evidence only. The gate
+requires positive effects on both datasets, corrected support on at least one,
+and no contradiction on the other. Router-training seeds are deterministic
+method-specific provenance, not additional replications. Exact Wilcoxon,
+paired permutation, and seed-block bootstrap analyses replace normal
+approximations. Holm-corrected support, confidence intervals, and frozen effect
+thresholds affect the go/no-go decision. Worst-case improvement is the minimum
+matched-contract difference within seed; maximum and CVaR regret are formed
+from contract regret within seed.

@@ -1,0 +1,34 @@
+{
+  "ABLATION_GRID.csv": {
+    "rows": 105,
+    "sha256": "50f41ef1f252df0250217b0344ccfd087c92373ed6b2d71eef9205332371f710"
+  },
+  "FINAL_10SEED_GRID.csv": {
+    "rows": 1050,
+    "sha256": "8d3e5982ebfa2d58e1977ca1dfb9f81eb7adb12ab2123bad3be6248b3cdb4d2e"
+  },
+  "FRAUD_GRID.csv": {
+    "rows": 1520,
+    "sha256": "1797615cefaa551e7196fa48901597915238f5b4403b1d3d366b02c7be664fad"
+  },
+  "GOOD_GRID.csv": {
+    "rows": 75,
+    "sha256": "35106669f85ec6013a7e568ec95b56e121bf1cf4f36e1dbf2e1bff532bb2fe59"
+  },
+  "MASTER_EXPERIMENT_MATRIX.csv": {
+    "rows": 1770,
+    "sha256": "56a0131d7b32735801822294eba6b4f93e5434182fc0756304b7959d494af847"
+  },
+  "RESOURCE_GRID.csv": {
+    "rows": 135,
+    "sha256": "73304908e786c4bed4c3e4633eb99d9eda1032cc8633755ad274e1bc1b08f639"
+  },
+  "SCREENING_5SEED_GRID.csv": {
+    "rows": 1400,
+    "sha256": "48a6100b07e0580f0e741ef7494fe776d983168298096f6c6c0bf9af725fd224"
+  },
+  "THEORY_SYNTHETIC_GRID.csv": {
+    "rows": 160,
+    "sha256": "ed95fcbaa78e862e67d99fc795ad2111eddb8e4892001d89813afbd81d183b15"
+  }
+}

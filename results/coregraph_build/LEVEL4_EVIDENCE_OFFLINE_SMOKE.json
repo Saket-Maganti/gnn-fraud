@@ -1,0 +1,140 @@
+{
+  "archives": [
+    {
+      "archive_name": "dgraphfin_10seed_inductive_isolated.zip",
+      "expected_sha256": "6ce0d2e37893a7a162d6d575347f6606eb63f90b7940cc3a259dc309cf88b8c8",
+      "member_count": 31,
+      "present": true,
+      "status": "VERIFIED",
+      "verified": true
+    },
+    {
+      "archive_name": "dgraphfin_10seed_strict_inductive.zip",
+      "expected_sha256": "e0055d3482107d16c7d52574b0a32adc1e7ae9236b67dbdf12f57327c0e6bce5",
+      "member_count": 31,
+      "present": true,
+      "status": "VERIFIED",
+      "verified": true
+    },
+    {
+      "archive_name": "dgraphfin_10seed_transductive.zip",
+      "expected_sha256": "6d0167aae53b681bb7ffc037b84c723869ba718f30feb955c333890bfe8783d5",
+      "member_count": 31,
+      "present": true,
+      "status": "VERIFIED",
+      "verified": true
+    },
+    {
+      "archive_name": "elliptic_10seed_inductive_isolated.zip",
+      "expected_sha256": "20f25a1f93604ea5eb8537c8808f9b69dae2fc82eccbccfd36c50c443aee94e8",
+      "member_count": 31,
+      "present": true,
+      "status": "VERIFIED",
+      "verified": true
+    },
+    {
+      "archive_name": "elliptic_10seed_strict_inductive.zip",
+      "expected_sha256": "24752f5ffdc082dc79ca5084701fccd04d2ac9588b4b15712598bdfe8daa1e4a",
+      "member_count": 31,
+      "present": true,
+      "status": "VERIFIED",
+      "verified": true
+    },
+    {
+      "archive_name": "elliptic_10seed_transductive.zip",
+      "expected_sha256": "99d2f7ad1ad95fd7c30c193da9003c091b0c3fdce028dccd2bd0019f35869c08",
+      "member_count": 31,
+      "present": true,
+      "status": "VERIFIED",
+      "verified": true
+    }
+  ],
+  "failures": [],
+  "member_index_count": 180,
+  "permanent_extractions": 0,
+  "representative_members": [
+    {
+      "archive": "dgraphfin_10seed_inductive_isolated.zip",
+      "coordinate": [
+        "dgraphfin",
+        "isolated_inductive",
+        "feature_mlp",
+        1
+      ],
+      "member": "predictions/dgraphfin__inductive_isolated__mlp__seed1.csv",
+      "member_sha256": "c44e5b090f3eed2b628bbd28e3a504002d871d64d68e245b41b01f6f34ffacdd",
+      "metric_computation_performed": false,
+      "sample_rows": 2
+    },
+    {
+      "archive": "dgraphfin_10seed_strict_inductive.zip",
+      "coordinate": [
+        "dgraphfin",
+        "strict_inductive",
+        "feature_mlp",
+        1
+      ],
+      "member": "predictions/dgraphfin__strict_inductive__mlp__seed1.csv",
+      "member_sha256": "ef5960ebcc4ee41bddb1d94b294b78dd2671a2d0835e08e560629eb684e53eea",
+      "metric_computation_performed": false,
+      "sample_rows": 2
+    },
+    {
+      "archive": "dgraphfin_10seed_transductive.zip",
+      "coordinate": [
+        "dgraphfin",
+        "transductive_structure",
+        "feature_mlp",
+        1
+      ],
+      "member": "predictions/dgraphfin__transductive__mlp__seed1.csv",
+      "member_sha256": "3474452afe1603ce46759721608f1f4be134a045affa52f01ae4276821b0d765",
+      "metric_computation_performed": false,
+      "sample_rows": 2
+    },
+    {
+      "archive": "elliptic_10seed_inductive_isolated.zip",
+      "coordinate": [
+        "elliptic",
+        "isolated_inductive",
+        "feature_mlp",
+        1
+      ],
+      "member": "predictions/elliptic__inductive_isolated__mlp__seed1.csv",
+      "member_sha256": "8b15d22c38ec72c987d34ff5e85a0dbaa0a5fea1614210a0be59608e074b2802",
+      "metric_computation_performed": false,
+      "sample_rows": 2
+    },
+    {
+      "archive": "elliptic_10seed_strict_inductive.zip",
+      "coordinate": [
+        "elliptic",
+        "strict_inductive",
+        "feature_mlp",
+        1
+      ],
+      "member": "predictions/elliptic__strict_inductive__mlp__seed1.csv",
+      "member_sha256": "3bbbdfe978f76c0f0b0604447488e4c978cb287401cfbcfb9a686836ae154124",
+      "metric_computation_performed": false,
+      "sample_rows": 2
+    },
+    {
+      "archive": "elliptic_10seed_transductive.zip",
+      "coordinate": [
+        "elliptic",
+        "transductive_structure",
+        "feature_mlp",
+        1
+      ],
+      "member": "predictions/elliptic__transductive__mlp__seed1.csv",
+      "member_sha256": "947c4590b90dbe81d403f79e2870d5da28dff0e3db5201a1190c3f3bafdc900d",
+      "metric_computation_performed": false,
+      "sample_rows": 2
+    }
+  ],
+  "schema": "coregraph_level4_evidence_offline_smoke_v1",
+  "ssd_source_used": false,
+  "status": "PASS",
+  "target_metrics_computed": 0,
+  "target_oracles_computed": 0
+}

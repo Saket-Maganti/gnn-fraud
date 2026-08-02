@@ -1,0 +1,10 @@
+{
+  "coregraph_files": 603,
+  "credentials": 0,
+  "curated_files": 420,
+  "private_path_or_identity_failures": [],
+  "provider_payloads": 0,
+  "schema": "coregraph_level4_public_tree_audit_v1",
+  "source_snapshots": 2,
+  "status": "PASS"
+}

@@ -1,0 +1,8 @@
+{
+  "checked": 0,
+  "failures": [
+    "no_provider_manifests_staged"
+  ],
+  "schema": "coregraph_dataset_manifest_audit_v1",
+  "status": "BLOCKED"
+}

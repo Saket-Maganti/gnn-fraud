@@ -1,0 +1,82 @@
+{
+  "schema": "coregraph_level4_claim_gate_v2",
+  "metric_schema": "coregraph_v5_metric_schema_v2",
+  "default_empirical_status": "BLOCKED_PENDING_RESULTS",
+  "required_statuses": [
+    "BLOCKED_PENDING_RESULTS",
+    "BLOCKED_PENDING_LICENSE_REVIEW",
+    "BLOCKED_RESOURCE_UNMEASURED",
+    "BLOCKED_OFFICIAL_BASELINE_INTEGRATION",
+    "NOT_APPLICABLE",
+    "RESOURCE_BLOCKED",
+    "SUPPORTED",
+    "REFUTED_IN_SCOPE"
+  ],
+  "claims": [
+    {
+      "claim_id": "L4-H1-FACTORISED",
+      "paper_location": "results.unseen_compositions",
+      "required_experiments": ["fraud_unseen_composition", "synthetic_factorised"],
+      "required_baselines": ["protocol_one_hot", "flat_contract_mlp"],
+      "metric": "composition_generalisation_gap",
+      "gate": "paired_per_dataset_holm",
+      "status": "BLOCKED_PENDING_RESULTS"
+    },
+    {
+      "claim_id": "L4-H2-DIAGNOSTICS",
+      "paper_location": "results.diagnostic_ablation",
+      "required_experiments": ["expert_diagnostic_ablation"],
+      "required_baselines": ["contract_only_router"],
+      "metric": "maximum_contract_regret_vs_feasible_row_oracle",
+      "gate": "paired_per_dataset_holm",
+      "status": "BLOCKED_PENDING_RESULTS"
+    },
+    {
+      "claim_id": "L4-H3-HIERARCHICAL",
+      "paper_location": "results.routing_modes",
+      "required_experiments": ["hierarchical_vs_contract_vs_instance"],
+      "required_baselines": ["contract_router", "instance_router"],
+      "metric": "contract_regret_vs_feasible_row_oracle_and_routing_stability",
+      "gate": "joint_noninferiority_stability_and_regret",
+      "status": "BLOCKED_PENDING_RESULTS"
+    },
+    {
+      "claim_id": "L4-H4-ROBUST",
+      "paper_location": "results.robust_objective",
+      "required_experiments": ["cvar_and_worst_ablation"],
+      "required_baselines": ["mean_risk_objective", "groupdro", "vrex"],
+      "metric": "cvar_contract_regret_vs_feasible_row_oracle",
+      "gate": "paired_per_dataset_holm",
+      "status": "BLOCKED_PENDING_RESULTS"
+    },
+    {
+      "claim_id": "L4-H5-RESOURCE",
+      "paper_location": "resource_tradeoffs",
+      "required_experiments": ["resource_interventions"],
+      "required_baselines": ["resource_aware_heuristic", "cheapest_feasible_expert"],
+      "metric": "feasibility_and_utility",
+      "gate": "zero_mask_violations_and_paired_utility",
+      "status": "BLOCKED_RESOURCE_UNMEASURED"
+    },
+    {
+      "claim_id": "L4-H6-ABSTENTION",
+      "paper_location": "results.selective_prediction",
+      "required_experiments": ["source_calibrated_abstention"],
+      "required_baselines": ["no_abstention"],
+      "metric": "selective_risk_at_coverage",
+      "gate": "useful_nonzero_coverage_and_paired_risk",
+      "status": "BLOCKED_PENDING_RESULTS"
+    },
+    {
+      "claim_id": "L4-H7-DISCOVERY",
+      "paper_location": "supplement.contract_discovery",
+      "required_experiments": ["noisy_and_missing_contracts"],
+      "required_baselines": ["supplied_contract", "no_contract"],
+      "metric": "composition_generalisation_gap",
+      "gate": "extension_gate_only",
+      "status": "BLOCKED_PENDING_RESULTS"
+    }
+  ],
+  "oracle_policy": "PRIMARY_ROW_WISE_FEASIBLE_HINDSIGHT_INCLUDES_ABSTENTION_OFFLINE_ONLY;BEST_FIXED_NONABSTAINING_EXPERT_SECONDARY_DIAGNOSTIC",
+  "paper_population": "FORBIDDEN_UNTIL_ALL_LINKED_CELLS_AND_STATISTICAL_GATES_PASS"
+}

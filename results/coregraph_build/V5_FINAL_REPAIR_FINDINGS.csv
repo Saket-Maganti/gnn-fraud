@@ -1,0 +1,8 @@
+finding_id,severity,surface,finding,required_repair,status
+V5FR-001,CRITICAL,scientific_semantics,Primary contract regret compared an abstaining method with a best-fixed non-abstaining expert,Use row-wise feasible expert-or-abstain oracle and retain best-fixed only as a diagnostic,REPAIRED_VALIDATED
+V5FR-002,CRITICAL,resume_identity,Chunk-row overrides changed execution without changing coordinate/checkpoint identity,Hash the complete effective execution config and bind it through every output layer,REPAIRED_VALIDATED
+V5FR-003,CRITICAL,packaging,Packaging accepted equality of COMPLETE count and plan count,Require exact coordinate sets identities checksums and pre/post-extraction validation,REPAIRED_VALIDATED
+V5FR-004,HIGH,real_run_guard,Authoritative CLI retained a hidden allow-dirty bypass,Remove the bypass and reject dirty real execution unconditionally,REPAIRED_VALIDATED
+V5FR-005,HIGH,override_policy,Authoritative CLI permitted method/scenario subsets,Remove scientific-set overrides from the canonical runner,REPAIRED_VALIDATED
+V5FR-006,HIGH,metric_schema,All-target AUPRC and regret names were ambiguous,Freeze coregraph_v5_metric_schema_v2 with explicit global and matched-action names,REPAIRED_VALIDATED
+V5FR-007,MEDIUM,preregistration,V5.0 encoded the unequal-action comparator,Preserve V5.0 and freeze a hashed V5.1 correction before real outcomes,REPAIRED_VALIDATED

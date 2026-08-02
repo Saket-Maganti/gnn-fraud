@@ -1,0 +1,25 @@
+\section{Related work}
+
+\paragraph{Graph OOD generalisation and adaptation.}
+GOOD provides explicit covariate and concept-shift environments for node and graph tasks \cite{gui2022good}. CIGA learns causally invariant subgraphs \cite{chen2022ciga}, while EERM constructs environments through graph perturbation \cite{wu2022eerm}. GraphMETRO uses aligned experts for mixtures of graph shifts \cite{wu2024graphmetro}. Domain adaptation and test-time adaptation may exploit unlabeled target inputs; our headline domain-generalisation regime forbids such access unless the selection coordinate explicitly enables it. Exact graph-OOD and adaptation coverage remains subject to official-code parity rather than an internal method inheriting an upstream name.
+
+DomainBed shows that model selection and implementation parity can dominate apparent domain-generalisation gains \cite{gulrajani2021domainbed}. Fully test-time methods such as Tent \cite{wang2021tent} and EATA \cite{niu2022eata} update a pretrained model from unlabeled test inputs. We therefore register domain generalisation, unlabeled target adaptation, and few-label adaptation as different access contracts instead of pooling them under one shift label.
+
+\paragraph{Graph mixtures of experts.}
+GMoE routes among message-passing experts to encourage specialization \cite{wang2023gmoe}. Mowst combines weak feature and strong graph experts using confidence \cite{zeng2024mowst}. These methods motivate heterogeneous expert routing, but a deployment contract additionally determines whether an expert is admissible and which graph view it may consume. \method{} routes pretrained expert families under a typed contract and distinguishes a stable contract prior from bounded instance corrections. Confidence-only routing is a baseline and a documented failure mode.
+
+Sparse conditional computation predates graph routing: sparsely gated MoE layers learn an input-dependent expert subset \cite{shazeer2017moe}, and Switch Transformers expose the resulting capacity, communication, and load-balancing trade-offs at scale \cite{fedus2022switch}. Our setting is smaller but more constrained: feasibility masks are deployment rules, not learned capacity decisions, and expert invocation cost is measured rather than inferred from sparsity.
+
+\paragraph{Robust and invariant learning.}
+GroupDRO optimizes worst-group risk \cite{sagawa2020groupdro}; VREx penalizes variation across environment risks \cite{krueger2021vrex}. We use source-only robust surrogates during fitting. The frozen V5 target estimand compares method loss with a row-wise feasible hindsight oracle over experts plus abstention, with mean, maximum, and CVaR aggregation; the best fixed non-abstaining expert is reported separately.
+
+\paragraph{Selective prediction, budgets, and resources.}
+Selective classification permits abstention when risk is high \cite{geifman2017selective}. Our acceptance threshold is selected on source validation, frozen before target scoring, and constrained by coverage/review capacity. Resource-aware mixtures commonly trade accuracy against invocation cost; here memory, latency, availability, and invocation constraints first define a hard feasible set. We report router latency separately from expert inference and never substitute training time.
+
+Predictive confidence can degrade under distribution shift even after in-distribution calibration \cite{ovadia2019uncertainty}. This motivates reporting proper scores, coverage--risk behavior, and abstention jointly, while preventing unlabeled target diagnostics from becoming an implicit label channel.
+
+\paragraph{Temporal graphs and fraud under shift.}
+Temporal Graph Networks model timed event streams with memory \cite{rossi2020tgn}, whereas EvolveGCN evolves convolutional parameters across graph snapshots \cite{pareja2020evolvegcn}. Fraud-specific graph learning must additionally confront camouflage and neighborhood heterogeneity \cite{dou2020caregnn}, extreme class imbalance \cite{liu2021pcgnn}, and dynamic financial graph scale \cite{huang2022dgraph}. Fraud graphs also pose chronological splits, delayed labels, changing structure, and human-review constraints. We preserve provider time and task semantics rather than treating every graph as static node classification. A snapshot approximation remains diagnostic unless validated against an official temporal implementation.
+
+\paragraph{Compositional generalisation.}
+Compositional learning asks whether known factors can be recombined outside observed tuples. Our factorisation is deliberately modest: it supports source-observed axis values and bounded interactions, and the theory becomes vacuous for arbitrary XOR-like effects. Unlike architectural MoE work, the composition variables here are registered deployment coordinates with typed observability and access semantics. The held-out object is a coordinate combination, not an unseen axis value, and arbitrary interaction effects remain outside the stated guarantee.

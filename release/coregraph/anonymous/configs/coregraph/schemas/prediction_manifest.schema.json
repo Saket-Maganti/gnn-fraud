@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CoReGraphPredictionManifestV4",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "expert_id",
+    "dataset",
+    "task",
+    "prediction_unit",
+    "protocol_id",
+    "contract_coordinate_hash",
+    "contract_id",
+    "environment_id",
+    "expert_prediction_seed",
+    "fold",
+    "contract_role",
+    "deployment_contract",
+    "prediction_path",
+    "prediction_checksum",
+    "original_prediction_path",
+    "original_prediction_checksum",
+    "config_hash",
+    "code_hash",
+    "expert_available",
+    "availability_reason_codes",
+    "compute_cost",
+    "compute_cost_provenance",
+    "score_type",
+    "permitted_splits",
+    "evaluation_split",
+    "row_scope_policy",
+    "label_mapping",
+    "positive_label_id",
+    "provider_split_mapping"
+  ],
+  "properties": {
+    "schema_version": {"const": "coregraph_prediction_manifest_v4"},
+    "expert_id": {"type": "string", "minLength": 1},
+    "expert_alias_of": {"type": "string"},
+    "dataset": {"type": "string", "minLength": 1},
+    "task": {
+      "enum": [
+        "node_classification",
+        "edge_classification",
+        "transaction_classification"
+      ]
+    },
+    "prediction_unit": {"enum": ["node", "edge", "transaction"]},
+    "protocol_id": {
+      "enum": [
+        "strict_inductive",
+        "isolated_inductive",
+        "transductive_structure"
+      ]
+    },
+    "contract_coordinate_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "contract_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_.-]{0,63}:[0-9a-f]{16}$"
+    },
+    "environment_id": {"type": "string", "minLength": 1},
+    "expert_prediction_seed": {"type": "integer", "minimum": 1},
+    "fold": {"type": ["string", "integer"]},
+    "contract_role": {"enum": ["source", "target"]},
+    "deployment_contract": {"type": "object"},
+    "prediction_path": {"type": "string", "minLength": 1},
+    "prediction_checksum": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "original_prediction_path": {"type": "string", "minLength": 1},
+    "original_prediction_checksum": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "config_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "code_hash": {
+      "type": "string",
+      "pattern": "^([0-9a-f]{40}|[0-9a-f]{64})$"
+    },
+    "expert_available": {"type": "boolean"},
+    "availability_reason_codes": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "compute_cost": {"type": "number", "minimum": 0},
+    "compute_cost_provenance": {"type": "string", "minLength": 1},
+    "score_type": {"const": "PROBABILITY"},
+    "permitted_splits": {
+      "type": "array",
+      "items": {"enum": ["train", "validation", "test", "unscored"]},
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "evaluation_split": {"enum": ["validation", "test"]},
+    "row_scope_policy": {"const": "filter_and_audit"},
+    "label_mapping": {
+      "type": "object",
+      "minProperties": 2,
+      "additionalProperties": {"type": "string", "minLength": 1}
+    },
+    "positive_label_id": {"type": "integer"},
+    "provider_split_mapping": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "enum": ["train", "validation", "test", "unscored"]
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"contract_role": {"const": "source"}},
+        "required": ["contract_role"]
+      },
+      "then": {
+        "properties": {
+          "permitted_splits": {
+            "type": "array",
+            "items": {"enum": ["train", "validation"]},
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "evaluation_split": {"const": "validation"}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {"contract_role": {"const": "target"}},
+        "required": ["contract_role"]
+      },
+      "then": {
+        "properties": {
+          "permitted_splits": {"const": ["test"]},
+          "evaluation_split": {"const": "test"}
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

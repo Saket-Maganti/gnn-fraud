@@ -1,0 +1,17 @@
+{
+  "aggregate_sha256": "3aa453c2563e768a53b16d8d053e51011eb852d20b411c88a7424e0d2e546614",
+  "files": {
+    "configs/coregraph/analysis_families.yaml": "4de97b664bd037518b95de789c084c05637f55f39c82bed68ce030d95bb7d1b4",
+    "configs/coregraph/run_matrices/ABLATION_GRID.csv": "50f41ef1f252df0250217b0344ccfd087c92373ed6b2d71eef9205332371f710",
+    "configs/coregraph/run_matrices/FINAL_10SEED_GRID.csv": "8d3e5982ebfa2d58e1977ca1dfb9f81eb7adb12ab2123bad3be6248b3cdb4d2e",
+    "configs/coregraph/run_matrices/FRAUD_GRID.csv": "1797615cefaa551e7196fa48901597915238f5b4403b1d3d366b02c7be664fad",
+    "configs/coregraph/run_matrices/GOOD_GRID.csv": "35106669f85ec6013a7e568ec95b56e121bf1cf4f36e1dbf2e1bff532bb2fe59",
+    "configs/coregraph/run_matrices/MASTER_EXPERIMENT_MATRIX.csv": "56a0131d7b32735801822294eba6b4f93e5434182fc0756304b7959d494af847",
+    "configs/coregraph/run_matrices/RESOURCE_GRID.csv": "73304908e786c4bed4c3e4633eb99d9eda1032cc8633755ad274e1bc1b08f639",
+    "configs/coregraph/run_matrices/SCREENING_5SEED_GRID.csv": "48a6100b07e0580f0e741ef7494fe776d983168298096f6c6c0bf9af725fd224",
+    "configs/coregraph/run_matrices/THEORY_SYNTHETIC_GRID.csv": "ed95fcbaa78e862e67d99fc795ad2111eddb8e4892001d89813afbd81d183b15",
+    "results/coregraph_build/PILOT_GATE_FROZEN_SPEC.json": "23c78e1ac95a464fe3732815a6238f8450541105a9c7fb0e3abec0b935b7713f"
+  },
+  "note": "Regenerate only before inspecting final-run outcomes.",
+  "schema": "coregraph_analysis_freeze_v2"
+}
