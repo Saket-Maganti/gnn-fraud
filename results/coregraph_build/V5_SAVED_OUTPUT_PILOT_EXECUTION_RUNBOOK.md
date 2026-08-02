@@ -1,6 +1,6 @@
 # V5 saved-output pilot execution runbook
 
-Status: `EXECUTOR_VALIDATED_EMPIRICAL_PILOT_UNEXECUTED`
+Status: `V5.1_FINAL_REPAIR_VALIDATED_REAL_PILOT_UNEXECUTED`
 
 Repository: `${COREGRAPH_REPO_ROOT}`
 
@@ -11,6 +11,10 @@ Evidence cache: `${COREGRAPH_EVIDENCE_CACHE}`
 Config: `configs/coregraph/pilot/saved_output_v5.yaml`
 
 Runner: `scripts/coregraph/run_saved_output_pilot_v5.py`
+
+Frozen preregistration SHA-256: `931cd9f39cec9f0d28a68f6a8c13ad3628ccc155797e0c8276b9e3f75c63b487`.
+
+The effective execution hash is clean-tip-specific because it includes code SHA. Record the value emitted by plan mode and require the same value in every plan row, checkpoint, freeze, evaluation, COMPLETE identity, gate, checksum header, and package report.
 
 The saved-output pilot is CPU-first. Do not launch Kaggle or a GPU job for this campaign unless later measured evidence justifies changing the operational venue. Never modify the preregistration or config after viewing target results.
 
@@ -48,7 +52,7 @@ cd "$COREGRAPH_REPO_ROOT"
   --plan
 ```
 
-Verify `PILOT_PLAN.csv` has exactly 240 rows and that the report states 6 archives, 180 base artifacts, 60 scenarios, 540 bindings, and 240 coordinates.
+Verify `PILOT_PLAN.csv` has exactly 240 unique rows, the effective hash is uniform, and the report states 6 archives, 180 base artifacts, 60 scenarios, 540 bindings, and 240 coordinates.
 
 ## Full no-training validation
 
@@ -75,7 +79,7 @@ cd "$COREGRAPH_REPO_ROOT"
   --fail-fast
 ```
 
-This builds tiny deterministic ZIP fixtures and exercises the same 180/60/540/240 schemas, all four methods, policy freezing, offline evaluation, aggregation, checksums, and the three-outcome gate implementation. Its numbers are synthetic and must never enter the paper.
+This builds tiny deterministic ZIP fixtures and exercises the same 180/60/540/240 schemas, all four methods, policy freezing, matched-action regret, offline evaluation, aggregation, checksums, exact coordinate validation, and the three-outcome gate. Its numbers are synthetic and must never enter the real root or paper.
 
 ## Later authorised real execution
 
@@ -94,7 +98,7 @@ cd "$COREGRAPH_REPO_ROOT"
   --authorization-token AUTHORIZE_COREGRAPH_V5_PILOT_RUN
 ```
 
-The runner creates `RUN_MANIFEST.json`, `PILOT_PLAN.csv`, and `PILOT_PLAN.sha256` before fitting. Each method moves atomically through `PLANNED`, `INPUTS_VALIDATED`, `SOURCE_ASSEMBLED`, `POLICY_FITTED`, `POLICY_FROZEN`, `TARGET_SCORED`, `EVALUATED`, and `COMPLETE`; failures become explicit records. Resume reuses only exact hash-matching `COMPLETE` coordinates. Changed code, config, preregistration, archive/member identity, dependency lock, scenario fingerprint, method, output schema, or file bytes makes a coordinate stale and forces a rerun.
+The runner creates `RUN_MANIFEST.json`, `PILOT_PLAN.csv`, and `PILOT_PLAN.sha256` before fitting. Each method moves atomically through `PLANNED`, `INPUTS_VALIDATED`, `SOURCE_ASSEMBLED`, `POLICY_FITTED`, `POLICY_FROZEN`, `TARGET_SCORED`, `EVALUATED`, and `COMPLETE`; failures become explicit records. Resume reuses only exact hash-matching `COMPLETE` coordinates. Changed code, base config, effective chunk rows, real/synthetic mode, worker policy, preregistration, archive/member identity, dependency lock, scenario fingerprint, method, output/metric schema, or file bytes makes a coordinate stale and forces a rerun.
 
 Monitor without changing files:
 
@@ -113,4 +117,4 @@ cd "$COREGRAPH_REPO_ROOT"
   --package
 ```
 
-Packaging refuses an incomplete run and writes `OUTPUT_CHECKSUMS.sha256` before the ZIP. Do not populate paper results until the packaged output, gate result, and scientific claims pass a separate independent audit.
+Packaging requires exact equality of all 240 planned, manifest, directory, evaluation, checkpoint, and COMPLETE coordinate identities. It writes `PACKAGE_VALIDATION_REPORT.json`, `PACKAGE_COORDINATE_MANIFEST.csv`, and `OUTPUT_CHECKSUMS.sha256`, tests ZIP CRC, and repeats exact validation after temporary extraction. Do not populate paper results until the immutable package, gate result, and scientific claims pass a separate independent audit.

@@ -18,15 +18,16 @@ score is
 \[
   s_\theta(x,c)=\sum_{e\in\mathcal A(c)}w_{\theta,e}(x,c,d)s_e(x;G_c).
 \]
-The contract-level feasible oracle is
-$R_c^\star=\min_{e\in\mathcal A(c)}R_c(e)$: it chooses one feasible expert for
-the whole contract after each expert risk has been aggregated over that
-contract. For headline evaluation, $R_c$ is mean Brier risk and offline
-\emph{Brier contract regret} is
-$\mathrm{Reg}_c(\theta)=R_c(\theta)-R_c^\star$.
-The oracle is never queried at deployment.
-An instance-clairvoyant oracle that changes expert per example is a diagnostic
-ceiling only and is excluded from headline regret and significance.
+For V5 target evaluation, the primary offline oracle chooses the lower Brier
+loss among each row's feasible expert predictions and the same frozen-cost
+abstention action available to the method. The primary
+\texttt{contract\_regret\_vs\_feasible\_row\_oracle} averages method loss minus
+that matched-action row-oracle loss. A best fixed feasible non-abstaining expert
+over the whole contract is retained only as a separately named diagnostic. No
+oracle is queried at deployment.
+The older contract-level feasible oracle and instance-clairvoyant oracle remain
+source-training or theory terminology only; neither defines the V5 primary
+target metric.
 
 We distinguish domain generalisation with no target access,
 unlabelled target adaptation, and few-label target adaptation. Thresholds,

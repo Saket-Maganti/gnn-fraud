@@ -1,7 +1,7 @@
-schema_version: coregraph_saved_output_pilot_config_v5
-pilot_specification_version: coregraph_saved_output_pilot_v5.0
+schema_version: coregraph_saved_output_pilot_config_v5.1
+pilot_specification_version: coregraph_saved_output_pilot_v5.1
 preregistration_path: specifications/V5_SAVED_OUTPUT_PILOT_SPECIFICATION.md
-preregistration_sha256: 9ace6ac65dfb7d9244c7ee74e651a66e91809d6c3479881f43b6d30bb815dc96
+preregistration_sha256: 931cd9f39cec9f0d28a68f6a8c13ad3628ccc155797e0c8276b9e3f75c63b487
 base_artifact_registry: specifications/V5_BASE_ARTIFACTS.csv
 scenario_registry: specifications/V5_SCENARIOS.csv
 binding_registry: specifications/V5_BINDINGS.csv
@@ -80,19 +80,24 @@ streaming:
   max_workers: 1
   target_score_dtype: float32
   archive_extraction: forbidden
+metric_schema_version: coregraph_v5_metric_schema_v2
 output_schemas:
-  run_manifest: coregraph_v5_pilot_run_manifest_v1
-  scenario_manifest: coregraph_v5_pilot_scenario_manifest_v1
-  policy_freeze: coregraph_v5_policy_freeze_manifest_v1
-  method_result: coregraph_v5_pilot_method_result_v1
-  failure: coregraph_v5_pilot_failure_v1
-  aggregate: coregraph_v5_pilot_aggregate_v1
-  gate: coregraph_v5_pilot_gate_v1
+  run_manifest: coregraph_v5_pilot_run_manifest_v2
+  scenario_manifest: coregraph_v5_pilot_scenario_manifest_v2
+  policy_freeze: coregraph_v5_policy_freeze_manifest_v2
+  method_result: coregraph_v5_pilot_method_result_v2
+  failure: coregraph_v5_pilot_failure_v2
+  aggregate: coregraph_v5_pilot_aggregate_v2
+  gate: coregraph_v5_pilot_gate_v2
 gate:
   paired_unit: dataset_target_protocol_provider_seed
+  primary_metric: contract_regret_vs_feasible_row_oracle
+  primary_oracle: row_wise_feasible_hindsight_oracle_including_abstention
+  diagnostic_fixed_comparator: best_fixed_nonabstaining_expert_brier
   comparisons: [uniform_average, best_fixed_expert, source_logistic_gate]
   minimum_contract_regret_improvement: 0.001
-  average_auprc_harm_floor: -0.002
+  average_global_target_auprc_harm_floor: -0.002
+  regret_numeric_tolerance: -1.0e-12
   missing_coordinate_outcome: INCONCLUSIVE
 resume:
   atomic_writes: true

@@ -5,7 +5,7 @@
 For risks \((0,\delta_1)\) and \((\delta_2,0)\) with \(\delta_1,\delta_2>0\), any contract-independent randomized expert selector has minimax regret \(\delta_1\delta_2/(\delta_1+\delta_2)\), whereas a contract-aware selector has zero regret.
 \end{theorem}
 \begin{proof}
-Let \(w\in[0,1]\) be the probability of expert one. By affine randomized-selection risk, contract regrets are \(r_1(w)=(1-w)\delta_1\) and \(r_2(w)=w\delta_2\). The first decreases and the second increases. Their maximum is minimized at their unique intersection; otherwise moving toward the intersection reduces the larger term. Solving gives \(w^\star=\delta_1/(\delta_1+\delta_2)\), and substitution gives the stated positive value. Conditioning on the contract chooses the zero-risk expert in each environment.
+Let \(w\in[0,1]\) be the probability of expert one. By affine randomized-selection risk, fixed-expert excess risks are \(r_1(w)=(1-w)\delta_1\) and \(r_2(w)=w\delta_2\). The first decreases and the second increases. Their maximum is minimized at their unique intersection; otherwise moving toward the intersection reduces the larger term. Solving gives \(w^\star=\delta_1/(\delta_1+\delta_2)\), and substitution gives the stated positive value. Conditioning on the contract chooses the zero-risk expert in each environment. This is not V5 matched-action regret.
 \end{proof}
 If a resource mask changes the feasible set, the same argument applies to the two feasible risk gaps when their optima reverse. If either gap vanishes or one feasible expert is optimal everywhere, a positive lower bound does not follow. Prediction averaging under nonlinear loss is outside the affine selection premise.
 

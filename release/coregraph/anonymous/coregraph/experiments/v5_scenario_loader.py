@@ -16,6 +16,7 @@ from coregraph.evidence.archive_store import ArchiveStore
 from coregraph.evidence.member_index import MemberIndex
 from coregraph.experiments.v5_pilot_types import (
     EXPERT_ORDER,
+    METRIC_SCHEMA_VERSION,
     PRIMARY_METHODS,
     PilotCoordinate,
     V5BaseArtifact,
@@ -52,6 +53,7 @@ CONFIG_FIELDS = frozenset(
         "expert_relative_costs",
         "resource_profiles",
         "streaming",
+        "metric_schema_version",
         "output_schemas",
         "gate",
         "resume",
@@ -113,8 +115,10 @@ def load_v5_config(path: Path) -> V5PilotConfig:
         raise ValueError(
             f"V5 config field mismatch: unknown={sorted(unknown)}, missing={sorted(missing)}"
         )
-    if payload["schema_version"] != "coregraph_saved_output_pilot_config_v5":
+    if payload["schema_version"] != "coregraph_saved_output_pilot_config_v5.1":
         raise ValueError("V5 config schema version is invalid")
+    if payload["metric_schema_version"] != METRIC_SCHEMA_VERSION:
+        raise ValueError("V5 metric schema version is invalid or superseded")
     if tuple(payload["primary_methods"]) != PRIMARY_METHODS:
         raise ValueError("V5 primary method set/order is not frozen")
     if tuple(payload["required_experts"]) != EXPERT_ORDER:
@@ -370,6 +374,8 @@ def load_v5_surface(
 def build_pilot_coordinates(
     materializations: Sequence[V5ScenarioMaterialization],
     config: V5PilotConfig,
+    *,
+    effective_execution_config_sha256: str,
 ) -> tuple[PilotCoordinate, ...]:
     coordinates = tuple(
         PilotCoordinate(
@@ -380,6 +386,7 @@ def build_pilot_coordinates(
             pilot_specification_version=config.specification_version,
             scenario_id=scenario.definition.scenario_id,
             scenario_fingerprint=scenario.scenario_fingerprint,
+            effective_execution_config_sha256=effective_execution_config_sha256,
         )
         for scenario in materializations
         for method in PRIMARY_METHODS

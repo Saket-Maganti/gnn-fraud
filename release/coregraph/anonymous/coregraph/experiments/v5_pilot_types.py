@@ -18,6 +18,8 @@ PRIMARY_METHODS = (
     "source_logistic_gate",
 )
 EXPERT_ORDER = ("feature_mlp", "gcn", "graphsage")
+METHOD_REGISTRY_VERSION = "coregraph_v5_primary_methods_v1"
+METRIC_SCHEMA_VERSION = "coregraph_v5_metric_schema_v2"
 
 
 def _sha256(value: str, field_name: str) -> None:
@@ -288,10 +290,15 @@ class PilotCoordinate:
     pilot_specification_version: str
     scenario_id: str
     scenario_fingerprint: str
+    effective_execution_config_sha256: str
 
     def __post_init__(self) -> None:
         if self.method not in PRIMARY_METHODS:
             raise ValueError("coordinate method is outside the frozen primary set")
+        _sha256(
+            self.effective_execution_config_sha256,
+            "effective_execution_config_sha256",
+        )
 
     @property
     def key(self) -> str:
@@ -316,6 +323,8 @@ class PilotCheckpoint:
     identity_hash: str
     stage: PilotStage
     output_schema_version: str
+    metric_schema_version: str
+    effective_execution_config_sha256: str
     checksums: Mapping[str, str] = field(default_factory=dict)
     retry_count: int = 0
 
@@ -324,7 +333,7 @@ class PilotCheckpoint:
 class PilotResultRecord:
     coordinate: PilotCoordinate
     execution_status: str
-    metrics: Mapping[str, float]
+    metrics: Mapping[str, Any]
     route_summary: Mapping[str, Any]
     policy_freeze_sha256: str
     target_score_sha256: str
@@ -337,6 +346,8 @@ class PilotGateRecord:
     reasons: tuple[str, ...]
     coordinate_count: int
     preregistration_sha256: str
+    effective_execution_config_sha256: str
+    metric_schema_version: str
 
     def __post_init__(self) -> None:
         if self.outcome not in {"GO", "NO_GO", "INCONCLUSIVE"}:

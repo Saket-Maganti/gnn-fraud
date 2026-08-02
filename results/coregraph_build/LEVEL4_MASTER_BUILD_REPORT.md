@@ -61,7 +61,7 @@ permanently extracted.
   `{"IMPLEMENTED_INTERNAL": 15, "OFFICIAL_AVAILABLE_NOT_INSTALLED": 3, "UNAVAILABLE_LICENSE": 2}`. Internal methods are implemented;
   official repositories remain uninstalled or explicitly licence/dependency
   blocked.
-- Statistics: preregistration SHA-256 `1536ba2a645baf965b09ca428caa689b3436ee25432872ce4b5cabf4c684dd3f`; all empirical claims
+- Statistics: preregistration SHA-256 `b7e26cdc4ffb55d04d4f57b5c35bfe05ab7a3cc52819a66794d1b13587573020`; all empirical claims
   remain blocked until validated results pass the frozen gates.
 
 ## Validation and paper

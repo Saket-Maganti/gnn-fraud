@@ -45,11 +45,19 @@ SPECIFICATION_FILES = (
     "results/coregraph_build/PILOT_V4_SPECIFICATION.md",
     "results/coregraph_build/CONTRACT_PROTOCOL_REGISTRY.schema.json",
     "results/coregraph_build/CONTRACT_PROTOCOL_REGISTRY_V4.json",
-    "results/coregraph_build/V5_SAVED_OUTPUT_PILOT_SPECIFICATION.md",
+    "specifications/V5_SAVED_OUTPUT_PILOT_SPECIFICATION.md",
     "results/coregraph_build/V5_BASE_ARTIFACTS.csv",
     "results/coregraph_build/V5_SCENARIOS.csv",
     "results/coregraph_build/V5_BINDINGS.csv",
 )
+SUPERSEDED_SPECIFICATION_FILES = {
+    "results/coregraph_build/V5_SAVED_OUTPUT_PILOT_SPECIFICATION.md": (
+        "V5_SAVED_OUTPUT_PILOT_SPECIFICATION_v5.0_SUPERSEDED.md"
+    ),
+}
+RENAMED_SPECIFICATION_FILES = {
+    "specifications/PILOT_GATE_FROZEN_SPEC.json": "PILOT_GATE_FROZEN_SPEC_V5.json",
+}
 V5_PORTABLE_CONFIG = "configs/coregraph/pilot/saved_output_v5.yaml"
 EXCLUDE_PARTS = {
     ".DS_Store",
@@ -120,6 +128,10 @@ def main() -> int:
     for relative in SPECIFICATION_FILES:
         source = ROOT / relative
         shutil.copy2(source, specification_dir / source.name)
+    for relative, destination_name in SUPERSEDED_SPECIFICATION_FILES.items():
+        shutil.copy2(ROOT / relative, specification_dir / destination_name)
+    for relative, destination_name in RENAMED_SPECIFICATION_FILES.items():
+        shutil.copy2(ROOT / relative, specification_dir / destination_name)
     portable_config = DESTINATION / V5_PORTABLE_CONFIG
     portable_config_text = portable_config.read_text(encoding="utf-8")
     for relative in SPECIFICATION_FILES:
