@@ -5,12 +5,13 @@ After the focused repair commit is pushed and exact-tip CI passes:
 ```bash
 set -euo pipefail
 
-REPO=/Users/saketmaganti/Projects/gnn-fraud/gnn-fraud-coregraph
-EVIDENCE=/Users/saketmaganti/Projects/gnn-fraud/gnn-fraud-local-evidence-cache
+COREGRAPH_WORKSPACE="${COREGRAPH_WORKSPACE:?set COREGRAPH_WORKSPACE to the private execution workspace}"
+REPO="${COREGRAPH_WORKSPACE}/gnn-fraud-coregraph"
+EVIDENCE="${COREGRAPH_WORKSPACE}/gnn-fraud-local-evidence-cache"
 SHORT_SHA="$(git -C "$REPO" rev-parse --short=7 HEAD)"
-REAL_ROOT="/Users/saketmaganti/Projects/gnn-fraud/runs/coregraph-v5-real-pilot-v5.2-${SHORT_SHA}"
-SYNTHETIC_ROOT="/Users/saketmaganti/Projects/gnn-fraud/runs/coregraph-v5-synthetic-rehearsal-v5.2-${SHORT_SHA}"
-CONTROL_ROOT="/Users/saketmaganti/Projects/gnn-fraud/run-control/coregraph-v5-real-pilot-v5.2-${SHORT_SHA}"
+REAL_ROOT="${COREGRAPH_WORKSPACE}/runs/coregraph-v5-real-pilot-v5.2-${SHORT_SHA}"
+SYNTHETIC_ROOT="${COREGRAPH_WORKSPACE}/runs/coregraph-v5-synthetic-rehearsal-v5.2-${SHORT_SHA}"
+CONTROL_ROOT="${COREGRAPH_WORKSPACE}/run-control/coregraph-v5-real-pilot-v5.2-${SHORT_SHA}"
 
 cd "$REPO"
 
