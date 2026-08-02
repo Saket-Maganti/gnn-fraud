@@ -17,19 +17,16 @@
    scopes pass SupportEngine.
 8. **Paper:** no result placeholder is converted into a factual claim without
    an eligible evidence unit; target-year policy/template is confirmed.
-9. **Pilot semantics:** the V4 frozen gate requires Elliptic and DGraphFin,
-   every target contract, expert-prediction seeds 1--10, all methods,
-   meaningful corrected ablations, dataset-stratified robust effects positive
-   on both datasets with corrected support on at least one, AUPRC harm limits,
-   routing diversity/stability, and no target-label selection. Protocol aliases,
-   coordinate hashes, and complete contract IDs remain distinct.
-10. **Pilot authorization:** the V5 readiness layer requires 180 role-neutral
-    base artifacts, 60 held-out-protocol scenarios, 540 scenario-local role
-    bindings, exact split/label-known/registry/leakage audits, and a no-training
-    runner/gate pass. The current canonical RB09v3 references are blocked on six
-    absent checksum-locked source archives. Even after recovery, readiness means
-    only that a fifth independent review may consider authorizing a separate
-    pilot; it does not authorize `--execute`.
+9. **Pilot semantics:** V5.1 requires `coregraph_v5_metric_schema_v2`. Primary
+   regret is measured against a row-wise feasible hindsight oracle that includes
+   abstention; the best fixed non-abstaining expert is diagnostic only. Global
+   target AUPRC, selective risk, coverage, and the exact 1% review fraction are
+   distinct fields. Old or mixed metric schemas force `INCONCLUSIVE`.
+10. **Pilot authorization:** require 6/6 archives, 180 role-neutral artifacts,
+    60 scenarios, 540 bindings, 240 exact coordinates, a clean tree, the V5.1
+    preregistration hash, one shared effective-execution hash, exact package-set
+    validation before and after ZIP extraction, and the explicit later token.
+    Readiness does not authorize `--execute`; the real pilot remains unexecuted.
 
 Failure of gates 1–2 stops local commit. Failure of gates 3–8 blocks heavy
 execution, headline claims, release, or push as applicable; blockers must be

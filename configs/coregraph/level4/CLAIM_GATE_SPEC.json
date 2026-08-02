@@ -1,5 +1,6 @@
 {
-  "schema": "coregraph_level4_claim_gate_v1",
+  "schema": "coregraph_level4_claim_gate_v2",
+  "metric_schema": "coregraph_v5_metric_schema_v2",
   "default_empirical_status": "BLOCKED_PENDING_RESULTS",
   "required_statuses": [
     "BLOCKED_PENDING_RESULTS",
@@ -26,7 +27,7 @@
       "paper_location": "results.diagnostic_ablation",
       "required_experiments": ["expert_diagnostic_ablation"],
       "required_baselines": ["contract_only_router"],
-      "metric": "worst_contract_regret",
+      "metric": "maximum_contract_regret_vs_feasible_row_oracle",
       "gate": "paired_per_dataset_holm",
       "status": "BLOCKED_PENDING_RESULTS"
     },
@@ -35,7 +36,7 @@
       "paper_location": "results.routing_modes",
       "required_experiments": ["hierarchical_vs_contract_vs_instance"],
       "required_baselines": ["contract_router", "instance_router"],
-      "metric": "regret_and_routing_stability",
+      "metric": "contract_regret_vs_feasible_row_oracle_and_routing_stability",
       "gate": "joint_noninferiority_stability_and_regret",
       "status": "BLOCKED_PENDING_RESULTS"
     },
@@ -44,7 +45,7 @@
       "paper_location": "results.robust_objective",
       "required_experiments": ["cvar_and_worst_ablation"],
       "required_baselines": ["mean_risk_objective", "groupdro", "vrex"],
-      "metric": "cvar_regret",
+      "metric": "cvar_contract_regret_vs_feasible_row_oracle",
       "gate": "paired_per_dataset_holm",
       "status": "BLOCKED_PENDING_RESULTS"
     },
@@ -76,6 +77,6 @@
       "status": "BLOCKED_PENDING_RESULTS"
     }
   ],
-  "oracle_policy": "DIAGNOSTIC_ONLY_NEVER_DEPLOYABLE_BASELINE",
+  "oracle_policy": "PRIMARY_ROW_WISE_FEASIBLE_HINDSIGHT_INCLUDES_ABSTENTION_OFFLINE_ONLY;BEST_FIXED_NONABSTAINING_EXPERT_SECONDARY_DIAGNOSTIC",
   "paper_population": "FORBIDDEN_UNTIL_ALL_LINKED_CELLS_AND_STATISTICAL_GATES_PASS"
 }
