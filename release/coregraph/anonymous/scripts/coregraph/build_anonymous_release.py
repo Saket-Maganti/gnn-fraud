@@ -1,0 +1,169 @@
+#!/usr/bin/env python3
+"""Build a deterministic anonymous source package without scientific outputs."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import shutil
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+DESTINATION = ROOT / "release/coregraph/anonymous"
+INCLUDE = (
+    "coregraph",
+    "models",
+    "docs/coregraph",
+    "configs/coregraph",
+    "external_baselines",
+    "paper_iclr",
+    "scripts/coregraph",
+    "runbooks/coregraph",
+    "kaggle/coregraph",
+    "notebooks/coregraph",
+    "tests/coregraph",
+    "theory/coregraph_level4",
+)
+ROOT_FILES = (
+    "pyproject.toml",
+    "requirements-coregraph-lock.txt",
+    "Makefile",
+)
+EXACT_FILES = (
+    "scripts/audit_cross_paper_overlap.py",
+    "scripts/github_publish/validate_public_tree.py",
+)
+EXCLUDE_FILES = {
+    # This test requires local evidence-build reports that the anonymous package
+    # deliberately excludes. The artifact generator itself remains included.
+    "tests/coregraph/test_level4_generated_artifacts.py",
+}
+SPECIFICATION_FILES = (
+    "results/coregraph_build/PILOT_GATE_FROZEN_SPEC.json",
+    "results/coregraph_build/PILOT_V3_SPECIFICATION.md",
+    "results/coregraph_build/PILOT_GATE_FROZEN_SPEC_V4.json",
+    "results/coregraph_build/PILOT_V4_SPECIFICATION.md",
+    "results/coregraph_build/CONTRACT_PROTOCOL_REGISTRY.schema.json",
+    "results/coregraph_build/CONTRACT_PROTOCOL_REGISTRY_V4.json",
+    "specifications/V5_SAVED_OUTPUT_PILOT_SPECIFICATION.md",
+    "results/coregraph_build/V5_2_PREREGISTRATION_AMENDMENT.md",
+    "results/coregraph_build/V5_BASE_ARTIFACTS.csv",
+    "results/coregraph_build/V5_SCENARIOS.csv",
+    "results/coregraph_build/V5_BINDINGS.csv",
+)
+SUPERSEDED_SPECIFICATION_FILES = {
+    "results/coregraph_build/V5_SAVED_OUTPUT_PILOT_SPECIFICATION.md": (
+        "V5_SAVED_OUTPUT_PILOT_SPECIFICATION_v5.0_SUPERSEDED.md"
+    ),
+}
+RENAMED_SPECIFICATION_FILES = {
+    "specifications/PILOT_GATE_FROZEN_SPEC.json": "PILOT_GATE_FROZEN_SPEC_V5.json",
+}
+V5_PORTABLE_CONFIG = "configs/coregraph/pilot/saved_output_v5.yaml"
+EXCLUDE_PARTS = {
+    ".DS_Store",
+    "__pycache__",
+    ".pytest_cache",
+    ".mypy_cache",
+    ".ruff_cache",
+    "anonymous",
+    "build",
+}
+EXCLUDE_SUFFIXES = {
+    ".pyc",
+    ".pyo",
+    ".pt",
+    ".pth",
+    ".ckpt",
+    ".parquet",
+    ".npz",
+    ".aux",
+    ".bbl",
+    ".blg",
+    ".log",
+    ".out",
+    ".synctex.gz",
+}
+
+
+def include_file(path: Path) -> bool:
+    if any(part in EXCLUDE_PARTS for part in path.parts):
+        return False
+    if path.name.endswith(".synctex.gz"):
+        return False
+    if path.name == "main.pdf" and "paper_iclr" in path.parts:
+        return False
+    return path.suffix.lower() not in EXCLUDE_SUFFIXES
+
+
+def main() -> int:
+    if DESTINATION.exists():
+        # The target is an explicit generated-artifact directory, never user data.
+        shutil.rmtree(DESTINATION)
+    DESTINATION.mkdir(parents=True)
+    for relative in INCLUDE:
+        source = ROOT / relative
+        if not source.exists():
+            continue
+        for path in sorted(source.rglob("*")):
+            relative_path = path.relative_to(ROOT)
+            if (
+                path.is_file()
+                and relative_path.as_posix() not in EXCLUDE_FILES
+                and include_file(path)
+            ):
+                target = DESTINATION / relative_path
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(path, target)
+    for relative in ROOT_FILES:
+        source = ROOT / relative
+        if source.exists():
+            shutil.copy2(source, DESTINATION / relative)
+    for relative in EXACT_FILES:
+        source = ROOT / relative
+        target = DESTINATION / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, target)
+    specification_dir = DESTINATION / "specifications"
+    specification_dir.mkdir()
+    for relative in SPECIFICATION_FILES:
+        source = ROOT / relative
+        shutil.copy2(source, specification_dir / source.name)
+    for relative, destination_name in SUPERSEDED_SPECIFICATION_FILES.items():
+        shutil.copy2(ROOT / relative, specification_dir / destination_name)
+    for relative, destination_name in RENAMED_SPECIFICATION_FILES.items():
+        shutil.copy2(ROOT / relative, specification_dir / destination_name)
+    portable_config = DESTINATION / V5_PORTABLE_CONFIG
+    portable_config_text = portable_config.read_text(encoding="utf-8")
+    for relative in SPECIFICATION_FILES:
+        if not Path(relative).name.startswith("V5_"):
+            continue
+        portable_config_text = portable_config_text.replace(
+            relative, f"specifications/{Path(relative).name}"
+        )
+    portable_config.write_text(portable_config_text, encoding="utf-8")
+    files = {}
+    for path in sorted(DESTINATION.rglob("*")):
+        if path.is_file():
+            files[str(path.relative_to(DESTINATION))] = {
+                "bytes": path.stat().st_size,
+                "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            }
+    aggregate = hashlib.sha256(
+        json.dumps(files, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+    manifest = {
+        "schema": "coregraph_anonymous_release_v1",
+        "aggregate_sha256": aggregate,
+        "files": files,
+        "scientific_results_included": False,
+    }
+    (DESTINATION / "ANONYMOUS_RELEASE_MANIFEST.json").write_text(
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+    print(json.dumps({"files": len(files), "aggregate_sha256": aggregate}, sort_keys=True))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

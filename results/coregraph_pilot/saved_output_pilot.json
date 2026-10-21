@@ -1,0 +1,9 @@
+{
+  "discovered_manifests": [],
+  "execute_requested": false,
+  "manifest_roots": [
+    "${COREGRAPH_SAVED_PREDICTIONS_ROOT}"
+  ],
+  "schema": "coregraph_saved_output_pilot_plan_v1",
+  "status": "PLANNED"
+}

@@ -1,0 +1,21 @@
+\section{Experimental protocol}
+
+\input{tables/baselines}
+
+\paragraph{Experts and baselines.}
+The V5 saved-output fraud pilot uses feature MLP, GCN, and GraphSAGE predictions for ten expert-training seeds. Its frozen primary family contains exactly four methods: uniform average, best fixed expert selected on source validation, a source-trained logistic gate, and \method{}. The primary offline comparator is a row-wise feasible hindsight oracle that includes the frozen-cost abstention action; the best fixed feasible non-abstaining expert is a secondary diagnostic. Neither can influence deployment. Broader benchmark phases are not silently added to the V5 pilot family.
+
+\paragraph{Tuning and seeds.}
+All deployable hyperparameters, normalization, diagnostics, checkpoints, and abstention thresholds use source train/validation only. The target protocol is absent from fitting. A target-unlabeled bundle contains predictions and permitted diagnostics but has no label field; the offline evaluator opens target labels only after a checksum-bound policy-freeze record exists. The policy freeze and every later output bind the effective execution hash, including chunk rows, real/synthetic mode, one-worker policy, code, dependency lock, and output/metric schemas. Seeds 1--10 index immutable expert predictions; router randomness is provenance, not an independent dataset replication.
+
+\paragraph{Outcomes.}
+Under \texttt{coregraph\_v5\_metric\_schema\_v2}, primary outcomes are the matched-action contract-regret metric, its maximum and CVaR summaries, \texttt{global\_target\_auprc}, recall at the recorded frozen review fraction, selective risk, coverage, routing stability, relative compute, and boolean resource feasibility. Its exact result-field name is \texttt{contract\_\allowbreak{}regret\_\allowbreak{}vs\_\allowbreak{}feasible\_\allowbreak{}row\_\allowbreak{}oracle}. Selective risk is not called selective AUPRC. The best-fixed quantities remain separately named diagnostics.
+
+\paragraph{Statistical analysis.}
+The paired unit is dataset, held-out target contract, and expert-prediction seed. Exact Wilcoxon and paired permutation tests, raw and robust standardized effects, and seed-block bootstrap intervals are computed separately per dataset. Holm correction applies within frozen claim families. A hierarchical dataset-seed bootstrap is secondary and cannot override a contradiction on one fraud dataset. Missing cells are not imputed.
+
+\paragraph{Ablations and stress tests.}
+Encoder ablations compare protocol one-hot, flat MLP, factorisation, bounded interactions, axis attention, uncertainty, discovery, and hybrid variants. Routing ablations compare contract, instance, and hierarchical modes. Diagnostic, regret/CVaR, budget, stability, uncertainty, sparsity, abstention, and mask terms are switched independently. Noisy categorical/continuous axes, delayed resource status, incorrect protocol labels, corrupted diagnostics, and out-of-support contracts are pre-registered.
+
+\paragraph{Resource measurement and claim gates.}
+The pilot cannot pass unless integrity/leakage gates are complete, maximum corrected regret improves directionally on both fraud datasets, no catastrophic primary reversal occurs, masks are exact, abstention has useful nonzero coverage, effects are not one-seed artifacts, and no oracle feature enters deployment. Packaging requires exact equality of planned and observed coordinate keys plus all identity and checksum fields before and after ZIP extraction. The v5.1 preregistration correction occurred before any real pilot outcome; the manuscript remains \texttt{REAL PILOT UNEXECUTED} and \texttt{EMPIRICAL CLAIMS BLOCKED}.

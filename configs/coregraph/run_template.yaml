@@ -1,0 +1,27 @@
+dataset: elliptic_v2
+task: node_classification
+source_contracts: [historical_transductive_full]
+target_contracts: [future_inductive_recent]
+access_regime: DG_NO_TARGET
+experts: [logistic, mlp, hist_gradient_boosting, gcn_sampled]
+router: coregraph_factorised_diagnostics
+objective: composite
+metrics: [auprc, auroc, recall_at_k, brier, adaptive_ece, regret, cvar]
+seed: 0
+hardware:
+  device: cpu
+  memory_cap_gb: 8
+  mixed_precision: false
+  gradient_accumulation: 1
+  workers: 0
+data_checksum: REQUIRED_PROVIDER_CHECKSUM
+code_commit: REQUIRED_GIT_COMMIT
+dependency_lock: requirements-coregraph-lock.txt
+dataset_manifest: REQUIRED_DATASET_MANIFEST_HASH
+output:
+  schema: coregraph_result_v2
+  prediction_export: true
+  telemetry: true
+  output_root: results/coregraph_pilot
+smoke: false
+dry_run: true

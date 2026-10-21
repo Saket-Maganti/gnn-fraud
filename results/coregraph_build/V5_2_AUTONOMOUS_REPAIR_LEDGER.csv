@@ -1,0 +1,4 @@
+cycle,class,stage,status,root_cause,action,science_changed,old_coordinates_reused
+1,B,numerical_routing,REPAIRED_AND_LOCALLY_VALIDATED,float32 simplex and routed-score accumulation violated convex-hull invariant,implemented centralized float64 feasible-simplex residual correction hull enforcement diagnostics versioning and regression tests,false,0
+2,C,anonymous_release,REPAIRED_AND_LOCALLY_VALIDATED,V5.2 preregistration amendment was absent from the anonymous release specification set,added the amendment to the deterministic specification allowlist and reran the release audit,false,0
+3,C,public_tree_ci,REPAIRED_AND_LOCALLY_VALIDATED,operator runbook embedded machine-specific absolute paths,replaced private paths with a required operator-supplied workspace variable and reran the public-tree audit,false,0

@@ -1,0 +1,28 @@
+{
+  "absolute_private_defaults": false,
+  "coregraph": {
+    "authority": "branch_tip_after_normal_fast_forward_push",
+    "branch": "codex/coregraph-iclr-buildout-2026",
+    "build_parent_sha": "b09ce165cd72683ac1903d5fde8c026ff78efe30",
+    "path": "${COREGRAPH_REPO_ROOT}",
+    "repository_form_at_preflight": "VALID_LINKED_WORKTREE_PORTABILITY_REPAIR_PENDING",
+    "repository_form_current": "INDEPENDENT_GIT_CHECKOUT_VALIDATED"
+  },
+  "curated_fraudshiftbench": {
+    "branch": "codex/curated-fraudshiftbench-2026",
+    "frozen_scientific_files": 249,
+    "path": "${COREGRAPH_CURATED_ROOT}",
+    "sha": "2dec25eac1d7a8951f9d4639f49e889c4c9ca486"
+  },
+  "data_root": "${COREGRAPH_DATA_ROOT}",
+  "evidence_cache": {
+    "path": "${COREGRAPH_EVIDENCE_CACHE}",
+    "status": "VERIFIED_CANONICAL_RB09V3_LOCAL_CACHE"
+  },
+  "output_root": "${COREGRAPH_OUTPUT_ROOT}",
+  "pull_request": {
+    "number": 2,
+    "state_required": "OPEN_DRAFT_UNMERGED"
+  },
+  "schema": "coregraph_project_paths_and_authorities_v1"
+}

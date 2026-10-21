@@ -1,0 +1,15 @@
+\section{Implementation details}
+
+The contract schema accepts exactly six axes. Each observation stores a category or continuous value, state (`observed`, `missing`, `uncertain`, `out\_of\_range`, `unseen`), and confidence. Source-only statistics normalize continuous axes; zero-variance scales become one. Category vocabularies reserve missing and unknown indices. Encoder manifests record dimensions, vocabulary, normalization authority, pairwise interactions, and attention.
+
+The hierarchical router uses a two-layer contract head and two-layer instance-correction head. Tanh bounds corrections; an optional magnitude threshold makes them sparse. Contract-only sets corrections to zero, and instance-only removes the prior. The mask composes availability, memory, latency, and invocation predicates as aligned batch-by-expert tensors. All-unavailable rows emit zero weights and expert sentinel \(-1\).
+
+Diagnostics are modular declarations. Source calibration fits only source validation; feature drift fits source-train moments; graph statistics use only the admissible visible graph. Missing values carry masks and confidence rather than silent zeros. The optional latent discovery head cannot be constructed unless an experimental flag is set.
+
+Objective terms are source group means. After policy freeze, V5 target regret uses a row-wise feasible expert-or-abstain oracle; the best fixed non-abstaining expert is diagnostic. CVaR uses the corrected regret tail. Review surrogates remain source-group local. Manifests bind effective execution; resume and packaging require exact identities and checksums.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{04_training_inference_flow.pdf}
+  \caption{Source-only fitting and target-label-free inference boundary.}
+\end{figure}

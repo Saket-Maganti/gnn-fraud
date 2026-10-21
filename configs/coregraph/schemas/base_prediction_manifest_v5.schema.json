@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CoReGraphRoleNeutralBasePredictionManifestV5",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "base_artifact_hash",
+    "dataset",
+    "task",
+    "prediction_unit",
+    "protocol_id",
+    "contract_coordinate_hash",
+    "role_neutral_contract_coordinates",
+    "expert_id",
+    "expert_prediction_seed",
+    "fold",
+    "prediction_path",
+    "prediction_checksum",
+    "row_schema",
+    "provider_split_mapping",
+    "label_mapping",
+    "positive_label_id",
+    "config_payload",
+    "config_sha256",
+    "config_provenance_type",
+    "config_provenance_path",
+    "code_provenance_type",
+    "code_provenance_value",
+    "code_provenance_path",
+    "routing_cost_value",
+    "routing_cost_unit",
+    "routing_cost_provenance",
+    "measured_compute_available",
+    "measured_compute_record",
+    "validation_evidence",
+    "artifact_family",
+    "source_package",
+    "source_archive_path",
+    "source_archive_sha256",
+    "alias_lineage",
+    "score_type"
+  ],
+  "properties": {
+    "schema_version": {"const": "coregraph_base_prediction_manifest_v5"},
+    "base_artifact_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "dataset": {"type": "string", "minLength": 1},
+    "task": {"const": "node_classification"},
+    "prediction_unit": {"const": "node"},
+    "protocol_id": {
+      "enum": [
+        "strict_inductive",
+        "isolated_inductive",
+        "transductive_structure"
+      ]
+    },
+    "contract_coordinate_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "role_neutral_contract_coordinates": {
+      "type": "object",
+      "not": {"required": ["contract_role"]}
+    },
+    "expert_id": {"type": "string", "minLength": 1},
+    "expert_prediction_seed": {"type": "integer", "minimum": 1},
+    "fold": {"type": "string", "minLength": 1},
+    "prediction_path": {"type": "string", "minLength": 1},
+    "prediction_checksum": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "row_schema": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "minItems": 5,
+      "uniqueItems": true
+    },
+    "provider_split_mapping": {"type": "object", "minProperties": 1},
+    "label_mapping": {"type": "object", "minProperties": 2},
+    "positive_label_id": {"type": "integer"},
+    "config_payload": {"type": "object"},
+    "config_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "config_provenance_type": {"type": "string", "minLength": 1},
+    "config_provenance_path": {"type": "string", "minLength": 1},
+    "code_provenance_type": {
+      "enum": [
+        "GIT_COMMIT",
+        "RUNTIME_BUNDLE_SHA256",
+        "SOURCE_ARCHIVE_SHA256",
+        "CONTAINER_IMAGE_DIGEST",
+        "UNRESOLVED_LEGACY_CODE"
+      ]
+    },
+    "code_provenance_value": {"type": "string", "minLength": 1},
+    "code_provenance_path": {"type": "string", "minLength": 1},
+    "routing_cost_value": {"type": ["number", "null"], "minimum": 0},
+    "routing_cost_unit": {"type": "string"},
+    "routing_cost_provenance": {"type": "string", "minLength": 1},
+    "measured_compute_available": {"type": "boolean"},
+    "measured_compute_record": {"type": "object"},
+    "validation_evidence": {"type": "array", "items": {"type": "object"}},
+    "artifact_family": {"type": "string", "minLength": 1},
+    "source_package": {"type": "string", "minLength": 1},
+    "source_archive_path": {"type": "string"},
+    "source_archive_sha256": {
+      "type": "string",
+      "pattern": "^$|^[0-9a-f]{64}$"
+    },
+    "alias_lineage": {"type": "array", "items": {"type": "string"}},
+    "score_type": {"const": "PROBABILITY"}
+  },
+  "not": {"required": ["contract_role"]},
+  "additionalProperties": false
+}

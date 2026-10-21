@@ -1,0 +1,12 @@
+{
+  "blocked_empirical_claims": 4,
+  "claims": 8,
+  "failures": [],
+  "invented_numeric_results": false,
+  "main_sections": 12,
+  "open_todo_tokens": 37,
+  "schema": "coregraph_level4_paper_claim_audit_v1",
+  "status": "PASS_RESULTS_BLOCKED",
+  "supplement_sections": 7,
+  "target_year_template": "OFFICIAL_ICLR_2027_TEMPLATE_NOT_AVAILABLE_AT_BUILD_TIME"
+}

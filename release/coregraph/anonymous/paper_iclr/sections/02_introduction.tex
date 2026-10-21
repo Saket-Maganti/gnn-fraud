@@ -1,0 +1,34 @@
+\section{Introduction}
+
+Graph-learning systems are usually compared under a single dataset split and a
+single resource envelope. Deployment is less tidy. A detector may move from a
+static graph to a rolling event stream, lose edge attributes, face a smaller
+review budget, or run where a graph expert no longer fits in memory. These
+changes are not merely covariate shift: they alter what is observable, what can
+be selected, and which actions are feasible.
+
+Prior graph-OOD benchmarks make distribution shifts explicit
+\cite{gui2022good}, while graph mixtures route among computation paths or
+feature/structure experts \cite{wang2023gmoe,zeng2024mowst}. GraphMETRO aligns
+experts for mixtures of shift components \cite{wu2024graphmetro}. These works
+motivate a sharper deployment question: can a router generalise to an unseen
+\emph{combination} of known contract coordinates while respecting review and
+compute constraints?
+
+We study that question through four contributions:
+
+\begin{enumerate}
+  \item a six-axis compositional deployment-contract problem with separate
+  node, edge, and transaction prediction units;
+  \item CoReGraph, a resource- and budget-aware expert router using factorised
+  contract encoding, label-free diagnostics, feasibility masks, fallback,
+  abstention, and routing-stability regularisation;
+  \item exact lower-bound and compositional-error results with machine-checked
+  numerical examples; and
+  \item ContractShiftBench, a pre-registered evaluation across fraud,
+  graph-OOD, and controlled synthetic surfaces.
+\end{enumerate}
+
+FraudShiftBench is prior evaluation infrastructure, not the method contribution
+of this paper. The present manuscript does not reuse its completed result
+tables as evidence for CoReGraph.

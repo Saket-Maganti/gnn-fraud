@@ -1,0 +1,80 @@
+schema: coregraph_analysis_plan_v3
+frozen_before_final_runs: true
+pairing_unit: expert_prediction_seed_after_exact_dataset_task_target_contract_fold_pairing
+router_training_seed: deterministic_method_specific_secondary_seed_not_an_inferential_block
+contract_rows_as_independent_seeds: prohibited
+primary_outcomes:
+  - auprc
+  - recall_at_0.5pct
+  - recall_at_1pct
+  - recall_at_2pct
+  - budget_curve_area
+  - mean_regret
+  - maximum_regret
+  - cvar_regret
+  - selective_risk
+  - abstention_cost
+  - compute
+inference:
+  - exact_wilcoxon
+  - paired_permutation
+  - seed_block_bootstrap
+matched_worst_case: minimum_paired_improvement_within_expert_prediction_seed
+regret_aggregation: contract_regret_then_maximum_or_cvar_within_expert_prediction_seed
+families:
+  ranking_and_budget:
+    outcomes:
+      - auprc
+      - recall_at_0.5pct
+      - recall_at_1pct
+      - recall_at_2pct
+      - budget_curve_area
+    comparisons: every_predeclared_strong_baseline
+    correction: holm
+    alpha: 0.05
+    minimum_effects:
+      auprc: -0.002
+      recall_at_0.5pct: 0.0
+      recall_at_1pct: 0.0
+      recall_at_2pct: 0.0
+      budget_curve_area: 0.001
+  robust_risk:
+    outcomes:
+      - mean_regret
+      - maximum_regret
+      - cvar_regret
+    comparisons: every_predeclared_strong_baseline
+    correction: holm
+    alpha: 0.05
+    minimum_effects:
+      mean_regret: 0.001
+      maximum_regret: 0.001
+      cvar_regret: 0.001
+  deployment:
+    outcomes:
+      - selective_risk
+      - abstention_cost
+      - compute
+    comparisons: every_predeclared_strong_baseline
+    correction: holm
+    alpha: 0.05
+    minimum_effects:
+      selective_risk: 0.001
+      abstention_cost: 0.0
+      compute: 0.0
+ablation_family:
+  correction: holm
+  alpha: 0.05
+  paired_block: expert_prediction_seed
+  requires_effect_threshold: true
+  required_contributions:
+    - no_contract
+    - atomic_contract
+    - no_regret
+    - no_budget
+    - no_resource_mask
+missingness:
+  resource_blocked: report_and_exclude_from_predictive_ordering
+  abstain_only: undefined_selective_risk_and_gate_blocking_at_zero_coverage
+  failed: report_no_imputation
+  missing_seed: blocks_confirmatory_claim

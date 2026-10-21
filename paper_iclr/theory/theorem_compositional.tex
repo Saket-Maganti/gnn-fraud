@@ -1,0 +1,31 @@
+\begin{theorem}[Axis-additive approximation; \texttt{PROVED}]
+Let the risk of a candidate routing action $a$ under a $d$-axis contract
+$c=(c_1,\ldots,c_d)$ decompose as
+\[
+ R(a,c)=b(a)+\sum_{j=1}^d f_j(a,c_j)+h(a,c),
+\]
+where $|h(a,c)|\leq\epsilon_{\mathrm{int}}$. Suppose estimates satisfy
+$|\widehat f_j(a,c_j)-f_j(a,c_j)|\leq\epsilon_j$ for every axis value present
+in source contracts, and the learned router's optimisation error relative to
+the minimiser of the estimated additive risk is at most
+$\epsilon_{\mathrm{router}}$. For an unseen combination containing only those
+observed axis values, its excess true risk over the best action is at most
+\[
+ 2\sum_{j=1}^d\epsilon_j+
+ 2\epsilon_{\mathrm{int}}+\epsilon_{\mathrm{router}}.
+\]
+\end{theorem}
+
+\begin{proof}
+For any action, the difference between true risk and estimated additive risk is
+at most $\sum_j\epsilon_j+\epsilon_{\mathrm{int}}$ by the triangle
+inequality. Apply this bound once to the learned action and once to the true
+optimal action, and insert the assumed optimisation error between their
+estimated risks.
+\end{proof}
+
+\paragraph{Interpretation and counterexample.}
+The guarantee does not cover an unseen axis value. It becomes vacuous when the
+interaction residual is large. An XOR interaction between two contract axes
+has zero marginal axis effects but nonzero joint risk, providing a direct
+counterexample to factorisation without the residual term.

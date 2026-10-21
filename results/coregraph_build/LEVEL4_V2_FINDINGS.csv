@@ -1,0 +1,4 @@
+finding_id,subsystem,severity,evidence_path,observed_state,expected_state,decision,files_changed,test_proving_closure,residual_risk
+L4V2-001,repository,high,.git,"CoreGraph is a clean linked worktree at b09ce165cd72683ac1903d5fde8c026ff78efe30","Independently portable active repository","Audit local-only content and convert with Git-supported clone workflow if equality is proven",PENDING,PENDING,"Conversion not yet performed"
+L4V2-002,repository,info,../gnn-fraud-github-curated/.git,"Curated tree is clean and independent at 2dec25eac1d7a8951f9d4639f49e889c4c9ca486","Frozen independent repository","Preserve without scientific edits",NONE,PENDING,"Final frozen-delta gate pending"
+L4V2-003,scope,high,.,"Existing Level-3/V5 pre-run build found; Level-4 V2 deliverables not yet audited","All Level-4 V2 deliverables validated","Perform traceable gap audit before implementation",PENDING,PENDING,"Scope is large and empirical work remains prohibited"

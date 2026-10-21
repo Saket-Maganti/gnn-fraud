@@ -1,0 +1,19 @@
+{
+  "schema": "coregraph_v5_2_numerical_repair_gate_v1",
+  "status": "PASS_READY_FOR_FOCUSED_COMMIT_AND_EXACT_TIP_CI",
+  "v5_1_checksum_verified": true,
+  "v5_1_writable_files": 0,
+  "v5_1_coordinates_reusable": 0,
+  "root_cause_reproduced": true,
+  "numerical_implementation_version": "coregraph_v5_2_float64_simplex_v1",
+  "scientific_compute_dtype": "float64",
+  "output_schema_version": "coregraph_v5_output_schema_v3",
+  "metric_schema_version": "coregraph_v5_metric_schema_v2",
+  "preregistration_sha256": "6d7ff43a5490cc7f20730817800d511a38b47817123cd73fb9abc14fe35710b9",
+  "scientific_definitions_changed": false,
+  "full_tests_passed": true,
+  "coverage_targets_passed": true,
+  "synthetic_240_passed": true,
+  "package_smoke_passed": true,
+  "real_v5_2_campaign_executed_at_repair_stage": false
+}

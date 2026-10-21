@@ -1,0 +1,17 @@
+\section{Resource and budget tradeoffs}
+
+\input{tables/resource_tradeoffs}
+\input{tables/noisy_contract_robustness}
+
+Resource profiles cover all experts, one graph expert unavailable, all graph experts unavailable, tight memory, tight latency, tight review budget, combined graph/resource shift, and dynamic availability. The feasible set is constructed before routing from compatible measurement units. Estimated quantities retain an estimated status; OOM is `RESOURCE\_BLOCKED` with attempted batch and envelope.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{07_resource_feasible_masking.pdf}
+  \caption{Resource-feasible masking. The empty-set branch is an explicit abstention state.}
+  \label{fig:masking}
+\end{figure}
+
+We measure warmed expert inference and router latency separately, as well as parameter count, FLOPs or a justified proxy, peak CPU/GPU memory, throughput, invocation count, review use, batch size, hardware, and software. Training runtime is excluded from inference-latency claims. Utility-resource frontiers will show missing and blocked cells instead of interpolation.
+
+\ResultPending{R6-RESOURCE} No latency, memory, throughput, cost, or utility number has been measured for Level-4. Consequently the paper makes no efficiency claim.

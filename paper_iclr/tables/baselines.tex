@@ -1,0 +1,18 @@
+\begin{table*}[t]
+\centering
+\caption{Baseline families and honest implementation status. Oracles are diagnostic only.}
+\label{tab:baselines}
+\small
+\begin{tabularx}{\textwidth}{l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+Family & Examples & Status & Headline eligibility \\
+\midrule
+Simple & fixed, average, confidence, logistic/MLP gates & implemented internal & yes \\
+Resource-aware & cheapest feasible, heuristic gate & implemented internal & yes \\
+Graph MoE & Mowst & official available, not installed & blocked parity \\
+Graph OOD & GraphMETRO, CIGA, EERM, GOOD & mixed licence/integration status & task-valid cells only \\
+Robust & GroupDRO, VREx & internal objective variants & yes with common access \\
+Oracle & whole-contract, instance-clairvoyant & implemented diagnostic & no \\
+\bottomrule
+\end{tabularx}
+\end{table*}

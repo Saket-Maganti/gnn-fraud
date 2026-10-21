@@ -1,0 +1,126 @@
+schema_version: coregraph_external_baselines_v1
+verified_at: "2026-07-29"
+baselines:
+  mowst:
+    display_name: Mixture of Weak and Strong Experts on Graphs
+    paper: https://openreview.net/forum?id=wYvuY60SdD
+    repository: https://github.com/facebookresearch/mowst-gnn
+    commit: 2e3569962d2388bfda4535cdd1fc0b6eaec88a28
+    licence: MIT
+    licence_file_verified: true
+    repository_archived: true
+    status: PENDING_INTEGRATION
+    entrypoint: main.py
+    checkout_env: COREGRAPH_MOWST_ROOT
+    supported_tasks: [node_classification]
+    supported_surfaces: [GOODCora, GOODArxiv, GOODTwitch]
+    unsupported: [edge_classification, transaction_classification]
+    acquisition:
+      - git clone --filter=blob:none https://github.com/facebookresearch/mowst-gnn external/mowst-gnn
+      - git -C external/mowst-gnn checkout 2e3569962d2388bfda4535cdd1fc0b6eaec88a28
+    smoke_status: ADAPTER_ONLY_UPSTREAM_NOT_INSTALLED
+  graphmetro:
+    display_name: GraphMETRO
+    paper: https://papers.nips.cc/paper_files/paper/2024/hash/11c892a9fcc430cc0f4c7d457e5d60ea-Abstract-Conference.html
+    repository: https://github.com/Wuyxin/GraphMETRO
+    commit: e2b6ab62c6d7a3d72b6508db9bfce49336a9b129
+    licence: NO_LICENCE_FILE_FOUND
+    licence_file_verified: false
+    status: UNAVAILABLE_LICENSE
+    entrypoint: scripts/train.py
+    checkout_env: COREGRAPH_GRAPHMETRO_ROOT
+    supported_tasks: [node_classification]
+    supported_surfaces: [GOODCora, GOODTwitch]
+    unsupported: [fraud_adapters_without_upstream_data_bridge]
+    acquisition: []
+    smoke_status: BLOCKED_BY_LICENCE
+  ciga:
+    display_name: CIGA
+    paper: https://arxiv.org/abs/2202.05441
+    repository: https://github.com/LFhase/CIGA
+    commit: 454801108737ff8855ac2be947201dd9338dff37
+    licence: MIT
+    licence_file_verified: true
+    status: PENDING_INTEGRATION
+    entrypoint: main.py
+    checkout_env: COREGRAPH_CIGA_ROOT
+    supported_tasks: [graph_classification]
+    supported_surfaces: [GOOD_graph_level_only]
+    unsupported: [fraud_node_classification, edge_classification, transaction_classification]
+    acquisition:
+      - git clone --filter=blob:none https://github.com/LFhase/CIGA external/CIGA
+      - git -C external/CIGA checkout 454801108737ff8855ac2be947201dd9338dff37
+    smoke_status: ADAPTER_ONLY_UPSTREAM_NOT_INSTALLED
+  eerm:
+    display_name: Explore-to-Extrapolate Risk Minimization
+    paper: https://openreview.net/forum?id=FQOC5u-1egI
+    repository: https://github.com/qitianwu/GraphOOD-EERM
+    commit: ffdc4a11161976fac7dd71e2aa1dcd72db6e44e9
+    licence: NO_LICENCE_FILE_FOUND
+    licence_file_verified: false
+    status: UNAVAILABLE_LICENSE
+    entrypoint: temp_elliptic/main.py
+    checkout_env: COREGRAPH_EERM_ROOT
+    supported_tasks: [node_classification]
+    supported_surfaces: [Elliptic, GOODArxiv]
+    unsupported: [edge_classification, transaction_classification]
+    acquisition: []
+    smoke_status: BLOCKED_BY_LICENCE
+  tgn:
+    display_name: Temporal Graph Networks
+    paper: https://arxiv.org/abs/2006.10637
+    repository: https://github.com/twitter-research/tgn
+    commit: d55bbe678acabb9fc3879c408fd1f2e15919667c
+    licence: Apache-2.0
+    licence_file_verified: true
+    status: PENDING_INTEGRATION
+    entrypoint: train_supervised.py
+    checkout_env: COREGRAPH_TGN_ROOT
+    supported_tasks: [edge_classification, transaction_classification]
+    supported_surfaces: [IBM_AML_Small, IBM_AML_Medium, DGraphFin_event]
+    unsupported: [node_tasks_without_event_adapter]
+    acquisition:
+      - git clone --filter=blob:none https://github.com/twitter-research/tgn external/tgn
+      - git -C external/tgn checkout d55bbe678acabb9fc3879c408fd1f2e15919667c
+    smoke_status: ADAPTER_ONLY_UPSTREAM_NOT_INSTALLED
+  good:
+    display_name: GOOD benchmark and official algorithm library
+    paper: https://proceedings.neurips.cc/paper_files/paper/2022/hash/0dc91de822b71c66a7f54fa121d8cbb9-Abstract-Datasets_and_Benchmarks.html
+    repository: https://github.com/divelab/GOOD
+    commit: b53566c9297bc65b90a7f2213fb9ffa930f5b6e5
+    licence: GPL-3.0
+    licence_file_verified: true
+    status: PENDING_INTEGRATION
+    entrypoint: GOOD/kernel/main.py
+    checkout_env: COREGRAPH_GOOD_ROOT
+    supported_tasks: [node_classification, graph_classification]
+    supported_surfaces: [GOODCora, GOODArxiv, GOODTwitch]
+    unsupported: [fraud_provider_datasets]
+    acquisition:
+      - git clone --filter=blob:none https://github.com/divelab/GOOD external/GOOD
+      - git -C external/GOOD checkout b53566c9297bc65b90a7f2213fb9ffa930f5b6e5
+    smoke_status: ADAPTER_ONLY_UPSTREAM_NOT_INSTALLED
+internal_baselines:
+  group_dro:
+    status: VALIDATED_REIMPLEMENTATION
+    implementation: coregraph/experts/official_adapters/robust.py
+  vrex:
+    status: VALIDATED_REIMPLEMENTATION
+    implementation: coregraph/experts/official_adapters/robust.py
+  irm:
+    status: VALIDATED_REIMPLEMENTATION
+    implementation: coregraph/experts/official_adapters/robust.py
+    headline: false
+  graphsafe:
+    status: VALIDATED_REIMPLEMENTATION
+    implementation: models/graphsafe_v2.py
+    scope: bounded_saved_output_baseline
+  simple_average:
+    status: VALIDATED_REIMPLEMENTATION
+    scope: deterministic_baseline
+  validation_selected_best_expert:
+    status: VALIDATED_REIMPLEMENTATION
+    scope: source_validation_only
+  oracle_best_feasible_expert:
+    status: DIAGNOSTIC_APPROXIMATION
+    scope: offline_evaluation_ceiling_only

@@ -1,0 +1,44 @@
+\section{Proofs and counterexamples}
+
+\subsection{Fixed-mixture impossibility}
+\begin{theorem}
+For risks \((0,\delta_1)\) and \((\delta_2,0)\) with \(\delta_1,\delta_2>0\), any contract-independent randomized expert selector has minimax regret \(\delta_1\delta_2/(\delta_1+\delta_2)\), whereas a contract-aware selector has zero regret.
+\end{theorem}
+\begin{proof}
+Let \(w\in[0,1]\) be the probability of expert one. By affine randomized-selection risk, fixed-expert excess risks are \(r_1(w)=(1-w)\delta_1\) and \(r_2(w)=w\delta_2\). The first decreases and the second increases. Their maximum is minimized at their unique intersection; otherwise moving toward the intersection reduces the larger term. Solving gives \(w^\star=\delta_1/(\delta_1+\delta_2)\), and substitution gives the stated positive value. Conditioning on the contract chooses the zero-risk expert in each environment. This is not V5 matched-action regret.
+\end{proof}
+If a resource mask changes the feasible set, the same argument applies to the two feasible risk gaps when their optima reverse. If either gap vanishes or one feasible expert is optimal everywhere, a positive lower bound does not follow. Prediction averaging under nonlinear loss is outside the affine selection premise.
+
+\subsection{Regret decomposition}
+Let \(\pi^{(0)}\) be the ideal policy and \(\pi^{(1)},\ldots,\pi^{(7)}=\hat\pi\) successively replace representation, diagnostics, router approximation, feasible set, budget, abstention, and population risk with deployed counterparts. Adding and subtracting adjacent risks yields
+\[
+R_c(\hat\pi)-R_c(\pi^{(0)})=\sum_{k=1}^{7}\left[R_c(\pi^{(k)})-R_c(\pi^{(k-1)})\right].
+\]
+Taking absolute values and applying the triangle inequality gives the stated sum of nonnegative errors. The identity does not imply the intermediate contrasts are identifiable from observational target data; it specifies proof obligations and diagnostic counterfactuals.
+
+\subsection{Compositional approximation}
+\begin{theorem}
+Suppose \(R(a,c)=b(a)+\sum_jf_j(a,c_j)+h(a,c)\), \(|h|\leq\epsilon_{\mathrm{int}}\), and \(|\hat f_j-f_j|\leq\epsilon_j\) uniformly for source-observed values. If \(\hat a\) is within \(\epsilon_{\mathrm{route}}\) of the minimizer of the estimated additive risk, then on any unseen combination of those values,
+\[
+R(\hat a,c)-R(a^\star,c)\leq 2\sum_j\epsilon_j+2\epsilon_{\mathrm{int}}+\epsilon_{\mathrm{route}}.
+\]
+\end{theorem}
+\begin{proof}
+Let \(\hat R_0(a,c)=b(a)+\sum_j\hat f_j(a,c_j)\). For every action, \(|R(a,c)-\hat R_0(a,c)|\leq\sum_j\epsilon_j+\epsilon_{\mathrm{int}}=:\epsilon\). Thus
+\[
+R(\hat a,c)\leq\hat R_0(\hat a,c)+\epsilon
+\leq\hat R_0(a^\star,c)+\epsilon_{\mathrm{route}}+\epsilon
+\leq R(a^\star,c)+2\epsilon+\epsilon_{\mathrm{route}}.
+\]
+\end{proof}
+An XOR risk over two binary axes has zero marginal main effects but a nonzero joint term; without a bounded interaction residual, a factorized predictor cannot identify the unseen corner from the marginals.
+
+\subsection{Mask and selective-risk results}
+For a nonempty feasible set, exponentiating \(-\infty\) gives zero and normalizing the finite feasible exponents gives unit mass. Every selected expert satisfies the conjunction defining the mask. The empty-set branch is defined separately and therefore does not invoke softmax on all \(-\infty\) logits.
+
+For selective risk, the density-ratio assumption gives
+\(\mathbb E_t[\ell\mathbf 1_A]\leq\kappa\mathbb E_s[\ell\mathbf 1_A]=\kappa P_s(A)R_s^{\mathrm{sel}}\).
+Dividing by \(P_t(A)\geq\gamma\) and using bounded loss gives the claimed minimum with \(L\). If \(\gamma=0\), conditional risk is undefined.
+
+\subsection{Executable finite failures}
+The artifact checks protocol one-hot memorization, crossing mixtures, overconfident wrong experts, hidden masks, wrong cross-dataset seed pairing, runtime/latency substitution, noisy-contract non-identifiability, XOR interactions, and zero-coverage semantics. Passing these checks confirms each finite construction, not real-data assumptions.

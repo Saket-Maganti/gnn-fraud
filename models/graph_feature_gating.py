@@ -43,7 +43,7 @@ score-only. Nothing trains a GNN.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, Mapping, Optional
+from typing import Dict, Mapping, Optional, Protocol
 
 import numpy as np
 
@@ -59,6 +59,10 @@ VALID_MODES = ("feature_only", "graph_only", "static", "global_weight", "logisti
 
 class GatingLeakageError(ValueError):
     """Raised when ``predict`` is handed labels (it must be score-only)."""
+
+
+class _ProbabilityClassifier(Protocol):
+    def predict_proba(self, values: np.ndarray) -> np.ndarray: ...
 
 
 _FORBIDDEN_LABEL_KEYS = frozenset(
@@ -129,7 +133,7 @@ class GraphFeatureGate:
     # learned state (populated by fit)
     alpha: float = 0.5
     fallback_used: bool = False
-    _clf: object = field(default=None, repr=False)
+    _clf: Optional[_ProbabilityClassifier] = field(default=None, repr=False)
     _fitted: bool = False
     mean_gate: float = 0.5
 

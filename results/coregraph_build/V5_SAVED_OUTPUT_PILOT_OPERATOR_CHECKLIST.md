@@ -1,0 +1,21 @@
+# V5 saved-output pilot operator checklist
+
+- [ ] Set absolute `COREGRAPH_REPO_ROOT`, `COREGRAPH_EVIDENCE_CACHE`, and `COREGRAPH_OUTPUT_ROOT` values; do not commit machine-local paths.
+- [ ] Work only in `${COREGRAPH_REPO_ROOT}` on `codex/coregraph-iclr-buildout-2026`.
+- [ ] Confirm the tree is clean and equals `origin/codex/coregraph-iclr-buildout-2026`.
+- [ ] Confirm PR #2 is open, draft, unmerged, and based on `codex/curated-fraudshiftbench-2026`.
+- [ ] Confirm the V5 preregistration hash matches the authoritative config; do not edit either after target results are visible.
+- [ ] Confirm at least 5 GiB free on the `${COREGRAPH_OUTPUT_ROOT}` filesystem.
+- [ ] Run plan mode; require exactly 6/180/60/540/240.
+- [ ] Run validate-only; require six archive hashes, 180 member hashes, and zero training/labels/metrics/oracles.
+- [ ] Review `RUN_MANIFEST.json`, `PILOT_PLAN.csv`, and `PILOT_PLAN.sha256`.
+- [ ] Obtain explicit later authorization; do not reuse closure-phase approval.
+- [ ] Launch the exact sequential CPU command in the runbook with `--resume`.
+- [ ] Monitor `COMPLETE` markers and failure JSON; never delete or convert a failed cell to zero.
+- [ ] Stop safely with Ctrl-C; do not edit checkpoints. Resume with the identical command.
+- [ ] Require 240 hash-valid `COMPLETE` markers before packaging.
+- [ ] Preserve `POLICY_FREEZE_MANIFEST.json` and target-score hashes for every method.
+- [ ] Require the gate to emit exactly `GO`, `NO_GO`, or `INCONCLUSIVE`.
+- [ ] Package with the authoritative `--package` command; verify `OUTPUT_CHECKSUMS.sha256`.
+- [ ] Submit the package and gate to independent audit before populating any paper result.
+- [ ] Keep PR #2 draft and unmerged throughout the run.

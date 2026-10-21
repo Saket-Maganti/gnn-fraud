@@ -1,0 +1,18 @@
+{
+  "frozen": true,
+  "labels": [
+    "WRONG_EXPERT_SELECTED",
+    "ALL_EXPERTS_POOR",
+    "OVERCONFIDENT_DIAGNOSTICS",
+    "ROUTING_INSTABILITY",
+    "CORRELATED_SHIFT",
+    "LATENT_CONTRACT_AMBIGUITY",
+    "BUDGET_COLLAPSE",
+    "RESOURCE_MASK_COLLAPSE",
+    "ABSTENTION_COLLAPSE",
+    "SOURCE_OVERFITTING",
+    "BASELINE_UNFAIRNESS",
+    "METRIC_DISAGREEMENT"
+  ],
+  "schema": "coregraph_level4_failure_labels_v1"
+}

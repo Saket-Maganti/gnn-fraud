@@ -1,0 +1,11 @@
+{
+  "failures": [],
+  "prohibited_promotions": [
+    "learned_router_universal_improvement",
+    "prediction_space_mixture_lower_bound_without_assumptions",
+    "empirical_fraud_performance_from_theory"
+  ],
+  "proved_results": 3,
+  "schema": "coregraph_theory_gate_v1",
+  "status": "PASS"
+}

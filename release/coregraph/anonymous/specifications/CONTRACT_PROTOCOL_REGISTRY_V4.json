@@ -1,0 +1,25 @@
+{
+  "$schema": "results/coregraph_build/CONTRACT_PROTOCOL_REGISTRY.schema.json",
+  "schema_version": "coregraph_contract_protocol_registry_v4",
+  "frozen_before_manifest_conversion": true,
+  "protocols": [
+    {
+      "protocol_id": "strict_inductive",
+      "visibility_profile": "strict_inductive",
+      "allowed_contract_roles": ["source", "target"],
+      "semantic_definition": "Target nodes and label-free covariates may be observed, while target edges are unavailable and only cutoff-respecting historical edges are visible."
+    },
+    {
+      "protocol_id": "isolated_inductive",
+      "visibility_profile": "isolated_inductive",
+      "allowed_contract_roles": ["source", "target"],
+      "semantic_definition": "Target nodes and label-free covariates may be observed but graph edges are unavailable for the isolated target evaluation."
+    },
+    {
+      "protocol_id": "transductive_structure",
+      "visibility_profile": "transductive_structure",
+      "allowed_contract_roles": ["source", "target"],
+      "semantic_definition": "All nodes and graph edges are structurally visible at test time without target-label selection."
+    }
+  ]
+}
