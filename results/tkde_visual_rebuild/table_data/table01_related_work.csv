@@ -1,0 +1,7 @@
+work,temporal,graph_contract,capacity,resources,predictions,claim_support
+GADBench,No,Limited,No,No,Benchmark,No
+TGB / BenchTemp,Yes,Inductive tasks,No,Efficiency,Benchmark,No
+BAG,Yes,Task/model breadth,No,Scale,Benchmark,No
+GAD in the Wild,Partial,Scale/missing attrs.,No,Scale,Limited,No
+BetterBench / Eval Factsheets,Generic,Documented,Documented,Documented,Metadata,Descriptive
+FraudShiftBench,Yes,Visibility + construction,Top-$K$ + cost,Typed status,Per-seed,Executable

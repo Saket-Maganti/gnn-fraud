@@ -1,0 +1,31 @@
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.10}
+\begin{longtable}{@{}p{0.12\textwidth} p{0.14\textwidth} r r r r r@{}}
+\caption{Exact IBM temporal-window counts and test prevalence.}\label{tab:s-ibm-windows}\\
+\toprule
+\textbf{Variant} & \textbf{Protocol} & \textbf{Train} & \textbf{Validation} & \textbf{Test} & \textbf{Test positives} & \textbf{Test prevalence} \\
+\midrule
+\endfirsthead
+\caption[]{Exact IBM temporal-window counts and test prevalence. (continued)}\\
+\toprule
+\textbf{Variant} & \textbf{Protocol} & \textbf{Train} & \textbf{Validation} & \textbf{Test} & \textbf{Test positives} & \textbf{Test prevalence} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{7}{r}{\footnotesize Continued on next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+HI MEDIUM & Early-to-late & 15,949,119 & 6,379,647 & 9,569,472 & 14,147 & 0.148\% \\
+HI MEDIUM & Late-window & 19,138,942 & 6,379,648 & 6,379,648 & 10,642 & 0.167\% \\
+HI SMALL & Early-to-late & 2,539,172 & 1,015,669 & 1,523,504 & 2,321 & 0.152\% \\
+HI SMALL & Late-window & 3,047,007 & 1,015,669 & 1,015,669 & 1,797 & 0.177\% \\
+LI MEDIUM & Early-to-late & 15,625,741 & 6,250,297 & 9,375,445 & 5,392 & 0.058\% \\
+LI MEDIUM & Late-window & 18,750,889 & 6,250,297 & 6,250,297 & 3,783 & 0.061\% \\
+LI SMALL & Early-to-late & 3,462,024 & 1,384,810 & 2,077,215 & 1,334 & 0.064\% \\
+LI SMALL & Late-window & 4,154,429 & 1,384,810 & 1,384,810 & 925 & 0.067\% \\
+\end{longtable}
+\noindent\footnotesize\emph{Scope and reading.} The table reports prediction-unit denominators. It does not pool HI/LI or Small/Medium, and the early-to-late history visibility remains the shared first-60\% map described above.\par
+\endgroup

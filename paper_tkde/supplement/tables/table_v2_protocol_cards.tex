@@ -1,0 +1,21 @@
+\begin{table}[tbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\renewcommand{\arraystretch}{1.12}
+\caption{Protocol cards keep time, visibility, selection, and decision coordinates separate.}
+\label{tab:s-protocol-cards}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.12\textwidth} >{\raggedright\arraybackslash}p{0.13\textwidth} Y Y Y >{\raggedright\arraybackslash}p{0.12\textwidth}@{}}
+\toprule
+\textbf{Protocol} & \textbf{Masks} & \textbf{Graph/covariate visibility} & \textbf{Labels} & \textbf{Selection/decision} & \textbf{Datasets} \\
+\midrule
+Strict & chronological & training nodes/edges only during training; held-out structure available at evaluation & test labels hidden & validation F1 & Elliptic, DGraphFin \\
+Isolated & same chronological masks & held-out nodes isolated from training-period cross-split edges at evaluation & test labels hidden & validation F1 & Elliptic, DGraphFin \\
+Transductive & same masks & full graph structure visible & test labels hidden & validation F1 & Elliptic, DGraphFin \\
+Late-window & 60/20/20 chronological & shared node-history map uses first 60\%, which is this protocol's training interval & test transaction labels hidden & fixed 0.5 threshold for saved F1 & IBM AML-Data \\
+Early-to-late & 50/20/30 chronological & classifier labels use first 50\%; shared label-free node-history map uses first 60\%, including covariates from 50-60\% & test transaction labels hidden & fixed 0.5 threshold for saved F1 & IBM AML-Data \\
+\bottomrule
+\end{tabularx}
+\vspace{2pt}
+\begin{minipage}{\textwidth}\footnotesize\emph{Scope and reading.} Strict and isolated protocols share masks but differ in graph access. IBM early-to-late is explicitly a 50\% labeled-training / 60\% label-free-history contract.\end{minipage}
+\end{table}

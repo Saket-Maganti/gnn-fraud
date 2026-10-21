@@ -1,0 +1,21 @@
+\begin{table}[tbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\renewcommand{\arraystretch}{1.12}
+\caption{Protocol and architecture claims.}
+\label{tab:s-claims-protocol}
+\begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}p{0.16\textwidth} Y Y Y@{}}
+\toprule
+\textbf{ID} & \textbf{Status} & \textbf{Exact scoped subject} & \textbf{Permitted wording} & \textbf{Prohibited generalization} \\
+\midrule
+C01 & \texttt{SUPPORTED} & Elliptic; MLP/GCN/GraphSAGE; strict versus isolated; seeds 1-10 & the evaluated Elliptic leaderboard reverses at the top under the two visibility contracts & evaluation protocols always reverse rankings \\
+C02 & \texttt{SUPPORTED} & Elliptic and DGraphFin; MLP; strict versus isolated; seeds 1-10 & the MLP negative control is unchanged by the graph-only visibility intervention & the two protocols are identical \\
+C03 & \texttt{SUPPORTED} & Elliptic and DGraphFin; GCN and GraphSAGE; strict versus isolated; seeds 1-10 & effects depend on architecture and dataset in the evaluated grid & graph isolation is always harmful or always beneficial \\
+C04 & \texttt{REFUTED\_\allowbreak{}IN\_\allowbreak{}SCOPE} & all datasets, constructions, protocols, and graph models & the evaluated evidence rejects a uniform graph-harm narrative & GNNs fail universally; graph methods are always harmful \\
+C19 & \texttt{SUPPORTED\_\allowbreak{}THEORETICALLY} & typed deployment contracts & protocol results are contract-relative & any numerical difference is caused solely by graph visibility \\
+\bottomrule
+\end{tabularx}
+\vspace{2pt}
+\begin{minipage}{\textwidth}\footnotesize\emph{Scope and reading.} Status and scope text are copied from the frozen 22-claim ledger. Exact matched evidence-unit identifiers remain in the machine-readable ledger rather than in these reviewer-facing cells.\end{minipage}
+\end{table}

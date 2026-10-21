@@ -1,0 +1,28 @@
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.10}
+\begin{longtable}{@{}p{0.11\textwidth} p{0.10\textwidth} p{0.09\textwidth} p{0.06\textwidth} p{0.18\textwidth} p{0.15\textwidth} p{0.11\textwidth} p{0.10\textwidth}@{}}
+\caption{Access matrix for the five evaluated deployment contracts.}\label{tab:s-visibility-matrix}\\
+\toprule
+\textbf{Contract} & \textbf{Labeled train} & \textbf{Validation} & \textbf{Test features} & \textbf{Graph nodes/edges} & \textbf{Historical covariates} & \textbf{Decision rule} & \textbf{Resources} \\
+\midrule
+\endfirsthead
+\caption[]{Access matrix for the five evaluated deployment contracts. (continued)}\\
+\toprule
+\textbf{Contract} & \textbf{Labeled train} & \textbf{Validation} & \textbf{Test features} & \textbf{Graph nodes/edges} & \textbf{Historical covariates} & \textbf{Decision rule} & \textbf{Resources} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{8}{r}{\footnotesize Continued on next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+Strict & Chronological train & Validation F1 & Yes & Held-out structure at evaluation & Training-period only & Validation-selected & Recorded run envelope \\
+Isolated & Same train & Validation F1 & Yes & Held-out subgraph; no train/held-out cross edges & Training-period only & Validation-selected & Recorded run envelope \\
+Transductive & Same train & Validation F1 & Yes & Full graph during training/evaluation; held-out labels hidden & Full visible graph & Validation-selected & Recorded run envelope \\
+IBM late-window & First 60\% labels & Next 20\% & Yes & Account graph and transaction features & First 60\% label-free history & Fixed 0.5 F1 threshold & Small/Medium measured \\
+IBM early-to-late & First 50\% labels & Next 20\% & Yes & Account graph and transaction features & Shared first 60\%; includes 50--60\% label-free covariates & Fixed 0.5 F1 threshold & Small/Medium measured \\
+\end{longtable}
+\noindent\footnotesize\emph{Scope and reading.} Test labels are hidden in every evaluation. Access to test features or graph structure is a declared contract coordinate and must not be confused with access to test labels.\par
+\endgroup

@@ -1,0 +1,24 @@
+\begin{table}[tbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\renewcommand{\arraystretch}{1.12}
+\caption{IBM AML baseline, construction, and scale claims.}
+\label{tab:s-claims-ibm}
+\begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}p{0.16\textwidth} Y Y Y@{}}
+\toprule
+\textbf{ID} & \textbf{Status} & \textbf{Exact scoped subject} & \textbf{Permitted wording} & \textbf{Prohibited generalization} \\
+\midrule
+C05 & \texttt{SUPPORTED} & IBM AML HI/LI Small/Medium; two temporal protocols; HistGB/LogReg/GraphSAGE-h32; seeds 1-10 & HistGB leads mean AUPRC in all eight evaluated baseline-grid contexts & trees are universally best for AML \\
+C07 & \texttt{SUPPORTED} & HI/LI Small/Medium; both protocols; edge-aware GraphSAGE h64 versus NoEdge/ShuffledEdge; seeds 1-10 & the original edge-feature representation outperforms the two matched controls on mean AUPRC in this grid & edge features causally improve all fraud models \\
+C08 & \texttt{SUPPORTED} & IBM AML HI/LI Small/Medium; both protocols; DegreeCap versus edge-aware GraphSAGE reference & degree capping exposes metric- and regime-dependent tradeoffs & degree capping improves the benchmark \\
+C09 & \texttt{SUPPORTED} & IBM AML HI/LI Medium; both protocols; complete V27/V28 graph configurations & RecentWindow lies on a metric-dependent speed/performance tradeoff in the Medium grid & RecentWindow is Pareto-optimal for every objective \\
+C10 & \texttt{SUPPORTED\_\allowbreak{}WITH\_\allowbreak{}RESOURCE\_\allowbreak{}BOUNDARY} & IBM AML HI/LI Small for performance; HI/LI Medium for resource status & GINE leads mean AUPRC on the feasible Small cells; Medium remains resource-blocked & GINE is best across Small and Medium; Medium GINE performs poorly \\
+C11 & \texttt{RESOURCE\_\allowbreak{}BLOCKED} & IBM AML HI-Large and LI-Large & Large lies outside the admitted resource envelope and is unmeasured & Large performs worse; Large full10 evidence \\
+C12 & \texttt{RESOURCE\_\allowbreak{}BLOCKED} & IBM AML HI-Medium and LI-Medium; GINE h64 & Medium GINE is outside the measured performance set & Medium GINE underperforms \\
+C13 & \texttt{DIAGNOSTIC\_\allowbreak{}ONLY} & IBM AML V28 sender-receiver configuration versus V27 reference & contract restatement/equivalence check & a distinct sender-receiver method independently replicated the result \\
+\bottomrule
+\end{tabularx}
+\vspace{2pt}
+\begin{minipage}{\textwidth}\footnotesize\emph{Scope and reading.} Status and scope text are copied from the frozen 22-claim ledger. Exact matched evidence-unit identifiers remain in the machine-readable ledger rather than in these reviewer-facing cells.\end{minipage}
+\end{table}

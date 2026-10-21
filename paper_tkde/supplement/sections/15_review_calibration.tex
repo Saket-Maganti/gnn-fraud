@@ -1,0 +1,28 @@
+\section{Review-budget and calibration diagnostics}
+\label{sec:s-review-calibration}
+
+\subsection{One-percent review capacity}
+
+Review-budget metrics ask how much fraud is found when only the top \(b\%\) of scores can be reviewed. Table~\ref{tab:s-review-budget-1pct} reports the central 1\% operating point for five saved-prediction policies on each dataset.
+
+\input{tables/table_v2_review_budget_1pct}
+
+On DGraphFin, GraphSafe conservative averages precision 0.0229 and recall 0.0209, compared with 0.0156 and 0.0143 for simple averaging. On Elliptic, the direction reverses: GraphSafe averages precision 0.7624 and recall 0.1176, while simple averaging reaches 0.8274 and 0.1276. The complete 0.5\%, 1\%, and 2\% rows remain in \path{results/tkde_rebuild/REVIEW_BUDGET_CURVES.csv}.
+
+\begin{figure}[tbp]
+    \centering
+    \includegraphics[width=0.88\textwidth]{fig07_review_budget_analysis.pdf}
+    \caption{Precision and recall across the three declared review capacities. Uncertainty uses ten seed blocks after averaging six fixed contexts within seed.}
+    \label{fig:s-review-budget-v2}
+\end{figure}
+
+\subsection{Calibration}
+
+Table~\ref{tab:s-calibration} reports ECE and Brier score from saved predictions.
+
+\input{tables/table_v2_calibration}
+
+On DGraphFin, GraphSafe's mean ECE is 0.2751 and Brier score is 0.09094, compared with 0.2826 and 0.09295 for simple averaging. On Elliptic, simple averaging is better on both diagnostics (ECE 0.09631 versus 0.09820; Brier 0.07059 versus 0.07899).
+
+\paragraph{Limit.}
+These are fixed-dataset diagnostics, not guarantees of calibration in a bank population. Capacity, delayed labels, investigator actions, and changing prevalence can alter the operating surface.

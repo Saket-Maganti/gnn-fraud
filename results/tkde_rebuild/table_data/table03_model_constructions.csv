@@ -1,0 +1,9 @@
+method,operation,hypothesis,configuration
+MLP,node features only,graph-visibility negative control,h256/l3 Ell.; h64/l2 DGraph
+GCN,normalized neighborhood aggregation,visibility-sensitive smoothing,same widths/depths as MLP
+GraphSAGE,mean aggregation,inductive aggregation,same widths/depths as MLP
+LR / HistGB,transaction features,linear / nonlinear tabular controls,balanced LR; 160-tree-iteration HistGB
+SAGE-derived h32,endpoint + train-neighbor + edge features,small graph baseline,"20 epochs; batch 65,536"
+Edge-aware h64,endpoint + train-neighbor + edge features,graph-ablation reference,"30 epochs; batch 32,768"
+GINE h64,one GINE layer + edge head,edge-conditioned message passing,Small measured; Medium T4 OOM
+Graph controls,"NoEdge, Shuffle, Degree, DegreeCap, Recent","remove alignment, cap hubs, or restrict history",matched h64 cells

@@ -1,0 +1,21 @@
+\begin{table}[tbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\renewcommand{\arraystretch}{1.12}
+\caption{Statistical families and inferential units.}
+\label{tab:s-statistical-families}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.16\textwidth} >{\raggedright\arraybackslash}p{0.18\textwidth} Y Y >{\raggedright\arraybackslash}p{0.18\textwidth}@{}}
+\toprule
+\textbf{Family} & \textbf{Scope} & \textbf{Independent unit} & \textbf{Interval/test} & \textbf{Correction} \\
+\midrule
+Node visibility & 18 dataset-model-metric effects & 10 paired seeds & 10,000-resample percentile CI; paired dz; Wilcoxon & Holm within metric \\
+IBM construction & Candidate vs h64 by size and metric & 10 seed blocks after averaging four fixed contexts within seed & 10,000-resample percentile CI; paired dz; Wilcoxon & Holm within size-by-metric \\
+IBM context sensitivity & 208 context-specific effects & 10 paired seeds per fixed context & Descriptive CI, dz, and Wilcoxon & Context table is sensitivity, not a second confirmatory family \\
+GraphSafe & 48 declared comparator-metric tests & 10 seed blocks after averaging six contexts within seed & Percentile CI and Wilcoxon & One Holm family of 48 \\
+V22 robustness & 198 legacy paired tests & 10 paired seeds & Bootstrap CI and paired test & Original Benjamini-Hochberg values retained \\
+\bottomrule
+\end{tabularx}
+\vspace{2pt}
+\begin{minipage}{\textwidth}\footnotesize\emph{Scope and reading.} Ten seeds quantify optimization variation on fixed datasets and splits. They do not estimate population variation across banks, institutions, or future periods.\end{minipage}
+\end{table}

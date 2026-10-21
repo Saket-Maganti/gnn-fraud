@@ -1,0 +1,80 @@
+\documentclass[10pt,journal,onecolumn]{IEEEtran}
+
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{multicol}
+\usepackage{tabularx}
+\usepackage{microtype}
+\usepackage{etoolbox}
+\usepackage{cite}
+\usepackage{textcomp}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+
+\graphicspath{{../figures/}}
+\urlstyle{tt}
+\setlength{\LTpre}{6pt}
+\setlength{\LTpost}{8pt}
+\renewcommand{\arraystretch}{1.08}
+\setlength{\columnsep}{18pt}
+\setlength{\multicolsep}{6pt}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+% The two-column reference block shares its final page with the limitations.
+% A slight leading reduction prevents the balanced columns from exceeding the
+% IEEEtran text box while preserving a readable reference font.
+\AtBeginEnvironment{thebibliography}{\fontsize{7.6}{8.8}\selectfont}
+
+\newtheorem{definition}{Definition}
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
+\newcommand{\Evidence}{\mathcal{E}}
+\newcommand{\Supports}{\models}
+\newcommand{\Required}{\operatorname{Req}}
+\newcommand{\Status}{\operatorname{status}}
+
+\begin{document}
+
+\title{Supplementary Material for ``FraudShiftBench: Deployment-Contract Evaluation for Temporal Graph Fraud Detection''}
+\author{Anonymous Author}
+\maketitle
+\pagestyle{plain}
+
+\begin{abstract}
+This supplement is the human-readable technical evidence layer for FraudShiftBench. Its twenty-part reviewer path covers notation, support properties, dataset/model/protocol cards, optimization, matched statistics, aggregate results, resource cases, all 22 typed claim scopes, and reproduction. Four exhaustive row tables---180 node-protocol seeds, 198 legacy paired tests, 840 IBM seeds, and 208 IBM context sensitivities---are retained with schemas and checksums in the machine-readable artifact rather than typeset microscopically. Two construct boundaries remain explicit: IBM early-to-late uses first-50\% classifier labels with a shared first-60\% label-free history map, and the V24 temporal-stress labels are duplicate metadata on 120 scientific cells. All values come from the frozen saved-evidence baseline; no model is retrained and no blocked cell is assigned performance.
+\end{abstract}
+
+\tableofcontents
+
+\input{sections/01_scope_navigation}
+\input{sections/02_notation_definitions}
+\input{sections/03_support_validation}
+\input{sections/04_dataset_cards}
+\input{sections/05_temporal_visibility}
+\input{sections/06_graph_constructions}
+\input{sections/07_model_cards}
+\input{sections/08_optimization_selection}
+\input{sections/09_metrics_statistics_v2}
+\input{sections/10_protocol_results}
+\input{sections/11_robustness_controls}
+\input{sections/12_ibm_baselines}
+\input{sections/13_ibm_graph_scale}
+\input{sections/14_rank_decision}
+\input{sections/15_review_calibration}
+\input{sections/16_graphsafe_case_v2}
+\input{sections/17_resource_cases}
+\input{sections/18_claim_provenance}
+\input{sections/19_reproduction_artifact}
+\input{sections/20_limitations_ethics}
+
+% A two-column reference block avoids a nearly empty tail page while retaining
+% IEEEtran's standard bibliography font size.
+\raggedcolumns
+\begin{multicols}{2}
+  \bibliographystyle{IEEEtran}
+  \bibliography{../references}
+\end{multicols}
+
+\end{document}

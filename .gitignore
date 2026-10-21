@@ -1,51 +1,106 @@
-# Virtual environments
-venv/
+# Environments and local configuration
 .venv/
+venv/
 env/
 gnn_env/
+.env
+.env.*
+!.env.example
+.netrc
+kaggle.json
+credentials.json
 
-# Python caches and build outputs
+# Python/editor/OS caches
 __pycache__/
 *.py[cod]
 *.egg-info/
 .pytest_cache/
-.mypy_cache/
 .ruff_cache/
-build/
-dist/
-
-# Local configuration
-.env
+.mypy_cache/
+.coverage
+htmlcov/
 .DS_Store
-.python-version
+__MACOSX/
+.ipynb_checkpoints/
+.idea/
+.vscode/
+.cursor/
+.claude/
 
-# Data and large local assets
-data/raw/
+# Raw data, model payloads, and prediction exports
+data/raw/*
+!data/raw/.gitkeep
+!data/raw/README.md
+data/_pyg_elliptic/
 data/elliptic_bitcoin_dataset/
+**/predictions/
+**/prediction_exports/
+**/raw_predictions/
+*.npz
+*.npy
+*.parquet
+*.pkl
+*.pt
+*.pth
+*.ckpt
+
+# Provider workspaces and local run output
+kaggle/.bundle_stage/
+kaggle/notebooks/
+kaggle_workspace/*
+!kaggle_workspace/manifests/
+kaggle_workspace/manifests/*
+!kaggle_workspace/manifests/V22_FINAL_GPU_EVIDENCE_LOCK.json
+kaggleresults/
+kaggleoutputs/
+logs/*.log
+wandb/
+
+# Generated experiment output is local unless a small frozen aggregate is
+# explicitly force-added as part of the curated evidence closure.
+results/**
+!results/github_publish/
+!results/github_publish/**
+!results/runs_rb09v3/
+!results/runs_rb09v3/**
+!results/runs_rb17_review_budget_worst_block/
+!results/runs_rb17_review_budget_worst_block/**
+!results/tkde_rebuild/
+!results/tkde_rebuild/**
+!results/tkde_visual_rebuild/
+!results/tkde_visual_rebuild/**
+!results/v24_imported/
+!results/v24_imported/V24_IMPORTED_EVIDENCE_LOCK.json
+!results/v26_imported/
+!results/v26_imported/V26_IMPORTED_EVIDENCE_LOCK.json
+!results/v27_imported/
+!results/v27_imported/V27_STRONGER_GRAPH_EVIDENCE_LOCK.json
+!results/v28_imported/
+!results/v28_imported/V28_ALL_RUNS_EVIDENCE_LOCK.json
+
+# Archives, backups, and compiled binaries
 *.zip
 *.tar
 *.tar.gz
+*.tgz
 *.7z
+*.so
+*.dylib
+tmp/
+freezes/
+promptpacks/
+*_backup_*/
 
-# Experiment outputs and checkpoints
-results/
-results2/
-logs/*.log
-*.pt
-*.pth
-best_model.pt
-best_evolve_model.pt
+# LaTeX intermediates. Final public PDFs live only in paper/pdf/.
+paper_tkde/**/*.aux
+paper_tkde/**/*.bbl
+paper_tkde/**/*.blg
+paper_tkde/**/*.fdb_latexmk
+paper_tkde/**/*.fls
+paper_tkde/**/*.log
+paper_tkde/**/*.out
+paper_tkde/**/*.synctex.gz
+paper_tkde/**/*.toc
+paper_tkde/main.pdf
+paper_tkde/supplement/supplement.pdf
 
-# Paper build artifacts
-paper/*.aux
-paper/*.bbl
-paper/*.blg
-paper/*.fdb_latexmk
-paper/*.fls
-paper/*.log
-paper/*.out
-paper/*.pdf
-paper/*.spl
-paper/*.toc
-paper/missfont.log
-paper/texput.log

@@ -1,0 +1,7 @@
+symbol,axis,contract_contents,why_it_matters
+T,temporal partition/order,train/validation/test windows and ordering,prevents future-label/time leakage and fixes horizon
+V,graph visibility/access,which nodes/edges are available at train and inference,"separates full, train-subgraph, and isolated access"
+C,graph construction,"entities, edges, attributes, caps, and recency window",fixes the information and inductive bias supplied to a model
+S,selection cleanliness,"validation data, metric, threshold, and policy selection",prevents test-driven model or policy choice
+B,decision budget,"threshold, top-K or coverage, and explicit costs",distinguishes ranking from operational decisions
+R,resource envelope,"hardware, memory/disk guard, runtime, and failure status",separates measured feasibility from predictive performance

@@ -1,0 +1,28 @@
+\section{Rank-versus-decision analyses}
+\label{sec:s-rank-decision}
+
+\subsection{Baseline-grid disagreement}
+
+Table~\ref{tab:s-rank-baseline_grid} compares AUPRC and fixed-threshold F1 winners in the eight baseline contexts. The feasible set contains the same three configurations in every row.
+
+\input{tables/table_v2_rank_baseline_grid}
+
+The AUPRC and F1 winners differ in 3 of 8 baseline contexts. This is not a contradiction: AUPRC summarizes the score ordering, while F1 evaluates one threshold. Rank correlation is shown to expose the magnitude of agreement rather than only a categorical winner change.
+
+\subsection{Graph-grid disagreement}
+
+Table~\ref{tab:s-rank-graph_grid} performs the same comparison in the exact feasible graph-construction set.
+
+\input{tables/table_v2_rank_graph_grid}
+
+The winners differ in all 8 graph-grid contexts, giving 11 of 16 disagreements across the two families. For example, in HI-Medium late-window, SAGE-edge h64 ranks first by AUPRC but sixth by F1; DegreeCap ranks sixth by AUPRC but first by F1. Medium GINE is not in the feasible set, and the sender-receiver identity row is not counted as an independent method.
+
+\begin{figure}[tbp]
+    \centering
+    \includegraphics[width=0.84\textwidth]{fig04_rank_decision_divergence.pdf}
+    \caption{AUPRC and F1@0.5 rank divergence within exact IBM feasibility sets. The plot makes the operating-point dependence visible without pooling scales or blocked configurations.}
+    \label{fig:s-rank-divergence-v2}
+\end{figure}
+
+\paragraph{Interpretive limit.}
+The count 11 of 16 is specific to threshold 0.5. It does not establish disagreement under every threshold or review budget, and higher AUROC does not automatically imply better operational decisions.

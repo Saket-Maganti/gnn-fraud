@@ -1,0 +1,26 @@
+\begin{table}[tbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\renewcommand{\arraystretch}{1.12}
+\caption{IBM AML-Data dataset card.}
+\label{tab:s-dataset-ibm}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.23\textwidth} Y@{}}
+\toprule
+\textbf{Field} & \textbf{Verified value} \\
+\midrule
+Origin & Synthetic financial transactions from IBM AML-Data \\
+Prediction unit & Directed transaction edge \\
+Measured variants & HI MEDIUM, HI SMALL, LI MEDIUM, LI SMALL \\
+Graph range & 515,088--2,077,023 accounts; 5,078,345--31,898,238 transactions \\
+Features & Eight transaction attributes and eight account-history attributes \\
+Temporal order & Stable chronological transaction sort \\
+Labels & is\_laundering=1 positive; 0 negative; no unknown class in the materialized task \\
+Visibility & Classifier labels use 50\% or 60\% by protocol; both protocols share the first-60\% label-free account-history map \\
+Unmeasured scope & HI/LI Large are guard-blocked; HI/LI Medium GINE h64 is T4-OOM \\
+Known limitation & HI/LI are synthetic generator regimes, not observed bank populations or severity categories \\
+\bottomrule
+\end{tabularx}
+\vspace{2pt}
+\begin{minipage}{\textwidth}\footnotesize\emph{Scope and reading.} Predictive evidence exists only for the four Small/Medium variants. Large and Medium-GINE cells are retained as resource outcomes, not assigned performance.\end{minipage}
+\end{table}

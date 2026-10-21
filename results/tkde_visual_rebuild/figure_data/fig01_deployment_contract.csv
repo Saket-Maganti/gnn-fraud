@@ -1,0 +1,17 @@
+record_type,record_id,label,display_detail,order,contract_contents,why_it_matters
+contract_coordinate,T,Time,windows / order,1,train/validation/test windows and ordering,prevents future-label/time leakage and fixes horizon
+contract_coordinate,V,Visibility,nodes / edges,2,which nodes/edges are available at train and inference,"separates full, train-subgraph, and isolated access"
+contract_coordinate,C,Construction,entities / features,3,"entities, edges, attributes, caps, and recency window",fixes the information and inductive bias supplied to a model
+contract_coordinate,S,Selection,validation / policy,4,"validation data, metric, threshold, and policy selection",prevents test-driven model or policy choice
+contract_coordinate,B,Decision,threshold / budget,5,"threshold, top-K or coverage, and explicit costs",distinguishes ranking from operational decisions
+contract_coordinate,R,Resources,compute / status,6,"hardware, memory/disk guard, runtime, and failure status",separates measured feasibility from predictive performance
+formal_flow,contract,Deployment contract,$\Pi$,1,code-authored formal architecture,maps a recorded contract to a scoped claim
+formal_flow,evidence,Evidence unit,$e$,2,code-authored formal architecture,maps a recorded contract to a scoped claim
+formal_flow,support,Support test,$\mathcal{E}\models c$,3,code-authored formal architecture,maps a recorded contract to a scoped claim
+formal_flow,claim,Typed claim,$c$,4,code-authored formal architecture,maps a recorded contract to a scoped claim
+status_semantics,supported,supported,nonnumeric status,1,compact legend label,status is not a predictive score
+status_semantics,blocked,blocked,nonnumeric status,2,compact legend label,status is not a predictive score
+status_semantics,resource_blocked,resource-blocked,nonnumeric status,3,compact legend label,status is not a predictive score
+status_semantics,diagnostic,diagnostic,nonnumeric status,4,compact legend label,status is not a predictive score
+status_semantics,excluded,excluded,nonnumeric status,5,compact legend label,status is not a predictive score
+status_semantics,refuted,refuted,nonnumeric status,6,compact legend label,status is not a predictive score

@@ -1,0 +1,7 @@
+cell,resource_envelope_or_reason,status_tag,benchmark_treatment
+IBM AML HI-Large,safe resource guard,GUARD-BLOCKED,"excluded from predictive ranks, matched means, and Pareto sets"
+IBM AML LI-Large,safe resource guard,GUARD-BLOCKED,"excluded from predictive ranks, matched means, and Pareto sets"
+IBM AML HI-Medium GINE h64,single Tesla T4 CUDA OOM,T4-OOM,"excluded from predictive ranks, matched means, and Pareto sets"
+IBM AML LI-Medium GINE h64,single Tesla T4 CUDA OOM,T4-OOM,"excluded from predictive ranks, matched means, and Pareto sets"
+DGraphFin GAT h64/l2,Tesla T4 CUDA OOM,T4-OOM,"excluded from predictive ranks, matched means, and Pareto sets"
+DGraphFin GraphSAGE max-pool rerun,larger GPU required,UNMEASURED,"excluded from predictive ranks, matched means, and Pareto sets"

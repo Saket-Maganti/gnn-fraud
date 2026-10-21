@@ -1,0 +1,19 @@
+# Model Construction Inventory
+
+Scientific method names, computational forms, hypotheses, and exact configurations.
+
+method_or_construction,computational_form,hypothesis,configuration
+MLP,node features only,negative control for graph-visibility intervention,Elliptic h256/l3; DGraphFin h64/l2
+GCN,normalized neighborhood aggregation,tests spectral-style smoothing under visibility change,Elliptic h256/l3; DGraphFin h64/l2
+GraphSAGE,mean neighborhood aggregation,tests inductive aggregation under visibility change,Elliptic h256/l3; DGraphFin h64/l2
+Logistic regression,standardized transaction features,linear non-graph baseline,balanced classes; max_iter=500
+Histogram gradient boosting,transaction features,nonlinear tabular baseline,160 iterations; learning rate 0.06
+GraphSAGE-derived edge classifier h32,training-history endpoint/neighborhood summaries plus edge features,small IBM graph baseline,"20 epochs; batch 65,536"
+Edge-aware GraphSAGE-derived edge classifier h64,training-history endpoint/neighborhood summaries plus edge features,reference for graph-feature/construction ablations,"30 epochs; batch 32,768"
+GINE h64,one GINE layer and edge head,edge-conditioned message-passing architecture,"30 epochs; batch 32,768; Small only"
+NoEdge,zero transaction attributes; structure retained,tests edge-attribute contribution,matched to h64 reference
+ShuffledEdge,edge attributes permuted within temporal masks,destroys edge-feature alignment while preserving marginal values,matched to h64 reference
+DegreeOnly,endpoint-degree attributes replace transaction features,tests structural summaries without original attributes,matched to h64 reference
+DegreeCap,q=.995 cap on training structure,tests hub sensitivity and resource/performance tradeoff,matched to h64 reference
+RecentWindow,most recent 50% of training edges,tests recency and reduced computation,matched to h64 reference
+

@@ -1,0 +1,46 @@
+\section{Reproduction and artifact index}
+\label{sec:s-reproduction-artifact}
+
+\subsection{Deterministic no-training path}
+
+The visual rebuild consumes the frozen scientific surfaces and regenerates only reviewer-facing tables. From the repository root:
+
+\begin{verbatim}
+gnn_env/bin/python \
+  scripts/tkde_visual_rebuild/build_curated_supplement_tables.py
+\end{verbatim}
+
+The generator verifies recorded frozen hashes where available, asserts the 22 claim IDs and status counts, checks the four exhaustive row counts and hashes, and rejects active portrait-table fragments containing \texttt{tiny}, \texttt{scriptsize}, \texttt{resizebox}, landscape wrappers, or forced page commands.
+
+The supplement bibliography cycle is:
+
+\begin{verbatim}
+cd paper_tkde/supplement
+pdflatex -interaction=nonstopmode -halt-on-error supplement.tex
+bibtex supplement
+pdflatex -interaction=nonstopmode -halt-on-error supplement.tex
+pdflatex -interaction=nonstopmode -halt-on-error supplement.tex
+\end{verbatim}
+
+This path regenerates the visual representation from already derived, locked evidence. The broader saved-evidence analysis path remains documented in the baseline command log. Neither path is a claim that full training was rerun.
+
+\subsection{Exhaustive rows moved to the artifact}
+
+Table~\ref{tab:s-raw-artifacts} records the full machine-readable destination, row count, path, SHA-256, and schema prefix for each raw table removed from the PDF.
+
+\input{tables/table_v2_raw_artifact_index}
+
+The complete ordered schemas and commands live in \path{results/tkde_visual_rebuild/RAW_TABLE_ARTIFACT_INDEX.csv} and \path{RAW_TABLE_ARTIFACT_INDEX.md}. The four row counts are exactly 180, 198, 840, and 208. Their source SHA-256 values are checked before any curated fragment is written.
+
+\subsection{Representation and completeness}
+
+The 180 node seeds become three matched metric tables with strict/isolated means, paired deltas, intervals, effect sizes, adjusted tests, and \(n\). The 198 legacy tests become a family/metric composition table while preserving every original test row in CSV. The 840 IBM seeds become baseline, matched-effect, rank, runtime, and feasibility aggregates. The 208 context sensitivities remain available for heterogeneity inspection while the PDF reports the dependence-aware ten-seed inference.
+
+No missing value is converted to zero, no blocked configuration receives a numeric cell, and no unmatched feasibility set is averaged. The artifact retains full result paths and source paths that would be distracting and fragile in typeset pages.
+
+\subsection{Provenance and packaging boundary}
+
+Canonical imports and locks are read-only. Generated LaTeX fragments live under \path{paper_tkde/supplement/tables}; the curated-table manifest records their hashes and portrait/footnotesize invariants. A clean release should include the four machine-readable sources, their index, the claim/evidence ledger, scalar map, lock paths, checksums, and excluded-file manifest while omitting raw restricted data, credentials, private absolute paths, caches, macOS metadata, predictions that cannot be redistributed, and build debris.
+
+\paragraph{Reproducibility limit.}
+Deterministic reconstruction from saved evidence is verified. Fresh data acquisition, model training, GPU execution, and an external artifact badge are separate activities and are not claimed here.

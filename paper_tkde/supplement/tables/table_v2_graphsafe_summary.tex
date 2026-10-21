@@ -1,0 +1,33 @@
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.10}
+\begin{longtable}{@{}p{0.12\textwidth} p{0.19\textwidth} r r r r r@{}}
+\caption{GraphSafe and comparator outcomes after seed-block aggregation.}\label{tab:s-graphsafe-summary}\\
+\toprule
+\textbf{Dataset} & \textbf{Policy} & \textbf{n} & \textbf{F1} & \textbf{AUPRC} & \textbf{Recall@1\%} & \textbf{Cost risk} \\
+\midrule
+\endfirsthead
+\caption[]{GraphSafe and comparator outcomes after seed-block aggregation. (continued)}\\
+\toprule
+\textbf{Dataset} & \textbf{Policy} & \textbf{n} & \textbf{F1} & \textbf{AUPRC} & \textbf{Recall@1\%} & \textbf{Cost risk} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{7}{r}{\footnotesize Continued on next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+DGraphFin & Best validation branch & 10 & 0.03624 & 0.01641 & 0.01375 & 0.47266 \\
+DGraphFin & Feature branch & 10 & 0.03241 & 0.01390 & 0.01469 & 0.59243 \\
+DGraphFin & Graph branch & 10 & 0.03624 & 0.01641 & 0.01375 & 0.47266 \\
+DGraphFin & GraphSafe conservative & 10 & 0.04257 & 0.01901 & 0.02092 & 0.29128 \\
+DGraphFin & Simple average & 10 & 0.03647 & 0.01625 & 0.01430 & 0.45220 \\
+Elliptic & Best validation branch & 10 & 0.53247 & 0.49281 & 0.12005 & 0.17972 \\
+Elliptic & Feature branch & 10 & 0.51700 & 0.43718 & 0.09994 & 0.17929 \\
+Elliptic & Graph branch & 10 & 0.53252 & 0.51525 & 0.12881 & 0.18203 \\
+Elliptic & GraphSafe conservative & 10 & 0.53325 & 0.48762 & 0.11756 & 0.17831 \\
+Elliptic & Simple average & 10 & 0.55130 & 0.53292 & 0.12762 & 0.17086 \\
+\end{longtable}
+\noindent\footnotesize\emph{Scope and reading.} Each row averages six fixed contexts within seed, then summarizes ten seeds. The 1:5 cost is illustrative. DGraphFin descriptive gains and Elliptic negative comparisons are both retained.\par
+\endgroup

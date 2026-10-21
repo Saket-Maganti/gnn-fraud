@@ -1,0 +1,50 @@
+\section{Model cards and equations}
+\label{sec:s-models-v2}
+
+\subsection{Node classifiers}
+
+The feature-only MLP does not consume adjacency and therefore serves as a negative control for the graph-only visibility intervention. The GCN update is
+\begin{equation}
+ H^{(\ell+1)}
+ =\sigma\!\left(\widehat D^{-1/2}\widehat A\widehat D^{-1/2}
+ H^{(\ell)}W^{(\ell)}\right),
+\end{equation}
+with self-loops in \(\widehat A\)~\cite{kipf2017gcn}. Mean GraphSAGE uses
+\begin{equation}
+ h_v^{(\ell+1)}
+ =\sigma\!\left(W^{(\ell)}
+ [h_v^{(\ell)}\Vert |N(v)|^{-1}\!\sum_{u\in N(v)}h_u^{(\ell)}]\right)
+\end{equation}
+and therefore depends differently on available neighborhoods~\cite{hamilton2017graphsage}.
+
+\input{tables/table_v2_node_model_cards}
+
+The card makes the architecture control explicit: Elliptic uses h256/l3 while DGraphFin uses h64/l2. The grid studies three mostly static families and does not support a class-wide conclusion about temporal-state, transformer, or heterogeneous GNNs.
+
+\subsection{IBM transaction classifiers}
+
+Logistic regression and histogram gradient boosting operate on transaction attributes without account-graph message passing~\cite{friedman2001gbm}. The SAGE-derived edge classifiers first form one-hop training-history summaries
+\begin{equation}
+ \bar x_{N(v)}
+ =\frac{1}{\max(1,|N_{\mathrm{tr}}(v)|)}
+ \sum_{u\in N_{\mathrm{tr}}(v)}x_u,
+ \qquad
+ \widetilde x_v=[x_v\Vert\bar x_{N(v)}],
+\end{equation}
+then score transaction \((u,v)\) with
+\begin{equation}
+ q_{uv}=\sigma\!\left(f_\theta(
+ [\widetilde x_u\Vert\widetilde x_v\Vert a_{uv}])\right).
+\end{equation}
+They are static one-hop edge classifiers, not stacks of sampled GraphSAGE convolutions.
+
+The feasible GINE candidate uses one edge-conditioned update,
+\begin{equation}
+ h_v'=\operatorname{MLP}\!\left((1+\epsilon)h_v+
+ \sum_{u\in N(v)}\operatorname{ReLU}(h_u+\phi(a_{uv}))\right),
+\end{equation}
+followed by an edge head~\cite{hu2020pretraining}.
+
+\input{tables/table_v2_ibm_model_cards}
+
+GINE h64 is measured only on Small. The two Medium lanes exhausted a T4 and receive no performance score. The model card preserves that feasibility condition alongside the computational definition.

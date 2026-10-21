@@ -1,0 +1,1326 @@
+{
+  "created_at_utc": "2026-07-01T08:52:13+00:00",
+  "fixed_blocked_lanes": [
+    {
+      "claim_scope": "blocked; not replaced by RB45",
+      "display_name": "DGraphFin fixed-config GAT hidden64/layers2",
+      "lane_id": "DGRAPHFIN_FIXED_CONFIG_GAT_HIDDEN64_LAYERS2",
+      "reason": "No comparable fixed-config PASS evidence imported in V24.",
+      "status": "BLOCKED_T4_OOM"
+    }
+  ],
+  "lanes": [
+    {
+      "actual_json": 180,
+      "actual_prediction_csv": 180,
+      "bad_return_codes": [],
+      "claim_scope": "main evidence",
+      "datasets": [
+        "elliptic"
+      ],
+      "display_name": "RB41 Elliptic full10 temporal shift",
+      "dry_run_hits": [],
+      "duplicate_logical_prediction_files": [],
+      "duplicate_logical_result_files": [],
+      "expected_json": 180,
+      "expected_prediction_csv": 180,
+      "expected_seeds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "extra_models": [],
+      "extra_protocols": [],
+      "extra_seeds": [],
+      "extra_stress_configs": [],
+      "fail_reasons": [],
+      "hidden_channel_violations": [],
+      "incomplete_reasons": [],
+      "lane_id": "RB41_ELLIPTIC_TEMPORAL_SHIFT_STRESS_FULL10_SEEDS_1_10_V24",
+      "missing_by_seed": [],
+      "missing_json_for_prediction_csv": [],
+      "missing_manifest_members": [],
+      "missing_models": [],
+      "missing_prediction_for_json": [],
+      "missing_protocols": [],
+      "missing_seeds": [],
+      "missing_stress_configs": [],
+      "models": [
+        "gcn",
+        "mlp",
+        "sage"
+      ],
+      "num_layer_violations": [],
+      "oom_log_hits": [],
+      "package_index": [
+        {
+          "file_size_bytes": 71694113,
+          "manifest_names": [
+            "RUN_MANIFEST.json",
+            "V24_STRICT_EVIDENCE_GATE.json",
+            "dataset_materialization_manifest.json",
+            "dependency_manifest.json",
+            "dual_gpu_merge_manifest.json",
+            "dual_gpu_worker_manifest.json",
+            "final_count_validation.json",
+            "source_trace_manifest.json"
+          ],
+          "package_path": "kaggleoutputs/v24/rb41_elliptic_full10/DOWNLOAD_ME_RB41_ELLIPTIC_TEMPORAL_SHIFT_STRESS_FULL10_SEEDS_1_10_V24.zip",
+          "prediction_entries": 180,
+          "result_entries": 180,
+          "sha256": "20dee30333b2c25e96c4544f0ca5f8f5162d639268bd925d328442e3d0f163e9"
+        }
+      ],
+      "package_json_entries": 180,
+      "package_mode": "monolithic zip",
+      "package_paths": [
+        "kaggleoutputs/v24/rb41_elliptic_full10/DOWNLOAD_ME_RB41_ELLIPTIC_TEMPORAL_SHIFT_STRESS_FULL10_SEEDS_1_10_V24.zip"
+      ],
+      "package_prediction_csv_entries": 180,
+      "prediction_index_csv": "results/v24_imported/rb41_elliptic_temporal_shift_full10/PREDICTION_INDEX.csv",
+      "protocols": [
+        "inductive_isolated",
+        "strict_inductive"
+      ],
+      "result_index_csv": "results/v24_imported/rb41_elliptic_temporal_shift_full10/RESULT_INDEX.csv",
+      "schema_errors": [],
+      "seed_coverage": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "split_manifest_paths": [
+        "kaggleoutputs/v24/rb41_elliptic_full10/DOWNLOAD_ME_RB41_ELLIPTIC_TEMPORAL_SHIFT_STRESS_FULL10_SEEDS_1_10_V24__SPLIT_PACKAGE_MANIFEST.json"
+      ],
+      "status": "PASS",
+      "status_category": "MAIN_FULL10",
+      "stress_configs": [
+        "early_to_late_transfer",
+        "late_window_holdout",
+        "rolling_window_stress"
+      ],
+      "version": "V24"
+    },
+    {
+      "actual_json": 120,
+      "actual_prediction_csv": 120,
+      "bad_return_codes": [],
+      "claim_scope": "appendix diagnostics",
+      "datasets": [
+        "elliptic"
+      ],
+      "display_name": "RB44 Elliptic full10 perturbation stress",
+      "dry_run_hits": [],
+      "duplicate_logical_prediction_files": [],
+      "duplicate_logical_result_files": [],
+      "expected_json": 120,
+      "expected_prediction_csv": 120,
+      "expected_seeds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "extra_models": [],
+      "extra_protocols": [],
+      "extra_seeds": [],
+      "extra_stress_configs": [],
+      "fail_reasons": [],
+      "hidden_channel_violations": [],
+      "incomplete_reasons": [],
+      "lane_id": "RB44_ELLIPTIC_PERTURBATION_STRESS_FULL10_SEEDS_1_10_V24",
+      "missing_by_seed": [],
+      "missing_json_for_prediction_csv": [],
+      "missing_manifest_members": [],
+      "missing_models": [],
+      "missing_prediction_for_json": [],
+      "missing_protocols": [],
+      "missing_seeds": [],
+      "missing_stress_configs": [],
+      "models": [
+        "gcn",
+        "mlp",
+        "sage"
+      ],
+      "num_layer_violations": [],
+      "oom_log_hits": [],
+      "package_index": [
+        {
+          "file_size_bytes": 50156657,
+          "manifest_names": [
+            "RUN_MANIFEST.json",
+            "V24_STRICT_EVIDENCE_GATE.json",
+            "dataset_materialization_manifest.json",
+            "dependency_manifest.json",
+            "dual_gpu_merge_manifest.json",
+            "dual_gpu_worker_manifest.json",
+            "final_count_validation.json",
+            "source_trace_manifest.json"
+          ],
+          "package_path": "kaggleoutputs/v24/rb44_elliptic_full10/DOWNLOAD_ME_RB44_ELLIPTIC_PERTURBATION_STRESS_FULL10_SEEDS_1_10_V24.zip",
+          "prediction_entries": 120,
+          "result_entries": 120,
+          "sha256": "4dc17cea1e9c1c37183f7229279c51fec7c2a4afbe2024ff2fb0129aacc5e309"
+        }
+      ],
+      "package_json_entries": 120,
+      "package_mode": "monolithic zip",
+      "package_paths": [
+        "kaggleoutputs/v24/rb44_elliptic_full10/DOWNLOAD_ME_RB44_ELLIPTIC_PERTURBATION_STRESS_FULL10_SEEDS_1_10_V24.zip"
+      ],
+      "package_prediction_csv_entries": 120,
+      "prediction_index_csv": "results/v24_imported/rb44_elliptic_perturbation_stress_full10/PREDICTION_INDEX.csv",
+      "protocols": [
+        "inductive_isolated",
+        "strict_inductive"
+      ],
+      "result_index_csv": "results/v24_imported/rb44_elliptic_perturbation_stress_full10/RESULT_INDEX.csv",
+      "schema_errors": [],
+      "seed_coverage": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "split_manifest_paths": [
+        "kaggleoutputs/v24/rb44_elliptic_full10/DOWNLOAD_ME_RB44_ELLIPTIC_PERTURBATION_STRESS_FULL10_SEEDS_1_10_V24__SPLIT_PACKAGE_MANIFEST.json"
+      ],
+      "status": "PASS",
+      "status_category": "APPENDIX_FULL10",
+      "stress_configs": [
+        "perturbation_edge_drop",
+        "perturbation_feature_shuffle"
+      ],
+      "version": "V24"
+    },
+    {
+      "actual_json": 36,
+      "actual_prediction_csv": 36,
+      "bad_return_codes": [],
+      "claim_scope": "main evidence after full10 merge",
+      "datasets": [
+        "dgraphfin"
+      ],
+      "display_name": "RB41 DGraphFin temporal shift chunk 1-2",
+      "dry_run_hits": [],
+      "duplicate_logical_prediction_files": [],
+      "duplicate_logical_result_files": [],
+      "expected_json": 36,
+      "expected_prediction_csv": 36,
+      "expected_seeds": [
+        1,
+        2
+      ],
+      "extra_models": [],
+      "extra_protocols": [],
+      "extra_seeds": [],
+      "extra_stress_configs": [],
+      "fail_reasons": [],
+      "hidden_channel_violations": [],
+      "incomplete_reasons": [],
+      "lane_id": "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_1_2_DUALGPU_V24",
+      "missing_by_seed": [],
+      "missing_json_for_prediction_csv": [],
+      "missing_manifest_members": [],
+      "missing_models": [],
+      "missing_prediction_for_json": [],
+      "missing_protocols": [],
+      "missing_seeds": [],
+      "missing_stress_configs": [],
+      "models": [
+        "gcn",
+        "mlp",
+        "sage"
+      ],
+      "num_layer_violations": [],
+      "oom_log_hits": [],
+      "package_index": [
+        {
+          "file_size_bytes": 199090401,
+          "manifest_names": [
+            "RUN_MANIFEST.json",
+            "V24_STRICT_EVIDENCE_GATE.json",
+            "dataset_materialization_manifest.json",
+            "dependency_manifest.json",
+            "dual_gpu_merge_manifest.json",
+            "dual_gpu_worker_manifest.json",
+            "final_count_validation.json",
+            "source_trace_manifest.json"
+          ],
+          "package_path": "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_1_2_DUALGPU_V24__seed_1.zip",
+          "prediction_entries": 18,
+          "result_entries": 18,
+          "sha256": "2220060483b5fe88ddb57b995c4b24251b5b8e16befd5febf12e0a2c5aa84275"
+        },
+        {
+          "file_size_bytes": 197932746,
+          "manifest_names": [
+            "RUN_MANIFEST.json",
+            "V24_STRICT_EVIDENCE_GATE.json",
+            "dataset_materialization_manifest.json",
+            "dependency_manifest.json",
+            "dual_gpu_merge_manifest.json",
+            "dual_gpu_worker_manifest.json",
+            "final_count_validation.json",
+            "source_trace_manifest.json"
+          ],
+          "package_path": "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_1_2_DUALGPU_V24__seed_2.zip",
+          "prediction_entries": 18,
+          "result_entries": 18,
+          "sha256": "8b75dab263870713ca27c289aebbe2870fefe1d4a790b30503fc14a69d31cc74"
+        }
+      ],
+      "package_json_entries": 36,
+      "package_mode": "split package",
+      "package_paths": [
+        "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_1_2_DUALGPU_V24__seed_1.zip",
+        "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_1_2_DUALGPU_V24__seed_2.zip"
+      ],
+      "package_prediction_csv_entries": 36,
+      "prediction_index_csv": "results/v24_imported/rb41_dgraphfin_temporal_shift_seeds_1_2/PREDICTION_INDEX.csv",
+      "protocols": [
+        "inductive_isolated",
+        "strict_inductive"
+      ],
+      "result_index_csv": "results/v24_imported/rb41_dgraphfin_temporal_shift_seeds_1_2/RESULT_INDEX.csv",
+      "schema_errors": [],
+      "seed_coverage": [
+        1,
+        2
+      ],
+      "split_manifest_paths": [
+        "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_1_2_DUALGPU_V24__SPLIT_PACKAGE_MANIFEST.json"
+      ],
+      "status": "PASS",
+      "status_category": "MAIN_CHUNK",
+      "stress_configs": [
+        "early_to_late_transfer",
+        "late_window_holdout",
+        "rolling_window_stress"
+      ],
+      "version": "V24"
+    },
+    {
+      "actual_json": 36,
+      "actual_prediction_csv": 36,
+      "bad_return_codes": [],
+      "claim_scope": "main evidence after full10 merge",
+      "datasets": [
+        "dgraphfin"
+      ],
+      "display_name": "RB41 DGraphFin temporal shift chunk 3-4",
+      "dry_run_hits": [],
+      "duplicate_logical_prediction_files": [],
+      "duplicate_logical_result_files": [],
+      "expected_json": 36,
+      "expected_prediction_csv": 36,
+      "expected_seeds": [
+        3,
+        4
+      ],
+      "extra_models": [],
+      "extra_protocols": [],
+      "extra_seeds": [],
+      "extra_stress_configs": [],
+      "fail_reasons": [],
+      "hidden_channel_violations": [],
+      "incomplete_reasons": [],
+      "lane_id": "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_3_4_DUALGPU_V24",
+      "missing_by_seed": [],
+      "missing_json_for_prediction_csv": [],
+      "missing_manifest_members": [],
+      "missing_models": [],
+      "missing_prediction_for_json": [],
+      "missing_protocols": [],
+      "missing_seeds": [],
+      "missing_stress_configs": [],
+      "models": [
+        "gcn",
+        "mlp",
+        "sage"
+      ],
+      "num_layer_violations": [],
+      "oom_log_hits": [],
+      "package_index": [
+        {
+          "file_size_bytes": 197016059,
+          "manifest_names": [
+            "RUN_MANIFEST.json",
+            "V24_STRICT_EVIDENCE_GATE.json",
+            "dataset_materialization_manifest.json",
+            "dependency_manifest.json",
+            "dual_gpu_merge_manifest.json",
+            "dual_gpu_worker_manifest.json",
+            "final_count_validation.json",
+            "source_trace_manifest.json"
+          ],
+          "package_path": "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_3_4_DUALGPU_V24__seed_3.zip",
+          "prediction_entries": 18,
+          "result_entries": 18,
+          "sha256": "dbdf079088c4c78e780060273ac52eb11631fbf60a22d2263134f8548e85600c"
+        },
+        {
+          "file_size_bytes": 197408979,
+          "manifest_names": [
+            "RUN_MANIFEST.json",
+            "V24_STRICT_EVIDENCE_GATE.json",
+            "dataset_materialization_manifest.json",
+            "dependency_manifest.json",
+            "dual_gpu_merge_manifest.json",
+            "dual_gpu_worker_manifest.json",
+            "final_count_validation.json",
+            "source_trace_manifest.json"
+          ],
+          "package_path": "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_3_4_DUALGPU_V24__seed_4.zip",
+          "prediction_entries": 18,
+          "result_entries": 18,
+          "sha256": "98d1aa0998be7d2e695f676d61eec82cccf78fbe787a0936db3a2ee78b125ebf"
+        }
+      ],
+      "package_json_entries": 36,
+      "package_mode": "split package",
+      "package_paths": [
+        "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_3_4_DUALGPU_V24__seed_3.zip",
+        "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_3_4_DUALGPU_V24__seed_4.zip"
+      ],
+      "package_prediction_csv_entries": 36,
+      "prediction_index_csv": "results/v24_imported/rb41_dgraphfin_temporal_shift_seeds_3_4/PREDICTION_INDEX.csv",
+      "protocols": [
+        "inductive_isolated",
+        "strict_inductive"
+      ],
+      "result_index_csv": "results/v24_imported/rb41_dgraphfin_temporal_shift_seeds_3_4/RESULT_INDEX.csv",
+      "schema_errors": [],
+      "seed_coverage": [
+        3,
+        4
+      ],
+      "split_manifest_paths": [
+        "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_3_4_DUALGPU_V24__SPLIT_PACKAGE_MANIFEST.json"
+      ],
+      "status": "PASS",
+      "status_category": "MAIN_CHUNK",
+      "stress_configs": [
+        "early_to_late_transfer",
+        "late_window_holdout",
+        "rolling_window_stress"
+      ],
+      "version": "V24"
+    },
+    {
+      "actual_json": 36,
+      "actual_prediction_csv": 36,
+      "bad_return_codes": [],
+      "claim_scope": "main evidence after full10 merge",
+      "datasets": [
+        "dgraphfin"
+      ],
+      "display_name": "RB41 DGraphFin temporal shift chunk 5-6",
+      "dry_run_hits": [],
+      "duplicate_logical_prediction_files": [],
+      "duplicate_logical_result_files": [],
+      "expected_json": 36,
+      "expected_prediction_csv": 36,
+      "expected_seeds": [
+        5,
+        6
+      ],
+      "extra_models": [],
+      "extra_protocols": [],
+      "extra_seeds": [],
+      "extra_stress_configs": [],
+      "fail_reasons": [],
+      "hidden_channel_violations": [],
+      "incomplete_reasons": [],
+      "lane_id": "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_5_6_DUALGPU_V24",
+      "missing_by_seed": [],
+      "missing_json_for_prediction_csv": [],
+      "missing_manifest_members": [],
+      "missing_models": [],
+      "missing_prediction_for_json": [],
+      "missing_protocols": [],
+      "missing_seeds": [],
+      "missing_stress_configs": [],
+      "models": [
+        "gcn",
+        "mlp",
+        "sage"
+      ],
+      "num_layer_violations": [],
+      "oom_log_hits": [],
+      "package_index": [
+        {
+          "file_size_bytes": 200394244,
+          "manifest_names": [
+            "RUN_MANIFEST.json",
+            "V24_STRICT_EVIDENCE_GATE.json",
+            "dataset_materialization_manifest.json",
+            "dependency_manifest.json",
+            "dual_gpu_merge_manifest.json",
+            "dual_gpu_worker_manifest.json",
+            "final_count_validation.json",
+            "source_trace_manifest.json"
+          ],
+          "package_path": "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_5_6_DUALGPU_V24__seed_5.zip",
+          "prediction_entries": 18,
+          "result_entries": 18,
+          "sha256": "c18bd9aa45415c987b0dde6b091c5b3e80ee350274096a660d9b07addf926ae5"
+        },
+        {
+          "file_size_bytes": 198391020,
+          "manifest_names": [
+            "RUN_MANIFEST.json",
+            "V24_STRICT_EVIDENCE_GATE.json",
+            "dataset_materialization_manifest.json",
+            "dependency_manifest.json",
+            "dual_gpu_merge_manifest.json",
+            "dual_gpu_worker_manifest.json",
+            "final_count_validation.json",
+            "source_trace_manifest.json"
+          ],
+          "package_path": "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_5_6_DUALGPU_V24__seed_6.zip",
+          "prediction_entries": 18,
+          "result_entries": 18,
+          "sha256": "06a1a975856a98e318b892146f20415544b916f155518c6d3e6d7d50d2284042"
+        }
+      ],
+      "package_json_entries": 36,
+      "package_mode": "split package",
+      "package_paths": [
+        "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_5_6_DUALGPU_V24__seed_5.zip",
+        "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_5_6_DUALGPU_V24__seed_6.zip"
+      ],
+      "package_prediction_csv_entries": 36,
+      "prediction_index_csv": "results/v24_imported/rb41_dgraphfin_temporal_shift_seeds_5_6/PREDICTION_INDEX.csv",
+      "protocols": [
+        "inductive_isolated",
+        "strict_inductive"
+      ],
+      "result_index_csv": "results/v24_imported/rb41_dgraphfin_temporal_shift_seeds_5_6/RESULT_INDEX.csv",
+      "schema_errors": [],
+      "seed_coverage": [
+        5,
+        6
+      ],
+      "split_manifest_paths": [
+        "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_5_6_DUALGPU_V24__SPLIT_PACKAGE_MANIFEST.json"
+      ],
+      "status": "PASS",
+      "status_category": "MAIN_CHUNK",
+      "stress_configs": [
+        "early_to_late_transfer",
+        "late_window_holdout",
+        "rolling_window_stress"
+      ],
+      "version": "V24"
+    },
+    {
+      "actual_json": 36,
+      "actual_prediction_csv": 36,
+      "bad_return_codes": [],
+      "claim_scope": "main evidence after full10 merge",
+      "datasets": [
+        "dgraphfin"
+      ],
+      "display_name": "RB41 DGraphFin temporal shift chunk 7-8",
+      "dry_run_hits": [],
+      "duplicate_logical_prediction_files": [],
+      "duplicate_logical_result_files": [],
+      "expected_json": 36,
+      "expected_prediction_csv": 36,
+      "expected_seeds": [
+        7,
+        8
+      ],
+      "extra_models": [],
+      "extra_protocols": [],
+      "extra_seeds": [],
+      "extra_stress_configs": [],
+      "fail_reasons": [],
+      "hidden_channel_violations": [],
+      "incomplete_reasons": [],
+      "lane_id": "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_7_8_DUALGPU_V24",
+      "missing_by_seed": [],
+      "missing_json_for_prediction_csv": [],
+      "missing_manifest_members": [],
+      "missing_models": [],
+      "missing_prediction_for_json": [],
+      "missing_protocols": [],
+      "missing_seeds": [],
+      "missing_stress_configs": [],
+      "models": [
+        "gcn",
+        "mlp",
+        "sage"
+      ],
+      "num_layer_violations": [],
+      "oom_log_hits": [],
+      "package_index": [
+        {
+          "file_size_bytes": 200211010,
+          "manifest_names": [
+            "RUN_MANIFEST.json",
+            "V24_STRICT_EVIDENCE_GATE.json",
+            "dataset_materialization_manifest.json",
+            "dependency_manifest.json",
+            "dual_gpu_merge_manifest.json",
+            "dual_gpu_worker_manifest.json",
+            "final_count_validation.json",
+            "source_trace_manifest.json"
+          ],
+          "package_path": "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_7_8_DUALGPU_V24__seed_7.zip",
+          "prediction_entries": 18,
+          "result_entries": 18,
+          "sha256": "7ecde988078362352f44b7db7a0a94dfe4c8a4414aab95fb30466145008b11e3"
+        },
+        {
+          "file_size_bytes": 195312579,
+          "manifest_names": [
+            "RUN_MANIFEST.json",
+            "V24_STRICT_EVIDENCE_GATE.json",
+            "dataset_materialization_manifest.json",
+            "dependency_manifest.json",
+            "dual_gpu_merge_manifest.json",
+            "dual_gpu_worker_manifest.json",
+            "final_count_validation.json",
+            "source_trace_manifest.json"
+          ],
+          "package_path": "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_7_8_DUALGPU_V24__seed_8.zip",
+          "prediction_entries": 18,
+          "result_entries": 18,
+          "sha256": "0ae57c611bb57f57e1e79dc798f6db4084b0ec888490d58d6dba71f4137be7a5"
+        }
+      ],
+      "package_json_entries": 36,
+      "package_mode": "split package",
+      "package_paths": [
+        "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_7_8_DUALGPU_V24__seed_7.zip",
+        "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_7_8_DUALGPU_V24__seed_8.zip"
+      ],
+      "package_prediction_csv_entries": 36,
+      "prediction_index_csv": "results/v24_imported/rb41_dgraphfin_temporal_shift_seeds_7_8/PREDICTION_INDEX.csv",
+      "protocols": [
+        "inductive_isolated",
+        "strict_inductive"
+      ],
+      "result_index_csv": "results/v24_imported/rb41_dgraphfin_temporal_shift_seeds_7_8/RESULT_INDEX.csv",
+      "schema_errors": [],
+      "seed_coverage": [
+        7,
+        8
+      ],
+      "split_manifest_paths": [
+        "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_7_8_DUALGPU_V24__SPLIT_PACKAGE_MANIFEST.json"
+      ],
+      "status": "PASS",
+      "status_category": "MAIN_CHUNK",
+      "stress_configs": [
+        "early_to_late_transfer",
+        "late_window_holdout",
+        "rolling_window_stress"
+      ],
+      "version": "V24"
+    },
+    {
+      "actual_json": 36,
+      "actual_prediction_csv": 36,
+      "bad_return_codes": [],
+      "claim_scope": "main evidence after full10 merge",
+      "datasets": [
+        "dgraphfin"
+      ],
+      "display_name": "RB41 DGraphFin temporal shift chunk 9-10",
+      "dry_run_hits": [],
+      "duplicate_logical_prediction_files": [],
+      "duplicate_logical_result_files": [],
+      "expected_json": 36,
+      "expected_prediction_csv": 36,
+      "expected_seeds": [
+        9,
+        10
+      ],
+      "extra_models": [],
+      "extra_protocols": [],
+      "extra_seeds": [],
+      "extra_stress_configs": [],
+      "fail_reasons": [],
+      "hidden_channel_violations": [],
+      "incomplete_reasons": [],
+      "lane_id": "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_9_10_DUALGPU_V24",
+      "missing_by_seed": [],
+      "missing_json_for_prediction_csv": [],
+      "missing_manifest_members": [],
+      "missing_models": [],
+      "missing_prediction_for_json": [],
+      "missing_protocols": [],
+      "missing_seeds": [],
+      "missing_stress_configs": [],
+      "models": [
+        "gcn",
+        "mlp",
+        "sage"
+      ],
+      "num_layer_violations": [],
+      "oom_log_hits": [],
+      "package_index": [
+        {
+          "file_size_bytes": 201322640,
+          "manifest_names": [
+            "RUN_MANIFEST.json",
+            "V24_STRICT_EVIDENCE_GATE.json",
+            "dataset_materialization_manifest.json",
+            "dependency_manifest.json",
+            "dual_gpu_merge_manifest.json",
+            "dual_gpu_worker_manifest.json",
+            "final_count_validation.json",
+            "source_trace_manifest.json"
+          ],
+          "package_path": "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_9_10_DUALGPU_V24__seed_10.zip",
+          "prediction_entries": 18,
+          "result_entries": 18,
+          "sha256": "60f3fde7d6060bd090a57f5df02cbaff6d87716817cc9ed42ea5ca3d8833180a"
+        },
+        {
+          "file_size_bytes": 197786370,
+          "manifest_names": [
+            "RUN_MANIFEST.json",
+            "V24_STRICT_EVIDENCE_GATE.json",
+            "dataset_materialization_manifest.json",
+            "dependency_manifest.json",
+            "dual_gpu_merge_manifest.json",
+            "dual_gpu_worker_manifest.json",
+            "final_count_validation.json",
+            "source_trace_manifest.json"
+          ],
+          "package_path": "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_9_10_DUALGPU_V24__seed_9.zip",
+          "prediction_entries": 18,
+          "result_entries": 18,
+          "sha256": "407073d920ceaacd5366ff77491a80de0570ede2cfd4ecd2217b96324afade7c"
+        }
+      ],
+      "package_json_entries": 36,
+      "package_mode": "split package",
+      "package_paths": [
+        "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_9_10_DUALGPU_V24__seed_10.zip",
+        "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_9_10_DUALGPU_V24__seed_9.zip"
+      ],
+      "package_prediction_csv_entries": 36,
+      "prediction_index_csv": "results/v24_imported/rb41_dgraphfin_temporal_shift_seeds_9_10/PREDICTION_INDEX.csv",
+      "protocols": [
+        "inductive_isolated",
+        "strict_inductive"
+      ],
+      "result_index_csv": "results/v24_imported/rb41_dgraphfin_temporal_shift_seeds_9_10/RESULT_INDEX.csv",
+      "schema_errors": [],
+      "seed_coverage": [
+        9,
+        10
+      ],
+      "split_manifest_paths": [
+        "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_9_10_DUALGPU_V24__SPLIT_PACKAGE_MANIFEST.json"
+      ],
+      "status": "PASS",
+      "status_category": "MAIN_CHUNK",
+      "stress_configs": [
+        "early_to_late_transfer",
+        "late_window_holdout",
+        "rolling_window_stress"
+      ],
+      "version": "V24"
+    },
+    {
+      "actual_json": 20,
+      "actual_prediction_csv": 20,
+      "bad_return_codes": [],
+      "claim_scope": "appendix/exploratory only",
+      "datasets": [
+        "dgraphfin"
+      ],
+      "display_name": "RB45 DGraphFin GAT memory-reduced exploratory full10",
+      "dry_run_hits": [],
+      "duplicate_logical_prediction_files": [
+        {
+          "duplicate_member": "predictions/RB45__memory_reduced_exploratory_not_comparable__inductive_isolated__gat__none/dgraphfin__inductive_isolated__gat__seed10.csv",
+          "duplicate_package": "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_10.zip",
+          "first_member": "predictions/RB45__memory_reduced_exploratory_not_comparable__inductive_isolated__gat__none/dgraphfin__inductive_isolated__gat__seed10.csv",
+          "first_package": "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_1.zip",
+          "logical_key": "dgraphfin|memory_reduced_exploratory_not_comparable|inductive_isolated|gat|none|10",
+          "same_size_crc": true
+        },
+        {
+          "duplicate_member": "predictions/RB45__memory_reduced_exploratory_not_comparable__strict_inductive__gat__none/dgraphfin__strict_inductive__gat__seed10.csv",
+          "duplicate_package": "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_10.zip",
+          "first_member": "predictions/RB45__memory_reduced_exploratory_not_comparable__strict_inductive__gat__none/dgraphfin__strict_inductive__gat__seed10.csv",
+          "first_package": "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_1.zip",
+          "logical_key": "dgraphfin|memory_reduced_exploratory_not_comparable|strict_inductive|gat|none|10",
+          "same_size_crc": true
+        }
+      ],
+      "duplicate_logical_result_files": [
+        {
+          "duplicate_member": "json/RB45__memory_reduced_exploratory_not_comparable__inductive_isolated__gat__none/dgraphfin__inductive_isolated__gat__seed10.json",
+          "duplicate_package": "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_10.zip",
+          "first_member": "json/RB45__memory_reduced_exploratory_not_comparable__inductive_isolated__gat__none/dgraphfin__inductive_isolated__gat__seed10.json",
+          "first_package": "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_1.zip",
+          "logical_key": "dgraphfin|memory_reduced_exploratory_not_comparable|inductive_isolated|gat|none|10",
+          "same_sha256": true
+        },
+        {
+          "duplicate_member": "json/RB45__memory_reduced_exploratory_not_comparable__strict_inductive__gat__none/dgraphfin__strict_inductive__gat__seed10.json",
+          "duplicate_package": "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_10.zip",
+          "first_member": "json/RB45__memory_reduced_exploratory_not_comparable__strict_inductive__gat__none/dgraphfin__strict_inductive__gat__seed10.json",
+          "first_package": "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_1.zip",
+          "logical_key": "dgraphfin|memory_reduced_exploratory_not_comparable|strict_inductive|gat|none|10",
+          "same_sha256": true
+        }
+      ],
+      "expected_json": 20,
+      "expected_prediction_csv": 20,
+      "expected_seeds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "extra_models": [],
+      "extra_protocols": [],
+      "extra_seeds": [],
+      "extra_stress_configs": [],
+      "fail_reasons": [],
+      "hidden_channel_violations": [],
+      "incomplete_reasons": [],
+      "lane_id": "RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24",
+      "missing_by_seed": [],
+      "missing_json_for_prediction_csv": [],
+      "missing_manifest_members": [],
+      "missing_models": [],
+      "missing_prediction_for_json": [],
+      "missing_protocols": [],
+      "missing_seeds": [],
+      "missing_stress_configs": [],
+      "models": [
+        "gat"
+      ],
+      "num_layer_violations": [],
+      "oom_log_hits": [],
+      "package_index": [
+        {
+          "file_size_bytes": 48620188,
+          "manifest_names": [
+            "RUN_MANIFEST.json",
+            "V24_STRICT_EVIDENCE_GATE.json",
+            "dataset_materialization_manifest.json",
+            "dependency_manifest.json",
+            "dual_gpu_merge_manifest.json",
+            "dual_gpu_worker_manifest.json",
+            "final_count_validation.json",
+            "source_trace_manifest.json"
+          ],
+          "package_path": "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_1.zip",
+          "prediction_entries": 4,
+          "result_entries": 4,
+          "sha256": "3752dc25e62e9554a43a8b3f301f1a1864ec0a095caf98c6db92dca1f51d91e9"
+        },
+        {
+          "file_size_bytes": 24507063,
+          "manifest_names": [
+            "RUN_MANIFEST.json",
+            "V24_STRICT_EVIDENCE_GATE.json",
+            "dataset_materialization_manifest.json",
+            "dependency_manifest.json",
+            "dual_gpu_merge_manifest.json",
+            "dual_gpu_worker_manifest.json",
+            "final_count_validation.json",
+            "source_trace_manifest.json"
+          ],
+          "package_path": "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_10.zip",
+          "prediction_entries": 2,
+          "result_entries": 2,
+          "sha256": "7266a3a2d9e358c9d6004438044b4654ada8fe6fb0697caa69cf0d4bf478a20d"
+        },
+        {
+          "file_size_bytes": 24504422,
+          "manifest_names": [
+            "RUN_MANIFEST.json",
+            "V24_STRICT_EVIDENCE_GATE.json",
+            "dataset_materialization_manifest.json",
+            "dependency_manifest.json",
+            "dual_gpu_merge_manifest.json",
+            "dual_gpu_worker_manifest.json",
+            "final_count_validation.json",
+            "source_trace_manifest.json"
+          ],
+          "package_path": "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_2.zip",
+          "prediction_entries": 2,
+          "result_entries": 2,
+          "sha256": "e40d80cbb177ce8a5a25e373e1f5c6d80315551e74aaca8b11d31d12606996ab"
+        },
+        {
+          "file_size_bytes": 24011140,
+          "manifest_names": [
+            "RUN_MANIFEST.json",
+            "V24_STRICT_EVIDENCE_GATE.json",
+            "dataset_materialization_manifest.json",
+            "dependency_manifest.json",
+            "dual_gpu_merge_manifest.json",
+            "dual_gpu_worker_manifest.json",
+            "final_count_validation.json",
+            "source_trace_manifest.json"
+          ],
+          "package_path": "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_3.zip",
+          "prediction_entries": 2,
+          "result_entries": 2,
+          "sha256": "f05685f3cae7d810ba35c33ee2c53ea7162a41b04373a4a3c7c0a8a14b6c68b1"
+        },
+        {
+          "file_size_bytes": 24214316,
+          "manifest_names": [
+            "RUN_MANIFEST.json",
+            "V24_STRICT_EVIDENCE_GATE.json",
+            "dataset_materialization_manifest.json",
+            "dependency_manifest.json",
+            "dual_gpu_merge_manifest.json",
+            "dual_gpu_worker_manifest.json",
+            "final_count_validation.json",
+            "source_trace_manifest.json"
+          ],
+          "package_path": "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_4.zip",
+          "prediction_entries": 2,
+          "result_entries": 2,
+          "sha256": "f711aee3fe08d74da89d8a09aa0e1e6788d24410bad7f24a30bdff747bc9b9ac"
+        },
+        {
+          "file_size_bytes": 24451325,
+          "manifest_names": [
+            "RUN_MANIFEST.json",
+            "V24_STRICT_EVIDENCE_GATE.json",
+            "dataset_materialization_manifest.json",
+            "dependency_manifest.json",
+            "dual_gpu_merge_manifest.json",
+            "dual_gpu_worker_manifest.json",
+            "final_count_validation.json",
+            "source_trace_manifest.json"
+          ],
+          "package_path": "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_5.zip",
+          "prediction_entries": 2,
+          "result_entries": 2,
+          "sha256": "3040c21935b55f68123fccbc9ec4bc7589be84ae0f20bcdea82a9167d65b9506"
+        },
+        {
+          "file_size_bytes": 23995140,
+          "manifest_names": [
+            "RUN_MANIFEST.json",
+            "V24_STRICT_EVIDENCE_GATE.json",
+            "dataset_materialization_manifest.json",
+            "dependency_manifest.json",
+            "dual_gpu_merge_manifest.json",
+            "dual_gpu_worker_manifest.json",
+            "final_count_validation.json",
+            "source_trace_manifest.json"
+          ],
+          "package_path": "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_6.zip",
+          "prediction_entries": 2,
+          "result_entries": 2,
+          "sha256": "0a21c56ed9f5acf2691b578bdb40b557400499de6628d2a0e0df27e123cd1e57"
+        },
+        {
+          "file_size_bytes": 24116806,
+          "manifest_names": [
+            "RUN_MANIFEST.json",
+            "V24_STRICT_EVIDENCE_GATE.json",
+            "dataset_materialization_manifest.json",
+            "dependency_manifest.json",
+            "dual_gpu_merge_manifest.json",
+            "dual_gpu_worker_manifest.json",
+            "final_count_validation.json",
+            "source_trace_manifest.json"
+          ],
+          "package_path": "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_7.zip",
+          "prediction_entries": 2,
+          "result_entries": 2,
+          "sha256": "1e342386a84c2bc3bf26b54d40ed1ffd68a7489728117b6c4e24ff0a175a8436"
+        },
+        {
+          "file_size_bytes": 24155390,
+          "manifest_names": [
+            "RUN_MANIFEST.json",
+            "V24_STRICT_EVIDENCE_GATE.json",
+            "dataset_materialization_manifest.json",
+            "dependency_manifest.json",
+            "dual_gpu_merge_manifest.json",
+            "dual_gpu_worker_manifest.json",
+            "final_count_validation.json",
+            "source_trace_manifest.json"
+          ],
+          "package_path": "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_8.zip",
+          "prediction_entries": 2,
+          "result_entries": 2,
+          "sha256": "bae4a93f29fbf3312a76d482cc6e14a276c555cc5203568e98c89227d46db6e0"
+        },
+        {
+          "file_size_bytes": 23970349,
+          "manifest_names": [
+            "RUN_MANIFEST.json",
+            "V24_STRICT_EVIDENCE_GATE.json",
+            "dataset_materialization_manifest.json",
+            "dependency_manifest.json",
+            "dual_gpu_merge_manifest.json",
+            "dual_gpu_worker_manifest.json",
+            "final_count_validation.json",
+            "source_trace_manifest.json"
+          ],
+          "package_path": "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_9.zip",
+          "prediction_entries": 2,
+          "result_entries": 2,
+          "sha256": "b4ad68e018e3e63f8c1733f7d2e45a63ac1ab497b2931d779466ff33050f96d1"
+        }
+      ],
+      "package_json_entries": 22,
+      "package_mode": "split package",
+      "package_paths": [
+        "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_1.zip",
+        "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_10.zip",
+        "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_2.zip",
+        "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_3.zip",
+        "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_4.zip",
+        "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_5.zip",
+        "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_6.zip",
+        "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_7.zip",
+        "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_8.zip",
+        "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__seed_9.zip"
+      ],
+      "package_prediction_csv_entries": 22,
+      "prediction_index_csv": "results/v24_imported/rb45_dgraphfin_gat_memory_reduced_exploratory_full10/PREDICTION_INDEX.csv",
+      "protocols": [
+        "inductive_isolated",
+        "strict_inductive"
+      ],
+      "result_index_csv": "results/v24_imported/rb45_dgraphfin_gat_memory_reduced_exploratory_full10/RESULT_INDEX.csv",
+      "schema_errors": [],
+      "seed_coverage": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "split_manifest_paths": [
+        "kaggleoutputs/v24/rb45_dgraphfin_gat_memory_reduced_full10/DOWNLOAD_ME_RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24__SPLIT_PACKAGE_MANIFEST.json"
+      ],
+      "status": "EXPLORATORY_PASS",
+      "status_category": "EXPLORATORY_FULL10",
+      "stress_configs": [
+        "memory_reduced_exploratory_not_comparable"
+      ],
+      "version": "V24"
+    }
+  ],
+  "merged_lanes": [
+    {
+      "actual_json": 180,
+      "actual_prediction_csv": 180,
+      "chunk_summaries": [
+        {
+          "actual_json": 36,
+          "actual_prediction_csv": 36,
+          "chunk_id": "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_1_2_DUALGPU_V24",
+          "duplicates": 0,
+          "expected_json": 36,
+          "expected_prediction_csv": 36,
+          "reasons": [],
+          "schema_errors": 0,
+          "seeds": [
+            1,
+            2
+          ],
+          "status": "PASS"
+        },
+        {
+          "actual_json": 36,
+          "actual_prediction_csv": 36,
+          "chunk_id": "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_3_4_DUALGPU_V24",
+          "duplicates": 0,
+          "expected_json": 36,
+          "expected_prediction_csv": 36,
+          "reasons": [],
+          "schema_errors": 0,
+          "seeds": [
+            3,
+            4
+          ],
+          "status": "PASS"
+        },
+        {
+          "actual_json": 36,
+          "actual_prediction_csv": 36,
+          "chunk_id": "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_5_6_DUALGPU_V24",
+          "duplicates": 0,
+          "expected_json": 36,
+          "expected_prediction_csv": 36,
+          "reasons": [],
+          "schema_errors": 0,
+          "seeds": [
+            5,
+            6
+          ],
+          "status": "PASS"
+        },
+        {
+          "actual_json": 36,
+          "actual_prediction_csv": 36,
+          "chunk_id": "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_7_8_DUALGPU_V24",
+          "duplicates": 0,
+          "expected_json": 36,
+          "expected_prediction_csv": 36,
+          "reasons": [],
+          "schema_errors": 0,
+          "seeds": [
+            7,
+            8
+          ],
+          "status": "PASS"
+        },
+        {
+          "actual_json": 36,
+          "actual_prediction_csv": 36,
+          "chunk_id": "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_9_10_DUALGPU_V24",
+          "duplicates": 0,
+          "expected_json": 36,
+          "expected_prediction_csv": 36,
+          "reasons": [],
+          "schema_errors": 0,
+          "seeds": [
+            9,
+            10
+          ],
+          "status": "PASS"
+        }
+      ],
+      "claim_scope": "main evidence",
+      "display_name": "RB41 DGraphFin temporal shift merged full10",
+      "duplicate_logical_prediction_files": [],
+      "duplicate_logical_result_files": [],
+      "duplicates_existed": false,
+      "expected_json": 180,
+      "expected_prediction_csv": 180,
+      "lane_id": "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_FULL10_SEEDS_1_10_DUALGPU_V24",
+      "merge_strategy": "zip-member index merge; raw prediction CSVs remain in source zips",
+      "package_paths": [
+        "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_1_2_DUALGPU_V24__seed_1.zip",
+        "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_1_2_DUALGPU_V24__seed_2.zip",
+        "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_3_4_DUALGPU_V24__seed_3.zip",
+        "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_3_4_DUALGPU_V24__seed_4.zip",
+        "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_5_6_DUALGPU_V24__seed_5.zip",
+        "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_5_6_DUALGPU_V24__seed_6.zip",
+        "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_7_8_DUALGPU_V24__seed_7.zip",
+        "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_7_8_DUALGPU_V24__seed_8.zip",
+        "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_9_10_DUALGPU_V24__seed_10.zip",
+        "kaggleoutputs/v24/rb41_dgraphfin_full10_chunks/DOWNLOAD_ME_RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_9_10_DUALGPU_V24__seed_9.zip"
+      ],
+      "partial_or_corrupt_files_excluded": [],
+      "pass_chunk_ids": [
+        "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_1_2_DUALGPU_V24",
+        "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_3_4_DUALGPU_V24",
+        "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_5_6_DUALGPU_V24",
+        "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_7_8_DUALGPU_V24",
+        "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_9_10_DUALGPU_V24"
+      ],
+      "reasons": [],
+      "required_chunk_ids": [
+        "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_1_2_DUALGPU_V24",
+        "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_3_4_DUALGPU_V24",
+        "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_5_6_DUALGPU_V24",
+        "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_7_8_DUALGPU_V24",
+        "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_9_10_DUALGPU_V24"
+      ],
+      "seed_coverage": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "status": "PASS",
+      "status_category": "MAIN_FULL10_MERGED",
+      "version": "V24"
+    }
+  ],
+  "output_root": "results/v24_imported",
+  "rb45_scope_note": "RB45 memory-reduced GAT full10 shows feasibility and exploratory behavior for a smaller DGraphFin GAT on T4. It does not unblock or replace the original fixed-config DGraphFin GAT hidden64/layers2 lane.",
+  "status": "PASS",
+  "status_table_rows": [
+    {
+      "actual_json": 180,
+      "actual_prediction_csv": 180,
+      "claim_scope": "main evidence",
+      "display_name": "RB41 Elliptic full10 temporal shift",
+      "expected_json": 180,
+      "expected_prediction_csv": 180,
+      "lane_id": "RB41_ELLIPTIC_TEMPORAL_SHIFT_STRESS_FULL10_SEEDS_1_10_V24",
+      "notes": "",
+      "seed_coverage": "1 2 3 4 5 6 7 8 9 10",
+      "status": "PASS",
+      "status_category": "MAIN_FULL10"
+    },
+    {
+      "actual_json": 120,
+      "actual_prediction_csv": 120,
+      "claim_scope": "appendix diagnostics",
+      "display_name": "RB44 Elliptic full10 perturbation stress",
+      "expected_json": 120,
+      "expected_prediction_csv": 120,
+      "lane_id": "RB44_ELLIPTIC_PERTURBATION_STRESS_FULL10_SEEDS_1_10_V24",
+      "notes": "",
+      "seed_coverage": "1 2 3 4 5 6 7 8 9 10",
+      "status": "PASS",
+      "status_category": "APPENDIX_FULL10"
+    },
+    {
+      "actual_json": 36,
+      "actual_prediction_csv": 36,
+      "claim_scope": "main evidence after full10 merge",
+      "display_name": "RB41 DGraphFin temporal shift chunk 1-2",
+      "expected_json": 36,
+      "expected_prediction_csv": 36,
+      "lane_id": "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_1_2_DUALGPU_V24",
+      "notes": "",
+      "seed_coverage": "1 2",
+      "status": "PASS",
+      "status_category": "MAIN_CHUNK"
+    },
+    {
+      "actual_json": 36,
+      "actual_prediction_csv": 36,
+      "claim_scope": "main evidence after full10 merge",
+      "display_name": "RB41 DGraphFin temporal shift chunk 3-4",
+      "expected_json": 36,
+      "expected_prediction_csv": 36,
+      "lane_id": "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_3_4_DUALGPU_V24",
+      "notes": "",
+      "seed_coverage": "3 4",
+      "status": "PASS",
+      "status_category": "MAIN_CHUNK"
+    },
+    {
+      "actual_json": 36,
+      "actual_prediction_csv": 36,
+      "claim_scope": "main evidence after full10 merge",
+      "display_name": "RB41 DGraphFin temporal shift chunk 5-6",
+      "expected_json": 36,
+      "expected_prediction_csv": 36,
+      "lane_id": "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_5_6_DUALGPU_V24",
+      "notes": "",
+      "seed_coverage": "5 6",
+      "status": "PASS",
+      "status_category": "MAIN_CHUNK"
+    },
+    {
+      "actual_json": 36,
+      "actual_prediction_csv": 36,
+      "claim_scope": "main evidence after full10 merge",
+      "display_name": "RB41 DGraphFin temporal shift chunk 7-8",
+      "expected_json": 36,
+      "expected_prediction_csv": 36,
+      "lane_id": "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_7_8_DUALGPU_V24",
+      "notes": "",
+      "seed_coverage": "7 8",
+      "status": "PASS",
+      "status_category": "MAIN_CHUNK"
+    },
+    {
+      "actual_json": 36,
+      "actual_prediction_csv": 36,
+      "claim_scope": "main evidence after full10 merge",
+      "display_name": "RB41 DGraphFin temporal shift chunk 9-10",
+      "expected_json": 36,
+      "expected_prediction_csv": 36,
+      "lane_id": "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_SEEDS_9_10_DUALGPU_V24",
+      "notes": "",
+      "seed_coverage": "9 10",
+      "status": "PASS",
+      "status_category": "MAIN_CHUNK"
+    },
+    {
+      "actual_json": 20,
+      "actual_prediction_csv": 20,
+      "claim_scope": "appendix/exploratory only",
+      "display_name": "RB45 DGraphFin GAT memory-reduced exploratory full10",
+      "expected_json": 20,
+      "expected_prediction_csv": 20,
+      "lane_id": "RB45_DGRAPHFIN_GAT_MEMORY_REDUCED_EXPLORATORY_FULL10_SEEDS_1_10_DUALGPU_V24",
+      "notes": "",
+      "seed_coverage": "1 2 3 4 5 6 7 8 9 10",
+      "status": "EXPLORATORY_PASS",
+      "status_category": "EXPLORATORY_FULL10"
+    },
+    {
+      "actual_json": 180,
+      "actual_prediction_csv": 180,
+      "claim_scope": "main evidence",
+      "display_name": "RB41 DGraphFin temporal shift merged full10",
+      "expected_json": 180,
+      "expected_prediction_csv": 180,
+      "lane_id": "RB41_DGRAPHFIN_TEMPORAL_SHIFT_STRESS_FULL10_SEEDS_1_10_DUALGPU_V24",
+      "notes": "",
+      "seed_coverage": "1 2 3 4 5 6 7 8 9 10",
+      "status": "PASS",
+      "status_category": "MAIN_FULL10_MERGED"
+    },
+    {
+      "actual_json": 0,
+      "actual_prediction_csv": 0,
+      "claim_scope": "blocked; not replaced by RB45",
+      "display_name": "DGraphFin fixed-config GAT hidden64/layers2",
+      "expected_json": 20,
+      "expected_prediction_csv": 20,
+      "lane_id": "DGRAPHFIN_FIXED_CONFIG_GAT_HIDDEN64_LAYERS2",
+      "notes": "Original comparable fixed-config GAT remains blocked on Kaggle T4.",
+      "seed_coverage": "",
+      "status": "BLOCKED_T4_OOM",
+      "status_category": "BLOCKED"
+    }
+  ],
+  "version": "V24"
+}

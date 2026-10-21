@@ -1,0 +1,18 @@
+\section{Graph-construction definitions}
+\label{sec:s-constructions}
+
+The IBM construction study uses the edge-aware SAGE-derived h64 classifier as its reference. Every intervention retains variant, protocol, seed, and optimizer schedule unless the intervention itself changes the training structure. Table~\ref{tab:s-construction-cards} records the operation and question for each matched candidate.
+
+\input{tables/table_v2_construction_cards}
+
+\paragraph{Feature controls.}
+NoEdge sets all eight transaction attributes to zero while preserving account structure and histories. ShuffledEdge permutes transaction-feature rows separately within train, validation, and test masks, preserving marginal distributions and split sizes while breaking transaction-to-feature alignment. DegreeOnly replaces the transaction attributes with source/destination in/out-degree summaries computed from training edges.
+
+\paragraph{Structural controls.}
+DegreeCap removes training edges incident to accounts above the 0.995 active-training-degree quantile, subject to safety guards. RecentWindow uses only the chronologically latest 50\% of training edges to construct the training structure, changing both represented history and computation.
+
+\paragraph{Identity diagnostic.}
+The sender-receiver row records that the materialized arrays already encode sender-to-receiver transactions. It performs no independent graph transformation. Its matched zero rows remain useful as an identity check but cannot count as replication or as another method in a winner set.
+
+\paragraph{Interpretive limit.}
+These interventions isolate implementation-level representation and construction choices within the recorded IBM contracts. They do not identify causal effects for arbitrary AML networks, and Medium GINE remains outside the feasible set.
